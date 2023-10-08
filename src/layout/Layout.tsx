@@ -1,23 +1,14 @@
+import { Container } from "@mui/material";
 import React from "react";
-import {
-  AppBar,
-  Toolbar,
-  Typography,
-  Container,
-  CssBaseline,
-} from "@mui/material";
+import { Header } from "../components/layout/Header";
+import { Footer } from "../components/layout/Footer";
 
 function Layout({ children }: { children: React.ReactNode }) {
   return (
     <div>
-      <CssBaseline />
-      <AppBar position="static">
-        <Toolbar>
-          <Typography variant="h6">My App</Typography>
-        </Toolbar>
-      </AppBar>
+      <Header />
       <Container>{children}</Container>
-      <footer>{/* Footer content */}</footer>
+      <Footer />
     </div>
   );
 }

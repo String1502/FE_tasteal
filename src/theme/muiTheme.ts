@@ -1,17 +1,50 @@
-import { createTheme } from "@mui/material/styles";
+import { PaletteMode } from "@mui/material";
 
-const theme = createTheme({
+const TopicColor = "#00404e";
+const SubColor = "#ffe6d4";
+
+export const getMode = (mode: PaletteMode) => ({
   palette: {
-    primary: {
-      main: "#007bff",
-    },
-    secondary: {
-      main: "#ff6f61",
-    },
-  },
-  typography: {
-    fontFamily: "Arial, sans-serif",
+    mode,
+    ...(mode === "light"
+      ? {
+          primary: {
+            main: TopicColor,
+            contrastText: "#fff",
+          },
+          secondary: {
+            main: SubColor,
+            constrastText: TopicColor,
+          },
+          text: {
+            primary: TopicColor,
+          },
+          divider: TopicColor,
+          background: {
+            default: "#fff",
+            paper: "#fff",
+          },
+        }
+      : {
+          primary: {
+            main: TopicColor,
+          },
+          secondary: {
+            main: SubColor,
+          },
+          text: {
+            primary: "#fff",
+          },
+          divider: "#fff",
+          background: {
+            default: TopicColor,
+            paper: TopicColor,
+          },
+        }),
   },
 });
 
-export default theme;
+export const MainShadow =
+  "rgba(0, 0, 0, 0.1) 0px 4px 6px -1px, rgba(0, 0, 0, 0.06) 0px 2px 4px -1px";
+export const HoverShadow =
+  "rgba(0, 0, 0, 0.1) 0px 4px 6px -1px, rgba(0, 0, 0, 0.06) 0px 2px 4px -1px";
