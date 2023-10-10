@@ -71,12 +71,12 @@ const CustomAccordion = ({
           borderColor: "grey.300",
         }}
       >
-        <AccordionSummary expandIcon={<ExpandMore />}>
+        <AccordionSummary sx={{ px: 0 }} expandIcon={<ExpandMore />}>
           <Typography variant="body1" sx={{ fontWeight: "bold" }}>
             {label}
           </Typography>
         </AccordionSummary>
-        <AccordionDetails>{children}</AccordionDetails>
+        <AccordionDetails sx={{ px: 0 }}>{children}</AccordionDetails>
       </Accordion>
     </>
   );

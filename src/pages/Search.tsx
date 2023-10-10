@@ -82,7 +82,7 @@ function Search() {
     <Layout>
       <Grid
         container
-        spacing={2}
+        spacing={4}
         sx={{
           justifyContent: "center",
           alignItems: "flex-start",
@@ -132,11 +132,11 @@ function Search() {
           </Box>
         </Grid>
 
-        <Grid item xs={12} lg={3} sx={{ mt: 4 }}>
+        <Grid item xs={12} lg={3} sx={{ mt: 2 }}>
           <SearchFilter />
         </Grid>
 
-        <Grid item xs={12} lg={9} sx={{ mt: 4 }}>
+        <Grid item xs={12} lg={9} sx={{ mt: 2 }}>
           <Typography variant="h5" sx={{ fontWeight: "bold" }}>
             Công thức phổ biến
           </Typography>

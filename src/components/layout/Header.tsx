@@ -65,37 +65,39 @@ export function Header(props: Props) {
           backgroundColor: theme.palette.common.white,
         }}
       >
-        <Toolbar>
-          <IconButton
-            color="primary"
-            aria-label="open drawer"
-            edge="start"
-            onClick={handleDrawerToggle}
-            sx={{ mr: 2, display: { sm: "none" } }}
-          >
-            <MenuIcon />
-          </IconButton>
-          <Typography
-            variant="h6"
-            component="div"
-            color="primary"
-            sx={{ flexGrow: 1, display: { xs: "none", sm: "block" } }}
-          >
-            Tasteal
-          </Typography>
-          <Box sx={{ display: { xs: "none", sm: "block" } }}>
-            {navItems.map((item) => (
-              <Button
-                variant="contained"
-                color="primary"
-                key={item}
-                sx={{ mx: 2 }}
-              >
-                {item}
-              </Button>
-            ))}
-          </Box>
-        </Toolbar>
+        <Container>
+          <Toolbar>
+            <IconButton
+              color="primary"
+              aria-label="open drawer"
+              edge="start"
+              onClick={handleDrawerToggle}
+              sx={{ mr: 2, display: { sm: "none" } }}
+            >
+              <MenuIcon />
+            </IconButton>
+            <Typography
+              variant="h6"
+              component="div"
+              color="primary"
+              sx={{ flexGrow: 1, display: { xs: "none", sm: "block" } }}
+            >
+              Tasteal
+            </Typography>
+            <Box sx={{ display: { xs: "none", sm: "block" } }}>
+              {navItems.map((item) => (
+                <Button
+                  variant="contained"
+                  color="primary"
+                  key={item}
+                  sx={{ mx: 2 }}
+                >
+                  {item}
+                </Button>
+              ))}
+            </Box>
+          </Toolbar>
+        </Container>
       </AppBar>
       <nav>
         <Drawer
