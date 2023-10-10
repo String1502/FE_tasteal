@@ -14,7 +14,7 @@ import {
 } from "@mui/material";
 import { ingredients, occasions } from "../../types/sampleData";
 import { useEffect, useMemo, useState } from "react";
-import { Ingredient_Autocomplete } from "./Ingredient_Autocomplete";
+import { IngredientAutocomplete } from "./IngredientAutocomplete";
 import { IngredientEntity } from "../../types/type";
 
 const timeFilterItems = [
@@ -205,7 +205,7 @@ export function SearchFilter() {
                 Bao gồm:
               </Typography>
             </Box>
-            <Ingredient_Autocomplete
+            <IngredientAutocomplete
               ingredients={selectedIngredientsOptions}
               handleChange={handleChangeSelectedIngredients}
             />
@@ -220,7 +220,7 @@ export function SearchFilter() {
                 Không bao gồm:
               </Typography>
             </Box>
-            <Ingredient_Autocomplete
+            <IngredientAutocomplete
               ingredients={exceptedIngredientsOptions}
               handleChange={handleChangeExceptedIngredients}
             />

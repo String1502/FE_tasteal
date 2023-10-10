@@ -20,7 +20,7 @@ function sleep(duration: number): Promise<void> {
     }, duration);
   });
 }
-export function Ingredient_Autocomplete({
+export function IngredientAutocomplete({
   ingredients,
   handleChange,
 }: {
