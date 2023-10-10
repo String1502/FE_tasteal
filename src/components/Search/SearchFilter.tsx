@@ -4,13 +4,15 @@ import {
   AccordionDetails,
   AccordionSummary,
   Box,
+  Checkbox,
   FormControlLabel,
+  FormGroup,
   Grid,
   Radio,
   RadioGroup,
   Typography,
 } from "@mui/material";
-import { ingredients } from "../../types/sampleData";
+import { ingredients, occasions } from "../../types/sampleData";
 import { useEffect, useMemo, useState } from "react";
 import { Ingredient_Autocomplete } from "./Ingredient_Autocomplete";
 import { IngredientEntity } from "../../types/type";
@@ -52,13 +54,16 @@ const calorieFilterItems = [
 const CustomAccordion = ({
   label,
   children,
+  expanded,
 }: {
+  expanded?: boolean;
   label: string;
   children?: React.ReactNode;
 }) => {
   return (
     <>
       <Accordion
+        expanded={expanded}
         square
         sx={{
           boxShadow: 0,
@@ -132,10 +137,11 @@ export function SearchFilter() {
   //#endregion
 
   //#region filter Thời gian
-  const [selectedTime, setSelectedTime] = useState<number | null>(null);
+  const [selectedTime, setSelectedTime] = useState<string | null>(null);
 
   const handleChangeTime = (event: any) => {
     const newValue = event.target.value;
+
     if (newValue === selectedTime) {
       // Nếu người dùng nhấn vào nút radio đã được chọn, hủy chọn nó
       setSelectedTime(null);
@@ -147,16 +153,33 @@ export function SearchFilter() {
 
   //#region filter Calorie
 
-  const [selectedCalorie, setSelectedCalorie] = useState<number | null>(null);
+  const [selectedCalorie, setSelectedCalorie] = useState<string | null>(null);
 
   const handleChangeCalorie = (event: any) => {
     const newValue = event.target.value;
+
     if (newValue === selectedCalorie) {
       setSelectedCalorie(null);
     } else {
       setSelectedCalorie(newValue);
     }
   };
+
+  //#endregion
+
+  //#region filter Dịp
+  const [selectedDip, setSelectedDip] = useState<string[]>([]);
+
+  const handleChangeDip = (event: any) => {
+    const newValue = event.target.value;
+
+    if (selectedDip.includes(newValue)) {
+      setSelectedDip([...selectedDip.filter((dip) => dip !== newValue)]);
+    } else {
+      setSelectedDip([...selectedDip, newValue]);
+    }
+  };
+
   //#endregion
 
   return (
@@ -171,7 +194,7 @@ export function SearchFilter() {
         }}
       >
         <Grid item xs={12}>
-          <CustomAccordion label="Nguyên liệu">
+          <CustomAccordion expanded label="Nguyên liệu">
             <Box sx={{ mb: 1 }}>
               <Typography
                 variant="body2"
@@ -221,12 +244,29 @@ export function SearchFilter() {
         </Grid>
 
         <Grid item xs={12}>
+          <CustomAccordion label="Dịp">
+            <FormGroup>
+              {occasions.map((item) => (
+                <FormControlLabel
+                  key={item.id}
+                  value={item.id}
+                  onChange={handleChangeDip}
+                  control={<Checkbox size="small" />}
+                  label={<Typography variant="body2">{item.name}</Typography>}
+                  onClick={handleChangeTime}
+                />
+              ))}
+            </FormGroup>
+          </CustomAccordion>
+        </Grid>
+
+        <Grid item xs={12}>
           <CustomAccordion label="Calorie/phần">
-            <RadioGroup value={selectedTime} onChange={handleChangeTime}>
+            <RadioGroup value={selectedCalorie} onChange={handleChangeCalorie}>
               {calorieFilterItems.map((item) => (
                 <FormControlLabel
-                  key={item.min}
-                  value={item}
+                  key={JSON.stringify(item)}
+                  value={JSON.stringify(item)}
                   control={<Radio size="small" />}
                   label={
                     <Typography variant="body2">
@@ -234,7 +274,7 @@ export function SearchFilter() {
                       {item.max} Cal
                     </Typography>
                   }
-                  onClick={handleChangeTime}
+                  onClick={handleChangeCalorie}
                 />
               ))}
             </RadioGroup>
