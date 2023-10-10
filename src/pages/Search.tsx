@@ -1,104 +1,174 @@
 import {
   Box,
   Button,
+  Checkbox,
   Container,
   Grid,
   InputAdornment,
+  Stack,
   TextField,
   Typography,
 } from "@mui/material";
 import Layout from "../layout/Layout";
 import { SearchRounded } from "@mui/icons-material";
 import { HoverShadow, MainShadow } from "../theme/muiTheme";
-import React from "react";
+import React, { useEffect } from "react";
 import { RecipeEntity } from "../types/type";
 import { recipes } from "../types/sampleData";
 import { PrimaryCard } from "../components/card/PrimaryCard";
-import { SearchFilter } from "../components/Search/SearchFilter";
+import { SearchFilter } from "../components/search/SearchFilter.tsx";
+import { CheckBoxButton } from "../components/button/CheckBoxButton.tsx";
+
+export type TuKhoa = {
+  label: string;
+  value: boolean;
+};
+
+const DefaultTuKhoas: TuKhoa[] = [
+  {
+    label: "Bánh mì",
+    value: false,
+  },
+  {
+    label: "Bánh bao",
+    value: false,
+  },
+  {
+    label: "heo quay",
+    value: false,
+  },
+  {
+    label: "bún thịt nướng",
+    value: false,
+  },
+  {
+    label: "cơm sườn",
+    value: false,
+  },
+  {
+    label: "Bún đậu",
+    value: false,
+  },
+];
 
 function Search() {
   const [resultItem, setResultItem] = React.useState<RecipeEntity[]>(recipes);
+
+  //#region Từ khóa
+  const [tuKhoas, setTuKhoas] = React.useState<TuKhoa[]>(DefaultTuKhoas);
+
+  const handleChangeTuKhoa = (tukhoa: TuKhoa) => {
+    setTuKhoas((prev) => {
+      return prev.map((item) => {
+        if (item.label === tukhoa.label) {
+          return {
+            ...item,
+            value: !item.value,
+          };
+        } else {
+          return item;
+        }
+      });
+    });
+  };
+
+  useEffect(() => {
+    setTuKhoas(DefaultTuKhoas);
+  }, [DefaultTuKhoas]);
+
+  //#endregion
+
   return (
     <Layout>
-      <Container>
-        <Grid
-          container
-          spacing={2}
-          sx={{
-            justifyContent: "center",
-            alignItems: "flex-start",
-            width: "100%",
-          }}
-        >
-          <Grid item xs={12}>
-            <Box
-              sx={{
-                my: 4,
+      <Grid
+        container
+        spacing={2}
+        sx={{
+          justifyContent: "center",
+          alignItems: "flex-start",
+          width: "100%",
+        }}
+      >
+        <Grid item xs={12}>
+          <Box
+            sx={{
+              my: 4,
+            }}
+          >
+            <TextField
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <SearchRounded />
+                  </InputAdornment>
+                ),
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <Button
+                      variant="contained"
+                      sx={{
+                        borderRadius: "40px",
+                      }}
+                    >
+                      Search
+                    </Button>
+                  </InputAdornment>
+                ),
+                sx: {
+                  borderRadius: "40px",
+                  pl: 3,
+                  pr: 2,
+                  py: 0.5,
+                  boxShadow: MainShadow,
+                  border: 0,
+                },
               }}
-            >
-              <TextField
-                InputProps={{
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <SearchRounded />
-                    </InputAdornment>
-                  ),
-                  endAdornment: (
-                    <InputAdornment position="end">
-                      <Button
-                        variant="contained"
-                        sx={{
-                          borderRadius: "40px",
-                        }}
-                      >
-                        Search
-                      </Button>
-                    </InputAdornment>
-                  ),
-                  sx: {
-                    borderRadius: "40px",
-                    pl: 3,
-                    pr: 2,
-                    py: 0.5,
-                    boxShadow: MainShadow,
-                    border: 0,
-                  },
-                }}
-                placeholder="Đang đói lắm phải không?"
-                variant="outlined"
-                fullWidth
+              placeholder="Đang đói lắm phải không?"
+              variant="outlined"
+              fullWidth
+            />
+          </Box>
+        </Grid>
+
+        <Grid
+          item
+          lg={3}
+          sx={{ display: { xs: "none", md: "none", lg: "block" } }}
+        >
+          <SearchFilter />
+        </Grid>
+
+        <Grid item xs={12} lg={9}>
+          <Typography variant="h5" sx={{ fontWeight: "bold" }}>
+            Công thức phổ biến
+          </Typography>
+
+          <Stack flexWrap={"wrap"} direction="row" sx={{ my: 2 }}>
+            {tuKhoas.map((item) => (
+              <CheckBoxButton
+                key={item.label}
+                label={item.label}
+                value={item.value}
+                handleChangeTuKhoa={handleChangeTuKhoa}
               />
-            </Box>
-          </Grid>
+            ))}
+          </Stack>
 
           <Grid
-            item
-            lg={3}
-            sx={{ display: { xs: "none", md: "none", lg: "block" } }}
+            container
+            direction="row"
+            justifyContent="flex-start"
+            alignItems="flex-start"
+            spacing={2}
           >
-            <SearchFilter />
-          </Grid>
-
-          <Grid item xs={12} lg={9}>
-            <Typography variant="h5" sx={{ fontWeight: "bold", mb: 2 }}>
-              Công thức phổ biến
-            </Typography>
-            <Grid
-              container
-              direction="row"
-              justifyContent="flex-start"
-              alignItems="flex-start"
-              spacing={2}
-            >
-              {resultItem.map((item, index) => (
-                <Grid item xs={12} sm={6} md={4} key={index}>
-                  <PrimaryCard recipe={item as RecipeEntity} />
-                </Grid>
-              ))}
-            </Grid>
+            {resultItem.map((item, index) => (
+              <Grid item xs={12} sm={6} md={4} key={index}>
+                <PrimaryCard recipe={item as RecipeEntity} />
+              </Grid>
+            ))}
           </Grid>
         </Grid>
-      </Container>
+      </Grid>
     </Layout>
   );
 }

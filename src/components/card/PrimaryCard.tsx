@@ -5,13 +5,18 @@ import {
   Card,
   CardContent,
   CardMedia,
+  Checkbox,
   Grid,
   IconButton,
   Rating,
   Typography,
 } from "@mui/material";
 import { MainShadow } from "../../theme/muiTheme";
-import { BookmarkBorderRounded, StarRounded } from "@mui/icons-material";
+import {
+  BookmarkBorderRounded,
+  BookmarkRounded,
+  StarRounded,
+} from "@mui/icons-material";
 import { RecipeEntity } from "../../types/type";
 import shape1 from "../../../public/shape1.png";
 import defaultAvt from "../../../public/gordonramsay.jpg";
@@ -42,7 +47,7 @@ export function PrimaryCard({ recipe }: { recipe: RecipeEntity }) {
             image="https://www.sidechef.com/recipe/d49b0c1d-e63e-4aac-afcc-b337b0cd1bff.jpg?d=1408x1120"
             alt={recipe.name}
           />
-          <IconButton
+          <Checkbox
             size="small"
             sx={{
               position: "absolute",
@@ -58,9 +63,9 @@ export function PrimaryCard({ recipe }: { recipe: RecipeEntity }) {
                 transform: "scale(1.15)",
               },
             }}
-          >
-            <BookmarkBorderRounded fontSize="inherit" />
-          </IconButton>
+            icon={<BookmarkBorderRounded sx={{ color: "#fff" }} />}
+            checkedIcon={<BookmarkRounded sx={{ color: "#fff" }} />}
+          />
 
           <Box
             sx={{
