@@ -89,12 +89,14 @@ function Search() {
           width: "100%",
         }}
       >
-        <Grid item xs={12}>
-          <Box
-            sx={{
-              my: 4,
-            }}
-          >
+        <Grid
+          item
+          xs={12}
+          sx={{
+            mt: 8,
+          }}
+        >
+          <Box>
             <TextField
               InputProps={{
                 startAdornment: (
@@ -130,15 +132,11 @@ function Search() {
           </Box>
         </Grid>
 
-        <Grid
-          item
-          lg={3}
-          sx={{ display: { xs: "none", md: "none", lg: "block" } }}
-        >
+        <Grid item xs={12} lg={3} sx={{ mt: 4 }}>
           <SearchFilter />
         </Grid>
 
-        <Grid item xs={12} lg={9}>
+        <Grid item xs={12} lg={9} sx={{ mt: 4 }}>
           <Typography variant="h5" sx={{ fontWeight: "bold" }}>
             Công thức phổ biến
           </Typography>

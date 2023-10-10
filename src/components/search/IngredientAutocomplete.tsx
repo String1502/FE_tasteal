@@ -77,7 +77,7 @@ export function IngredientAutocomplete({
           <Paper
             {...props}
             sx={{
-              width: { sm: "100vw", md: "50vw", lg: "30vw" },
+              width: { sm: "100%", md: "100%", lg: "30vw" },
             }}
             elevation={1}
           />
