@@ -63,7 +63,7 @@ const CustomAccordion = ({
   return (
     <>
       <Accordion
-        expanded={expanded}
+        defaultExpanded={expanded}
         square
         sx={{
           boxShadow: 0,
@@ -186,7 +186,6 @@ export function SearchFilter() {
     <>
       <Grid
         container
-        spacing={2}
         sx={{
           justifyContent: "center",
           alignItems: "flex-start",
