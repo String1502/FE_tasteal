@@ -9,6 +9,7 @@ import {
 } from "@mui/material";
 import { getMode } from "./theme/muiTheme";
 import Search from "./pages/Search";
+import { SignIn } from "./pages/SignIn";
 
 export const ColorModeContext = React.createContext({
   toggleColorMode: () => {},
@@ -37,6 +38,7 @@ function App() {
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/search" element={<Search />} />
+            <Route path="/signin" element={<SignIn />} />
             {/* Thêm các tuyến đường khác */}
           </Routes>
         </Router>

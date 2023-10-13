@@ -125,7 +125,7 @@ function Search() {
                   border: 0,
                 },
               }}
-              placeholder="Đang đói lắm phải không?"
+              placeholder="Bạn muốn có người yêu?"
               variant="outlined"
               fullWidth
             />
