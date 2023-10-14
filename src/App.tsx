@@ -1,14 +1,15 @@
-import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
-import Home from "./pages/Home";
-import React from "react";
 import {
   CssBaseline,
   PaletteMode,
   ThemeProvider,
   createTheme,
 } from "@mui/material";
-import { getMode } from "./theme/muiTheme";
+import React from "react";
+import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
+import CreateRecipe from "./pages/CreateRecipe";
+import Home from "./pages/Home";
 import Search from "./pages/Search";
+import { getMode } from "./theme/muiTheme";
 
 export const ColorModeContext = React.createContext({
   toggleColorMode: () => {},
@@ -37,6 +38,7 @@ function App() {
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/search" element={<Search />} />
+            <Route path="/create-recipe" element={<CreateRecipe />} />
             {/* Thêm các tuyến đường khác */}
           </Routes>
         </Router>

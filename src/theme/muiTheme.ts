@@ -1,9 +1,9 @@
-import { PaletteMode } from "@mui/material";
+import { PaletteMode, ThemeOptions } from "@mui/material";
 
 const TopicColor = "#00404e";
 const SubColor = "#ffe6d4";
 
-export const getMode = (mode: PaletteMode) => ({
+export const getMode = (mode: PaletteMode): ThemeOptions => ({
   palette: {
     mode,
     ...(mode === "light"
@@ -14,7 +14,7 @@ export const getMode = (mode: PaletteMode) => ({
           },
           secondary: {
             main: SubColor,
-            constrastText: TopicColor,
+            contrastText: TopicColor,
           },
           text: {
             primary: TopicColor,
