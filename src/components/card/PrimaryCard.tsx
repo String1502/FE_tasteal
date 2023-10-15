@@ -18,10 +18,10 @@ import {
   StarRounded,
 } from "@mui/icons-material";
 import { RecipeEntity } from "../../types/type";
-import shape1 from "../../../public/shape1.png";
-import defaultAvt from "../../../public/gordonramsay.jpg";
+import shape1 from "../../assets/shape1.png";
+import defaultAvt from "../../assets/gordonramsay.jpg";
 
-const imgHeight = "240px";
+const imgHeight = "224px";
 const padding = 2;
 
 export function PrimaryCard({ recipe }: { recipe: RecipeEntity }) {
