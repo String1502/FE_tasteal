@@ -1,23 +1,21 @@
+import { SearchRounded } from "@mui/icons-material";
 import {
   Box,
   Button,
-  Checkbox,
-  Container,
   Grid,
   InputAdornment,
   Stack,
   TextField,
   Typography,
 } from "@mui/material";
-import Layout from "../layout/Layout";
-import { SearchRounded } from "@mui/icons-material";
-import { HoverShadow, MainShadow } from "../theme/muiTheme";
 import React, { useEffect } from "react";
-import { RecipeEntity } from "../types/type";
-import { recipes } from "../types/sampleData";
+import { CheckBoxButton } from "../components/button/CheckBoxButton.tsx";
 import { PrimaryCard } from "../components/card/PrimaryCard";
 import { SearchFilter } from "../components/search/SearchFilter.tsx";
-import { CheckBoxButton } from "../components/button/CheckBoxButton.tsx";
+import Layout from "../layout/Layout";
+import { MainShadow } from "../theme/muiTheme";
+import { recipes } from "../types/sampleData";
+import { RecipeEntity } from "../types/type";
 
 export type TuKhoa = {
   label: string;
