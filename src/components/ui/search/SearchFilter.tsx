@@ -12,10 +12,10 @@ import {
   RadioGroup,
   Typography,
 } from "@mui/material";
-import { ingredients, occasions } from "../../types/sampleData";
+import { ingredients, occasions } from "../../../types/sampleData";
 import { useEffect, useMemo, useState } from "react";
 import { IngredientAutocomplete } from "./IngredientAutocomplete";
-import { IngredientEntity } from "../../types/type";
+import { IngredientEntity } from "../../../types/type";
 
 const timeFilterItems = [
   {

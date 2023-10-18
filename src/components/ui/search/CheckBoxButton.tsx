@@ -1,5 +1,5 @@
 import { Button, Checkbox, Typography } from "@mui/material";
-import { TuKhoa } from "../../pages/Search";
+import { TuKhoa } from "../../../pages/Search";
 
 const sx = {
   borderRadius: "40px",

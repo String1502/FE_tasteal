@@ -11,13 +11,13 @@ import {
   Rating,
   Typography,
 } from "@mui/material";
-import { MainShadow } from "../../theme/muiTheme";
+import { MainShadow } from "../../../theme/muiTheme";
 import {
   BookmarkBorderRounded,
   BookmarkRounded,
   StarRounded,
 } from "@mui/icons-material";
-import { RecipeEntity } from "../../types/type";
+import { RecipeEntity } from "../../../types/type";
 import shape1 from "../../assets/shape1.png";
 import defaultAvt from "../../assets/gordonramsay.jpg";
 

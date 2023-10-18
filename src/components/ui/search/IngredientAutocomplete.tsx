@@ -7,7 +7,7 @@ import {
   Paper,
   TextField,
 } from "@mui/material";
-import { IngredientEntity } from "../../types/type";
+import { IngredientEntity } from "../../../types/type";
 import React from "react";
 
 const icon = <CheckBoxOutlineBlank fontSize="small" />;

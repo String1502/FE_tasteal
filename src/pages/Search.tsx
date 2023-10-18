@@ -9,9 +9,9 @@ import {
   Typography,
 } from "@mui/material";
 import React, { useEffect } from "react";
-import { CheckBoxButton } from "../components/button/CheckBoxButton.tsx";
-import { PrimaryCard } from "../components/card/PrimaryCard";
-import { SearchFilter } from "../components/search/SearchFilter.tsx";
+import { CheckBoxButton } from "../components/ui/search/CheckBoxButton.tsx";
+import { PrimaryCard } from "../components/common/card/PrimaryCard.tsx";
+import { SearchFilter } from "../components/ui/search/SearchFilter.tsx";
 import Layout from "../layout/Layout";
 import { MainShadow } from "../theme/muiTheme";
 import { recipes } from "../types/sampleData";

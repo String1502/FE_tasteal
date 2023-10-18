@@ -14,7 +14,7 @@ import {
   useTheme,
   Container,
 } from "@mui/material";
-import { ColorModeContext } from "../../App";
+import { ColorModeContext } from "../../../App";
 import React from "react";
 import MenuIcon from "@mui/icons-material/Menu";
 import { SearchRounded, ShoppingBagRounded } from "@mui/icons-material";

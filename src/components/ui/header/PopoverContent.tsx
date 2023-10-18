@@ -7,12 +7,12 @@ import {
   Typography,
 } from "@mui/material";
 import React from "react";
-import { DefaultTuKhoas, TuKhoa } from "../../pages/Search";
+import { DefaultTuKhoas, TuKhoa } from "../../../pages/Search";
 import {
   ingredients as defaultIngredients,
   occasions as defaultOccasions,
-} from "../../types/sampleData";
-import { IngredientEntity, OccasionEntity } from "../../types/type";
+} from "../../../types/sampleData";
+import { IngredientEntity, OccasionEntity } from "../../../types/type";
 import PopoverImage from "../../assets/popoverHeader.jpg";
 import { CustomLink } from "./CustomLink";
 
