@@ -13,7 +13,7 @@ import {
   occasions as defaultOccasions,
 } from "../../../types/sampleData";
 import { IngredientEntity, OccasionEntity } from "../../../types/type";
-import PopoverImage from "../../assets/popoverHeader.jpg";
+import PopoverImage from "../../../assets/popoverHeader.jpg";
 import { CustomLink } from "./CustomLink";
 
 const gridItemSX = {

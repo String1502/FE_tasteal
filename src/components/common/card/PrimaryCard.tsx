@@ -18,8 +18,8 @@ import {
   StarRounded,
 } from "@mui/icons-material";
 import { RecipeEntity } from "../../../types/type";
-import shape1 from "../../assets/shape1.png";
-import defaultAvt from "../../assets/gordonramsay.jpg";
+import shape1 from "../../../assets/shape1.png";
+import defaultAvt from "../../../assets/gordonramsay.jpg";
 
 const imgHeight = "224px";
 const padding = 2;
