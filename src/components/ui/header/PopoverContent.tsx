@@ -13,8 +13,8 @@ import {
   occasions as defaultOccasions,
 } from "../../../types/sampleData";
 import { IngredientEntity, OccasionEntity } from "../../../types/type";
-import PopoverImage from "../../../assets/popoverHeader.jpg";
 import { CustomLink } from "./CustomLink";
+import { popoverImage } from "@/assets/exportImage";
 
 const gridItemSX = {
   height: "100%",
@@ -54,7 +54,7 @@ export function PopoverContent() {
                 aspectRatio: "1/1",
                 border: 1,
                 borderColor: "secondary.main",
-                backgroundImage: `url(${PopoverImage})`,
+                backgroundImage: `url(${popoverImage})`,
                 backgroundSize: "cover",
                 backgroundPosition: "center",
                 backgroundRepeat: "no-repeat",

@@ -18,8 +18,7 @@ import {
   StarRounded,
 } from "@mui/icons-material";
 import { RecipeEntity } from "../../../types/type";
-import shape1 from "../../../assets/shape1.png";
-import defaultAvt from "../../../assets/gordonramsay.jpg";
+import { curveShape, defaultAvt } from "@/assets/exportImage";
 
 const imgHeight = "224px";
 const padding = 2;
@@ -100,7 +99,7 @@ export function PrimaryCard({ recipe }: { recipe: RecipeEntity }) {
               height: "30px",
               zIndex: 2,
               transform: "translateY(-95%)",
-              backgroundImage: `url(${shape1})`,
+              backgroundImage: `url(${curveShape})`,
               backgroundRepeat: "no-repeat",
               backgroundSize: "contain",
               backgroundPosition: "center",
