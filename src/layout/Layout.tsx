@@ -12,7 +12,7 @@ function Layout({ children }: { children: React.ReactNode }) {
       }}
     >
       <Header />
-      <Container>{children}</Container>
+      {children}
       <Footer />
     </Box>
   );
