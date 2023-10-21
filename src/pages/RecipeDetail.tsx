@@ -1,3 +1,4 @@
+import { defaultAvt } from "@/assets/exportImage";
 import RecipeTimeInfo from "@/components/ui/cards/RecipeTimeInfo";
 import IngredientDisplayer from "@/components/ui/collections/IngredientDisplayer";
 import { N_A_VALUE } from "@/lib/constants/common";
@@ -5,7 +6,6 @@ import IngredientService from "@/lib/services/IngredientService";
 import RecipeDirectionService from "@/lib/services/RecipeDirectionService";
 import RecipeIngredientService from "@/lib/services/RecipeIngredientService";
 import RecipeService from "@/lib/services/RecipeService";
-import { ingredients } from "@/types/sampleData";
 import {
   RecipeEntity,
   Recipe_DirectionEntity,
@@ -162,11 +162,12 @@ const RecipeDetail: FC = () => {
         <Grid item xs={12}>
           <Grid container columnSpacing={4}>
             <Grid item xs={8}>
-              {/* // TODO: Please make a placeholder for null image */}
+              {/* TODO: Please make a placeholder for null image */}
+              {/* TODO: Replace with real image */}
               {recipe?.image ? (
                 <Box
                   component={"img"}
-                  src={recipe?.image}
+                  src={defaultAvt}
                   sx={{
                     width: "100%",
                     height: 520,

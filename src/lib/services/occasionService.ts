@@ -28,7 +28,7 @@ class OccasionService {
         occasions.push(item);
       });
     }
-    var index = 0;
+    let index = 0;
     const date = new Date();
     occasions.forEach((item) => {
       const startDate = new Date(item.start_at);

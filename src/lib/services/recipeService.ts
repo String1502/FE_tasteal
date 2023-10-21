@@ -20,12 +20,21 @@ class RecipeService {
     return Promise.resolve(recipesSampleData);
   }
 
+  public static GetById(id: number): Promise<RecipeEntity | undefined> {
+    // Simulate delay of 1 second
+    simulateDelay(1);
+
+    return Promise.resolve(
+      recipesSampleData.find((recipe) => recipe.id === id)
+    );
+  }
+
   public static async GetNewReleaseRecipes(
     limit: number
   ): Promise<RecipeEntity[]> {
     // Simulate delay of 1 second
     simulateDelay(1);
-    var recipes = await RecipeService.GetAllRecipes();
+    const recipes = await RecipeService.GetAllRecipes();
     return recipes
       .sort(
         (a, b) =>
@@ -40,7 +49,7 @@ class RecipeService {
   ): Promise<RecipeEntity[]> {
     // Simulate delay of 1 second
     simulateDelay(1);
-    var recipes = await RecipeService.GetAllRecipes();
+    const recipes = await RecipeService.GetAllRecipes();
     return recipes.sort((a, b) => b.rating - a.rating).slice(0, limit);
   }
 }

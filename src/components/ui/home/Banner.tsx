@@ -1,9 +1,9 @@
 import { bannerImage } from "@/assets/exportImage";
-import { Box, Button, Container, Typography, useTheme } from "@mui/material";
-import { SearchTextField } from "../search/SearchTextField";
+import OccasionService from "@/lib/services/OccasionService";
 import { OccasionEntity } from "@/types/type";
+import { Box, Button, Container, Typography, useTheme } from "@mui/material";
 import React from "react";
-import OccasionService from "@/lib/services/occasionService";
+import { SearchTextField } from "../search/SearchTextField";
 
 const height = "480px";
 

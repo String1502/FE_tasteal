@@ -1,38 +1,56 @@
-import { recipes } from "@/types/sampleData";
+import { recipes as recipesSampleData } from "@/types/sampleData";
 import { RecipeEntity } from "@/types/type";
 import simulateDelay from "@/utils/promises/stimulateDelay";
 
 /**
- * Represents a service for managing recipes.
+ * Represents a service for managing occasions.
  */
 class RecipeService {
   /**
-   * Retrieves all recipes.
+   * Retrieves all occasions.
    *
-   * @return {Promise<RecipeEntity[]>} A promise that resolves with an array of
-   * RecipeEntity objects.
+   * @return {Promise<RecipeEntity[]>}
    */
-  public static GetAll(): Promise<RecipeEntity[]> {
+  public static GetAllRecipes(): Promise<RecipeEntity[]> {
     // Simulate delay of 1 second
     simulateDelay(1);
 
-    // Return a promise that resolves with the ingredients array
-    return Promise.resolve(recipes);
+    // Return a promise that resolves with the occasions array
+
+    return Promise.resolve(recipesSampleData);
   }
 
-  /**
-   * Fetch recipe by Id.
-   *
-   * @param {number} id - The id of the recipe.
-   * @returns {RecipeEntity | undefined} The recipe.
-   */
   public static GetById(id: number): Promise<RecipeEntity | undefined> {
-    // Stimulate delay of 1 second
+    // Simulate delay of 1 second
     simulateDelay(1);
 
-    const recipe = recipes.find((recipe) => recipe.id === id);
+    return Promise.resolve(
+      recipesSampleData.find((recipe) => recipe.id === id)
+    );
+  }
 
-    return Promise.resolve(recipe);
+  public static async GetNewReleaseRecipes(
+    limit: number
+  ): Promise<RecipeEntity[]> {
+    // Simulate delay of 1 second
+    simulateDelay(1);
+    const recipes = await RecipeService.GetAllRecipes();
+    return recipes
+      .sort(
+        (a, b) =>
+          new Date(b.created_at ?? "").getTime() -
+          new Date(a.created_at ?? "").getTime()
+      )
+      .slice(0, limit);
+  }
+
+  public static async GetTrendingRecipes(
+    limit: number
+  ): Promise<RecipeEntity[]> {
+    // Simulate delay of 1 second
+    simulateDelay(1);
+    const recipes = await RecipeService.GetAllRecipes();
+    return recipes.sort((a, b) => b.rating - a.rating).slice(0, limit);
   }
 }
 

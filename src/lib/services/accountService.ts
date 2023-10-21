@@ -1,7 +1,7 @@
 import { accounts as accountsSampleData } from "@/types/sampleData";
 import { AccountEntity, RecipeEntity } from "@/types/type";
 import simulateDelay from "@/utils/promises/stimulateDelay";
-import RecipeService from "./recipeService";
+import RecipeService from "./RecipeService";
 
 /**
  * Represents a service for managing occasions.
