@@ -148,7 +148,7 @@ const RecipeDetail: FC = () => {
   //#endregion
 
   return (
-    <Container>
+    <Container sx={{ backgroundColor: "background.default", py: 2 }}>
       <Grid container spacing={4}>
         <Grid item xs={12}>
           <Breadcrumbs>

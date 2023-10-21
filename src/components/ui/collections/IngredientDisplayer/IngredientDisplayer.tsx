@@ -1,3 +1,4 @@
+import SectionHeading from "@/components/common/typos/SectionHeading";
 import { Recipe_IngredientEntity } from "@/types/type";
 import { Stack, Typography } from "@mui/material";
 import { FC, useCallback, useState } from "react";
@@ -16,13 +17,11 @@ const IngredientDisplayer: FC<IngredientDisplayerProps> = ({ ingredients }) => {
   }, []);
 
   return (
-    <>
+    <Stack gap={2}>
       <Stack direction={"row"} justifyContent={"space-between"}>
-        <Typography typography={"h6"} color="primary.main" fontWeight={"bold"}>
-          Ingredients
-        </Typography>
+        <SectionHeading>Ingredients</SectionHeading>
         <Stack direction={"row"} alignItems={"center"} gap={2}>
-          <Typography>Servings</Typography>
+          <Typography color="primary.main">Servings</Typography>
           <ServingSizeSelect
             servingSize={servingSize}
             onServingSizeChange={handleServingSizeChange}
@@ -33,8 +32,11 @@ const IngredientDisplayer: FC<IngredientDisplayerProps> = ({ ingredients }) => {
           />
         </Stack>
       </Stack>
-      <IngredientDisplayerItemList ingredients={ingredients} />
-    </>
+      <IngredientDisplayerItemList
+        ingredients={ingredients}
+        servingSize={servingSize}
+      />
+    </Stack>
   );
 };
 

@@ -29,24 +29,32 @@ const IngredientDisplayerItem: FC<IngredientDisplayerItemProps> = ({
 
   return (
     <Grid container alignItems={"center"}>
-      <Grid item xs={3}>
+      <Grid item xs={2}>
         <Box
           component={"img"}
           src={resolvedUrl}
-          width={32}
-          height={32}
+          width={40}
+          height={40}
           sx={{
             objectFit: "cover",
+            border: "2px solid",
+            borderColor: "primary.main",
+            borderRadius: "100%",
           }}
         ></Box>
       </Grid>
-      <Grid item xs={6}>
+      <Grid item xs={2}>
         <Typography fontSize={12} color="primary.main">
           {`${amount} ${MeasurementUnitResolver(Ingredient?.isLiquid)}`}
         </Typography>
       </Grid>
-      <Grid item xs={3}>
-        <Link href="" typography={"body1"} fontWeight={"bold"}>
+      <Grid item xs={8}>
+        <Link
+          href=""
+          typography={"body1"}
+          fontWeight={"bold"}
+          textAlign={"left"}
+        >
           {Ingredient?.name ?? "N/A"}
         </Link>
       </Grid>

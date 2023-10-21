@@ -16,7 +16,8 @@ export const recipes: RecipeEntity[] = [
     totalTime: 60,
     active_time: 30,
     serving_size: 4,
-    introduction: "This is recipe 1",
+    introduction:
+      "This is recipe 1.Lorem ipsum dolor sit, amet consectetur adipisicing elit. Consequatur voluptatum sequi hic eum labore ex iste laudantium alias cum facilis, eveniet aliquid, laborum suscipit exercitationem?",
     author_note: "Author's note for recipe 1",
     is_private: false,
     image: "recipe1.jpg",
@@ -174,6 +175,13 @@ export const recipeIngredients: Recipe_IngredientEntity[] = [
     amount: 2,
     recipe_id: 1,
     ingredient_id: 2,
+    note: "Hello, this is another sample note",
+  },
+  {
+    id: 3,
+    amount: 5,
+    recipe_id: 1,
+    ingredient_id: 3,
     note: "Hello, this is another sample note",
   },
 ];
