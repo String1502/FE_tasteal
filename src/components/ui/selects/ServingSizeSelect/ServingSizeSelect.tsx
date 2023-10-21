@@ -1,12 +1,22 @@
+import { SERVING_SIZES } from "@/lib/constants/options";
 import { PeopleOutlineOutlined } from "@mui/icons-material";
-import { MenuItem, Select, SelectChangeEvent } from "@mui/material";
+import {
+  MenuItem,
+  Select,
+  SelectChangeEvent,
+  SelectProps,
+} from "@mui/material";
 import { useCallback } from "react";
 
-export const ServingSizeSelect: React.FunctionComponent<{
+export type ServingSizeSelectProps = {
   servingSize: number;
-  sizes: number[];
   onServingSizeChange: (servingSize: number) => void;
-}> = ({ servingSize, sizes, onServingSizeChange }) => {
+  sizes?: number[];
+} & Omit<SelectProps<number>, "onChange" | "value">;
+
+export const ServingSizeSelect: React.FunctionComponent<
+  ServingSizeSelectProps
+> = ({ servingSize, onServingSizeChange, sizes = SERVING_SIZES, ...props }) => {
   const handleServingSizeChange = useCallback(
     (e: SelectChangeEvent<number>) => {
       const value = e.target.value;
@@ -19,6 +29,7 @@ export const ServingSizeSelect: React.FunctionComponent<{
   return (
     // TODO: add left margin to text (next to icon) if possible.
     <Select
+      {...props}
       value={servingSize}
       onChange={handleServingSizeChange}
       startAdornment={<PeopleOutlineOutlined />}
@@ -28,10 +39,13 @@ export const ServingSizeSelect: React.FunctionComponent<{
         bgcolor: "secondary.main",
         typography: "subtitle1",
         fontWeight: 800,
+        ...props.sx,
       }}
       MenuProps={{
+        ...props.MenuProps,
         sx: {
           height: 360,
+          ...props.MenuProps?.sx,
         },
       }}
     >
