@@ -12,6 +12,7 @@ import {
   Box,
   Card,
   CardContent,
+  Container,
   FormControlLabel,
   Radio,
   RadioGroup,
@@ -106,119 +107,124 @@ const CreateRecipe: React.FunctionComponent = () => {
 
   return (
     <>
-      <Box
-        sx={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          bgcolor: "#F0F0F0",
-          py: 4,
-        }}
-      >
-        <Card
-          sx={{ width: "52%", borderRadius: 12, p: 4, bgcolor: "##FFFAF9" }}
+      <Container>
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            bgcolor: "#F0F0F0",
+            py: 4,
+          }}
         >
-          <CardContent>
-            <Stack gap={4}>
-              <FormTitle>Create Your Own Recipe</FormTitle>
-              <Stack>
-                <FormLabel>Recipe Title</FormLabel>
-                <TastealTextField
-                  value={newRecipe.title}
-                  onChange={(e) =>
-                    handleNewRecipeFieldChange("title", e.target.value)
-                  }
-                  placeholder="Type your recipe name here"
-                />
-              </Stack>
-              <Stack>
-                <FormLabel>Add Cover Image (Optional)</FormLabel>
-                <ImagePicker />
-              </Stack>
-              <Stack>
-                <FormLabel>Serving Size</FormLabel>
-                <ServingSizeSelect
-                  servingSize={newRecipe.servingSize}
-                  sizes={SERVING_SIZES}
-                  onServingSizeChange={(size) =>
-                    handleNewRecipeFieldChange("servingSize", size)
-                  }
-                />
-              </Stack>
-              <Stack>
-                <FormLabel>Ingredients</FormLabel>
-                <IngredientSelector
-                  ingredients={newRecipe.ingredients}
-                  onChange={handleIngredientsChange}
-                  onOpen={handleIngredientSelectModalOpen}
-                />
-              </Stack>
-              <Stack>
-                <FormLabel>Cooking Instructions (Optional)</FormLabel>
-                <TastealTextField
-                  value={newRecipe.cookingInstruction}
-                  onChange={(e) =>
-                    handleNewRecipeFieldChange(
-                      "cookingInstruction",
-                      e.target.value
-                    )
-                  }
-                  multiline
-                  rows={2}
-                  placeholder={`Add one or multiple steps (e.g "transfer to a small bowl")`}
-                />
-              </Stack>
-              <Stack>
-                <FormLabel>Author's Notes (Optional)</FormLabel>
-                <TastealTextField
-                  value={newRecipe.authorNote}
-                  onChange={(e) =>
-                    handleNewRecipeFieldChange("authorNote", e.target.value)
-                  }
-                  multiline
-                  rows={2}
-                  placeholder={`Add tips or tricks for this recipe`}
-                />
-              </Stack>
-              <Stack>
-                <RadioGroup
-                  value={newRecipe.isPrivate}
-                  onChange={(e) =>
-                    handleNewRecipeFieldChange(
-                      "isPrivate",
-                      e.target.value === "true"
-                    )
-                  }
-                  defaultValue={true}
-                  name="isRecipePrivate"
-                >
-                  <FormControlLabel
-                    value={true}
-                    control={<Radio />}
-                    label="Not Visible to others"
+          <Card
+            sx={{ width: "52%", borderRadius: 12, p: 4, bgcolor: "##FFFAF9" }}
+          >
+            <CardContent>
+              <Stack gap={4}>
+                <FormTitle>Create Your Own Recipe</FormTitle>
+                <Stack>
+                  <FormLabel>Recipe Title</FormLabel>
+                  <TastealTextField
+                    value={newRecipe.title}
+                    onChange={(e) =>
+                      handleNewRecipeFieldChange("title", e.target.value)
+                    }
+                    placeholder="Type your recipe name here"
                   />
-                  <FormControlLabel
-                    value={false}
-                    control={<Radio />}
-                    label="Generates a shareable link"
+                </Stack>
+                <Stack>
+                  <FormLabel>Add Cover Image (Optional)</FormLabel>
+                  <ImagePicker />
+                </Stack>
+                <Stack>
+                  <FormLabel>Serving Size</FormLabel>
+                  <ServingSizeSelect
+                    servingSize={newRecipe.servingSize}
+                    sizes={SERVING_SIZES}
+                    onServingSizeChange={(size) =>
+                      handleNewRecipeFieldChange("servingSize", size)
+                    }
                   />
-                </RadioGroup>
+                </Stack>
+                <Stack>
+                  <FormLabel>Ingredients</FormLabel>
+                  <IngredientSelector
+                    ingredients={newRecipe.ingredients}
+                    onChange={handleIngredientsChange}
+                    onOpen={handleIngredientSelectModalOpen}
+                  />
+                </Stack>
+                <Stack>
+                  <FormLabel>Cooking Instructions (Optional)</FormLabel>
+                  <TastealTextField
+                    value={newRecipe.cookingInstruction}
+                    onChange={(e) =>
+                      handleNewRecipeFieldChange(
+                        "cookingInstruction",
+                        e.target.value
+                      )
+                    }
+                    multiline
+                    rows={2}
+                    placeholder={`Add one or multiple steps (e.g "transfer to a small bowl")`}
+                  />
+                </Stack>
+                <Stack>
+                  <FormLabel>Author's Notes (Optional)</FormLabel>
+                  <TastealTextField
+                    value={newRecipe.authorNote}
+                    onChange={(e) =>
+                      handleNewRecipeFieldChange("authorNote", e.target.value)
+                    }
+                    multiline
+                    rows={2}
+                    placeholder={`Add tips or tricks for this recipe`}
+                  />
+                </Stack>
+                <Stack>
+                  <RadioGroup
+                    value={newRecipe.isPrivate}
+                    onChange={(e) =>
+                      handleNewRecipeFieldChange(
+                        "isPrivate",
+                        e.target.value === "true"
+                      )
+                    }
+                    defaultValue={true}
+                    name="isRecipePrivate"
+                  >
+                    <FormControlLabel
+                      value={true}
+                      control={<Radio />}
+                      label="Not Visible to others"
+                    />
+                    <FormControlLabel
+                      value={false}
+                      control={<Radio />}
+                      label="Generates a shareable link"
+                    />
+                  </RadioGroup>
+                </Stack>
+                <Stack>
+                  <RoundedButton
+                    variant="contained"
+                    disabled={!canCreateRecipe}
+                  >
+                    DONE
+                  </RoundedButton>
+                </Stack>
               </Stack>
-              <Stack>
-                <RoundedButton variant="contained" disabled={!canCreateRecipe}>
-                  DONE
-                </RoundedButton>
-              </Stack>
-            </Stack>
-          </CardContent>
-        </Card>
-      </Box>
+            </CardContent>
+          </Card>
+        </Box>
 
-      <NewIngredientModal
-        open={ingredientSelectModalOpen}
-        onClose={handleIngredientSelectModalClose}
-        onAddIngredient={handleAddIngredient}
-      />
+        <NewIngredientModal
+          open={ingredientSelectModalOpen}
+          onClose={handleIngredientSelectModalClose}
+          onAddIngredient={handleAddIngredient}
+        />
+      </Container>
     </>
   );
 };

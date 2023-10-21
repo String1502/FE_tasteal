@@ -2,6 +2,9 @@ export type AccountEntity = {
   id: number;
   username?: string | null;
   password?: string | null;
+  name?: string | null;
+  avatar?: string | null;
+  introduction?: string | null;
 };
 
 export type Cart_ItemEntity = {
@@ -160,6 +163,7 @@ export type RecipeEntity = {
   nutrition_info_id?: number | null;
   Account?: AccountEntity | null;
   Nutrition_info?: Nutrition_InfoEntity | null;
+  created_at?: Date | null;
 };
 
 export type RecipeSearchEntity = {

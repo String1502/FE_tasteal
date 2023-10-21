@@ -84,11 +84,7 @@ export function Header(props: Props) {
         }}
       >
         <Container>
-          <Toolbar
-            sx={{
-              py: 2,
-            }}
-          >
+          <Toolbar disableGutters>
             <IconButton
               color="primary"
               aria-label="open drawer"

@@ -5,26 +5,31 @@ import {
   Card,
   CardContent,
   CardMedia,
+  CardProps,
   Checkbox,
   Grid,
   IconButton,
   Rating,
   Typography,
 } from "@mui/material";
-import { MainShadow } from "../../../theme/muiTheme";
 import {
   BookmarkBorderRounded,
   BookmarkRounded,
   StarRounded,
 } from "@mui/icons-material";
 import { RecipeEntity } from "../../../types/type";
-import shape1 from "../../../assets/shape1.png";
-import defaultAvt from "../../../assets/gordonramsay.jpg";
+import { curveShape, defaultAvt } from "@/assets/exportImage";
 
 const imgHeight = "224px";
 const padding = 2;
 
-export function PrimaryCard({ recipe }: { recipe: RecipeEntity }) {
+export function PrimaryCard({
+  recipe,
+  ...props
+}: {
+  props?: CardProps;
+  recipe: RecipeEntity;
+}) {
   return (
     <>
       <Box>
@@ -33,12 +38,13 @@ export function PrimaryCard({ recipe }: { recipe: RecipeEntity }) {
             borderRadius: "16px",
             transition: "all 0.15s ease-in-out",
             cursor: "pointer",
-            boxShadow: MainShadow,
+            boxShadow: 2,
             position: "relative",
             "&:hover": {
               transform: "translateY(-5px)",
               boxShadow: 12,
             },
+            ...props.props?.sx,
           }}
         >
           <CardMedia
@@ -100,7 +106,7 @@ export function PrimaryCard({ recipe }: { recipe: RecipeEntity }) {
               height: "30px",
               zIndex: 2,
               transform: "translateY(-95%)",
-              backgroundImage: `url(${shape1})`,
+              backgroundImage: `url(${curveShape})`,
               backgroundRepeat: "no-repeat",
               backgroundSize: "contain",
               backgroundPosition: "center",
