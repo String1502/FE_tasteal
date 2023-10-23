@@ -1,8 +1,8 @@
 import { Box, Button, Grid, Stack, Typography, TextField } from "@mui/material";
 
-import signin from "../../public/signin.jpg";
 import FacebookIcon from "../../public/facebook-icon.png";
 import { Facebook, Google } from "@mui/icons-material";
+import { signInImage } from "@/assets/exportImage";
 
 export function SignIn() {
   return (
@@ -31,7 +31,7 @@ function SignInContent() {
         >
           <Box
             sx={{
-              backgroundImage: `url(${signin})`,
+              backgroundImage: `url(${signInImage})`,
               backgroundRepeat: "no-repeat",
               backgroundSize: "cover",
               backgroundPosition: "center",

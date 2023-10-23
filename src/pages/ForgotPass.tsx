@@ -1,5 +1,5 @@
+import { signInImage } from "@/assets/exportImage";
 import { Box, Button, Grid, Stack, Typography, TextField } from "@mui/material";
-import signin from "../../public/signin.jpg";
 
 export function ForgotPass() {
   return (
@@ -21,7 +21,7 @@ function ForgotPassContent() {
         <Grid item xs={6} sx={{ height: "1000px" }}>
           <Box
             sx={{
-              backgroundImage: `url(${signin})`,
+              backgroundImage: `url(${signInImage})`,
               backgroundRepeat: "no-repeat",
               backgroundSize: "cover",
               backgroundPosition: "center",

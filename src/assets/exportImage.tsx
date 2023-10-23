@@ -7,6 +7,7 @@ import orderWhatYouNeed from "./orderWhatYouNeed.svg";
 import recipesOccasions from "./recipesOccasions.svg";
 import saveRecipes from "./saveRecipes.svg";
 import bannerFoot from "./banner1.jpg";
+import signIn from "./signin.jpg";
 
 export const curveShape = shape1;
 export const defaultAvt = gordonramsay;
@@ -17,3 +18,4 @@ export const orderWhatYouNeedImage = orderWhatYouNeed;
 export const recipesOccasionsImage = recipesOccasions;
 export const saveRecipesImage = saveRecipes;
 export const bannerFootImage = bannerFoot;
+export const signInImage = signIn;

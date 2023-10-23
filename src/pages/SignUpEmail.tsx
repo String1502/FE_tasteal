@@ -1,7 +1,5 @@
+import { defaultAvt, signInImage } from "@/assets/exportImage";
 import { Box, Button, Grid, Stack, Typography, TextField } from "@mui/material";
-import signin from "../../public/signin.jpg";
-
-import logo from "../../public/gordonramsay.jpg";
 
 export function SignUpEmail() {
   return (
@@ -23,7 +21,7 @@ function SignUpEmailContent() {
         <Grid item xs={6} sx={{ height: "1000px" }}>
           <Box
             sx={{
-              backgroundImage: `url(${signin})`,
+              backgroundImage: `url(${signInImage})`,
               backgroundRepeat: "no-repeat",
               backgroundSize: "cover",
               backgroundPosition: "center",
@@ -58,7 +56,7 @@ function SignUpEmailContent() {
 
           <Box
             sx={{
-              backgroundImage: `url(${logo})`,
+              backgroundImage: `url(${defaultAvt})`,
               backgroundRepeat: "no-repeat",
               backgroundSize: "cover",
               backgroundPosition: "center",

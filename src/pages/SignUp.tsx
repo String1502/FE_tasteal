@@ -1,10 +1,9 @@
 import { Box, Button, Grid, Stack, Typography, TextField } from "@mui/material";
-import signin from "../../public/signin.jpg";
 import GoogleIcon from "../../public/google-icon.png";
 import FacebookIcon from "../../public/facebook-icon.png";
 import EmailIcon from "../../public/email-icon.png";
-import logo from "../../public/gordonramsay.jpg";
 import { Facebook, Google, MailOutline } from "@mui/icons-material";
+import { defaultAvt, signInImage } from "@/assets/exportImage";
 
 export function SignUp() {
   return (
@@ -27,7 +26,7 @@ function SignUpContent() {
         <Grid item xs={6} sx={{ height: "1000px" }}>
           <Box
             sx={{
-              backgroundImage: `url(${signin})`,
+              backgroundImage: `url(${signInImage})`,
               backgroundRepeat: "no-repeat",
               backgroundSize: "cover",
               backgroundPosition: "center",
@@ -66,7 +65,7 @@ function SignUpContent() {
           {/*Cái logo*/}
           <Box
             sx={{
-              backgroundImage: `url(${logo})`,
+              backgroundImage: `url(${defaultAvt})`,
               backgroundRepeat: "no-repeat",
               backgroundSize: "cover",
               backgroundPosition: "center",
@@ -158,7 +157,6 @@ function SignUpContent() {
               ></MailOutline>
               Tiếp tục với Email
             </Button>
-
 
             {/* Radio button cái điều khoản links tới mấy cái điều khoản */}
             <div style={{ display: "flex", alignItems: "center" }}>
