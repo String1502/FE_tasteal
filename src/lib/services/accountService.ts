@@ -4,7 +4,7 @@ import simulateDelay from "@/utils/promises/stimulateDelay";
 import RecipeService from "./RecipeService";
 
 /**
- * Represents a service for managing occasions.
+ * Represents a service for managing accounts.
  */
 class AccountService {
   /**
@@ -20,12 +20,26 @@ class AccountService {
     return Promise.resolve(accountsSampleData);
   }
 
+  /**
+   * Get account by id
+   *
+   * @param id - The id of the account
+   */
+  public static GetById(id: number) {
+    // Simulate delay of 1 second
+    simulateDelay(1);
+
+    return Promise.resolve(
+      accountsSampleData.find((account) => account.id === id)
+    );
+  }
+
   public static async GetMostContributedAccounts(
     limit: number
   ): Promise<AccountEntity[]> {
     // Simulate delay of 1 second
     simulateDelay(1);
-    let accounts = await AccountService.GetAllAccounts();
+    const accounts = await AccountService.GetAllAccounts();
 
     type AccountWithRecipes = AccountEntity & {
       recipes?: RecipeEntity[];

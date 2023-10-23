@@ -1,16 +1,20 @@
+import { PrimaryCard } from "@/components/common/card/PrimaryCard";
 import { CustomCarousel } from "@/components/common/carousel/CustomeCarousel";
 import TastealTextField from "@/components/common/textFields/TastealTextField";
 import SectionHeading from "@/components/common/typos/SectionHeading";
 import RecipeTimeInfo from "@/components/ui/cards/RecipeTimeInfo";
 import IngredientDisplayer from "@/components/ui/collections/IngredientDisplayer";
 import NutrionPerServingInfo from "@/components/ui/displayers/NutrionPerServingInfo";
+import Layout from "@/layout/Layout";
 import { N_A_VALUE } from "@/lib/constants/common";
 import { responsive } from "@/lib/constants/responsiveCarousel";
+import AccountService from "@/lib/services/AccountService";
 import IngredientService from "@/lib/services/IngredientService";
 import RecipeDirectionService from "@/lib/services/RecipeDirectionService";
 import RecipeIngredientService from "@/lib/services/RecipeIngredientService";
 import RecipeService from "@/lib/services/RecipeService";
 import {
+  AccountEntity,
   RecipeEntity,
   Recipe_DirectionEntity,
   Recipe_IngredientEntity,
@@ -32,13 +36,11 @@ import {
   ChipProps,
   Container,
   Divider,
-  FormLabel,
   Grid,
   IconButton,
   Link,
   Rating,
   Stack,
-  TextField,
   Typography,
   styled,
 } from "@mui/material";
@@ -76,6 +78,10 @@ const RecipeDetail: FC = () => {
   const [recipeIngredients, setRecipeIngredients] = useState<
     Recipe_IngredientEntity[]
   >([]);
+  const [author, setAuthor] = useState<AccountEntity | null>(null);
+  const [sameAccountRecipes, setSameAccountRecipes] = useState<RecipeEntity[]>(
+    []
+  );
 
   const [rating, setRating] = useState(0);
 
@@ -122,6 +128,9 @@ const RecipeDetail: FC = () => {
     );
   }, [recipe]);
 
+  /**
+   * Fetch recipe's ingredients then update state.
+   */
   const getIngredients = useCallback((): Promise<string> => {
     if (!recipe) {
       return Promise.reject("Current recipe has null value.");
@@ -148,6 +157,35 @@ const RecipeDetail: FC = () => {
     );
   }, [recipe]);
 
+  const getAuthor = useCallback(() => {
+    if (!recipe) {
+      return Promise.reject("Current recipe has null value.");
+    }
+
+    if (!recipe.author) {
+      return Promise.reject("Recipe's author id is invalid");
+    }
+
+    return AccountService.GetById(recipe.author).then((author) => {
+      setAuthor(author ?? null);
+      return Promise.resolve(author);
+    });
+  }, [recipe]);
+
+  const getSameAccountRecipes = useCallback(() => {
+    if (!recipe) {
+      return Promise.reject("Current recipe has null value.");
+    }
+
+    if (!recipe.author) {
+      return Promise.reject("Recipe's author id is invalid");
+    }
+
+    return RecipeService.GetByAccountId(recipe.author).then((recipes) => {
+      setSameAccountRecipes(recipes);
+    });
+  }, [recipe]);
+
   //#endregion
 
   //#region UseEffects
@@ -157,9 +195,23 @@ const RecipeDetail: FC = () => {
       .then(() => {
         getDirections().catch((msg) => console.log(debugStringFormatter(msg)));
         getIngredients().catch((msg) => console.log(debugStringFormatter(msg)));
+        getAuthor()
+          .then(() =>
+            getSameAccountRecipes().catch((msg) =>
+              console.log(debugStringFormatter(msg))
+            )
+          )
+          .catch((msg) => console.log(debugStringFormatter(msg)));
       })
       .catch((msg) => console.log(debugStringFormatter(msg)));
-  }, [getDirections, getIngredients, getRecipe, id]);
+  }, [
+    getAuthor,
+    getDirections,
+    getIngredients,
+    getRecipe,
+    getSameAccountRecipes,
+    id,
+  ]);
 
   //#endregion
 
@@ -176,7 +228,7 @@ const RecipeDetail: FC = () => {
   //#endregion
 
   return (
-    <>
+    <Layout>
       <Container>
         <Grid
           container
@@ -389,22 +441,28 @@ const RecipeDetail: FC = () => {
               alignItems={"center"}
             >
               <BigSectionHeading>
-                More from Jack Lee at SideChef
+                More from {author?.name ?? "{AuthorName}"} at SideChef
               </BigSectionHeading>
               <Link href="#">VIEW ALL</Link>
             </Box>
             <Box>
-              <CustomCarousel
-                responsive={responsive}
-                removeArrowOnDeviceType={["sm", "xs"]}
-              >
-                <></>
-              </CustomCarousel>
+              <SameAuthorRecipesCarousel recipes={sameAccountRecipes} />
             </Box>
+          </Box>
+
+          <Box>
+            <Box
+              display="flex"
+              justifyContent={"space-between"}
+              alignItems={"center"}
+            >
+              <BigSectionHeading>Recommended Recipes</BigSectionHeading>
+            </Box>
+            <Box>{"Not yet implemented"}</Box>
           </Box>
         </Container>
       </Box>
-    </>
+    </Layout>
   );
 };
 
@@ -449,5 +507,34 @@ const TagChip: FC<ChipProps> = (props) => {
         },
       }}
     />
+  );
+};
+
+type SameAuthorRecipesCarouselProps = {
+  recipes: RecipeEntity[];
+};
+
+const SameAuthorRecipesCarousel: FC<SameAuthorRecipesCarouselProps> = ({
+  recipes,
+}) => {
+  return (
+    <>
+      {recipes.length > 0 ? (
+        <>
+          <CustomCarousel
+            responsive={responsive}
+            removeArrowOnDeviceType={["sm", "xs"]}
+          >
+            {recipes.map((recipe, index) => (
+              <PrimaryCard key={index} recipe={recipe} />
+            ))}
+          </CustomCarousel>
+        </>
+      ) : (
+        <>
+          <Typography>There are no recipes from this author.</Typography>
+        </>
+      )}
+    </>
   );
 };

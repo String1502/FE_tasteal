@@ -29,6 +29,21 @@ class RecipeService {
     );
   }
 
+  /**
+   * Fetch recipes that belong to a specific account.
+   *
+   * @param accountId - The id of the account.
+   * @returns
+   */
+  public static GetByAccountId(accountId: number) {
+    // Simulate delay of 1 second
+    simulateDelay(1);
+
+    return Promise.resolve(
+      recipesSampleData.filter((recipe) => recipe.author === accountId)
+    );
+  }
+
   public static async GetNewReleaseRecipes(
     limit: number
   ): Promise<RecipeEntity[]> {
