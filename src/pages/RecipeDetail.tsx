@@ -410,7 +410,7 @@ const RecipeDetail: FC = () => {
               </Box>
             </SimpleContainer>
 
-            <SimpleContainer>
+            <SimpleContainer sx={{ mt: 2 }}>
               <Box display={"flex"} flexDirection={"column"} gap={1}>
                 <Stack direction="row" alignItems={"center"} gap={2}>
                   <Avatar src={defaultAvt} />

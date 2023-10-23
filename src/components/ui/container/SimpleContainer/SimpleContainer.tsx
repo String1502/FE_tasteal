@@ -1,12 +1,14 @@
-import { Card, CardContent } from "@mui/material";
-import { FC, PropsWithChildren } from "react";
+import { Card, CardContent, CardProps } from "@mui/material";
+import { FC } from "react";
 
-type SimpleContainerProps = PropsWithChildren;
+type SimpleContainerProps = CardProps;
 
-const SimpleContainer: FC<SimpleContainerProps> = ({ children }) => {
+const SimpleContainer: FC<SimpleContainerProps> = ({ children, ...props }) => {
   return (
     <Card
+      {...props}
       sx={{
+        ...props.sx,
         borderStyle: "solid",
         borderColor: "rgba(0, 0, 0, 0.12)",
         borderWidth: 2,
