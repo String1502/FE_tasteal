@@ -11,7 +11,7 @@ import { OccasionsList } from "@/components/ui/home/OccasionsList";
 import { RecipesCarousel } from "@/components/ui/home/RecipesCarousel";
 import AccountService from "@/lib/services/AccountService";
 import RecipeService from "@/lib/services/RecipeService";
-import OccasionService from "@/lib/services/OccasionService";
+import OccasionService from "@/lib/services/occasionService";
 import { AccountEntity, OccasionEntity, RecipeEntity } from "@/types/type";
 import {
   Box,

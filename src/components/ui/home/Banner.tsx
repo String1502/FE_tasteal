@@ -1,5 +1,5 @@
 import { bannerImage } from "@/assets/exportImage";
-import OccasionService from "@/lib/services/OccasionService";
+import OccasionService from "@/lib/services/occasionService";
 import { OccasionEntity } from "@/types/type";
 import { Box, Button, Container, Typography, useTheme } from "@mui/material";
 import React from "react";
@@ -7,7 +7,7 @@ import { SearchTextField } from "../search/SearchTextField";
 
 const height = "480px";
 
-export function Banner(props?: any) {
+export function Banner() {
   const theme = useTheme();
 
   const [occasion, setOccasion] = React.useState<OccasionEntity | undefined>(
@@ -71,17 +71,16 @@ export function Banner(props?: any) {
 
               <Button
                 variant="contained"
+                color="primary"
                 sx={{
                   mt: 2,
                   mb: 8,
-                  color: "white",
                   backgroundColor: "primary.light",
-
                   px: 4,
                   py: 1.5,
                 }}
               >
-                <Typography variant="caption" fontWeight={"bold"}>
+                <Typography variant="caption" fontWeight={"bold"} color="white">
                   Xem công thức ngay!
                 </Typography>
               </Button>
