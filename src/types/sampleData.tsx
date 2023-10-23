@@ -2,8 +2,11 @@ import { bannerImage, defaultAvt } from "@/assets/exportImage";
 import {
   AccountEntity,
   IngredientEntity,
+  Nutrition_InfoEntity,
   OccasionEntity,
   RecipeEntity,
+  Recipe_DirectionEntity,
+  Recipe_IngredientEntity,
 } from "./type";
 
 export const recipes: RecipeEntity[] = [
@@ -14,12 +17,13 @@ export const recipes: RecipeEntity[] = [
     totalTime: 60,
     active_time: 30,
     serving_size: 4,
-    introduction: "This is recipe 1",
+    introduction:
+      "This is recipe 1.Lorem ipsum dolor sit, amet consectetur adipisicing elit. Consequatur voluptatum sequi hic eum labore ex iste laudantium alias cum facilis, eveniet aliquid, laborum suscipit exercitationem?",
     author_note: "Author's note for recipe 1",
     is_private: false,
     image: "recipe1.jpg",
     author: 10,
-    nutrition_info_id: 201,
+    nutrition_info_id: 1,
     created_at: new Date(),
   },
   {
@@ -159,11 +163,62 @@ export const recipes: RecipeEntity[] = [
   },
 ];
 
+export const recipeIngredients: Recipe_IngredientEntity[] = [
+  {
+    id: 1,
+    amount: 5,
+    recipe_id: 1,
+    ingredient_id: 1,
+    note: "Hello, this is a sample note",
+  },
+  {
+    id: 2,
+    amount: 2,
+    recipe_id: 1,
+    ingredient_id: 2,
+    note: "Hello, this is another sample note",
+  },
+  {
+    id: 3,
+    amount: 5,
+    recipe_id: 1,
+    ingredient_id: 3,
+    note: "Hello, this is another sample note",
+  },
+];
+
+export const recipeDirections: Recipe_DirectionEntity[] = [
+  {
+    id: 1,
+    recipe_id: 1,
+    step: 1,
+    direction:
+      "Lorem ipsum dolor sit, amet consectetur adipisicing elit. Nesciunt eaque quisquam cupiditate, consectetur delectus nam id, eos, doloribus numquam sint dolores incidunt quaerat suscipit minus.",
+    image: "",
+  },
+  {
+    id: 2,
+    recipe_id: 1,
+    step: 2,
+    direction:
+      "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Quos, libero!",
+    image: "",
+  },
+  {
+    id: 3,
+    recipe_id: 2,
+    step: 1,
+    direction:
+      "Lorem ipsum, dolor sit amet consectetur adipisicing elit. Aperiam natus odio asperiores sapiente, et aliquam nulla deserunt. Saepe odio exercitationem corrupti possimus commodi nam impedit veritatis aliquam at rem officiis, laborum fugiat. Similique, facere voluptatibus?",
+    image: "",
+  },
+];
+
 export const ingredients: IngredientEntity[] = [
   {
     id: 1,
     name: "Bơ",
-    image: "image_url_1",
+    image: "Nguyen-Lieu/San-Pham-Bo-Sua-Trung/bo.jpg",
     measurement_unit_id: 1,
     type_id: 1,
     nutrition_info_id: 1,
@@ -173,7 +228,7 @@ export const ingredients: IngredientEntity[] = [
   {
     id: 2,
     name: "Táo",
-    image: "image_url_2",
+    image: "Nguyen-Lieu/Trai-Cay/trai-tao.jpg",
     measurement_unit_id: 2,
     type_id: 2,
     nutrition_info_id: 2,
@@ -183,7 +238,7 @@ export const ingredients: IngredientEntity[] = [
   {
     id: 3,
     name: "Chuối",
-    image: "image_url_3",
+    image: "Nguyen-Lieu/Trai-Cay/trai-chuoi.jpg",
     measurement_unit_id: 3,
     type_id: 3,
     nutrition_info_id: 3,
@@ -418,5 +473,25 @@ export const accounts: AccountEntity[] = [
     name: "Người Dùng Mười",
     avatar: defaultAvt,
     introduction: "Rất vui được làm quen với bạn. Tôi là Người Dùng Mười.",
+  },
+];
+
+export const nutritionInfos: Nutrition_InfoEntity[] = [
+  {
+    id: 1,
+    calories: 200,
+    fat: 10,
+    saturated_fat: 2,
+    trans_fat: 0,
+    cholesterol: 20,
+    carbohydrates: 25,
+    fiber: 5,
+    sugars: 10,
+    protein: 15,
+    sodium: 300,
+    vitaminD: 10,
+    calcium: 150,
+    iron: 2,
+    potassium: 400,
   },
 ];

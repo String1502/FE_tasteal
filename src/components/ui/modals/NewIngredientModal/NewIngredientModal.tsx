@@ -2,7 +2,7 @@ import RoundedButton from "@/components/common/buttons/RoundedButton";
 import TastealTextField from "@/components/common/textFields/TastealTextField";
 import { DEFAULT_INGREDIENT_ITEM_DATA } from "@/lib/constants/defaultValue";
 import { DEFAULT_UNIT_OPTION, UNIT_OPTIONS } from "@/lib/constants/options";
-import IngredientService from "@/lib/services/ingredientService";
+import IngredientService from "@/lib/services/IngredientService";
 import {
   Autocomplete,
   Box,
@@ -34,7 +34,7 @@ const NewIngredientModal: React.FunctionComponent<{
 
   // Fetch ingredients
   useEffect(() => {
-    IngredientService.GetAllIngredients().then((res) => {
+    IngredientService.GetAll().then((res) => {
       const mappedIngredients: IngredientData[] = [];
 
       for (const ingredient of res) {

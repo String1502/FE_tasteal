@@ -5,7 +5,7 @@
  * @return {function} The memoized function.
  */
 function createCacheFunction<TValue extends unknown[], TResult>(
-  fn: (args: TValue) => TResult
+  fn: (...args: TValue) => TResult
 ) {
   const cache: Record<string, TResult> = {};
 
@@ -14,7 +14,7 @@ function createCacheFunction<TValue extends unknown[], TResult>(
     if (key in cache) {
       return cache[key];
     } else {
-      const result = fn(args);
+      const result = fn(...args);
       cache[key] = result;
       return result;
     }

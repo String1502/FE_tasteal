@@ -1,31 +1,30 @@
 import {
-  Box,
-  Button,
-  Container,
-  Grid,
-  Link,
-  Stack,
-  Typography,
-  TypographyProps,
-} from "@mui/material";
-import Layout from "../layout/Layout";
-import { Banner } from "@/components/ui/home/Banner";
-import { RecipesCarousel } from "@/components/ui/home/RecipesCarousel";
-import RecipeService from "@/lib/services/recipeService";
-import { useEffect, useState } from "react";
-import { AccountEntity, OccasionEntity, RecipeEntity } from "@/types/type";
-import OccasionService from "@/lib/services/occasionService";
-import { OccasionsList } from "@/components/ui/home/OccasionsList";
-import { AuthorsCarousel } from "@/components/ui/home/AuthorsCarousel";
-import AccountService from "@/lib/services/accountService";
-import {
   bannerFootImage,
   mealPlanImage,
   orderWhatYouNeedImage,
   recipesOccasionsImage,
   saveRecipesImage,
 } from "@/assets/exportImage";
+import { AuthorsCarousel } from "@/components/ui/home/AuthorsCarousel";
+import { Banner } from "@/components/ui/home/Banner";
+import { OccasionsList } from "@/components/ui/home/OccasionsList";
+import { RecipesCarousel } from "@/components/ui/home/RecipesCarousel";
+import AccountService from "@/lib/services/AccountService";
+import RecipeService from "@/lib/services/RecipeService";
+import OccasionService from "@/lib/services/OccasionService";
+import { AccountEntity, OccasionEntity, RecipeEntity } from "@/types/type";
+import {
+  Box,
+  Button,
+  Container,
+  Grid,
+  Stack,
+  Typography,
+  TypographyProps,
+} from "@mui/material";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import Layout from "../layout/Layout";
 
 const typoProps: TypographyProps = {
   variant: "h6",

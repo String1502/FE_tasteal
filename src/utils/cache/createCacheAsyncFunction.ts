@@ -5,7 +5,7 @@
  * @return {function} - The cached version of the function.
  */
 function createCacheAsyncFunction<TValue extends unknown[], TResult>(
-  fn: (args: TValue) => Promise<TResult> // Change the return type to Promise<TResult>
+  fn: (...args: TValue) => Promise<TResult> // Change the return type to Promise<TResult>
 ) {
   const cache: Record<string, TResult> = {};
 
@@ -15,7 +15,7 @@ function createCacheAsyncFunction<TValue extends unknown[], TResult>(
     if (key in cache) {
       return cache[key];
     } else {
-      const result = await fn(args); // Use await to wait for the asynchronous result
+      const result = await fn(...args); // Use await to wait for the asynchronous result
       cache[key] = result;
       return result;
     }
