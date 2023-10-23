@@ -1,7 +1,11 @@
-import { defaultAvt } from "@/assets/exportImage";
+import { CustomCarousel } from "@/components/common/carousel/CustomeCarousel";
+import TastealTextField from "@/components/common/textFields/TastealTextField";
+import SectionHeading from "@/components/common/typos/SectionHeading";
 import RecipeTimeInfo from "@/components/ui/cards/RecipeTimeInfo";
 import IngredientDisplayer from "@/components/ui/collections/IngredientDisplayer";
+import NutrionPerServingInfo from "@/components/ui/displayers/NutrionPerServingInfo";
 import { N_A_VALUE } from "@/lib/constants/common";
+import { responsive } from "@/lib/constants/responsiveCarousel";
 import IngredientService from "@/lib/services/IngredientService";
 import RecipeDirectionService from "@/lib/services/RecipeDirectionService";
 import RecipeIngredientService from "@/lib/services/RecipeIngredientService";
@@ -13,17 +17,39 @@ import {
 } from "@/types/type";
 import { createDebugStringFormatter } from "@/utils/debug/formatter";
 import {
+  BookmarkOutlined,
+  Facebook,
+  Mail,
+  Pinterest,
+  PrintOutlined,
+  StarRateRounded,
+  Twitter,
+} from "@mui/icons-material";
+import {
   Box,
   Breadcrumbs,
   Chip,
+  ChipProps,
   Container,
+  Divider,
+  FormLabel,
   Grid,
+  IconButton,
   Link,
+  Rating,
   Stack,
+  TextField,
   Typography,
+  styled,
 } from "@mui/material";
 import { FC, useCallback, useEffect, useMemo, useState } from "react";
 import { useParams } from "react-router-dom";
+
+const TastealIconButton = styled(IconButton)({
+  borderStyle: "solid",
+  border: 1,
+  borderColor: "primary.main",
+});
 
 /**
  * Page id for debug purpose.
@@ -50,6 +76,8 @@ const RecipeDetail: FC = () => {
   const [recipeIngredients, setRecipeIngredients] = useState<
     Recipe_IngredientEntity[]
   >([]);
+
+  const [rating, setRating] = useState(0);
 
   const { id } = useParams();
 
@@ -148,89 +176,278 @@ const RecipeDetail: FC = () => {
   //#endregion
 
   return (
-    <Container sx={{ backgroundColor: "background.default", py: 2 }}>
-      <Grid container spacing={4}>
-        <Grid item xs={12}>
-          <Breadcrumbs>
-            <Link>Tasteal</Link>
-            <Link>Recipes</Link>
-            // TODO: change this to recipe type
-            <Link>Keto</Link>
-          </Breadcrumbs>
-        </Grid>
+    <>
+      <Container>
+        <Grid
+          container
+          sx={{ backgroundColor: "background.default", py: 2 }}
+          spacing={2}
+        >
+          <Grid item xs={12}>
+            <Breadcrumbs>
+              <Link>Tasteal</Link>
+              <Link>Recipes</Link>
+              // TODO: change this to recipe type
+              <Link>Keto</Link>
+            </Breadcrumbs>
+          </Grid>
 
-        <Grid item xs={12}>
-          <Grid container columnSpacing={4}>
-            <Grid item xs={8}>
-              {/* TODO: Please make a placeholder for null image */}
-              {/* TODO: Replace with real image */}
-              {recipe?.image ? (
-                <Box
-                  component={"img"}
-                  src={defaultAvt}
-                  sx={{
-                    width: "100%",
-                    height: 520,
-                    objectFit: "cover",
-                    borderRadius: 4,
-                  }}
-                ></Box>
-              ) : (
-                <>
-                  <Typography>Image not found</Typography>
-                </>
-              )}
-            </Grid>
+          <Grid item xs={12}>
+            <Grid container columnSpacing={4}>
+              <Grid item xs={8}>
+                {/* TODO: Please make a placeholder for null image */}
+                {/* TODO: Replace with real image */}
+                {recipe?.image ? (
+                  <Box
+                    component={"img"}
+                    src={
+                      "https://www.sidechef.com/recipe/a1fbb0d7-7257-4b0a-bd35-8f5cc4b803d9.jpg?d=1408x1120"
+                    }
+                    sx={{
+                      width: "100%",
+                      height: 520,
+                      objectFit: "cover",
+                      borderRadius: 4,
+                    }}
+                  ></Box>
+                ) : (
+                  <>
+                    <Typography>Image not found</Typography>
+                  </>
+                )}
+              </Grid>
 
-            <Grid item xs={4}>
-              <Stack justifyContent={"center"} height={"100%"} gap={1}>
-                <Chip
-                  label="Recipe"
-                  sx={{
-                    borderRadius: 1,
-                    width: "fit-content",
-                    backgroundColor: "primary.main",
-                    color: "primary.contrastText",
-                    typography: "body2",
-                    fontWeight: "bold",
-                  }}
-                />
-                <Typography
-                  fontStyle={"italic"}
-                  color={"primary.main"}
-                  sx={{ bgColor: "secondary.main", borderRadius: 4, mt: 1 }}
-                >
-                  {recipeBrief}
-                </Typography>
-                <Typography
-                  typography={"h3"}
-                  color={"primary.main"}
-                  fontWeight={"bold"}
-                >
-                  {recipe?.name ?? RecipeDetailStringConstants.DEFAULT_NAME}
-                </Typography>
-              </Stack>
+              <Grid item xs={4}>
+                <Stack justifyContent={"center"} height={"100%"} gap={1}>
+                  <Chip
+                    label="Recipe"
+                    sx={{
+                      borderRadius: 1,
+                      width: "fit-content",
+                      backgroundColor: "primary.main",
+                      color: "primary.contrastText",
+                      typography: "body2",
+                      fontWeight: "bold",
+                    }}
+                  />
+                  <Typography
+                    fontStyle={"italic"}
+                    color={"primary.main"}
+                    sx={{ bgColor: "secondary.main", borderRadius: 4, mt: 1 }}
+                  >
+                    {recipeBrief}
+                  </Typography>
+                  <Typography
+                    typography={"h3"}
+                    color={"primary.main"}
+                    fontWeight={"bold"}
+                  >
+                    {recipe?.name ?? RecipeDetailStringConstants.DEFAULT_NAME}
+                  </Typography>
+                </Stack>
+              </Grid>
             </Grid>
           </Grid>
+
+          <Grid item xs={8}>
+            <Stack gap={8}>
+              <Typography color="primary.main" typography={"body1"}>
+                {recipe?.introduction ??
+                  RecipeDetailStringConstants.DEFAULT_INSTRUCTION}
+              </Typography>
+
+              <RecipeTimeInfo totalTime={recipe?.totalTime ?? 0} />
+
+              <IngredientDisplayer ingredients={recipeIngredients} />
+
+              <NutrionPerServingInfo />
+
+              <Stack>
+                <SectionHeading>Author's Notes</SectionHeading>
+                <Typography color="primary.main" typography={"body1"}>
+                  {recipe?.author_note}
+                </Typography>
+              </Stack>
+            </Stack>
+          </Grid>
+
+          <Grid item xs={4}></Grid>
         </Grid>
+      </Container>
 
-        <Grid item xs={8}>
-          <Stack gap={8}>
-            <Typography color="primary.main" typography={"body1"}>
-              {recipe?.introduction ??
-                RecipeDetailStringConstants.DEFAULT_INSTRUCTION}
-            </Typography>
+      <Box
+        sx={{
+          backgroundColor: "secondary.main",
+        }}
+      >
+        <Container sx={{ py: 8, width: "100%" }}>
+          <Stack width={"60%"} gap={1}>
+            <Stack
+              direction="row"
+              justifyContent={"space-between"}
+              alignItems={"center"}
+            >
+              <SectionHeading>Cooking Instructions</SectionHeading>
+              <Link href="#">HIDE IMAGES</Link>
+            </Stack>
 
-            <RecipeTimeInfo totalTime={recipe?.totalTime ?? 0} />
-
-            <IngredientDisplayer ingredients={recipeIngredients} />
+            <Stack gap={2}>
+              {directions.map((direction, index) => (
+                <DirectionItem key={index} value={direction} />
+              ))}
+            </Stack>
           </Stack>
-        </Grid>
+        </Container>
+      </Box>
 
-        <Grid item xs={4}></Grid>
-      </Grid>
-    </Container>
+      <Box>
+        <Container
+          sx={{
+            py: 4,
+            display: "flex",
+            flexDirection: "column",
+            gap: 4,
+          }}
+        >
+          <Box width="60%">
+            <Stack
+              direction="row"
+              alignItems={"end"}
+              justifyContent={"space-between"}
+            >
+              <BigSectionHeading>Rate & Review</BigSectionHeading>
+              <Stack direction="row" alignItems={"center"}>
+                <Typography color="primary" fontSize={20} fontWeight={"bold"}>
+                  Tap to rate:
+                </Typography>
+                <Rating
+                  size="large"
+                  icon={<StarRateRounded />}
+                  emptyIcon={<StarRateRounded />}
+                ></Rating>
+              </Stack>
+            </Stack>
+
+            <TastealTextField
+              multiline
+              rows={4}
+              placeholder="Leave a comment"
+              fullWidth
+              sx={{ mt: 1 }}
+            />
+          </Box>
+
+          <Box width="60%">
+            <BigSectionHeading>Tags</BigSectionHeading>
+            <Box sx={{ display: "flex", gap: 2, mt: 1, flexWrap: "wrap" }}>
+              {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((num, index) => (
+                <TagChip key={index} label={`Tag ${num}`} />
+              ))}
+            </Box>
+          </Box>
+
+          <Divider sx={{ width: "60%" }} />
+
+          <Box display={"flex"} justifyContent={"space-between"} width="60%">
+            <Box display="flex" alignItems={"center"} gap={1}>
+              <TastealIconButton>
+                <BookmarkOutlined color="primary" />
+              </TastealIconButton>
+              <Typography color="primary.main" fontSize={16}>
+                {122} Saved
+              </Typography>
+            </Box>
+            <Box display="flex" gap={1}>
+              <TastealIconButton>
+                <PrintOutlined color="primary" />
+              </TastealIconButton>
+              <TastealIconButton>
+                <Pinterest color="primary" />
+              </TastealIconButton>
+              <TastealIconButton>
+                <Facebook color="primary" />
+              </TastealIconButton>
+              <TastealIconButton>
+                <Twitter color="primary" />
+              </TastealIconButton>
+              <TastealIconButton>
+                <Mail color="primary" />
+              </TastealIconButton>
+            </Box>
+          </Box>
+
+          <Box
+            component="img"
+            src="https://www.sidechef.com/profile/0d2c1ebb-7521-4107-9b04-0c85d6a5b4f1.png"
+            borderRadius={6}
+          ></Box>
+
+          <Box>
+            <Box
+              display="flex"
+              justifyContent={"space-between"}
+              alignItems={"center"}
+            >
+              <BigSectionHeading>
+                More from Jack Lee at SideChef
+              </BigSectionHeading>
+              <Link href="#">VIEW ALL</Link>
+            </Box>
+            <Box>
+              <CustomCarousel
+                responsive={responsive}
+                removeArrowOnDeviceType={["sm", "xs"]}
+              >
+                <></>
+              </CustomCarousel>
+            </Box>
+          </Box>
+        </Container>
+      </Box>
+    </>
   );
 };
 
 export default RecipeDetail;
+
+type DirectionItemProps = {
+  value: Recipe_DirectionEntity;
+};
+
+const DirectionItem: FC<DirectionItemProps> = ({ value }) => {
+  return (
+    <Stack gap={2}>
+      <Typography color="primary.main" fontSize={20} fontWeight={"bold"}>
+        Step {value.step}
+      </Typography>
+      <Typography>{value.direction}</Typography>
+    </Stack>
+  );
+};
+
+const BigSectionHeading = styled(Typography)(({ theme }) => ({
+  fontSize: 32,
+  color: theme.palette.primary.main,
+  fontWeight: "bold",
+}));
+
+const TagChip: FC<ChipProps> = (props) => {
+  return (
+    <Chip
+      {...props}
+      variant="outlined"
+      clickable
+      sx={{
+        p: 2,
+        borderWidth: 1,
+        borderColor: "primary.main",
+        borderStyle: "solid",
+        fontSize: 16,
+        fontWeight: "bold",
+        "&:hover": {
+          bgColor: "#000",
+        },
+      }}
+    />
+  );
+};

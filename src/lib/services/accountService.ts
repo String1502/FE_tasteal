@@ -25,12 +25,12 @@ class AccountService {
   ): Promise<AccountEntity[]> {
     // Simulate delay of 1 second
     simulateDelay(1);
-    var accounts = await AccountService.GetAllAccounts();
+    let accounts = await AccountService.GetAllAccounts();
 
     type AccountWithRecipes = AccountEntity & {
       recipes?: RecipeEntity[];
     };
-    var accountsWithRecipes: AccountWithRecipes[] = [];
+    let accountsWithRecipes: AccountWithRecipes[] = [];
 
     accounts.forEach((item) => {
       accountsWithRecipes.push({
@@ -38,7 +38,7 @@ class AccountService {
         recipes: [],
       });
     });
-    var recipes = await RecipeService.GetAllRecipes();
+    const recipes = await RecipeService.GetAllRecipes();
     recipes.forEach((item) => {
       const account = accountsWithRecipes.find(
         (account) => account.id === item.author

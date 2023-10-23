@@ -5,6 +5,7 @@ import IngredientDisplayerItemListProps from "./types/IngredientDisplayerItemLis
 
 const IngredientDisplayerItemList: FC<IngredientDisplayerItemListProps> = ({
   ingredients,
+  servingSize,
 }) => {
   return (
     <Stack
