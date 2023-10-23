@@ -11,6 +11,7 @@ export const getMode = (mode: PaletteMode): ThemeOptions => ({
           primary: {
             main: TopicColor,
             contrastText: "#fff",
+            light: "#005468",
           },
           secondary: {
             main: SubColor,
@@ -28,6 +29,7 @@ export const getMode = (mode: PaletteMode): ThemeOptions => ({
       : {
           primary: {
             main: TopicColor,
+            light: "#005468",
           },
           secondary: {
             main: SubColor,
@@ -52,8 +54,3 @@ export const getMode = (mode: PaletteMode): ThemeOptions => ({
     },
   },
 });
-
-export const MainShadow =
-  "rgba(0, 0, 0, 0.1) 0px 4px 6px -1px, rgba(0, 0, 0, 0.06) 0px 2px 4px -1px";
-export const HoverShadow =
-  "rgba(0, 0, 0, 0.1) 0px 4px 6px -1px, rgba(0, 0, 0, 0.06) 0px 2px 4px -1px";
