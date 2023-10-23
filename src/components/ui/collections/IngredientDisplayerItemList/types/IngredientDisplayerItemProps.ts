@@ -1,5 +1,8 @@
 import { Recipe_IngredientEntity } from "@/types/type";
 
-type IngredientDisplayerItemProps = { value: Recipe_IngredientEntity };
+type IngredientDisplayerItemProps = {
+  value: Recipe_IngredientEntity;
+  servingSize: number;
+};
 
 export default IngredientDisplayerItemProps;

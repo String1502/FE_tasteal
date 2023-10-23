@@ -13,7 +13,11 @@ const IngredientDisplayerItemList: FC<IngredientDisplayerItemListProps> = ({
       gap={2}
     >
       {ingredients.map((ingredient) => (
-        <IngredientDisplayerItem key={ingredient.id} value={ingredient} />
+        <IngredientDisplayerItem
+          key={ingredient.id}
+          value={ingredient}
+          servingSize={servingSize}
+        />
       ))}
     </Stack>
   );

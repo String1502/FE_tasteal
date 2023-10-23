@@ -1,11 +1,12 @@
 import { resolveImagePathAsync } from "@/lib/firebase/image";
 import { MeasurementUnitResolver } from "@/lib/resolvers/measurement";
 import { Box, Grid, Link, Typography } from "@mui/material";
-import { FC, useEffect, useState } from "react";
+import { FC, useEffect, useMemo, useState } from "react";
 import IngredientDisplayerItemProps from "../types/IngredientDisplayerItemProps";
 
 const IngredientDisplayerItem: FC<IngredientDisplayerItemProps> = ({
   value: { Ingredient, amount },
+  servingSize,
 }) => {
   const [resolvedUrl, setResolvedUrl] = useState("");
 
@@ -27,6 +28,10 @@ const IngredientDisplayerItem: FC<IngredientDisplayerItemProps> = ({
     resolveUrl(Ingredient.image);
   }, [Ingredient?.image]);
 
+  const ingredientAmount = useMemo(() => {
+    return amount * (servingSize ?? 1);
+  }, [amount, servingSize]);
+
   return (
     <Grid container alignItems={"center"}>
       <Grid item xs={2}>
@@ -45,7 +50,9 @@ const IngredientDisplayerItem: FC<IngredientDisplayerItemProps> = ({
       </Grid>
       <Grid item xs={2}>
         <Typography fontSize={12} color="primary.main">
-          {`${amount} ${MeasurementUnitResolver(Ingredient?.isLiquid)}`}
+          {`${ingredientAmount} ${MeasurementUnitResolver(
+            Ingredient?.isLiquid
+          )}`}
         </Typography>
       </Grid>
       <Grid item xs={8}>
