@@ -1,15 +1,18 @@
 import { signInImage } from "@/assets/exportImage";
-import { Box, Button, Grid, Stack, Typography, TextField } from "@mui/material";
+import {
+  Box,
+  Button,
+  Grid,
+  Stack,
+  Typography,
+  TextField,
+  Container,
+} from "@mui/material";
+import { useNavigate } from "react-router-dom";
 
 export function ForgotPass() {
-  return (
-    <>
-      <ForgotPassContent />
-    </>
-  );
-}
+  const navigate = useNavigate();
 
-function ForgotPassContent() {
   return (
     <>
       <Grid
@@ -17,8 +20,28 @@ function ForgotPassContent() {
         direction="row"
         justifyContent="center"
         alignItems="stretch"
+        maxHeight={"100vh"}
+        sx={{
+          overflow: "auto",
+          scrollSnapType: "y mandatory",
+          "& > *": {
+            scrollSnapAlign: "center",
+          },
+          "::-webkit-scrollbar": { display: "none" },
+        }}
       >
-        <Grid item xs={6} sx={{ height: "1000px" }}>
+        <Grid
+          item
+          xs={0}
+          md={5}
+          lg={6}
+          sx={{
+            display: {
+              xs: "none",
+              md: "block",
+            },
+          }}
+        >
           <Box
             sx={{
               backgroundImage: `url(${signInImage})`,
@@ -26,80 +49,118 @@ function ForgotPassContent() {
               backgroundSize: "cover",
               backgroundPosition: "center",
               height: "100%",
+              minHeight: "100vh",
+              width: "100%",
             }}
           ></Box>
         </Grid>
-        <Grid item xs={6} sx={{ height: "100vh", px: 4, pt: 2 }}>
-          <Box
+
+        <Grid item xs={12} md={7} lg={6}>
+          <Container
             sx={{
-              display: "flex",
-              justifyContent: "flex-end",
-              alignItems: "center",
+              width: "100%",
+              height: "100%",
+              minHeight: "100vh",
+              px: { sm: 12 },
+              py: 2,
             }}
           >
-            <Typography variant="caption" color="gray.500">
-              Bạn chưa có tài khoản?
-            </Typography>
-            <Button
-              variant="outlined"
+            <Stack
+              direction="column"
+              alignItems="center"
+              justifyContent={"center"}
               sx={{
-                borderRadius: "40px",
-                ml: 2,
-              }}
-              onClick={() => {
-                window.location.href = "/signin";
+                height: "100%",
+                position: "relative",
               }}
             >
-              <Typography variant="button">Đăng ký</Typography>
-            </Button>
-          </Box>
+              <Box
+                sx={{
+                  display: "flex",
+                  justifyContent: { xs: "space-between", md: "flex-end" },
+                  alignItems: "center",
+                  width: "100%",
+                  position: "absolute",
+                  right: 0,
+                  top: 0,
+                }}
+              >
+                <Typography variant="caption" color="gray.500">
+                  Bạn chưa có tài khoản?
+                </Typography>
+                <Button
+                  variant="outlined"
+                  sx={{
+                    ml: 2,
+                  }}
+                  onClick={() => {
+                    navigate("/signup");
+                  }}
+                >
+                  <Typography variant="button" fontWeight={"bold"}>
+                    Đăng ký
+                  </Typography>
+                </Button>
+              </Box>
 
-          <Stack
-            spacing={3.2}
-            sx={{ height: "100vh", marginTop: "25vh" }}
-            alignItems={"center"}
-            direction={"column"}
-          >
-            <Typography
-              variant="h5"
-              sx={{ fontWeight: "bold", textAlign: "center", fontSize: "48px" }}
-            >
-              BẠN ĐÃ QUÊN MẬT KHẨU?
-            </Typography>
-            <Typography
-              variant="h5"
-              sx={{ textAlign: "start", fontSize: "19px" }}
-            >
-              <i>
-                Nhập Email SideChef của bạn. <br></br>
+              <Typography
+                variant="h4"
+                fontWeight={"bold"}
+                color="primary"
+                sx={{
+                  width: "100%",
+                  textAlign: "center",
+                }}
+              >
+                Quên mật khẩu?
+              </Typography>
+
+              <Typography
+                variant="body2"
+                fontWeight={"light"}
+                sx={{
+                  width: "100%",
+                  textAlign: "center",
+                  mb: 3,
+                  mt: 1,
+                }}
+              >
+                Nhập Email SideChef của bạn. <br />
                 Chúng tôi sẽ gửi bạn đường dẫn để đặt lại mật khẩu.
-              </i>
-            </Typography>
+              </Typography>
 
-            <TextField
-              label="Email"
-              variant="outlined"
-              fullWidth
-              sx={{
-                mt: 2,
-                width: "60vh",
-                backgroundColor: "#f7f7f7",
-              }}
-            />
+              {/*Cái ô nhập mail*/}
+              <TextField
+                placeholder="Email"
+                variant="outlined"
+                fullWidth
+                sx={{
+                  mt: 2,
+                  width: "100%",
+                }}
+                InputProps={{
+                  sx: {
+                    borderRadius: "40px",
+                    backgroundColor: "#f7f7f7",
+                    fontSize: "body2.fontSize",
+                    px: 1.5,
+                  },
+                }}
+              />
 
-            <Button
-              variant="contained"
-              color="primary"
-              sx={{
-                width: "60vh",
-                height: "6vh",
-                borderRadius: "40px",
-                mt: 2,
-              }}
-            >
-              Gửi đường dẫn để đặt lại
-            </Button>
-          </Stack>
+              <Button
+                variant="contained"
+                color="primary"
+                sx={{
+                  width: "100%",
+                  mt: 3,
+                  py: 1,
+                }}
+              >
+                Gửi đường dẫn
+              </Button>
+            </Stack>
+          </Container>
         </Grid>
       </Grid>
     </>

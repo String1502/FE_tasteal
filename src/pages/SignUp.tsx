@@ -1,19 +1,26 @@
-import { Box, Button, Grid, Stack, Typography, TextField } from "@mui/material";
-import GoogleIcon from "../../public/google-icon.png";
-import FacebookIcon from "../../public/facebook-icon.png";
-import EmailIcon from "../../public/email-icon.png";
-import { Facebook, Google, MailOutline } from "@mui/icons-material";
+import {
+  Box,
+  Button,
+  Grid,
+  Stack,
+  Typography,
+  Checkbox,
+  FormControlLabel,
+  Link,
+  Container,
+} from "@mui/material";
+import {
+  CheckCircleRounded,
+  Facebook,
+  Google,
+  MailOutline,
+  RadioButtonUncheckedRounded,
+} from "@mui/icons-material";
 import { defaultAvt, signInImage } from "@/assets/exportImage";
+import { useNavigate } from "react-router-dom";
 
 export function SignUp() {
-  return (
-    <>
-      <SignUpContent />
-    </>
-  );
-}
-
-function SignUpContent() {
+  const navigate = useNavigate();
   return (
     <>
       <Grid
@@ -21,9 +28,29 @@ function SignUpContent() {
         direction="row"
         justifyContent="center"
         alignItems="stretch"
+        maxHeight={"100vh"}
+        sx={{
+          overflow: "auto",
+          scrollSnapType: "y mandatory",
+          "& > *": {
+            scrollSnapAlign: "center",
+          },
+          "::-webkit-scrollbar": { display: "none" },
+        }}
       >
         {/*Cái hình bên trái*/}
-        <Grid item xs={6} sx={{ height: "1000px" }}>
+        <Grid
+          item
+          xs={0}
+          md={5}
+          lg={6}
+          sx={{
+            display: {
+              xs: "none",
+              md: "block",
+            },
+          }}
+        >
           <Box
             sx={{
               backgroundImage: `url(${signInImage})`,
@@ -31,165 +58,223 @@ function SignUpContent() {
               backgroundSize: "cover",
               backgroundPosition: "center",
               height: "100%",
+              minHeight: "100vh",
+              width: "100%",
             }}
           ></Box>
         </Grid>
 
         {/*Cái đống bên phải*/}
-        <Grid item xs={6} sx={{ height: "100vh", px: 4, pt: 2 }}>
-          {/*Cái đống mé trên bên phải*/}
-          <Box
+        <Grid item xs={12} md={7} lg={6}>
+          <Container
             sx={{
-              display: "flex",
-              justifyContent: "flex-end",
-              alignItems: "center",
+              width: "100%",
+              height: "100%",
+              minHeight: "100vh",
+              px: { sm: 12 },
+              py: 2,
             }}
           >
-            <Typography variant="caption" color="gray.500">
-              Bạn đã là thành viên?
-            </Typography>
-            <Button
-              variant="outlined"
+            <Stack
+              direction="column"
+              alignItems="center"
+              justifyContent={"center"}
               sx={{
-                borderRadius: "40px",
-                ml: 2,
-              }}
-              onClick={() => {
-                window.location.href = "/signin";
+                height: "100%",
+                position: "relative",
               }}
             >
-              <Typography variant="button">Đăng nhập</Typography>
-            </Button>
-          </Box>
-
-          {/*Cái logo*/}
-          <Box
-            sx={{
-              backgroundImage: `url(${defaultAvt})`,
-              backgroundRepeat: "no-repeat",
-              backgroundSize: "cover",
-              backgroundPosition: "center",
-              height: "10%",
-              width: "60%",
-              margin: "auto",
-              marginTop: "7vh",
-            }}
-          ></Box>
-
-          {/*Cái nội dung mé dưới*/}
-          <Stack
-            spacing={3.2}
-            sx={{ height: "100vh", marginTop: "2vh" }}
-            alignItems={"center"}
-            direction={"column"}
-          >
-            {/*Tiêu đề chào mừng*/}
-            <Typography
-              variant="h5"
-              sx={{ fontWeight: "bold", textAlign: "center", fontSize: "48px" }}
-            >
-              CHÀO MỪNG VỚI TASTEAL!
-            </Typography>
-
-            {/*Câu slogan*/}
-            <Typography
-              variant="h5"
-              sx={{ textAlign: "center", fontSize: "24px" }}
-            >
-              Lưu công thức, lên lịch ăn và mua nguyên liệu
-            </Typography>
-            {/*Cái nút với google nè */}
-            <Button
-              variant="contained"
-              color="primary"
-              sx={{
-                width: "60vh",
-                borderRadius: "40px",
-                height: "6vh",
-                mt: 2,
-                backgroundColor: "#3998f2",
-              }}
-            >
-              {/*icon của cái nút google nè*/}
-              <Google
-                sx={{ width: "2.4vh", height: "2.4vh", marginRight: "8px" }}
-              />
-              Tiếp tục với Google
-            </Button>
-
-            {/*Cái nút với facebook nè*/}
-            <Button
-              variant="contained"
-              color="info"
-              sx={{
-                width: "60vh",
-                height: "6vh",
-                borderRadius: "40px",
-                backgroundColor: "#3b5998",
-                mt: 1,
-              }}
-            >
-              {/*icon của cái nút facebook nè*/}
-              <Facebook
-                sx={{ width: "2.4vh", height: "2.4vh", marginRight: "8px" }}
-              ></Facebook>
-              Tiếp tục với Facebook
-            </Button>
-
-            {/*Cái nút với email nè*/}
-            <Button
-              variant="contained"
-              color="info"
-              sx={{
-                width: "60vh",
-                height: "6vh",
-                borderRadius: "40px",
-                backgroundColor: "#01404e",
-                mt: 1,
-              }}
-              onClick={() => {
-                window.location.href = "/signupemail";
-              }}
-            >
-              {/*icon của cái nút email nè*/}
-              <MailOutline
-                sx={{ width: "2.4vh", height: "2.4vh", marginRight: "8px" }}
-              ></MailOutline>
-              Tiếp tục với Email
-            </Button>
-
-            {/* Radio button cái điều khoản links tới mấy cái điều khoản */}
-            <div style={{ display: "flex", alignItems: "center" }}>
-              <input
-                type="radio"
-                id="subscribe"
-                name="subscription"
-                value="subscribe"
-              />
-              <label>
-                {" "}
-                &nbsp;Tôi muốn nhận cảm hứng về công thức, kế hoạch bữa ăn, cập
-                nhật và nhiều hơn nữa!
-              </label>
-            </div>
-
-            <Typography variant="body2" sx={{ textAlign: "center", mt: 1 }}>
-              Bằng cách đăng ký, tôi đồng ý với &nbsp;
-              <a
-                href="/"
-                style={{ textDecoration: "underline", color: "#000" }}
+              {/*Cái đống mé trên bên phải*/}
+              <Box
+                sx={{
+                  display: "flex",
+                  justifyContent: { xs: "space-between", md: "flex-end" },
+                  alignItems: "center",
+                  width: "100%",
+                  position: "absolute",
+                  right: 0,
+                  top: 0,
+                }}
               >
-                Điều khoản Dịch vụ
-              </a>{" "}
-              và <br></br>
-              <a
-                href="/"
-                style={{ textDecoration: "underline", color: "#000" }}
+                <Typography variant="caption" color="gray.500">
+                  Bạn đã là thành viên?
+                </Typography>
+                <Button
+                  variant="outlined"
+                  sx={{
+                    ml: 2,
+                  }}
+                  onClick={() => {
+                    navigate("/signin");
+                  }}
+                >
+                  <Typography variant="button" fontWeight={"bold"}>
+                    Đăng nhập
+                  </Typography>
+                </Button>
+              </Box>
+
+              <Box
+                sx={{
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  width: "100%",
+                  mt: 6,
+                }}
               >
-                Chính sách Bảo mật
-              </a>
-            </Typography>
-          </Stack>
+                <Box
+                  sx={{
+                    backgroundImage: `url(${defaultAvt})`,
+                    backgroundRepeat: "no-repeat",
+                    backgroundSize: "cover",
+                    backgroundPosition: "center",
+                    aspectRatio: "1/1",
+                    width: "32px",
+                    borderRadius: "50%",
+                    mr: 1,
+                  }}
+                ></Box>
+                <Typography variant="h6" color="primary">
+                  Tasteal
+                </Typography>
+              </Box>
+
+              <Typography
+                variant="h4"
+                fontWeight={"bold"}
+                color="primary"
+                sx={{
+                  width: "100%",
+                  textAlign: "center",
+                }}
+              >
+                Tasteal Xin Chào!
+              </Typography>
+
+              <Typography
+                variant="caption"
+                sx={{
+                  width: "100%",
+                  textAlign: "center",
+                }}
+              >
+                Lưu công thức, lên lịch ăn và chuẩn bị nguyên liệu
+              </Typography>
+
+              <Box
+                sx={{
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: 3,
+                  my: 5,
+                  justifyContent: "center",
+                  alignItems: "center",
+                  width: "100%",
+                }}
+              >
+                {/*Cái nút với google nè */}
+                <Button
+                  variant="contained"
+                  sx={{
+                    width: "100%",
+                    py: 1.2,
+                    backgroundColor: "#3998f2",
+                    opacity: 1,
+                    "&:hover": {
+                      opacity: 0.9,
+                      backgroundColor: "#3998f2",
+                    },
+                    fontSize: "caption.fontSize",
+                    fontWeight: "bold",
+                  }}
+                  startIcon={<Google fontSize="large" />}
+                >
+                  Tiếp tục với Google
+                </Button>
+
+                {/*Cái nút với facebook nè*/}
+                <Button
+                  variant="contained"
+                  sx={{
+                    width: "100%",
+                    py: 1.2,
+                    backgroundColor: "#3b5998",
+                    opacity: 1,
+                    "&:hover": {
+                      opacity: 0.9,
+                      backgroundColor: "#3b5998",
+                    },
+                    fontSize: "caption.fontSize",
+                    fontWeight: "bold",
+                  }}
+                  startIcon={<Facebook fontSize="large" />}
+                >
+                  Tiếp tục với Facebook
+                </Button>
+
+                {/*Cái nút với email nè*/}
+                <Button
+                  variant="contained"
+                  sx={{
+                    width: "100%",
+                    py: 1.2,
+                    backgroundColor: "#01404e",
+                    opacity: 1,
+                    "&:hover": {
+                      opacity: 0.9,
+                      backgroundColor: "#01404e",
+                    },
+                    fontSize: "caption.fontSize",
+                    fontWeight: "bold",
+                  }}
+                  startIcon={<MailOutline fontSize="large" />}
+                  onClick={() => {
+                    window.location.href = "/signupemail";
+                  }}
+                >
+                  Tiếp tục với Email
+                </Button>
+              </Box>
+
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    size="small"
+                    icon={<RadioButtonUncheckedRounded />}
+                    checkedIcon={<CheckCircleRounded />}
+                  />
+                }
+                label={
+                  <Typography
+                    variant="body2"
+                    fontWeight={"light"}
+                    sx={{ width: "100%" }}
+                    color={"primary"}
+                  >
+                    Tôi muốn nhận cảm hứng về công thức, kế hoạch bữa ăn, cập
+                    nhật và nhiều hơn nữa!
+                  </Typography>
+                }
+              />
+
+              <Typography
+                variant="body2"
+                fontWeight={"light"}
+                sx={{ width: "100%", textAlign: "center", mt: 2 }}
+                color={"grey.700"}
+              >
+                Bằng cách đăng ký, tôi đồng ý với{" "}
+                <Link underline="hover" href="/">
+                  Điều Khoản Dịch vụ
+                </Link>{" "}
+                và{" "}
+                <Link underline="hover" href="/">
+                  Chính Sách Bảo mật
+                </Link>
+              </Typography>
+            </Stack>
+          </Container>
         </Grid>
       </Grid>
     </>
