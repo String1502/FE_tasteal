@@ -191,6 +191,9 @@ export function Header(props: Props) {
                   mr: 2,
                   width: "140px",
                 }}
+                onClick={() => {
+                  navigate("/signup");
+                }}
               >
                 Đăng ký
               </Button>
@@ -201,6 +204,9 @@ export function Header(props: Props) {
                 size="small"
                 sx={{
                   width: "140px",
+                }}
+                onClick={() => {
+                  navigate("/signin");
                 }}
               >
                 Đăng nhập

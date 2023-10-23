@@ -9,6 +9,7 @@ function Layout({ children }: { children: React.ReactNode }) {
       component={"div"}
       sx={{
         backgroundColor: "#fffaf9",
+        px: 0,
       }}
     >
       <Header />

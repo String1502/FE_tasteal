@@ -1,5 +1,10 @@
 import RecipeDetail from "@/pages/RecipeDetail";
-import { PaletteMode, ThemeProvider, createTheme } from "@mui/material";
+import {
+  CssBaseline,
+  PaletteMode,
+  ThemeProvider,
+  createTheme,
+} from "@mui/material";
 import React from "react";
 import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
 import CreateRecipe from "./pages/CreateRecipe";
@@ -33,6 +38,7 @@ function App() {
 
   return (
     <ColorModeContext.Provider value={colorMode}>
+      <CssBaseline />
       <ThemeProvider theme={theme}>
         <Router>
           <Routes>
