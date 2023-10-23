@@ -17,18 +17,32 @@ import {
 import { ColorModeContext } from "../../App";
 import React from "react";
 import MenuIcon from "@mui/icons-material/Menu";
+import { SearchRounded, ShoppingBagRounded } from "@mui/icons-material";
+import { ButtonHoverPopover } from "../header/ButtonHoverPopover";
+import { PopoverContent } from "../header/PopoverContent";
+import { CustomHeaderLink } from "../header/CustomLink";
+import { useNavigate } from "react-router-dom";
 
 interface Props {
   window?: () => Window;
 }
 
 const drawerWidth = 240;
-const navItems = ["Trang chủ", "Về Tasteal", "Tìm kiếm"];
+const navItems = [
+  "Trang chủ",
+  "Về Tasteal",
+  "Lịch ăn",
+  "Tủ lạnh",
+  "Tìm kiếm",
+  "Giỏ đi chợ",
+  "Đăng ký",
+  "Đăng nhập",
+];
 
 export function Header(props: Props) {
   // Dùng cho đổi theme
   const colorMode = React.useContext(ColorModeContext);
-
+  const navigate = useNavigate();
   const theme = useTheme();
   const { window } = props;
   const [mobileOpen, setMobileOpen] = React.useState(false);
@@ -58,7 +72,11 @@ export function Header(props: Props) {
     window !== undefined ? () => window().document.body : undefined;
 
   return (
-    <Box sx={{ display: "flex" }}>
+    <Box
+      component={"div"}
+      id="headerApp"
+      sx={{ display: "flex", height: "fit-content" }}
+    >
       <AppBar
         component="nav"
         sx={{
@@ -66,35 +84,131 @@ export function Header(props: Props) {
         }}
       >
         <Container>
-          <Toolbar>
+          <Toolbar
+            sx={{
+              py: 2,
+            }}
+          >
             <IconButton
               color="primary"
               aria-label="open drawer"
               edge="start"
               onClick={handleDrawerToggle}
-              sx={{ mr: 2, display: { sm: "none" } }}
+              sx={{ mr: 2, display: { md: "none" } }}
             >
               <MenuIcon />
             </IconButton>
-            <Typography
-              variant="h6"
-              component="div"
-              color="primary"
-              sx={{ flexGrow: 1, display: { xs: "none", sm: "block" } }}
+            <Box
+              sx={{
+                direction: "row",
+                alignItems: "center",
+                justifyContent: "flex-start",
+                flexGrow: 1,
+                display: { xs: "none", md: "flex" },
+                gap: 4,
+              }}
             >
-              Tasteal
-            </Typography>
-            <Box sx={{ display: { xs: "none", sm: "block" } }}>
-              {navItems.map((item) => (
-                <Button
-                  variant="contained"
+              <Box
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  cursor: "pointer",
+                }}
+                onClick={() => {
+                  navigate("/");
+                }}
+              >
+                <Box
+                  sx={{
+                    aspectRatio: "1/1",
+                    height: "32px",
+                    borderRadius: "50%",
+                    overflow: "hidden",
+                    backgroundColor: "red",
+                    mr: 1,
+                    pointerEvents: "none",
+                  }}
+                ></Box>
+                <Typography
+                  variant="subtitle1"
+                  fontWeight={"bold"}
+                  component="div"
                   color="primary"
-                  key={item}
-                  sx={{ mx: 2 }}
+                  sx={{
+                    width: "fit-content",
+                    pointerEvents: "none",
+                  }}
                 >
-                  {item}
-                </Button>
-              ))}
+                  Tasteal
+                </Typography>
+              </Box>
+
+              <ButtonHoverPopover
+                customLink={<CustomHeaderLink href="#" label="Công thức" />}
+              >
+                <PopoverContent />
+              </ButtonHoverPopover>
+
+              <CustomHeaderLink href="#" label="Lịch ăn" />
+
+              <CustomHeaderLink href="#" label="Tủ lạnh" />
+            </Box>
+            <Box
+              sx={{
+                direction: "row",
+                alignItems: "center",
+                justifyContent: "center",
+                display: { xs: "none", md: "flex" },
+              }}
+            >
+              <IconButton
+                color="primary"
+                size="small"
+                sx={{
+                  border: 1,
+                  mr: 2,
+                }}
+                onClick={() => {
+                  navigate("/search");
+                }}
+              >
+                <SearchRounded fontSize="inherit" />
+              </IconButton>
+
+              <IconButton
+                color="primary"
+                size="small"
+                sx={{
+                  border: 1,
+                  mr: 2,
+                }}
+              >
+                <ShoppingBagRounded fontSize="inherit" />
+              </IconButton>
+
+              <Button
+                color="primary"
+                variant="contained"
+                size="small"
+                sx={{
+                  mr: 2,
+                  width: "140px",
+                }}
+              >
+                Đăng ký
+              </Button>
+
+              <Button
+                color="primary"
+                variant="outlined"
+                size="small"
+                sx={{
+                  width: "140px",
+                }}
+              >
+                Đăng nhập
+              </Button>
             </Box>
           </Toolbar>
         </Container>
@@ -109,7 +223,7 @@ export function Header(props: Props) {
             keepMounted: true, // Better open performance on mobile.
           }}
           sx={{
-            display: { xs: "block", sm: "none" },
+            display: { xs: "block", md: "none" },
             "& .MuiDrawer-paper": {
               boxSizing: "border-box",
               width: drawerWidth,

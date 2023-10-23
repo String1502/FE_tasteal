@@ -22,7 +22,7 @@ export type TuKhoa = {
   value: boolean;
 };
 
-const DefaultTuKhoas: TuKhoa[] = [
+export const DefaultTuKhoas: TuKhoa[] = [
   {
     label: "Bánh mì",
     value: false,
@@ -32,15 +32,15 @@ const DefaultTuKhoas: TuKhoa[] = [
     value: false,
   },
   {
-    label: "heo quay",
+    label: "Heo quay",
     value: false,
   },
   {
-    label: "bún thịt nướng",
+    label: "Bún thịt nướng",
     value: false,
   },
   {
-    label: "cơm sườn",
+    label: "Cơm sườn",
     value: false,
   },
   {
@@ -85,15 +85,10 @@ function Search() {
           justifyContent: "center",
           alignItems: "flex-start",
           width: "100%",
+          my: 8,
         }}
       >
-        <Grid
-          item
-          xs={12}
-          sx={{
-            mt: 8,
-          }}
-        >
+        <Grid item xs={12}>
           <Box>
             <TextField
               InputProps={{
@@ -121,6 +116,7 @@ function Search() {
                   py: 0.5,
                   boxShadow: MainShadow,
                   border: 0,
+                  backgroundColor: "white",
                 },
               }}
               placeholder="Bạn muốn có người yêu?"

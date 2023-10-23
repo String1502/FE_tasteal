@@ -58,6 +58,10 @@ export function IngredientAutocomplete({
   return (
     <>
       <Autocomplete
+        sx={{
+          backgroundColor: "white",
+          width: "100%",
+        }}
         multiple
         limitTags={1}
         open={open}
@@ -126,7 +130,6 @@ export function IngredientAutocomplete({
             }}
           />
         )}
-        sx={{ width: "100%" }}
       />
     </>
   );

@@ -42,6 +42,15 @@ export const getMode = (mode: PaletteMode): ThemeOptions => ({
           },
         }),
   },
+  components: {
+    MuiButton: {
+      styleOverrides: {
+        root: {
+          borderRadius: "40px",
+        },
+      },
+    },
+  },
 });
 
 export const MainShadow =

@@ -69,6 +69,7 @@ const CustomAccordion = ({
           boxShadow: 0,
           borderBottom: 1,
           borderColor: "grey.300",
+          backgroundColor: "transparent",
         }}
       >
         <AccordionSummary sx={{ px: 0 }} expandIcon={<ExpandMore />}>
