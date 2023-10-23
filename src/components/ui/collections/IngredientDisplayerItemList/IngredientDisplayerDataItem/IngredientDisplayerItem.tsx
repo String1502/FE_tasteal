@@ -41,10 +41,10 @@ const IngredientDisplayerItem: FC<IngredientDisplayerItemProps> = ({
           width={40}
           height={40}
           sx={{
-            objectFit: "cover",
-            border: "2px solid",
-            borderColor: "primary.main",
-            borderRadius: "100%",
+            objectFit: "contain",
+            border: "1px solid",
+            borderColor: "grey.300",
+            borderRadius: "50%",
           }}
         ></Box>
       </Grid>

@@ -6,19 +6,22 @@ import SectionHeading from "@/components/common/typos/SectionHeading";
 import RecipeTimeInfo from "@/components/ui/cards/RecipeTimeInfo";
 import DirectionItem from "@/components/ui/collections/DirectionItem";
 import IngredientDisplayer from "@/components/ui/collections/IngredientDisplayer";
-import TagChip from "@/components/ui/collections/TagChip/TagChip";
 import SimpleContainer from "@/components/ui/container/SimpleContainer";
 import NutrionPerServingInfo from "@/components/ui/displayers/NutrionPerServingInfo";
 import SameAuthorRecipesCarousel from "@/components/ui/displayers/SameAuthorRecipesCarousel/SameAuthorRecipesCarousel";
+import NutrionPerServingModal from "@/components/ui/modals/NutrionPerServingModal";
 import Layout from "@/layout/Layout";
 import { N_A_VALUE } from "@/lib/constants/common";
+import { DEFAULT_NUTRITION_VALUE } from "@/lib/constants/defaultValue";
 import AccountService from "@/lib/services/AccountService";
 import IngredientService from "@/lib/services/IngredientService";
+import NutritionService from "@/lib/services/NutrionInfoService";
 import RecipeDirectionService from "@/lib/services/RecipeDirectionService";
 import RecipeIngredientService from "@/lib/services/RecipeIngredientService";
 import RecipeService from "@/lib/services/RecipeService";
 import {
   AccountEntity,
+  Nutrition_InfoEntity,
   RecipeEntity,
   Recipe_DirectionEntity,
   Recipe_IngredientEntity,
@@ -72,6 +75,14 @@ const RecipeDetailStringConstants = {
 const debugStringFormatter = createDebugStringFormatter(PAGE_ID);
 
 const RecipeDetail: FC = () => {
+  //#region UseHooks
+
+  const { id } = useParams();
+
+  //#endregion
+
+  //#region UseStates
+
   const [recipe, setRecipe] = useState<RecipeEntity | null>(null);
   const [directions, setDirections] = useState<Recipe_DirectionEntity[]>([]);
   const [recipeIngredients, setRecipeIngredients] = useState<
@@ -81,10 +92,16 @@ const RecipeDetail: FC = () => {
   const [sameAccountRecipes, setSameAccountRecipes] = useState<RecipeEntity[]>(
     []
   );
+  const [nutritionInfo, setNutrionInfo] = useState<Nutrition_InfoEntity | null>(
+    null
+  );
 
   const [rating, setRating] = useState(0);
 
-  const { id } = useParams();
+  const [nutrionPerServingModalOpen, setNutrionPerServingModalOpen] =
+    useState(false);
+
+  //#endregion
 
   //#region Functions
 
@@ -185,6 +202,31 @@ const RecipeDetail: FC = () => {
     });
   }, [recipe]);
 
+  const getNutritionInfo = useCallback(() => {
+    if (!recipe) {
+      return Promise.reject("Current recipe has null value.");
+    }
+
+    if (!recipe.nutrition_info_id) {
+      return Promise.reject("Recipe's nutrition info id is invalid");
+    }
+
+    return NutritionService.GetById(recipe.nutrition_info_id).then(
+      (nutrition) => {
+        setNutrionInfo(nutrition ?? null);
+        return Promise.resolve(nutrition);
+      }
+    );
+  }, [recipe]);
+
+  //#endregion
+
+  //region Callbacks
+
+  const handleNutrionPerServingModalClose = useCallback(() => {
+    setNutrionPerServingModalOpen(false);
+  }, [setNutrionPerServingModalOpen]);
+
   //#endregion
 
   //#region UseEffects
@@ -201,12 +243,16 @@ const RecipeDetail: FC = () => {
             )
           )
           .catch((msg) => console.log(debugStringFormatter(msg)));
+        getNutritionInfo().catch((msg) =>
+          console.log(debugStringFormatter(msg))
+        );
       })
       .catch((msg) => console.log(debugStringFormatter(msg)));
   }, [
     getAuthor,
     getDirections,
     getIngredients,
+    getNutritionInfo,
     getRecipe,
     getSameAccountRecipes,
     id,
@@ -311,7 +357,10 @@ const RecipeDetail: FC = () => {
 
               <IngredientDisplayer ingredients={recipeIngredients} />
 
-              <NutrionPerServingInfo />
+              <NutrionPerServingInfo
+                onClick={() => setNutrionPerServingModalOpen(true)}
+                nutritionInfo={nutritionInfo ?? DEFAULT_NUTRITION_VALUE}
+              />
 
               <Stack>
                 <SectionHeading>Author's Notes</SectionHeading>
@@ -495,7 +544,20 @@ const RecipeDetail: FC = () => {
               <BigSectionHeading>
                 More from {author?.name ?? "{AuthorName}"} at SideChef
               </BigSectionHeading>
-              <Link href="#">VIEW ALL</Link>
+              <Button
+                sx={{
+                  color: "primary.main",
+                  fontSize: "14px",
+                  fontWeight: "bold",
+                  textDecoration: "underline",
+                  "&:hover": {
+                    color: "primary.main",
+                    textDecoration: "underline",
+                  },
+                }}
+              >
+                VIEW ALL
+              </Button>
             </Box>
             <Box>
               <SameAuthorRecipesCarousel recipes={sameAccountRecipes} />
@@ -514,6 +576,12 @@ const RecipeDetail: FC = () => {
           </Box>
         </Container>
       </Box>
+
+      <NutrionPerServingModal
+        open={nutrionPerServingModalOpen}
+        onClose={handleNutrionPerServingModalClose}
+        nutritionInfo={nutritionInfo ?? DEFAULT_NUTRITION_VALUE}
+      />
     </Layout>
   );
 };

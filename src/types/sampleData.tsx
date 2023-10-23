@@ -2,6 +2,7 @@ import { bannerImage, defaultAvt } from "@/assets/exportImage";
 import {
   AccountEntity,
   IngredientEntity,
+  Nutrition_InfoEntity,
   OccasionEntity,
   RecipeEntity,
   Recipe_DirectionEntity,
@@ -22,7 +23,7 @@ export const recipes: RecipeEntity[] = [
     is_private: false,
     image: "recipe1.jpg",
     author: 10,
-    nutrition_info_id: 201,
+    nutrition_info_id: 1,
     created_at: new Date(),
   },
   {
@@ -472,5 +473,25 @@ export const accounts: AccountEntity[] = [
     name: "Người Dùng Mười",
     avatar: defaultAvt,
     introduction: "Rất vui được làm quen với bạn. Tôi là Người Dùng Mười.",
+  },
+];
+
+export const nutritionInfos: Nutrition_InfoEntity[] = [
+  {
+    id: 1,
+    calories: 200,
+    fat: 10,
+    saturated_fat: 2,
+    trans_fat: 0,
+    cholesterol: 20,
+    carbohydrates: 25,
+    fiber: 5,
+    sugars: 10,
+    protein: 15,
+    sodium: 300,
+    vitaminD: 10,
+    calcium: 150,
+    iron: 2,
+    potassium: 400,
   },
 ];
