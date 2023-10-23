@@ -1,13 +1,17 @@
-import { PrimaryCard } from "@/components/common/card/PrimaryCard";
-import { CustomCarousel } from "@/components/common/carousel/CustomeCarousel";
+import { defaultAvt } from "@/assets/exportImage";
+import TastealIconButton from "@/components/common/buttons/TastealIconButton";
 import TastealTextField from "@/components/common/textFields/TastealTextField";
+import BigSectionHeading from "@/components/common/typos/BigSectionHeading/BigSectionHeading";
 import SectionHeading from "@/components/common/typos/SectionHeading";
 import RecipeTimeInfo from "@/components/ui/cards/RecipeTimeInfo";
+import DirectionItem from "@/components/ui/collections/DirectionItem";
 import IngredientDisplayer from "@/components/ui/collections/IngredientDisplayer";
+import TagChip from "@/components/ui/collections/TagChip/TagChip";
+import SimpleContainer from "@/components/ui/container/SimpleContainer";
 import NutrionPerServingInfo from "@/components/ui/displayers/NutrionPerServingInfo";
+import SameAuthorRecipesCarousel from "@/components/ui/displayers/SameAuthorRecipesCarousel/SameAuthorRecipesCarousel";
 import Layout from "@/layout/Layout";
 import { N_A_VALUE } from "@/lib/constants/common";
-import { responsive } from "@/lib/constants/responsiveCarousel";
 import AccountService from "@/lib/services/AccountService";
 import IngredientService from "@/lib/services/IngredientService";
 import RecipeDirectionService from "@/lib/services/RecipeDirectionService";
@@ -21,6 +25,8 @@ import {
 } from "@/types/type";
 import { createDebugStringFormatter } from "@/utils/debug/formatter";
 import {
+  Add,
+  Bookmark,
   BookmarkOutlined,
   Facebook,
   Mail,
@@ -30,28 +36,21 @@ import {
   Twitter,
 } from "@mui/icons-material";
 import {
+  Avatar,
   Box,
   Breadcrumbs,
+  Button,
   Chip,
-  ChipProps,
   Container,
   Divider,
   Grid,
-  IconButton,
   Link,
   Rating,
   Stack,
   Typography,
-  styled,
 } from "@mui/material";
 import { FC, useCallback, useEffect, useMemo, useState } from "react";
 import { useParams } from "react-router-dom";
-
-const TastealIconButton = styled(IconButton)({
-  borderStyle: "solid",
-  border: 1,
-  borderColor: "primary.main",
-});
 
 /**
  * Page id for debug purpose.
@@ -323,7 +322,60 @@ const RecipeDetail: FC = () => {
             </Stack>
           </Grid>
 
-          <Grid item xs={4}></Grid>
+          <Grid item xs={4}>
+            <SimpleContainer>
+              <Box display="flex" flexDirection={"column"} gap={1}>
+                <Box display="flex" gap={1}>
+                  <TastealIconButton>
+                    <PrintOutlined color="primary" />
+                  </TastealIconButton>
+                  <TastealIconButton>
+                    <Pinterest color="primary" />
+                  </TastealIconButton>
+                  <TastealIconButton>
+                    <Facebook color="primary" />
+                  </TastealIconButton>
+                  <TastealIconButton>
+                    <Twitter color="primary" />
+                  </TastealIconButton>
+                  <TastealIconButton>
+                    <Mail color="primary" />
+                  </TastealIconButton>
+                </Box>
+                <Button variant="contained" startIcon={<Bookmark />}>
+                  SAVE RECIPE
+                </Button>
+                <Button
+                  variant="contained"
+                  startIcon={<Add />}
+                  sx={{
+                    color: "primary.main",
+                    backgroundColor: "background.default",
+                    "&:hover": {
+                      backgroundColor: "background.default",
+                    },
+                  }}
+                >
+                  ADD TO PLAN
+                </Button>
+              </Box>
+            </SimpleContainer>
+
+            <SimpleContainer>
+              <Box display={"flex"} flexDirection={"column"} gap={1}>
+                <Stack direction="row" alignItems={"center"} gap={2}>
+                  <Avatar src={defaultAvt} />
+                  <Link>
+                    <Typography fontWeight={"bold"}>{author?.name}</Typography>
+                  </Link>
+                </Stack>
+                <Typography color="gray">{`Hello this is my {not implemented yet} introduction.`}</Typography>
+                <Link color="primary.main" fontWeight={"bold"}>
+                  https://www.sidechef.com/(not implemented)
+                </Link>
+              </Box>
+            </SimpleContainer>
+          </Grid>
         </Grid>
       </Container>
 
@@ -389,14 +441,14 @@ const RecipeDetail: FC = () => {
             />
           </Box>
 
-          <Box width="60%">
+          {/* <Box width="60%">
             <BigSectionHeading>Tags</BigSectionHeading>
             <Box sx={{ display: "flex", gap: 2, mt: 1, flexWrap: "wrap" }}>
               {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((num, index) => (
                 <TagChip key={index} label={`Tag ${num}`} />
               ))}
             </Box>
-          </Box>
+          </Box> */}
 
           <Divider sx={{ width: "60%" }} />
 
@@ -406,7 +458,7 @@ const RecipeDetail: FC = () => {
                 <BookmarkOutlined color="primary" />
               </TastealIconButton>
               <Typography color="primary.main" fontSize={16}>
-                {122} Saved
+                {122} Saved (not implemented yet)
               </Typography>
             </Box>
             <Box display="flex" gap={1}>
@@ -467,74 +519,3 @@ const RecipeDetail: FC = () => {
 };
 
 export default RecipeDetail;
-
-type DirectionItemProps = {
-  value: Recipe_DirectionEntity;
-};
-
-const DirectionItem: FC<DirectionItemProps> = ({ value }) => {
-  return (
-    <Stack gap={2}>
-      <Typography color="primary.main" fontSize={20} fontWeight={"bold"}>
-        Step {value.step}
-      </Typography>
-      <Typography>{value.direction}</Typography>
-    </Stack>
-  );
-};
-
-const BigSectionHeading = styled(Typography)(({ theme }) => ({
-  fontSize: 32,
-  color: theme.palette.primary.main,
-  fontWeight: "bold",
-}));
-
-const TagChip: FC<ChipProps> = (props) => {
-  return (
-    <Chip
-      {...props}
-      variant="outlined"
-      clickable
-      sx={{
-        p: 2,
-        borderWidth: 1,
-        borderColor: "primary.main",
-        borderStyle: "solid",
-        fontSize: 16,
-        fontWeight: "bold",
-        "&:hover": {
-          bgColor: "#000",
-        },
-      }}
-    />
-  );
-};
-
-type SameAuthorRecipesCarouselProps = {
-  recipes: RecipeEntity[];
-};
-
-const SameAuthorRecipesCarousel: FC<SameAuthorRecipesCarouselProps> = ({
-  recipes,
-}) => {
-  return (
-    <>
-      {recipes.length > 0 ? (
-        <>
-          <CustomCarousel
-            responsive={responsive}
-            removeArrowOnDeviceType={["sm", "xs"]}
-          >
-            {recipes.map((recipe, index) => (
-              <PrimaryCard key={index} recipe={recipe} />
-            ))}
-          </CustomCarousel>
-        </>
-      ) : (
-        <>
-          <Typography>There are no recipes from this author.</Typography>
-        </>
-      )}
-    </>
-  );
-};

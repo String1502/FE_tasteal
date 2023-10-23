@@ -1,5 +1,6 @@
-import { Card, CardContent, Grid } from "@mui/material";
+import { Grid } from "@mui/material";
 import { FC } from "react";
+import SimpleContainer from "../../container/SimpleContainer";
 import RecipeTimeInfoItem from "./RecipeTimeInfoItem";
 
 export type RecipeTimeInfoProps = {
@@ -9,28 +10,18 @@ export type RecipeTimeInfoProps = {
 
 const RecipeTimeInfo: FC<RecipeTimeInfoProps> = ({ totalTime, activeTime }) => {
   return (
-    <Card
-      sx={{
-        borderStyle: "solid",
-        borderColor: "rgba(0, 0, 0, 0.12)",
-        borderWidth: 2,
-        borderRadius: 6,
-        boxShadow: "none",
-      }}
-    >
-      <CardContent>
-        <Grid container>
-          <Grid item xs textAlign={"center"}>
-            <RecipeTimeInfoItem time={totalTime} type="total" />
-          </Grid>
-          {activeTime && (
-            <Grid item xs textAlign={"center"}>
-              <RecipeTimeInfoItem time={activeTime} type="active" />
-            </Grid>
-          )}
+    <SimpleContainer>
+      <Grid container>
+        <Grid item xs textAlign={"center"}>
+          <RecipeTimeInfoItem time={totalTime} type="total" />
         </Grid>
-      </CardContent>
-    </Card>
+        {activeTime && (
+          <Grid item xs textAlign={"center"}>
+            <RecipeTimeInfoItem time={activeTime} type="active" />
+          </Grid>
+        )}
+      </Grid>
+    </SimpleContainer>
   );
 };
 
