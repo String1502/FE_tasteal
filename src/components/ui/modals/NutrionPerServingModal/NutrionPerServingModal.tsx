@@ -10,7 +10,6 @@ import {
   TableCell,
   TableRow,
   Typography,
-  TypographyProps,
   styled,
 } from "@mui/material";
 import { FC, useMemo } from "react";
@@ -73,7 +72,7 @@ const NutrionPerServingModal: React.FunctionComponent<{
     };
 
     return result;
-  }, []);
+  }, [nutritionInfo]);
 
   return (
     <Modal

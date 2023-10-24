@@ -1,11 +1,5 @@
-import {
-  Box,
-  Container,
-  Grid,
-  Link,
-  LinkProps,
-  Typography,
-} from "@mui/material";
+import { popoverImage } from "@/assets/exportImage";
+import { Box, Container, Grid, Typography } from "@mui/material";
 import React from "react";
 import { DefaultTuKhoas, TuKhoa } from "../../../pages/Search";
 import {
@@ -14,7 +8,6 @@ import {
 } from "../../../types/sampleData";
 import { IngredientEntity, OccasionEntity } from "../../../types/type";
 import { CustomLink } from "./CustomLink";
-import { popoverImage } from "@/assets/exportImage";
 
 const gridItemSX = {
   height: "100%",

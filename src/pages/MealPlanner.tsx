@@ -1,20 +1,3 @@
-import React, { useState } from "react";
-import { RecipeEntity } from "../types/type";
-import { recipes } from "../types/sampleData";
-import { MealPlanCard } from "../components/common/card/MealPlanCard.tsx";
-import {
-  Container,
-  Grid,
-  Typography,
-  TypographyProps,
-  Button,
-  Box,
-  IconButton,
-  Accordion,
-  AccordionSummary,
-  AccordionDetails,
-} from "@mui/material";
-import Layout from "../layout/Layout";
 import {
   AddRounded,
   AdsClickRounded,
@@ -24,6 +7,22 @@ import {
   KeyboardArrowRightRounded,
   LibraryAdd,
 } from "@mui/icons-material";
+import {
+  Accordion,
+  AccordionDetails,
+  AccordionSummary,
+  Box,
+  Button,
+  Grid,
+  IconButton,
+  Typography,
+  TypographyProps,
+} from "@mui/material";
+import React, { useState } from "react";
+import { MealPlanCard } from "../components/common/card/MealPlanCard.tsx";
+import Layout from "../layout/Layout";
+import { recipes } from "../types/sampleData";
+import { RecipeEntity } from "../types/type";
 
 const typoProps: TypographyProps = {
   variant: "h6",
@@ -71,7 +70,10 @@ const WeekNavigation: React.FC = () => {
   };
 
   return (
-    <Box width={"100%"} sx={{ display: "flex", justifyContent: "center", ml:15 }}>
+    <Box
+      width={"100%"}
+      sx={{ display: "flex", justifyContent: "center", ml: 15 }}
+    >
       <Button onClick={() => handleNavigationClick(-1)}>
         <KeyboardArrowLeftRounded />
       </Button>
@@ -185,14 +187,8 @@ const MealPlanner: React.FC = () => {
         }}
       >
         <Grid item xs={12}>
-          <Box
-          sx={{ width: "80%", m: "auto" }}>
-            <Grid
-              container
-              justifyContent={"center"}
-              alignItems={"center"}
-      
-            >
+          <Box sx={{ width: "80%", m: "auto" }}>
+            <Grid container justifyContent={"center"} alignItems={"center"}>
               <Grid item xs={12} md={3}>
                 <Typography
                   {...typoProps}
@@ -211,7 +207,6 @@ const MealPlanner: React.FC = () => {
               </Grid>
 
               <Grid item xs={12} md={5}></Grid>
-   
             </Grid>
           </Box>
         </Grid>
@@ -311,11 +306,10 @@ const MealPlanner: React.FC = () => {
                                   <Grid item>
                                     <Typography>{day}</Typography>
                                   </Grid>
-                                  <Grid item >
+                                  <Grid item>
                                     <Button
                                       variant="contained"
                                       color="secondary"
-                                 
                                     >
                                       <AddRounded
                                         sx={{
