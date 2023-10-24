@@ -8,13 +8,13 @@ import {
 import React from "react";
 import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
 import CreateRecipe from "./pages/CreateRecipe";
+import { ForgotPass } from "./pages/ForgotPass";
 import Home from "./pages/Home";
+import MealPlanner from "./pages/MealPlanner";
 import Search from "./pages/Search";
 import { SignIn } from "./pages/SignIn";
 import { SignUp } from "./pages/SignUp";
-import  MealPlanner  from "./pages/MealPlanner";
 import { SignUpEmail } from "./pages/SignUpEmail";
-import { ForgotPass } from "./pages/ForgotPass";
 import { getMode } from "./theme/muiTheme";
 
 export const ColorModeContext = React.createContext({
@@ -48,8 +48,8 @@ function App() {
             <Route path="/signup" element={<SignUp />} />
             <Route path="/signupemail" element={<SignUpEmail />} />
             <Route path="/forgotpass" element={<ForgotPass />} />
-            <Route path="/create-recipe" element={<CreateRecipe />} />
-            <Route path="/recipe-detail/:id" element={<RecipeDetail />} />
+            <Route path="/recipe/create" element={<CreateRecipe />} />
+            <Route path="/recipe/:id" element={<RecipeDetail />} />
             <Route path="/mealplanner" element={<MealPlanner />} />
             {/* Thêm các tuyến đường khác */}
           </Routes>
