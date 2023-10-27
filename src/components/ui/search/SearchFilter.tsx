@@ -16,6 +16,7 @@ import { ingredients, occasions } from "../../../types/sampleData";
 import { useEffect, useMemo, useState } from "react";
 import { IngredientAutocomplete } from "./IngredientAutocomplete";
 import { IngredientEntity } from "../../../types/type";
+import IngredientService from "@/lib/services/ingredientService";
 
 const timeFilterItems = [
   {
@@ -83,10 +84,33 @@ const CustomAccordion = ({
   );
 };
 
-export function SearchFilter() {
+export function SearchFilter({
+  handleChangeFilter,
+}: {
+  handleChangeFilter: (
+    type:
+      | "ingredientID"
+      | "exceptIngredientID"
+      | "totalTime"
+      | "activeTime"
+      | "occasionID"
+      | "calories"
+      | "textSearch"
+      | "keyWords",
+    value: any
+  ) => void;
+}) {
   //#region filter Nguyên liệu
-  const ingredientsData = useMemo(() => {
-    return ingredients;
+  const [ingredientsData, setIngredientsData] = useState<IngredientEntity[]>(
+    []
+  );
+
+  useEffect(() => {
+    async function fetchData() {
+      // setIngredientsData(await IngredientService.GetAll());
+      setIngredientsData(ingredients);
+    }
+    fetchData();
   }, []);
 
   useEffect(() => {
@@ -115,6 +139,13 @@ export function SearchFilter() {
     setExceptedIngredientsOptions(exceptedIngredientsOptions);
   };
 
+  useEffect(() => {
+    const ids = selectedIngredients
+      .map((ingredient) => ingredient.id)
+      .filter((id) => id !== undefined);
+    handleChangeFilter("ingredientID", ids);
+  }, [selectedIngredients]);
+
   // Excepted ingredients
 
   const [exceptedIngredients, setExceptedIngredients] = useState<
@@ -135,6 +166,14 @@ export function SearchFilter() {
     );
     setSelectedIngredientsOptions(selectedIngredientsOptions);
   };
+
+  useEffect(() => {
+    const ids = exceptedIngredients
+      .map((ingredient) => ingredient.id)
+      .filter((id) => id !== undefined);
+    handleChangeFilter("exceptIngredientID", ids);
+  }, [exceptedIngredients]);
+
   //#endregion
 
   //#region filter Thời gian
@@ -150,6 +189,11 @@ export function SearchFilter() {
       setSelectedTime(newValue);
     }
   };
+
+  useEffect(() => {
+    handleChangeFilter("totalTime", parseInt(selectedTime ?? "0"));
+  }, [selectedTime]);
+
   //#endregion
 
   //#region filter Calorie
@@ -166,6 +210,17 @@ export function SearchFilter() {
     }
   };
 
+  useEffect(() => {
+    if (selectedCalorie) {
+      handleChangeFilter("calories", JSON.parse(selectedCalorie));
+    } else {
+      handleChangeFilter("calories", {
+        min: 0,
+        max: Infinity,
+      });
+    }
+  }, [selectedCalorie]);
+
   //#endregion
 
   //#region filter Dịp
@@ -180,6 +235,10 @@ export function SearchFilter() {
       setSelectedDip([...selectedDip, newValue]);
     }
   };
+
+  useEffect(() => {
+    handleChangeFilter("occasionID", selectedDip);
+  }, [selectedDip]);
 
   //#endregion
 

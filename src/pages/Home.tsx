@@ -10,7 +10,7 @@ import { Banner } from "@/components/ui/home/Banner";
 import { OccasionsList } from "@/components/ui/home/OccasionsList";
 import { RecipesCarousel } from "@/components/ui/home/RecipesCarousel";
 import AccountService from "@/lib/services/AccountService";
-import RecipeService from "@/lib/services/RecipeService";
+import RecipeService from "@/lib/services/recipeService";
 import OccasionService from "@/lib/services/occasionService";
 import { AccountEntity, OccasionEntity, RecipeEntity } from "@/types/type";
 import {
@@ -225,8 +225,8 @@ function Home() {
             >
               {whyTastealArray.map((item, index) => {
                 return (
-                  <Grid item xs={6} md={3}>
-                    <WhyTasteal key={index} item={item} />
+                  <Grid key={index} item xs={6} md={3}>
+                    <WhyTasteal item={item} />
                   </Grid>
                 );
               })}

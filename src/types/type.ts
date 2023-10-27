@@ -1,62 +1,71 @@
 export type AccountEntity = {
   id: number;
-  username?: string | null;
-  password?: string | null;
-  name?: string | null;
-  avatar?: string | null;
-  introduction?: string | null;
+  username?: string | undefined;
+  password?: string | undefined;
+  name?: string | undefined;
+  avatar?: string | undefined;
+  introduction?: string | undefined;
+};
+
+export type CartEntity = {
+  id: number;
+  account_id?: number | undefined;
+  recipe_id?: number | undefined;
+  serving_size: number;
+  Account?: AccountEntity | undefined;
+  Recipe?: RecipeEntity | undefined;
 };
 
 export type Cart_ItemEntity = {
   id: number;
-  account_id?: number | null;
-  ingredient_id?: number | null;
+  cart_id: number;
+  ingredient_id: number;
   amount: number;
-  Account?: AccountEntity | null;
-  Ingredient?: IngredientEntity | null;
+  isBought: boolean;
+  Cart?: CartEntity | undefined;
+  Ingredient?: IngredientEntity | undefined;
 };
 
 export type CommentEntity = {
   id: number;
   recipe_id: number;
   account_id: number;
-  comment?: string | null;
-  Recipe?: RecipeEntity | null;
-  Account?: AccountEntity | null;
+  comment?: string | undefined;
+  Recipe?: RecipeEntity | undefined;
+  Account?: AccountEntity | undefined;
 };
 
 export type CookBook_RecipeEntity = {
   id: number;
   cook_book_id: number;
   recipe_id: number;
-  CookBook?: CookBookEntity | null;
-  Recipe?: RecipeEntity | null;
+  CookBook?: CookBookEntity | undefined;
+  Recipe?: RecipeEntity | undefined;
 };
 
 export type CookBookEntity = {
   id: number;
   name: string;
-  owner?: number | null;
-  Account?: AccountEntity | null;
+  owner?: number | undefined;
+  Account?: AccountEntity | undefined;
 };
 
 export type Ingredient_TypeEntity = {
   id: number;
   name: string;
-  // measurement_unit_id: number;
 };
 
 export type IngredientEntity = {
   id: number;
   name: string;
-  image?: string | null;
+  image?: string | undefined;
   measurement_unit_id: number;
   type_id: number;
   nutrition_info_id: number;
   isLiquid: boolean;
   ratio: number;
-  Ingredient_Type?: Ingredient_TypeEntity | null;
-  Nutrition_Info?: Nutrition_InfoEntity | null;
+  Ingredient_Type?: Ingredient_TypeEntity | undefined;
+  Nutrition_Info?: Nutrition_InfoEntity | undefined;
 };
 
 export type Nutrition_InfoEntity = {
@@ -80,18 +89,18 @@ export type Nutrition_InfoEntity = {
 export type OccasionEntity = {
   id: number;
   name: string;
-  description?: string | null;
-  image?: string | null;
+  description?: string | undefined;
+  image?: string | undefined;
   start_at: Date;
 };
 
 export type Pantry_ItemEntity = {
   id: number;
-  account_id?: number | null;
-  ingredient_id?: number | null;
+  account_id?: number | undefined;
+  ingredient_id?: number | undefined;
   amount: number;
-  Account?: AccountEntity | null;
-  Ingredient?: IngredientEntity | null;
+  Account?: AccountEntity | undefined;
+  Ingredient?: IngredientEntity | undefined;
 };
 
 export type PlanEntity = {
@@ -100,8 +109,8 @@ export type PlanEntity = {
   recipe_id: number;
   date: Date;
   serving_size: number;
-  AccountEntity?: AccountEntity | null;
-  RecipeEntity?: RecipeEntity | null;
+  AccountEntity?: AccountEntity | undefined;
+  RecipeEntity?: RecipeEntity | undefined;
 };
 
 export type RatingEntity = {
@@ -109,24 +118,24 @@ export type RatingEntity = {
   recipe_id: number;
   account_id: number;
   rating: number;
-  Account?: AccountEntity | null;
-  Recipe?: RecipeEntity | null;
+  Account?: AccountEntity | undefined;
+  Recipe?: RecipeEntity | undefined;
 };
 
 export type Recipe_DirectionEntity = {
   id: number;
   recipe_id: number;
   step: number;
-  direction?: string | null;
-  image?: string | null;
-  Recipe?: RecipeEntity | null;
+  direction?: string | undefined;
+  image?: string | undefined;
+  Recipe?: RecipeEntity | undefined;
 };
 
 export type Recipe_ImageEntity = {
   id: number;
   recipe_id: number;
-  image?: string | null;
-  Recipe?: RecipeEntity | null;
+  image?: string | undefined;
+  Recipe?: RecipeEntity | undefined;
 };
 
 export type Recipe_IngredientEntity = {
@@ -134,18 +143,18 @@ export type Recipe_IngredientEntity = {
   recipe_id: number;
   ingredient_id: number;
   amount: number;
-  note?: string | null;
+  note?: string | undefined;
   // is_required: boolean;
-  Recipe?: RecipeEntity | null;
-  Ingredient?: IngredientEntity | null;
+  Recipe?: RecipeEntity | undefined;
+  Ingredient?: IngredientEntity | undefined;
 };
 
 export type Recipe_OccasionEntity = {
   id: number;
   occasion_id: number;
   recipe_id: number;
-  OccasionEntity?: OccasionEntity | null;
-  RecipeEntity?: RecipeEntity | null;
+  OccasionEntity?: OccasionEntity | undefined;
+  RecipeEntity?: RecipeEntity | undefined;
 };
 
 export type RecipeEntity = {
@@ -155,23 +164,23 @@ export type RecipeEntity = {
   totalTime: number;
   active_time: number;
   serving_size: number;
-  introduction?: string | null;
-  author_note?: string | null;
+  introduction?: string | undefined;
+  author_note?: string | undefined;
   is_private: boolean;
-  image?: string | null;
-  author?: number | null;
-  nutrition_info_id?: number | null;
-  Account?: AccountEntity | null;
-  Nutrition_info?: Nutrition_InfoEntity | null;
-  created_at?: Date | null;
+  image?: string | undefined;
+  author?: number | undefined;
+  nutrition_info_id?: number | undefined;
+  Account?: AccountEntity | undefined;
+  Nutrition_info?: Nutrition_InfoEntity | undefined;
+  created_at?: Date | undefined;
 };
 
 export type RecipeSearchEntity = {
-  IngredientID?: number[] | null;
-  ExceptIngredientID?: number[] | null;
-  TotalTime?: number | null;
-  ActiveTime?: number | null;
-  OccasionID?: number | null;
-  Calories?: number | null;
-  TextSearch?: string | null;
+  IngredientID?: number[] | undefined;
+  ExceptIngredientID?: number[] | undefined;
+  TotalTime?: number | undefined;
+  ActiveTime?: number | undefined;
+  OccasionID?: number | undefined;
+  Calories?: number | undefined;
+  TextSearch?: string | undefined;
 };

@@ -7,6 +7,7 @@ import Layout from "../layout/Layout";
 import { recipes } from "../types/sampleData";
 import { RecipeEntity } from "../types/type";
 import { SearchTextField } from "@/components/ui/search/SearchTextField.tsx";
+import { removeDiacritics } from "@/utils/format/index.ts";
 
 export type TuKhoa = {
   label: string;
@@ -40,8 +41,73 @@ export const DefaultTuKhoas: TuKhoa[] = [
   },
 ];
 
+type Filter = {
+  ingredientID: number[];
+  exceptIngredientID: number[];
+  totalTime: number;
+  activeTime: number;
+  occasionID: number[];
+  calories: {
+    min: number;
+    max: number;
+  };
+  textSearch: string;
+  keyWords: string[];
+};
+
 function Search() {
   const [resultItem, setResultItem] = React.useState<RecipeEntity[]>(recipes);
+
+  //#region Search
+
+  function searchButtonClick(value: string) {
+    handleChangeFilter("textSearch", value);
+  }
+
+  //#endregion
+
+  //#region Filter
+  const [filter, setFilter] = React.useState<Filter>({
+    ingredientID: [],
+    exceptIngredientID: [],
+    totalTime: 0,
+    activeTime: 0,
+    occasionID: [],
+    calories: {
+      min: 0,
+      max: Infinity,
+    },
+    textSearch: "",
+    keyWords: [],
+  });
+
+  function handleChangeFilter(
+    type:
+      | "ingredientID"
+      | "exceptIngredientID"
+      | "totalTime"
+      | "activeTime"
+      | "occasionID"
+      | "calories"
+      | "textSearch"
+      | "keyWords",
+    value: any
+  ) {
+    setFilter((prev) => {
+      return {
+        ...prev,
+        [type]: value,
+      };
+    });
+  }
+
+  useEffect(() => {
+    // API search
+  }, [filter]);
+
+  //#endregion
+
+  console.log(filter);
 
   //#region Từ khóa
   const [tuKhoas, setTuKhoas] = React.useState<TuKhoa[]>(DefaultTuKhoas);
@@ -62,9 +128,15 @@ function Search() {
   };
 
   useEffect(() => {
-    setTuKhoas(DefaultTuKhoas);
-  }, [DefaultTuKhoas]);
-
+    let keyWords = tuKhoas
+      .map((item) => {
+        if (item.value && item.label) {
+          return removeDiacritics(item.label);
+        }
+      })
+      .filter(Boolean);
+    handleChangeFilter("keyWords", keyWords);
+  }, [tuKhoas]);
   //#endregion
 
   return (
@@ -82,12 +154,12 @@ function Search() {
         >
           <Grid item xs={12}>
             <Box>
-              <SearchTextField />
+              <SearchTextField searchButtonClick={searchButtonClick} />
             </Box>
           </Grid>
 
           <Grid item xs={12} lg={3} sx={{ mt: 2 }}>
-            <SearchFilter />
+            <SearchFilter handleChangeFilter={handleChangeFilter} />
           </Grid>
 
           <Grid item xs={12} lg={9} sx={{ mt: 2 }}>

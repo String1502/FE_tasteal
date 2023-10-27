@@ -1,6 +1,7 @@
 import { ingredients } from "@/types/sampleData";
 import { IngredientEntity } from "@/types/type";
 import simulateDelay from "@/utils/promises/stimulateDelay";
+import { apiPath } from "../constants/common";
 
 /**
  * Represents a service for managing ingredients.
@@ -11,12 +12,18 @@ class IngredientService {
    *
    * @return {Promise<IngredientEntity[]>} A promise that resolves with an array of IngredientEntity objects.
    */
-  public static GetAll(): Promise<IngredientEntity[]> {
-    // Simulate delay of 1 second
-    simulateDelay(1);
+  public static async GetAll(): Promise<IngredientEntity[]> {
+    let result: IngredientEntity[] = [];
+    await fetch(`${apiPath}/api/v2/Ingredient/getall`)
+      .then((res) => res.json())
+      .then((data) => {
+        result = data;
+      })
+      .catch((error) => {
+        console.log(error);
+      });
 
-    // Return a promise that resolves with the ingredients array
-    return Promise.resolve(ingredients);
+    return result;
   }
 
   /**

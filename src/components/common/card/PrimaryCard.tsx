@@ -139,7 +139,13 @@ export function PrimaryCard({
               emptyIcon={<StarRounded fontSize="inherit" />}
               size="small"
             />
-            <Typography variant="body2" sx={{ fontWeight: "bold" }}>
+            <Typography
+              variant="body2"
+              sx={{ fontWeight: "bold" }}
+              whiteSpace={"nowrap"}
+              textOverflow={"ellipsis"}
+              overflow={"hidden"}
+            >
               {recipe.name}
             </Typography>
 

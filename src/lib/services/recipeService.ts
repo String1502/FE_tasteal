@@ -1,6 +1,7 @@
 import { recipes as recipesSampleData } from "@/types/sampleData";
 import { RecipeEntity } from "@/types/type";
 import simulateDelay from "@/utils/promises/stimulateDelay";
+import { apiPath } from "../constants/common";
 
 /**
  * Represents a service for managing occasions.
@@ -47,25 +48,60 @@ class RecipeService {
   public static async GetNewReleaseRecipes(
     limit: number
   ): Promise<RecipeEntity[]> {
-    // Simulate delay of 1 second
-    simulateDelay(1);
-    const recipes = await RecipeService.GetAllRecipes();
-    return recipes
-      .sort(
-        (a, b) =>
-          new Date(b.created_at ?? "").getTime() -
-          new Date(a.created_at ?? "").getTime()
-      )
-      .slice(0, limit);
+    let recipes: RecipeEntity[] = [];
+
+    const requestOptions = {
+      method: "POST",
+      headers: {
+        "Content-Type": "text/json",
+        Accept: "text/plain",
+      },
+      body: JSON.stringify({
+        pageSize: limit,
+        page: 0,
+        isDescend: true,
+      }),
+    };
+
+    await fetch(`${apiPath}/api/v2/Home/recipebydatetime`, requestOptions)
+      .then((response) => response.json())
+      .then((data) => {
+        recipes = data;
+      })
+      .catch((error) => {
+        console.error("Lỗi:", error);
+      });
+
+    return recipes;
   }
 
   public static async GetTrendingRecipes(
     limit: number
   ): Promise<RecipeEntity[]> {
-    // Simulate delay of 1 second
-    simulateDelay(1);
-    const recipes = await RecipeService.GetAllRecipes();
-    return recipes.sort((a, b) => b.rating - a.rating).slice(0, limit);
+    let recipes: RecipeEntity[] = [];
+
+    const requestOptions = {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        pageSize: limit,
+        page: 0,
+        isDescend: true,
+      }),
+    };
+
+    await fetch(`${apiPath}/api/v2/Home/recipebyrating`, requestOptions)
+      .then((response) => response.json())
+      .then((data) => {
+        recipes = data;
+      })
+      .catch((error) => {
+        console.error("Lỗi:", error);
+      });
+
+    return recipes;
   }
 }
 

@@ -6,11 +6,20 @@ const sx = {
   height: "35px",
 };
 
-const CustomButton = ({ label, variant }: { label: string; variant: any }) => {
+const CustomButton = ({
+  label,
+  variant,
+  color,
+}: {
+  label: string;
+  variant: any;
+  color?: string;
+}) => {
   return (
     <Button sx={sx} variant={variant}>
       <Typography
         variant="body2"
+        color={color ?? "primary"}
         sx={{ fontWeight: "bold", textTransform: "lowercase" }}
       >
         # {label}
@@ -36,7 +45,9 @@ export function CheckBoxButton({
           handleChangeTuKhoa({ label, value: e.target.checked });
         }}
         icon={<CustomButton label={label} variant="outlined" />}
-        checkedIcon={<CustomButton label={label} variant="contained" />}
+        checkedIcon={
+          <CustomButton label={label} variant="contained" color="white" />
+        }
         disableRipple
       />
     </>
