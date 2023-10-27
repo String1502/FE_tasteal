@@ -12,6 +12,7 @@ import Home from "./pages/Home";
 import Search from "./pages/Search";
 import { SignIn } from "./pages/SignIn";
 import { SignUp } from "./pages/SignUp";
+import MealPlanner from "./pages/MealPlanner";
 import { SignUpEmail } from "./pages/SignUpEmail";
 import { ForgotPass } from "./pages/ForgotPass";
 import { getMode } from "./theme/muiTheme";
@@ -51,6 +52,7 @@ function App() {
             <Route path="/create-recipe" element={<CreateRecipe />} />
             <Route path="/recipe-detail/:id" element={<RecipeDetail />} />
             <Route path="/grocery" element={<Grocery />} />
+            <Route path="/mealplanner" element={<MealPlanner />} />
             {/* Thêm các tuyến đường khác */}
           </Routes>
         </Router>
