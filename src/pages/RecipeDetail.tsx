@@ -18,7 +18,7 @@ import IngredientService from "@/lib/services/IngredientService";
 import NutritionService from "@/lib/services/NutrionInfoService";
 import RecipeDirectionService from "@/lib/services/RecipeDirectionService";
 import RecipeIngredientService from "@/lib/services/RecipeIngredientService";
-import RecipeService from "@/lib/services/RecipeService";
+import RecipeService from "@/lib/services/recipeService";
 import {
   AccountEntity,
   Nutrition_InfoEntity,

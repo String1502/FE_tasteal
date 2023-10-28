@@ -10,7 +10,6 @@ import { Banner } from "@/components/ui/home/Banner";
 import { OccasionsList } from "@/components/ui/home/OccasionsList";
 import { RecipesCarousel } from "@/components/ui/home/RecipesCarousel";
 import AccountService from "@/lib/services/AccountService";
-import RecipeService from "@/lib/services/recipeService";
 import OccasionService from "@/lib/services/occasionService";
 import { AccountEntity, OccasionEntity, RecipeEntity } from "@/types/type";
 import {
@@ -25,6 +24,7 @@ import {
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Layout from "../layout/Layout";
+import RecipeService from "@/lib/services/recipeService";
 
 const typoProps: TypographyProps = {
   variant: "h6",
