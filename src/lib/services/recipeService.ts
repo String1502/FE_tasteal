@@ -49,7 +49,6 @@ class RecipeService {
     limit: number
   ): Promise<RecipeEntity[]> {
     let recipes: RecipeEntity[] = [];
-    console.log(limit);
 
     const requestOptions: RequestInit = {
       method: "POST",

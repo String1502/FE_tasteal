@@ -17,9 +17,10 @@ class OccasionService {
     const requestOptions = {
       method: "POST",
       headers: {
-        "Content-Type": "application/json",
+        "Content-Type": "application/json; charset=UTF-8",
       },
     };
+
     await fetch(`${API_PATH}/api/v2/Home/getoccasion`, requestOptions)
       .then((res) => res.json())
       .then((data) => {
@@ -36,7 +37,7 @@ class OccasionService {
   public static async GetCurrentOccassions(): Promise<OccasionEntity> {
     // Simulate delay of 1 second
     simulateDelay(1);
-    const occasions = await OccasionService.GetAllOccasions();
+    const occasions = await this.GetAllOccasions();
     let index = 0;
     const date = new Date();
     occasions.forEach((item) => {

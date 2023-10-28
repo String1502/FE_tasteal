@@ -161,7 +161,7 @@ export type RecipeEntity = {
   id: number;
   name: string;
   rating: number;
-  totalTime: number;
+  totalTime: string;
   active_time: number;
   serving_size: number;
   introduction?: string | undefined;
