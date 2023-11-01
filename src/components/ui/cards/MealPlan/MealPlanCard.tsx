@@ -10,12 +10,12 @@ import {
   Rating,
   Typography,
 } from "@mui/material";
-import { Clear, StarRounded, SyncRounded } from "@mui/icons-material";
-import { RecipeEntity } from "../../../types/type";
+import { Clear, RotateLeftRounded, StarRounded } from "@mui/icons-material";
+import { RecipeEntity } from "../../../../types/type";
 import { curveShapePath } from "@/assets/exportImage";
 import useFirebaseImage from "@/lib/hooks/useFirebaseImage";
 
-const imgHeight = "180px";
+const imgHeight = "148px";
 const padding = 2;
 
 export function MealPlanCard({
@@ -53,43 +53,46 @@ export function MealPlanCard({
           <Button
             variant="contained"
             color="primary"
-            startIcon={<SyncRounded sx={{ color: "#fff" }} />}
+            size="small"
+            startIcon={<RotateLeftRounded sx={{ color: "#fff" }} />}
             sx={{
               position: "absolute",
               top: padding * 8,
               left: padding * 8,
               zIndex: 1,
-              backgroundColor: "rgba(0, 0, 0, 0.4)",
+              backgroundColor: "rgba(0, 0, 0, 0.7)",
               color: "#fff",
               transition: "all 0.1s ease-in-out",
               "&:hover": {
-                backgroundColor: "rgba(0, 0, 0, 0.5)",
+                backgroundColor: "rgba(0, 0, 0, 0.9)",
                 color: "#fff",
-                transform: "scale(1.15)",
               },
+              pr: 2,
+              py: 0.4,
+              fontWeight: "bold",
             }}
           >
             ĐỔI
           </Button>
           <IconButton
-            color="primary" // Change the color as needed
+            color="primary"
+            size="small"
             sx={{
               borderRadius: "50%",
               position: "absolute",
               top: padding * 8,
               right: padding * 8,
               zIndex: 1,
-              backgroundColor: "rgba(0, 0, 0, 0.4)",
+              backgroundColor: "rgba(0, 0, 0, 0.7)",
               color: "#fff",
               transition: "all 0.1s ease-in-out",
               "&:hover": {
-                backgroundColor: "rgba(0, 0, 0, 0.5)",
+                backgroundColor: "rgba(0, 0, 0, 0.9)",
                 color: "#fff",
-                transform: "scale(1.15)",
               },
-            }} // Set the border radius to make it circular
+            }}
           >
-            <Clear />
+            <Clear fontSize="small" />
           </IconButton>
 
           <Box
@@ -158,7 +161,13 @@ export function MealPlanCard({
               emptyIcon={<StarRounded fontSize="inherit" />}
               size="small"
             />
-            <Typography variant="body2" sx={{ fontWeight: "bold" }}>
+            <Typography
+              variant="body2"
+              sx={{ fontWeight: "bold" }}
+              whiteSpace={"nowrap"}
+              textOverflow={"ellipsis"}
+              overflow={"hidden"}
+            >
               {recipe.name}
             </Typography>
           </CardContent>

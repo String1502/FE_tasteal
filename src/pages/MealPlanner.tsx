@@ -1,346 +1,349 @@
-import React, { useState } from "react";
-import { RecipeEntity } from "../types/type";
-import { recipes } from "../types/sampleData";
-import { MealPlanCard } from "../components/common/card/MealPlanCard.tsx";
+import React, { useEffect, useState } from "react";
 import {
   Container,
   Grid,
   Typography,
-  TypographyProps,
   Button,
   Box,
   IconButton,
-  Accordion,
-  AccordionSummary,
-  AccordionDetails,
+  Popover,
 } from "@mui/material";
 import Layout from "../layout/Layout";
 import {
-  AddRounded,
-  AdsClickRounded,
-  ChangeCircleRounded,
-  ExpandMore,
-  KeyboardArrowLeftRounded,
-  KeyboardArrowRightRounded,
-  LibraryAdd,
+  HighlightAltRounded,
+  MapsUgcRounded,
+  QuestionMarkRounded,
+  RotateLeftRounded,
 } from "@mui/icons-material";
+import { WeekNavigation } from "@/components/ui/mealPlan/WeekNavigation.tsx";
+import WeekDateItem from "@/components/ui/mealPlan/WeekDateItem.tsx";
 
-const typoProps: TypographyProps = {
-  variant: "h6",
-  fontWeight: "900",
-  textTransform: "uppercase",
-  fontFamily: "poppins",
-};
+const ActionSection = () => {
+  const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(
+    null
+  );
 
-const formatNumberWithLeadingZero = (number: number) => {
-  return number < 10 ? `0${number}` : number;
-};
-
-const WeekNavigation: React.FC = () => {
-  const [weekCounter, setWeekCounter] = useState<number>(0);
-
-  const handleNavigationClick = (increment: number) => {
-    setWeekCounter(weekCounter + increment);
+  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setAnchorEl(event.currentTarget);
   };
 
-  const getWeekLabel = () => {
-    if (weekCounter === -1) {
-      return "Tuần trước";
-    } else if (weekCounter === 1) {
-      return "Tuần sau";
-    } else if (weekCounter === 0) {
-      return "Tuần hiện tại";
-    } else {
-      const currentWeek = new Date();
-      currentWeek.setDate(currentWeek.getDate() + weekCounter * 7);
-
-      // Set the start of the week to Monday
-      const weekStart = new Date(currentWeek);
-      weekStart.setDate(weekStart.getDate() - (currentWeek.getDay() - 1));
-
-      const weekEnd = new Date(weekStart);
-      weekEnd.setDate(weekStart.getDate() + 6);
-
-      const startMonth = formatNumberWithLeadingZero(weekStart.getMonth() + 1);
-      const startDay = formatNumberWithLeadingZero(weekStart.getDate());
-      const endMonth = formatNumberWithLeadingZero(weekEnd.getMonth() + 1);
-      const endDay = formatNumberWithLeadingZero(weekEnd.getDate());
-
-      return `${startDay}/${startMonth} - ${endDay}/${endMonth}`;
-    }
+  const handleClose = () => {
+    setAnchorEl(null);
   };
 
+  const open = Boolean(anchorEl);
+
   return (
-    <Box width={"100%"} sx={{ display: "flex", justifyContent: "center", ml:15 }}>
-      <Button onClick={() => handleNavigationClick(-1)}>
-        <KeyboardArrowLeftRounded />
-      </Button>
-      <Typography {...typoProps} align="center" sx={{ flexGrow: 1 }}>
-        {getWeekLabel()}
-      </Typography>
-      <Button onClick={() => handleNavigationClick(1)}>
-        <KeyboardArrowRightRounded />
-      </Button>
-    </Box>
-  );
-};
-
-import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
-
-const MyGroceriesSection: React.FC = () => {
-  return (
-    <Box sx={{ width: "100%", m: 2 }}>
-      <Typography>Kho Hàng Của Tôi</Typography>
-      <Typography {...typoProps}>$---</Typography>
-      <Typography
-        sx={{ fontfamily: "poppins", fontSize: "11px", color: "gray" }}
-      >
-        Tổng Ước Lượng
-        <IconButton>
-          <HelpOutlineIcon sx={{ width: "15px", height: "15px" }} />
-        </IconButton>
-      </Typography>
-      <Typography {...typoProps}>$---</Typography>
-      <Typography
-        sx={{ fontfamily: "poppins", fontSize: "11px", color: "gray" }}
-      >
-        Giá cả trung bình mỗi bữa ăn dựa trên tất cả bữa ăn tuần này
-      </Typography>
-      <Button variant="contained" sx={{ width: "100%", mt: 2 }}>
-        THÊM TẤT CẢ
-      </Button>
-    </Box>
-  );
-};
-
-const HowItWorksSection: React.FC = () => {
-  return (
-    <Box>
-      <Accordion>
-        <AccordionSummary
-          aria-controls="panel1a-content"
-          id="panel1a-header"
-          sx={{ borderRadius: "10px" }}
-          expandIcon={<ExpandMore />}
-        >
-          <Typography>Cách Hoạt Động</Typography>
-        </AccordionSummary>
-        <AccordionDetails>
-          <Box sx={{ display: "flex", alignItems: "center", mb: 2 }}>
-            <AdsClickRounded></AdsClickRounded>
-            <Typography sx={{ ml: 2 }}>
-              <span style={{ fontWeight: "bold", color: "#002c36" }}>
-                Kéo và thả
-              </span>{" "}
-              một công thức để di chuyển nó tời một ngày bất kỳ trong tuần
-            </Typography>
-          </Box>
-
-          <Box sx={{ display: "flex", alignItems: "center", mb: 2 }}>
-            <LibraryAdd></LibraryAdd>
-            <Typography sx={{ ml: 2 }}>
-              <span style={{ fontWeight: "bold", color: "#002c36" }}>Thêm</span>{" "}
-              số lượng công thức mà bạn mong muốn
-            </Typography>
-          </Box>
-
-          <Box sx={{ display: "flex", alignItems: "center", mb: 2 }}>
-            <ChangeCircleRounded></ChangeCircleRounded>
-            <Typography sx={{ ml: 2 }}>
-              <span style={{ fontWeight: "bold", color: "#002c36" }}>
-                Chuyển
-              </span>{" "}
-              đổi công thức để thay thế nó với một đề xuất cá nhân
-            </Typography>
-          </Box>
-
-          <hr style={{ width: "100%", color: "gray", margin: "10px 0" }}></hr>
-
-          <Typography
-            sx={{
-              textDecoration: "underline",
-              alignContent: "center",
-              width: "100%",
-            }}
-          >
-            TÌM HIỂU THÊM
-          </Typography>
-        </AccordionDetails>
-      </Accordion>
-    </Box>
-  );
-};
-
-const MealPlanner: React.FC = () => {
-  const [resultItem, setResultItem] = React.useState<RecipeEntity[]>(recipes);
-  return (
-    <Layout>
-      <Grid
-        container
-        alignItems={"stretch"}
-        justifyContent={"center"}
-        spacing={4}
+    <>
+      <Box
         sx={{
-          mt: "2px",
+          width: "100%",
+          display: "flex",
+          justifyContent: { xs: "space-between", md: "flex-end" },
+          alignItems: "center",
+          gap: 2,
         }}
       >
-        <Grid item xs={12}>
+        <IconButton
+          color="primary"
+          onClick={handleClick}
+          sx={{
+            border: 1,
+          }}
+          size="small"
+        >
+          <QuestionMarkRounded fontSize="small" />
+        </IconButton>
+
+        <Popover
+          open={open}
+          anchorEl={anchorEl}
+          onClose={handleClose}
+          anchorOrigin={{
+            vertical: "bottom",
+            horizontal: "center",
+          }}
+          transformOrigin={{
+            vertical: "top",
+            horizontal: "center",
+          }}
+          slotProps={{
+            paper: {
+              sx: {
+                borderRadius: 4,
+                background: "white",
+                width: "280px",
+              },
+            },
+          }}
+        >
           <Box
-          sx={{ width: "80%", m: "auto" }}>
+            sx={{
+              p: 2,
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "center",
+              alignItems: "center",
+              gap: 4,
+            }}
+          >
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                gap: 2,
+              }}
+            >
+              <HighlightAltRounded fontSize="small" />
+              <Typography variant="body2" fontWeight={"light"}>
+                <span style={{ fontWeight: "bold" }}>Kéo và thả </span>
+                công thức để di chuyển nó tới bất kỳ ngày nào trong tuần.
+              </Typography>
+            </Box>
+
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                gap: 2,
+              }}
+            >
+              <MapsUgcRounded
+                sx={{
+                  transform: "scaleX(-1)",
+                }}
+                fontSize="small"
+              />
+              <Typography variant="body2" fontWeight={"light"}>
+                <span style={{ fontWeight: "bold" }}>Thêm </span>
+                nhiều công thức nấu ăn ngon từ Tasteal.
+              </Typography>
+            </Box>
+
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                gap: 2,
+              }}
+            >
+              <RotateLeftRounded fontSize="small" />
+              <Typography variant="body2" fontWeight={"light"}>
+                <span style={{ fontWeight: "bold" }}>Đổi </span>
+                một công thức để thay thế nó bằng một gợi ý khác.
+              </Typography>
+            </Box>
+          </Box>
+        </Popover>
+
+        <Button
+          variant="contained"
+          color="primary"
+          size="small"
+          sx={{
+            px: 2,
+          }}
+        >
+          Thêm vào giỏ đi chợ
+        </Button>
+      </Box>
+    </>
+  );
+};
+
+export type DateDisplay = {
+  label: string;
+  borderRight?: boolean;
+  borderBottom?: boolean;
+};
+
+const daysInWeek: DateDisplay[] = [
+  {
+    label: "Thứ hai",
+    borderRight: true,
+    borderBottom: true,
+  },
+  {
+    label: "Thứ ba",
+    borderRight: true,
+    borderBottom: true,
+  },
+  {
+    label: "Thứ tư",
+    borderRight: true,
+    borderBottom: true,
+  },
+  {
+    label: "Thứ năm",
+    borderRight: false,
+    borderBottom: true,
+  },
+  {
+    label: "Thứ sáu",
+    borderRight: true,
+    borderBottom: false,
+  },
+  {
+    label: "Thứ bảy",
+    borderRight: true,
+    borderBottom: false,
+  },
+  {
+    label: "Chủ nhật",
+    borderRight: true,
+    borderBottom: false,
+  },
+];
+
+const MealPlanner: React.FC = () => {
+  const [weekCounter, setWeekCounter] = React.useState(0);
+  function handleChangeWeekCounter(increment: number) {
+    setWeekCounter((prev) => prev + increment);
+  }
+
+  const [weekDates, setWeekDates] = React.useState<Date[]>([]);
+
+  function getWeekDates(offset: number): Date[] {
+    const currentDate = new Date();
+    const currentDay = currentDate.getDay(); // Lấy ngày trong tuần của ngày hiện tại (0 là Chủ Nhật, 1 là thứ Hai, ..., 6 là thứ Bảy)
+
+    const startOfWeek = new Date(currentDate);
+    startOfWeek.setDate(
+      currentDate.getDate() - currentDay + (currentDay === 0 ? -6 : 1)
+    ); // Đặt ngày bắt đầu tuần
+    startOfWeek.setDate(startOfWeek.getDate() + 7 * offset); // Áp dụng offset
+
+    const endOfWeek = new Date(startOfWeek);
+    endOfWeek.setDate(endOfWeek.getDate() + 6); // Ngày kết thúc tuần là ngày bắt đầu + 6
+
+    const dates: Date[] = [];
+
+    for (
+      let day = new Date(startOfWeek);
+      day <= endOfWeek;
+      day.setDate(day.getDate() + 1)
+    ) {
+      dates.push(new Date(day));
+    }
+
+    return dates;
+  }
+
+  useEffect(() => {
+    setWeekCounter(0);
+    setWeekDates(getWeekDates(0));
+  }, []);
+
+  useEffect(() => {
+    setWeekDates(getWeekDates(weekCounter));
+  }, [weekCounter]);
+
+  return (
+    <Layout>
+      <Grid container alignItems={"stretch"} justifyContent={"center"}>
+        <Grid item xs={12}>
+          <Container
+            sx={{
+              py: 3,
+            }}
+          >
             <Grid
+              sx={{ width: "100%" }}
               container
               justifyContent={"center"}
               alignItems={"center"}
-      
+              spacing={{
+                xs: 3,
+                md: 2,
+              }}
             >
-              <Grid item xs={12} md={3}>
+              <Grid item xs={12} md={4}>
                 <Typography
-                  {...typoProps}
+                  variant="h5"
                   sx={{
-                    fontWeight: "bold",
-                    fontSize: "28px",
-                    fontFamily: "Poppins SC",
+                    fontWeight: "900",
+                    textTransform: "uppercase",
                   }}
                 >
-                  LỊCH ĂN CỦA TÔI
+                  Lịch ăn của tôi
                 </Typography>
               </Grid>
 
-              <Grid item xs={12} md={4}>
-                <WeekNavigation />
+              <Grid
+                item
+                xs={12}
+                md={4}
+                sx={{
+                  display: {
+                    xs: "none",
+                    md: "block",
+                  },
+                }}
+              >
+                <WeekNavigation
+                  weekCounter={weekCounter}
+                  handleChangeWeekCounter={handleChangeWeekCounter}
+                />
               </Grid>
 
-              <Grid item xs={12} md={5}></Grid>
-   
+              <Grid item xs={12} md={4}>
+                <ActionSection />
+              </Grid>
+
+              <Grid
+                item
+                xs={12}
+                sx={{
+                  display: {
+                    xs: "block",
+                    md: "none",
+                  },
+                }}
+              >
+                <WeekNavigation
+                  weekCounter={weekCounter}
+                  handleChangeWeekCounter={handleChangeWeekCounter}
+                />
+              </Grid>
             </Grid>
-          </Box>
+          </Container>
         </Grid>
 
         <Grid item xs={12}>
           <Box
             sx={{
               backgroundColor: "secondary.main",
+              py: 4,
             }}
           >
-            <Box sx={{ width: "80%", m: "auto" }}>
-              <Grid
-                container
-                spacing={2}
-                justifyContent={"flex-start"}
-                alignItems={"flex-start"}
+            <Container>
+              <Box
+                sx={{
+                  width: "100%",
+                  borderRadius: 4,
+                  overflow: "hidden",
+                  backgroundColor: "background.default",
+                }}
               >
-                <Grid item xs={12} md={2.5}>
-                  <Box
-                    sx={{
-                      display: "flex",
-                      justifyContent: "center",
-                      backgroundColor: "white",
-                      marginBottom: "10px",
-                      borderRadius: "10px",
-                    }}
-                  >
-                    <MyGroceriesSection />
-                  </Box>
-
-                  <Box
-                    sx={{
-                      display: "flex",
-                      justifyContent: "center",
-
-                      borderRadius: "10px",
-                      height: "520px",
-                    }}
-                  >
-                    <HowItWorksSection />
-                  </Box>
-                </Grid>
-                <Grid item xs={12} md={true}>
-                  <Box
-                    sx={{
-                      width: "100%",
-                      borderRadius: 3,
-                      p: 4,
-                      backgroundColor: "white",
-                      mb: 5,
-                    }}
-                  >
-                    <Grid
-                      container
-                      spacing={1}
-                      justifyContent={"flex-start"}
-                      alignItems={"flex-start"}
-                    >
-                      {/* sx={{
-                    display: {
-                        xs: "none",
-                        md: "block",
-                    }
-                }} */}
-                      <Grid container>
-                        {[
-                          "Thứ hai",
-                          "Thứ ba",
-                          "Thứ tư",
-                          "Thứ năm",
-                          "Thứ sáu",
-                          "Thứ bảy",
-                          "Chủ nhật",
-                          "",
-                        ].map((day, index) => (
-                          <Grid item xs={12} md={3} key={index}>
-                            {day && (
-                              <Box
-                                sx={{
-                                  display: "flex",
-                                  flexDirection: "column",
-                                  backgroundColor: "white",
-                                  height: "fit-content",
-                                  p: 2,
-                                  border: "1px solid #f0f0f0",
-                                }}
-                              >
-                                <Grid
-                                  container
-                                  direction="row"
-                                  justifyContent="space-between"
-                                  alignItems="center"
-                                  sx={{
-                                    mb: 2,
-                                  }}
-                                >
-                                  <Grid item>
-                                    <Typography>{day}</Typography>
-                                  </Grid>
-                                  <Grid item >
-                                    <Button
-                                      variant="contained"
-                                      color="secondary"
-                                 
-                                    >
-                                      <AddRounded
-                                        sx={{
-                                          width: "20px", // Đặt độ rộng của biểu tượng (AddRounded)
-                                          height: "20px", // Đặt chiều cao của biểu tượng (AddRounded), tùy theo nhu cầu
-                                        }}
-                                      />
-                                    </Button>
-                                  </Grid>
-                                </Grid>
-                                {resultItem.length > 0 && (
-                                  <MealPlanCard
-                                    recipe={resultItem[0] as RecipeEntity}
-                                  />
-                                )}
-                              </Box>
-                            )}
-                          </Grid>
-                        ))}
-                      </Grid>
+                <Grid
+                  container
+                  justifyContent={"flex-start"}
+                  alignItems={"stretch"}
+                >
+                  {daysInWeek.map((item, index) => (
+                    <Grid item xs={12} md={3} key={index}>
+                      <WeekDateItem
+                        dateDisplay={item}
+                        date={weekDates[index]}
+                      />
                     </Grid>
-                  </Box>
+                  ))}
                 </Grid>
-              </Grid>
-            </Box>
+              </Box>
+            </Container>
           </Box>
         </Grid>
       </Grid>

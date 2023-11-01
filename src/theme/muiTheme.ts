@@ -32,7 +32,7 @@ export const getMode = (mode: PaletteMode): ThemeOptions => ({
           },
           divider: TopicColor,
           background: {
-            default: "#fff",
+            default: "#fffaf9",
             paper: "#fff",
           },
         }

@@ -106,11 +106,17 @@ export type Pantry_ItemEntity = {
 export type PlanEntity = {
   id: number;
   account_id: number;
-  recipe_id: number;
   date: Date;
-  serving_size: number;
   AccountEntity?: AccountEntity | undefined;
-  RecipeEntity?: RecipeEntity | undefined;
+};
+
+export type PlanItemEntity = {
+  id: number;
+  plan_id: number;
+  recipe_id: number;
+  serving_size: number;
+  Plan?: PlanEntity | undefined;
+  Recipe?: RecipeEntity | undefined;
 };
 
 export type RatingEntity = {

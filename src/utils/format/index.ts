@@ -28,3 +28,17 @@ export function dateTimeToMinutes(value: string | number): number {
   }
   return Math.round(totalMinutes);
 }
+
+export function dateToDDMMYYYY(date: Date | undefined): string {
+  if (!date) {
+    return "";
+  }
+  const day = formatNumberWithLeadingZero(date.getDate());
+  const month = formatNumberWithLeadingZero(date.getMonth() + 1);
+  const year = date.getFullYear();
+  return `${day}/${month}/${year}`;
+}
+
+export function formatNumberWithLeadingZero(number: number): string {
+  return number < 10 ? `0${number}` : `${number}`;
+}
