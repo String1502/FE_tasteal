@@ -4,7 +4,10 @@ export function removeDiacritics(text: string): string {
   return unidecode(text);
 }
 
-export function dateTimeToMinutes(value: string): number {
+export function dateTimeToMinutes(value: string | number): number {
+  if (typeof value === "number") {
+    return value;
+  }
   var parts = value.split(/[:.]/);
   var totalMinutes = 0;
 

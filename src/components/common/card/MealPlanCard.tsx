@@ -12,7 +12,8 @@ import {
 } from "@mui/material";
 import { Clear, StarRounded, SyncRounded } from "@mui/icons-material";
 import { RecipeEntity } from "../../../types/type";
-import { curveShape, defaultAvt } from "@/assets/exportImage";
+import { curveShapePath } from "@/assets/exportImage";
+import useFirebaseImage from "@/lib/hooks/useFirebaseImage";
 
 const imgHeight = "180px";
 const padding = 2;
@@ -24,6 +25,8 @@ export function MealPlanCard({
   props?: CardProps;
   recipe: RecipeEntity;
 }) {
+  const curveShapeImg = useFirebaseImage(curveShapePath);
+  const authorAvatar = useFirebaseImage(recipe?.Account?.avatar);
   return (
     <>
       <Box>
@@ -122,7 +125,7 @@ export function MealPlanCard({
               height: "30px",
               zIndex: 2,
               transform: "translateY(-95%)",
-              backgroundImage: `url(${curveShape})`,
+              backgroundImage: `url(${curveShapeImg})`,
               backgroundRepeat: "no-repeat",
               backgroundSize: "contain",
               backgroundPosition: "center",
@@ -130,7 +133,7 @@ export function MealPlanCard({
           >
             <Avatar
               alt="Remy Sharp"
-              src={defaultAvt}
+              src={authorAvatar}
               sx={{
                 width: "40px",
                 height: "40px",

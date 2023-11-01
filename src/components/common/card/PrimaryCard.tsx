@@ -16,7 +16,7 @@ import {
   StarRounded,
 } from "@mui/icons-material";
 import { RecipeEntity } from "../../../types/type";
-import { curveShape, defaultAvt } from "@/assets/exportImage";
+import { curveShapePath } from "@/assets/exportImage";
 import { dateTimeToMinutes } from "@/utils/format";
 import useFirebaseImage from "@/lib/hooks/useFirebaseImage";
 
@@ -32,6 +32,7 @@ export function PrimaryCard({
 }) {
   const image = useFirebaseImage(recipe?.image);
   const authorAvatar = useFirebaseImage(recipe?.Account?.avatar);
+  const curveShapeImg = useFirebaseImage(curveShapePath);
   return (
     <>
       <Box>
@@ -109,7 +110,7 @@ export function PrimaryCard({
               height: "30px",
               zIndex: 2,
               transform: "translateY(-95%)",
-              backgroundImage: `url(${curveShape})`,
+              backgroundImage: `url(${curveShapeImg})`,
               backgroundRepeat: "no-repeat",
               backgroundSize: "contain",
               backgroundPosition: "center",

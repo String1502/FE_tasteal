@@ -10,11 +10,14 @@ import {
 } from "@mui/material";
 
 import { Facebook, Google } from "@mui/icons-material";
-import { signInImage } from "@/assets/exportImage";
+import { signInImagePath } from "@/assets/exportImage";
 import { useNavigate } from "react-router-dom";
+import useFirebaseImage from "@/lib/hooks/useFirebaseImage";
 
 export function SignIn() {
   const navigate = useNavigate();
+
+  const signInImage = useFirebaseImage(signInImagePath);
 
   return (
     <>

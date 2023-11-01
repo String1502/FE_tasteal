@@ -1,4 +1,4 @@
-import { bannerImage } from "@/assets/exportImage";
+import { bannerPath } from "@/assets/exportImage";
 import OccasionService from "@/lib/services/occasionService";
 import { OccasionEntity } from "@/types/type";
 import { Box, Button, Container, Typography, useTheme } from "@mui/material";

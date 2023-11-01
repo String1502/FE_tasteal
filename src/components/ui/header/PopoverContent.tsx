@@ -14,7 +14,8 @@ import {
 } from "../../../types/sampleData";
 import { IngredientEntity, OccasionEntity } from "../../../types/type";
 import { CustomLink } from "./CustomLink";
-import { popoverImage } from "@/assets/exportImage";
+import { popoverPath } from "@/assets/exportImage";
+import useFirebaseImage from "@/lib/hooks/useFirebaseImage";
 
 const gridItemSX = {
   height: "100%",
@@ -31,7 +32,7 @@ export function PopoverContent() {
     React.useState<IngredientEntity[]>(defaultIngredients);
   const [occasions, setOccasions] =
     React.useState<OccasionEntity[]>(defaultOccasions);
-
+  const popoverPathImage = useFirebaseImage(popoverPath);
   return (
     <>
       <Container
@@ -54,7 +55,7 @@ export function PopoverContent() {
                 aspectRatio: "1/1",
                 border: 1,
                 borderColor: "secondary.main",
-                backgroundImage: `url(${popoverImage})`,
+                backgroundImage: `url(${popoverPathImage})`,
                 backgroundSize: "cover",
                 backgroundPosition: "center",
                 backgroundRepeat: "no-repeat",

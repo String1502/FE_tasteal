@@ -1,15 +1,15 @@
 import {
-  bannerFootImage,
-  mealPlanImage,
-  orderWhatYouNeedImage,
-  recipesOccasionsImage,
-  saveRecipesImage,
+  bannerFootImagePath,
+  mealPlanImagePath,
+  orderWhatYouNeedImagePath,
+  recipesOccasionsImagePath,
+  saveRecipesImagePath,
 } from "@/assets/exportImage";
 import { AuthorsCarousel } from "@/components/ui/home/AuthorsCarousel";
 import { Banner } from "@/components/ui/home/Banner";
 import { OccasionsList } from "@/components/ui/home/OccasionsList";
 import { RecipesCarousel } from "@/components/ui/home/RecipesCarousel";
-import AccountService from "@/lib/services/AccountService";
+import AccountService from "@/lib/services/accountService";
 import OccasionService from "@/lib/services/occasionService";
 import { AccountEntity, OccasionEntity, RecipeEntity } from "@/types/type";
 import {
@@ -25,6 +25,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Layout from "../layout/Layout";
 import RecipeService from "@/lib/services/recipeService";
+import useFirebaseImage from "@/lib/hooks/useFirebaseImage";
 
 const typoProps: TypographyProps = {
   variant: "h6",
@@ -35,23 +36,24 @@ const typoProps: TypographyProps = {
 const whyTastealArray = [
   {
     title: "Công cụ lịch ăn miễn phí",
-    image: mealPlanImage,
+    image: mealPlanImagePath,
   },
   {
     title: "Tất cả công thức bạn yêu thích",
-    image: saveRecipesImage,
+    image: saveRecipesImagePath,
   },
   {
     title: "Thực đơn theo dịp đặc biệt",
-    image: recipesOccasionsImage,
+    image: recipesOccasionsImagePath,
   },
   {
     title: "Chỉ mua những thứ cần thiết",
-    image: orderWhatYouNeedImage,
+    image: orderWhatYouNeedImagePath,
   },
 ];
 
 const WhyTasteal = ({ item }: { item: { title: string; image: string } }) => {
+  const image = useFirebaseImage(item.image);
   return (
     <>
       <Box
@@ -65,7 +67,7 @@ const WhyTasteal = ({ item }: { item: { title: string; image: string } }) => {
       >
         <Box
           component={"img"}
-          src={item.image}
+          src={image}
           sx={{
             width: "20%",
             aspectRatio: "1/1",
@@ -90,6 +92,8 @@ const WhyTasteal = ({ item }: { item: { title: string; image: string } }) => {
 };
 
 function Home() {
+  const bannerFootImage = useFirebaseImage(bannerFootImagePath);
+
   const [newReleases, setNewReleases] = useState<RecipeEntity[]>([]);
 
   const [trending, setTrending] = useState<RecipeEntity[]>([]);

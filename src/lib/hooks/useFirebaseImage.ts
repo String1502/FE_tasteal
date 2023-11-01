@@ -1,4 +1,4 @@
-import { bannerImage } from "@/assets/exportImage";
+import bannerPath from "@/assets/banner.jpg";
 import { useEffect, useState } from "react";
 import { resolveImagePathAsync } from "../firebase/image";
 
@@ -7,7 +7,7 @@ export default function useFirebaseImage(path: string | undefined) {
 
   useEffect(() => {
     if (!path || path === "") {
-      setImage(bannerImage);
+      setImage(bannerPath);
       return;
     }
 
@@ -16,7 +16,7 @@ export default function useFirebaseImage(path: string | undefined) {
         setImage(url);
       })
       .catch((error) => {
-        setImage(bannerImage);
+        setImage(bannerPath);
       });
   }, [path]);
 

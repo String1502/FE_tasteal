@@ -1,4 +1,4 @@
-import { bannerImage, defaultAvt } from "@/assets/exportImage";
+import { bannerPath, defaultAvtPath } from "@/assets/exportImage";
 import {
   AccountEntity,
   CartEntity,
@@ -18,7 +18,7 @@ export const accounts: AccountEntity[] = [
     username: "nguoidung1",
     password: "matkhau1",
     name: "Người Dùng Một",
-    avatar: defaultAvt,
+    avatar: defaultAvtPath,
     introduction:
       "Lorem Ipsum chỉ đơn giản là một đoạn văn bản giả, được dùng vào việc trình bày và dàn trang phục vụ cho in ấn. Lorem Ipsum đã được sử dụng như một văn bản chuẩn cho ngành công nghiệp in ấn từ những năm 1500, khi một họa sĩ vô danh ghép nhiều đoạn văn bản với nhau để tạo thành một bản mẫu văn bản.",
   },
@@ -27,7 +27,7 @@ export const accounts: AccountEntity[] = [
     username: "nguoidung2",
     password: "matkhau2",
     name: "Người Dùng Hai",
-    avatar: defaultAvt,
+    avatar: defaultAvtPath,
     introduction:
       "Lorem Ipsum chỉ đơn giản là một đoạn văn bản giả, được dùng vào việc trình bày và dàn trang phục vụ cho in ấn. Lorem Ipsum đã được sử dụng như một văn bản chuẩn cho ngành công nghiệp in ấn từ những năm 1500, khi một họa sĩ vô danh ghép nhiều đoạn văn bản với nhau để tạo thành một bản mẫu văn bản.",
   },
@@ -36,7 +36,7 @@ export const accounts: AccountEntity[] = [
     username: "nguoidung3",
     password: "matkhau3",
     name: "Người Dùng Ba",
-    avatar: defaultAvt,
+    avatar: defaultAvtPath,
     introduction:
       "Lorem Ipsum chỉ đơn giản là một đoạn văn bản giả, được dùng vào việc trình bày và dàn trang phục vụ cho in ấn. Lorem Ipsum đã được sử dụng như một văn bản chuẩn cho ngành công nghiệp in ấn từ những năm 1500, khi một họa sĩ vô danh ghép nhiều đoạn văn bản với nhau để tạo thành một bản mẫu văn bản.",
   },
@@ -45,7 +45,7 @@ export const accounts: AccountEntity[] = [
     username: "nguoidung4",
     password: "matkhau4",
     name: "Người Dùng Bốn",
-    avatar: defaultAvt,
+    avatar: defaultAvtPath,
     introduction: "Xin chào mọi người, tôi là Người Dùng Bốn.",
   },
   {
@@ -53,7 +53,7 @@ export const accounts: AccountEntity[] = [
     username: "nguoidung5",
     password: "matkhau5",
     name: "Người Dùng Năm",
-    avatar: defaultAvt,
+    avatar: defaultAvtPath,
     introduction: "Chúc mọi người một ngày tốt lành! Tôi là Người Dùng Năm.",
   },
   {
@@ -61,7 +61,7 @@ export const accounts: AccountEntity[] = [
     username: "nguoidung6",
     password: "matkhau6",
     name: "Người Dùng Sáu",
-    avatar: defaultAvt,
+    avatar: defaultAvtPath,
     introduction: "Rất vui được gặp bạn. Tôi là Người Dùng Sáu.",
   },
   {
@@ -69,7 +69,7 @@ export const accounts: AccountEntity[] = [
     username: "nguoidung7",
     password: "matkhau7",
     name: "Người Dùng Bảy",
-    avatar: defaultAvt,
+    avatar: defaultAvtPath,
     introduction: "Chào bạn, tôi là Người Dùng Bảy.",
   },
   {
@@ -77,7 +77,7 @@ export const accounts: AccountEntity[] = [
     username: "nguoidung8",
     password: "matkhau8",
     name: "Người Dùng Tám",
-    avatar: defaultAvt,
+    avatar: defaultAvtPath,
     introduction: "Xin chào, tôi là Người Dùng Tám.",
   },
   {
@@ -85,7 +85,7 @@ export const accounts: AccountEntity[] = [
     username: "nguoidung9",
     password: "matkhau9",
     name: "Người Dùng Chín",
-    avatar: defaultAvt,
+    avatar: defaultAvtPath,
     introduction: "Chúc mọi người một ngày vui vẻ! Tôi là Người Dùng Chín.",
   },
   {
@@ -93,7 +93,7 @@ export const accounts: AccountEntity[] = [
     username: "nguoidung10",
     password: "matkhau10",
     name: "Người Dùng Mười",
-    avatar: defaultAvt,
+    avatar: defaultAvtPath,
     introduction: "Rất vui được làm quen với bạn. Tôi là Người Dùng Mười.",
   },
 ];
@@ -444,70 +444,70 @@ export const occasions: OccasionEntity[] = [
     name: "Tết Nguyên Đán",
     description: "Lễ Tết truyền thống của Việt Nam",
     start_at: new Date(new Date().getFullYear(), 0, 1),
-    image: bannerImage,
+    image: bannerPath,
   },
   {
     id: 2,
     name: "Ngày Quốc khánh",
     description: "Ngày Quốc khánh Việt Nam",
     start_at: new Date(new Date().getFullYear(), 8, 2),
-    image: bannerImage,
+    image: bannerPath,
   },
   {
     id: 3,
     name: "Ngày Lao động",
     description: "Lễ Quốc tế lao động",
     start_at: new Date(new Date().getFullYear(), 4, 1),
-    image: bannerImage,
+    image: bannerPath,
   },
   {
     id: 4,
     name: "Ngày Quốc tế Phụ nữ",
     description: "Ngày Quốc tế của Phụ nữ",
     start_at: new Date(new Date().getFullYear(), 2, 8),
-    image: bannerImage,
+    image: bannerPath,
   },
   {
     id: 5,
     name: "Ngày Quốc tế Hạnh phúc",
     description: "Ngày Quốc tế Hạnh phúc",
     start_at: new Date(new Date().getFullYear(), 2, 20),
-    image: bannerImage,
+    image: bannerPath,
   },
   {
     id: 6,
     name: "Ngày Quốc tế Thiếu nhi",
     description: "Ngày Quốc tế Thiếu nhi",
     start_at: new Date(new Date().getFullYear(), 5, 1),
-    image: bannerImage,
+    image: bannerPath,
   },
   {
     id: 7,
     name: "Ngày Quốc tế Dân số",
     description: "Ngày Quốc tế Dân số",
     start_at: new Date(new Date().getFullYear(), 6, 11),
-    image: bannerImage,
+    image: bannerPath,
   },
   {
     id: 8,
     name: "Ngày Quốc tế Hòa bình",
     description: "Ngày Quốc tế Hòa bình",
     start_at: new Date(new Date().getFullYear(), 8, 21),
-    image: bannerImage,
+    image: bannerPath,
   },
   {
     id: 9,
     name: "Ngày Quốc tế Người cao tuổi",
     description: "Ngày Quốc tế Người cao tuổi",
     start_at: new Date(new Date().getFullYear(), 9, 1),
-    image: bannerImage,
+    image: bannerPath,
   },
   {
     id: 10,
     name: "Ngày Quốc tế Áo trắng",
     description: "Ngày Quốc tế Áo trắng",
     start_at: new Date(new Date().getFullYear(), 4, 5),
-    image: bannerImage,
+    image: bannerPath,
   },
 ];
 

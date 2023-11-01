@@ -1,4 +1,5 @@
-import { defaultAvt, signInImage } from "@/assets/exportImage";
+import { defaultAvtPath, signInImagePath } from "@/assets/exportImage";
+import useFirebaseImage from "@/lib/hooks/useFirebaseImage";
 import { Box, Button, Grid, Stack, Typography, TextField } from "@mui/material";
 
 export function SignUpEmail() {
@@ -10,6 +11,8 @@ export function SignUpEmail() {
 }
 
 function SignUpEmailContent() {
+  const authorImage = useFirebaseImage(defaultAvtPath);
+  const signInImage = useFirebaseImage(signInImagePath);
   return (
     <>
       <Grid
@@ -56,7 +59,7 @@ function SignUpEmailContent() {
 
           <Box
             sx={{
-              backgroundImage: `url(${defaultAvt})`,
+              backgroundImage: `url(${authorImage})`,
               backgroundRepeat: "no-repeat",
               backgroundSize: "cover",
               backgroundPosition: "center",
