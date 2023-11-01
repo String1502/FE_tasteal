@@ -200,15 +200,15 @@ export function SignIn() {
               <TextField
                 placeholder="Email"
                 variant="outlined"
+                type="email"
                 fullWidth
                 sx={{
                   mt: 2,
-                  width: "100%",
                 }}
                 InputProps={{
                   sx: {
                     borderRadius: "40px",
-                    backgroundColor: "#f7f7f7",
+                    backgroundColor: "grey.100",
                     fontSize: "body2.fontSize",
                     px: 1.5,
                   },
@@ -223,12 +223,11 @@ export function SignIn() {
                 fullWidth
                 sx={{
                   mt: 2,
-                  width: "100%",
                 }}
                 InputProps={{
                   sx: {
                     borderRadius: "40px",
-                    backgroundColor: "#f7f7f7",
+                    backgroundColor: "grey.100",
                     fontSize: "body2.fontSize",
                     px: 1.5,
                   },

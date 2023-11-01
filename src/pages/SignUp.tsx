@@ -160,6 +160,7 @@ export function SignUp() {
                 sx={{
                   width: "100%",
                   textAlign: "center",
+                  fontWeight: "light",
                 }}
               >
                 Lưu công thức, lên lịch ăn và chuẩn bị nguyên liệu
@@ -222,18 +223,18 @@ export function SignUp() {
                   sx={{
                     width: "100%",
                     py: 1.2,
-                    backgroundColor: "#01404e",
+                    backgroundColor: "primary",
                     opacity: 1,
                     "&:hover": {
                       opacity: 0.9,
-                      backgroundColor: "#01404e",
+                      backgroundColor: "primary",
                     },
                     fontSize: "caption.fontSize",
                     fontWeight: "bold",
                   }}
                   startIcon={<MailOutline fontSize="large" />}
                   onClick={() => {
-                    window.location.href = "/signupemail";
+                    navigate("/signupemail");
                   }}
                 >
                   Tiếp tục với Email
