@@ -1,4 +1,7 @@
 import RoundedButton from "@/components/common/buttons/RoundedButton";
+import ChipsDisplayer, {
+  ChipValue,
+} from "@/components/common/collections/ChipsDisplayer";
 import ImagePicker from "@/components/common/files/ImagePicker";
 import TastealTextField from "@/components/common/textFields/TastealTextField";
 import FormLabel from "@/components/common/typos/FormLabel";
@@ -7,19 +10,19 @@ import IngredientSelector from "@/components/ui/collections/IngredientSelector";
 import { IngredientItemData } from "@/components/ui/collections/IngredientSelector/types";
 import NewIngredientModal from "@/components/ui/modals/NewIngredientModal";
 import ServingSizeSelect from "@/components/ui/selects/ServingSizeSelect";
+import Layout from "@/layout/Layout";
 import { SERVING_SIZES } from "@/lib/constants/options";
 import {
   Autocomplete,
   Box,
   Card,
   CardContent,
-  Chip,
   FormControlLabel,
   Radio,
   RadioGroup,
   Stack,
 } from "@mui/material";
-import { ChangeEventHandler, FC, useCallback, useMemo, useState } from "react";
+import { ChangeEventHandler, useCallback, useMemo, useState } from "react";
 
 /**
  * Because api resopnse is a whole object, so I'll mock occasion instead of create
@@ -178,7 +181,7 @@ const CreateRecipe: React.FunctionComponent = () => {
   console.log(newRecipe);
 
   return (
-    <>
+    <Layout>
       <Box
         sx={{
           display: "flex",
@@ -313,42 +316,8 @@ const CreateRecipe: React.FunctionComponent = () => {
         onClose={handleIngredientSelectModalClose}
         onAddIngredient={handleAddIngredient}
       />
-    </>
+    </Layout>
   );
 };
 
 export default CreateRecipe;
-
-type ChipValue = {
-  id: number;
-  name: string;
-};
-
-type ChipsDisplayerProps = {
-  chips: ChipValue[];
-  onChange: (chips: ChipValue[]) => void;
-};
-
-const ChipsDisplayer: FC<ChipsDisplayerProps> = ({ chips, onChange }) => {
-  return (
-    <Stack flexWrap="wrap" gap={1} alignItems={"flex-start"} direction={"row"}>
-      {chips.map((chip) => (
-        <Chip
-          key={chip.id}
-          label={chip.name}
-          onDelete={() => onChange(chips.filter((c) => c.id !== chip.id))}
-          sx={{
-            py: 2,
-            border: "1px solid transparent",
-            "&:hover": {
-              border: "1px solid",
-              transition: "all 0.2s ease-in-out",
-            },
-            fontSize: 16,
-            fontWeight: "bold",
-          }}
-        />
-      ))}
-    </Stack>
-  );
-};
