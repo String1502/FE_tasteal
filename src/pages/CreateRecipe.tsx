@@ -9,6 +9,7 @@ import NewIngredientModal from "@/components/ui/modals/NewIngredientModal";
 import ServingSizeSelect from "@/components/ui/selects/ServingSizeSelect";
 import { SERVING_SIZES } from "@/lib/constants/options";
 import {
+  Autocomplete,
   Box,
   Card,
   CardContent,
@@ -18,6 +19,38 @@ import {
   Stack,
 } from "@mui/material";
 import { useCallback, useMemo, useState } from "react";
+
+/**
+ * Because api resopnse is a whole object, so I'll mock occasion instead of create
+ * a whole new service for it.
+ */
+const mockOccasions = [
+  {
+    id: 1,
+    name: "Lunar New Year",
+  },
+  {
+    id: 2,
+    name: "Chrismas",
+  },
+  {
+    id: 3,
+    name: "Halloween",
+  },
+  {
+    id: 4,
+    name: "Birthday",
+  },
+  {
+    id: 5,
+    name: "Wedding",
+  },
+  {
+    id: 6,
+    name: "Thanksgiving",
+  },
+];
+
 /**
  * Represents a new recipe.
  */
@@ -162,6 +195,17 @@ const CreateRecipe: React.FunctionComponent = () => {
                   ingredients={newRecipe.ingredients}
                   onChange={handleIngredientsChange}
                   onOpen={handleIngredientSelectModalOpen}
+                />
+              </Stack>
+              <Stack>
+                <FormLabel>Occasions</FormLabel>
+                <Autocomplete
+                  options={mockOccasions}
+                  getOptionLabel={(o) => o.name}
+                  placeholder="Select occasions"
+                  renderInput={(params) => (
+                    <TastealTextField {...params} label="Autocomplete" />
+                  )}
                 />
               </Stack>
               <Stack>
