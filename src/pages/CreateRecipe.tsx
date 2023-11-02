@@ -13,12 +13,13 @@ import {
   Box,
   Card,
   CardContent,
+  Chip,
   FormControlLabel,
   Radio,
   RadioGroup,
   Stack,
 } from "@mui/material";
-import { useCallback, useMemo, useState } from "react";
+import { ChangeEventHandler, FC, useCallback, useMemo, useState } from "react";
 
 /**
  * Because api resopnse is a whole object, so I'll mock occasion instead of create
@@ -91,6 +92,8 @@ const CreateRecipe: React.FunctionComponent = () => {
   );
   const [newRecipe, setNewRecipe] = useState<NewRecipe>(DEFAULT_NEW_RECIPE);
 
+  const [selectedOccasions, setSelectedOccasions] = useState<ChipValue[]>([]);
+
   //#endregion
 
   //#region UseMemos
@@ -139,6 +142,16 @@ const CreateRecipe: React.FunctionComponent = () => {
 
   const handleRecipeThumbnailChange = useCallback((file: File | null) => {
     setRecipeThumbnailFile(file);
+  }, []);
+
+  const handleSelectedOccasionsChange = useCallback((value: ChipValue[]) => {
+    setSelectedOccasions(value);
+  }, []);
+
+  const handleSelectOccasion = useCallback((value: ChipValue | null) => {
+    if (value) {
+      setSelectedOccasions((prev) => [...prev, value]);
+    }
   }, []);
 
   //#endregion
@@ -197,7 +210,7 @@ const CreateRecipe: React.FunctionComponent = () => {
                   onOpen={handleIngredientSelectModalOpen}
                 />
               </Stack>
-              <Stack>
+              <Stack gap={1}>
                 <FormLabel>Occasions</FormLabel>
                 <Autocomplete
                   options={mockOccasions}
@@ -206,6 +219,11 @@ const CreateRecipe: React.FunctionComponent = () => {
                   renderInput={(params) => (
                     <TastealTextField {...params} label="Autocomplete" />
                   )}
+                  onChange={(_, value) => handleSelectOccasion(value)}
+                />
+                <ChipsDisplayer
+                  chips={selectedOccasions}
+                  onChange={handleSelectedOccasionsChange}
                 />
               </Stack>
               <Stack>
@@ -279,3 +297,37 @@ const CreateRecipe: React.FunctionComponent = () => {
 };
 
 export default CreateRecipe;
+
+type ChipValue = {
+  id: number;
+  name: string;
+};
+
+type ChipsDisplayerProps = {
+  chips: ChipValue[];
+  onChange: (chips: ChipValue[]) => void;
+};
+
+const ChipsDisplayer: FC<ChipsDisplayerProps> = ({ chips, onChange }) => {
+  return (
+    <Stack flexWrap="wrap" gap={1} alignItems={"flex-start"} direction={"row"}>
+      {chips.map((chip) => (
+        <Chip
+          key={chip.id}
+          label={chip.name}
+          onDelete={() => onChange(chips.filter((c) => c.id !== chip.id))}
+          sx={{
+            py: 2,
+            border: "1px solid transparent",
+            "&:hover": {
+              border: "1px solid",
+              transition: "all 0.2s ease-in-out",
+            },
+            fontSize: 16,
+            fontWeight: "bold",
+          }}
+        />
+      ))}
+    </Stack>
+  );
+};
