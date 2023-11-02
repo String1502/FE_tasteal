@@ -10,11 +10,14 @@ import {
 } from "@mui/material";
 
 import { Facebook, Google } from "@mui/icons-material";
-import { signInImage } from "@/assets/exportImage";
+import { signInImagePath } from "@/assets/exportImage";
 import { useNavigate } from "react-router-dom";
+import useFirebaseImage from "@/lib/hooks/useFirebaseImage";
 
 export function SignIn() {
   const navigate = useNavigate();
+
+  const signInImage = useFirebaseImage(signInImagePath);
 
   return (
     <>
@@ -197,15 +200,15 @@ export function SignIn() {
               <TextField
                 placeholder="Email"
                 variant="outlined"
+                type="email"
                 fullWidth
                 sx={{
                   mt: 2,
-                  width: "100%",
                 }}
                 InputProps={{
                   sx: {
                     borderRadius: "40px",
-                    backgroundColor: "#f7f7f7",
+                    backgroundColor: "grey.100",
                     fontSize: "body2.fontSize",
                     px: 1.5,
                   },
@@ -220,12 +223,11 @@ export function SignIn() {
                 fullWidth
                 sx={{
                   mt: 2,
-                  width: "100%",
                 }}
                 InputProps={{
                   sx: {
                     borderRadius: "40px",
-                    backgroundColor: "#f7f7f7",
+                    backgroundColor: "grey.100",
                     fontSize: "body2.fontSize",
                     px: 1.5,
                   },

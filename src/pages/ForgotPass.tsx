@@ -1,4 +1,5 @@
-import { signInImage } from "@/assets/exportImage";
+import { signInImagePath } from "@/assets/exportImage";
+import useFirebaseImage from "@/lib/hooks/useFirebaseImage";
 import {
   Box,
   Button,
@@ -12,6 +13,8 @@ import { useNavigate } from "react-router-dom";
 
 export function ForgotPass() {
   const navigate = useNavigate();
+
+  const signInImage = useFirebaseImage(signInImagePath);
 
   return (
     <>

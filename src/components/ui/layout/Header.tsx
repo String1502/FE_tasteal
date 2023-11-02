@@ -179,6 +179,9 @@ export function Header(props: Props) {
                   border: 1,
                   mr: 2,
                 }}
+                onClick={() => {
+                  navigate("/grocery");
+                }}
               >
                 <ShoppingBagRounded fontSize="inherit" />
               </IconButton>

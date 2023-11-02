@@ -1,4 +1,4 @@
-import { Box } from "@mui/material";
+import { Box, Container, useTheme } from "@mui/material";
 import React from "react";
 import { Footer } from "../components/ui/layout/Footer";
 import { Header } from "../components/ui/layout/Header";
@@ -8,7 +8,7 @@ function Layout({ children }: { children: React.ReactNode }) {
     <Box
       component={"div"}
       sx={{
-        backgroundColor: "#fffaf9",
+        backgroundColor: "background.default",
         px: 0,
       }}
     >

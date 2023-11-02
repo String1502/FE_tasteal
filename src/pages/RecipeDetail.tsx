@@ -1,4 +1,4 @@
-import { defaultAvt } from "@/assets/exportImage";
+import { defaultAvtPath } from "@/assets/exportImage";
 import TastealIconButton from "@/components/common/buttons/TastealIconButton";
 import TastealTextField from "@/components/common/textFields/TastealTextField";
 import BigSectionHeading from "@/components/common/typos/BigSectionHeading/BigSectionHeading";
@@ -13,12 +13,13 @@ import NutrionPerServingModal from "@/components/ui/modals/NutrionPerServingModa
 import Layout from "@/layout/Layout";
 import { N_A_VALUE } from "@/lib/constants/common";
 import { DEFAULT_NUTRITION_VALUE } from "@/lib/constants/defaultValue";
-import AccountService from "@/lib/services/AccountService";
-import IngredientService from "@/lib/services/IngredientService";
+import useFirebaseImage from "@/lib/hooks/useFirebaseImage";
+import AccountService from "@/lib/services/accountService";
+import IngredientService from "@/lib/services/ingredientService";
 import NutritionService from "@/lib/services/NutrionInfoService";
 import RecipeDirectionService from "@/lib/services/RecipeDirectionService";
 import RecipeIngredientService from "@/lib/services/RecipeIngredientService";
-import RecipeService from "@/lib/services/RecipeService";
+import RecipeService from "@/lib/services/recipeService";
 import {
   AccountEntity,
   Nutrition_InfoEntity,
@@ -78,6 +79,7 @@ const RecipeDetail: FC = () => {
   //#region UseHooks
 
   const { id } = useParams();
+  const authorImage = useFirebaseImage(defaultAvtPath);
 
   //#endregion
 
@@ -353,7 +355,7 @@ const RecipeDetail: FC = () => {
                   RecipeDetailStringConstants.DEFAULT_INSTRUCTION}
               </Typography>
 
-              <RecipeTimeInfo totalTime={recipe?.totalTime ?? 0} />
+              <RecipeTimeInfo totalTime={recipe?.totalTime ?? ""} />
 
               <IngredientDisplayer ingredients={recipeIngredients} />
 
@@ -413,7 +415,7 @@ const RecipeDetail: FC = () => {
             <SimpleContainer sx={{ mt: 2 }}>
               <Box display={"flex"} flexDirection={"column"} gap={1}>
                 <Stack direction="row" alignItems={"center"} gap={2}>
-                  <Avatar src={defaultAvt} />
+                  <Avatar src={authorImage} />
                   <Link>
                     <Typography fontWeight={"bold"}>{author?.name}</Typography>
                   </Link>

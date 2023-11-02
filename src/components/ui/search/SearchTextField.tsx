@@ -5,8 +5,16 @@ import {
   TextField,
   TextFieldProps,
 } from "@mui/material";
+import { useState } from "react";
 
-export function SearchTextField({ placeholder, ...props }: TextFieldProps) {
+export function SearchTextField({
+  props,
+  searchButtonClick,
+}: {
+  props?: TextFieldProps;
+  searchButtonClick?: (value: string) => void;
+}) {
+  const [value, setValue] = useState("");
   return (
     <>
       <TextField
@@ -14,6 +22,13 @@ export function SearchTextField({ placeholder, ...props }: TextFieldProps) {
         sx={{
           "& fieldset": { border: "none" },
         }}
+        value={value}
+        onChange={(e) => {
+          setValue(e.target.value);
+        }}
+        placeholder={props?.placeholder ?? "Hôm nay nấu gì?"}
+        variant="outlined"
+        fullWidth
         InputProps={{
           startAdornment: (
             <InputAdornment position="start">
@@ -24,11 +39,16 @@ export function SearchTextField({ placeholder, ...props }: TextFieldProps) {
             <InputAdornment position="end">
               <Button
                 variant="contained"
+                onClick={() => {
+                  if (searchButtonClick) {
+                    searchButtonClick(value);
+                  }
+                }}
                 sx={{
                   borderRadius: "40px",
                 }}
               >
-                Search
+                Tìm kiếm
               </Button>
             </InputAdornment>
           ),
@@ -42,9 +62,6 @@ export function SearchTextField({ placeholder, ...props }: TextFieldProps) {
             backgroundColor: "white",
           },
         }}
-        placeholder={placeholder ?? "Hôm nay nấu gì?"}
-        variant="outlined"
-        fullWidth
       />
     </>
   );

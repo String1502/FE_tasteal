@@ -1,15 +1,21 @@
-import { defaultAvt, signInImage } from "@/assets/exportImage";
-import { Box, Button, Grid, Stack, Typography, TextField } from "@mui/material";
+import { defaultAvtPath, signInImagePath } from "@/assets/exportImage";
+import useFirebaseImage from "@/lib/hooks/useFirebaseImage";
+import {
+  Box,
+  Button,
+  Grid,
+  Stack,
+  Typography,
+  TextField,
+  Container,
+  TextFieldProps,
+} from "@mui/material";
+import { useNavigate } from "react-router-dom";
 
 export function SignUpEmail() {
-  return (
-    <>
-      <SignUpEmailContent />
-    </>
-  );
-}
-
-function SignUpEmailContent() {
+  const navigate = useNavigate();
+  const authorImage = useFirebaseImage(defaultAvtPath);
+  const signInImage = useFirebaseImage(signInImagePath);
   return (
     <>
       <Grid
@@ -17,8 +23,28 @@ function SignUpEmailContent() {
         direction="row"
         justifyContent="center"
         alignItems="stretch"
+        maxHeight={"100vh"}
+        sx={{
+          overflow: "auto",
+          scrollSnapType: "y mandatory",
+          "& > *": {
+            scrollSnapAlign: "center",
+          },
+          "::-webkit-scrollbar": { display: "none" },
+        }}
       >
-        <Grid item xs={6} sx={{ height: "1000px" }}>
+        <Grid
+          item
+          xs={0}
+          md={5}
+          lg={6}
+          sx={{
+            display: {
+              xs: "none",
+              md: "block",
+            },
+          }}
+        >
           <Box
             sx={{
               backgroundImage: `url(${signInImage})`,
@@ -26,114 +52,169 @@ function SignUpEmailContent() {
               backgroundSize: "cover",
               backgroundPosition: "center",
               height: "100%",
+              minHeight: "100vh",
+              width: "100%",
             }}
           ></Box>
         </Grid>
-        <Grid item xs={6} sx={{ height: "100vh", px: 4, pt: 2 }}>
-          <Box
+        <Grid item xs={12} md={7} lg={6}>
+          <Container
             sx={{
-              display: "flex",
-              justifyContent: "flex-end",
-              alignItems: "center",
+              width: "100%",
+              height: "100%",
+              minHeight: "100vh",
+              px: { sm: 12 },
+              py: 2,
             }}
           >
-            <Typography variant="caption" color="gray.500">
-              Bạn chưa có tài khoản?
-            </Typography>
-            <Button
-              variant="outlined"
+            <Stack
+              direction="column"
+              alignItems="center"
+              justifyContent={"center"}
               sx={{
-                borderRadius: "40px",
-                ml: 2,
-              }}
-              onClick={() => {
-                window.location.href = "/signin";
+                height: "100%",
+                position: "relative",
               }}
             >
-              <Typography variant="button">Đăng ký</Typography>
-            </Button>
-          </Box>
+              <Box
+                sx={{
+                  display: "flex",
+                  justifyContent: { xs: "space-between", md: "flex-end" },
+                  alignItems: "center",
+                  width: "100%",
+                  position: "absolute",
+                  right: 0,
+                  top: 0,
+                }}
+              >
+                <Typography variant="caption" color="gray.500">
+                  Bạn đã là thành viên?
+                </Typography>
+                <Button
+                  variant="outlined"
+                  sx={{
+                    ml: 2,
+                  }}
+                  onClick={() => {
+                    navigate("/signin");
+                  }}
+                >
+                  <Typography variant="button" fontWeight={"bold"}>
+                    Đăng nhập
+                  </Typography>
+                </Button>
+              </Box>
 
-          <Box
-            sx={{
-              backgroundImage: `url(${defaultAvt})`,
-              backgroundRepeat: "no-repeat",
-              backgroundSize: "cover",
-              backgroundPosition: "center",
-              height: "10%",
-              width: "60%",
-              margin: "auto",
-              marginTop: "7vh",
-            }}
-          ></Box>
+              <Box
+                sx={{
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  width: "100%",
+                  mt: 6,
+                }}
+              >
+                <Box
+                  sx={{
+                    backgroundImage: `url(${authorImage})`,
+                    backgroundRepeat: "no-repeat",
+                    backgroundSize: "cover",
+                    backgroundPosition: "center",
+                    aspectRatio: "1/1",
+                    width: "32px",
+                    borderRadius: "50%",
+                    mr: 1,
+                  }}
+                ></Box>
+                <Typography variant="h6" color="primary">
+                  Tasteal
+                </Typography>
+              </Box>
 
-          <Stack
-            spacing={3.2}
-            sx={{ height: "100vh", marginTop: "2vh" }}
-            alignItems={"center"}
-            direction={"column"}
-          >
-            <Typography
-              variant="h5"
-              sx={{ fontWeight: "bold", textAlign: "center", fontSize: "48px" }}
-            >
-              ĐĂNG KÝ VỚI EMAIL
-            </Typography>
-            <Typography
-              variant="h5"
-              sx={{ textAlign: "center", fontSize: "24px" }}
-            >
-              Lưu công thức, lên lịch ăn và mua nguyên liệu
-            </Typography>
+              <Typography
+                variant="h4"
+                fontWeight={"bold"}
+                color="primary"
+                sx={{
+                  width: "100%",
+                  textAlign: "center",
+                }}
+              >
+                Đăng ký với Email
+              </Typography>
 
-            <TextField
-              label="Tên người dùng"
-              variant="outlined"
-              fullWidth
-              sx={{
-                mt: 2,
-                width: "60vh",
+              <Typography
+                variant="caption"
+                sx={{
+                  width: "100%",
+                  textAlign: "center",
+                  fontWeight: "light",
+                }}
+              >
+                Lưu công thức, lên lịch ăn và chuẩn bị nguyên liệu
+              </Typography>
 
-                backgroundColor: "#f7f7f7",
-              }}
-            />
-            <TextField
-              label="Email"
-              variant="outlined"
-              fullWidth
-              sx={{
-                mt: 2,
-                width: "60vh",
+              <Box
+                sx={{
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: 3,
+                  my: 5,
+                  justifyContent: "center",
+                  alignItems: "center",
+                  width: "100%",
+                }}
+              >
+                <TextField
+                  {...typoProps}
+                  placeholder="Chúng tôi có thể gọi bạn là?"
+                  type="name"
+                />
+                <TextField {...typoProps} placeholder="Email" type="email" />
+                <TextField
+                  {...typoProps}
+                  placeholder="Password"
+                  type="password"
+                />
 
-                backgroundColor: "#f7f7f7",
-              }}
-            />
-            <TextField
-              label="Password"
-              variant="outlined"
-              type="password"
-              fullWidth
-              sx={{
-                mt: 2,
-                width: "60vh",
-                backgroundColor: "#f7f7f7",
-              }}
-            />
-            <Button
-              variant="contained"
-              color="primary"
-              sx={{
-                width: "60vh",
-                height: "6vh",
-                borderRadius: "40px",
-                mt: 2,
-              }}
-            >
-              Đăng nhập
-            </Button>
-          </Stack>
+                <Button
+                  variant="contained"
+                  sx={{
+                    width: "100%",
+                    py: 1.2,
+                    backgroundColor: "primary",
+                    opacity: 1,
+                    "&:hover": {
+                      opacity: 0.9,
+                      backgroundColor: "primary",
+                    },
+                    fontSize: "caption.fontSize",
+                    fontWeight: "bold",
+                  }}
+                  onClick={() => {
+                    navigate("/signin");
+                  }}
+                >
+                  ĐĂNG KÝ
+                </Button>
+              </Box>
+            </Stack>
+          </Container>
         </Grid>
       </Grid>
     </>
   );
 }
+
+const typoProps: TextFieldProps = {
+  variant: "outlined",
+  fullWidth: true,
+  InputProps: {
+    sx: {
+      borderRadius: "40px",
+      backgroundColor: "grey.100",
+      fontSize: "body2.fontSize",
+      px: 1.5,
+    },
+  },
+};

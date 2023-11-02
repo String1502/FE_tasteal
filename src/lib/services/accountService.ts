@@ -1,7 +1,7 @@
 import { accounts as accountsSampleData } from "@/types/sampleData";
-import { AccountEntity, RecipeEntity } from "@/types/type";
+import { AccountEntity } from "@/types/type";
 import simulateDelay from "@/utils/promises/stimulateDelay";
-import RecipeService from "./RecipeService";
+import { API_PATH } from "../constants/common";
 
 /**
  * Represents a service for managing accounts.
@@ -37,39 +37,30 @@ class AccountService {
   public static async GetMostContributedAccounts(
     limit: number
   ): Promise<AccountEntity[]> {
-    // Simulate delay of 1 second
-    simulateDelay(1);
-    const accounts = await AccountService.GetAllAccounts();
+    let accounts: AccountEntity[] = [];
 
-    type AccountWithRecipes = AccountEntity & {
-      recipes?: RecipeEntity[];
+    const requestOptions = {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        pageSize: limit,
+        page: 0,
+        isDescend: true,
+      }),
     };
-    let accountsWithRecipes: AccountWithRecipes[] = [];
 
-    accounts.forEach((item) => {
-      accountsWithRecipes.push({
-        ...item,
-        recipes: [],
+    await fetch(`${API_PATH}/api/v2/Home/authors`, requestOptions)
+      .then((response) => response.json())
+      .then((data) => {
+        accounts = data;
+      })
+      .catch((error) => {
+        console.error("Lỗi:", error);
       });
-    });
-    const recipes = await RecipeService.GetAllRecipes();
-    recipes.forEach((item) => {
-      const account = accountsWithRecipes.find(
-        (account) => account.id === item.author
-      );
-      if (account) {
-        account.recipes!.push(item);
-      }
-    });
 
-    accountsWithRecipes = accountsWithRecipes
-      .sort((a, b) => b.recipes?.length! - a.recipes?.length!)
-      .slice(0, limit);
-
-    return accountsWithRecipes.map((item) => {
-      delete item.recipes;
-      return item as AccountEntity;
-    });
+    return accounts;
   }
 }
 

@@ -9,6 +9,7 @@ import React from "react";
 import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
 import CreateRecipe from "./pages/CreateRecipe";
 import { ForgotPass } from "./pages/ForgotPass";
+import { Grocery } from "./pages/Grocery";
 import Home from "./pages/Home";
 import MealPlanner from "./pages/MealPlanner";
 import Search from "./pages/Search";
@@ -50,6 +51,7 @@ function App() {
             <Route path="/forgotpass" element={<ForgotPass />} />
             <Route path="/recipe/create" element={<CreateRecipe />} />
             <Route path="/recipe/:id" element={<RecipeDetail />} />
+            <Route path="/grocery" element={<Grocery />} />
             <Route path="/mealplanner" element={<MealPlanner />} />
             {/* Thêm các tuyến đường khác */}
           </Routes>

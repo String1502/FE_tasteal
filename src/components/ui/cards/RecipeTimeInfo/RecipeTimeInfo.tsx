@@ -4,7 +4,7 @@ import SimpleContainer from "../../container/SimpleContainer";
 import RecipeTimeInfoItem from "./RecipeTimeInfoItem";
 
 export type RecipeTimeInfoProps = {
-  totalTime: number;
+  totalTime: string;
   activeTime?: number;
 };
 

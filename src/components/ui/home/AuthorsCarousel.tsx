@@ -1,13 +1,16 @@
 import { CustomCarousel } from "@/components/common/carousel/CustomeCarousel";
 import { cardWidth, responsive } from "@/lib/constants/responsiveCarousel";
+import useFirebaseImage from "@/lib/hooks/useFirebaseImage";
 import { AccountEntity } from "@/types/type";
 import { Box, Typography } from "@mui/material";
 
 const AuthorCard = ({ author }: { author: AccountEntity }) => {
+  const avatar = useFirebaseImage(author?.avatar);
+  console.log(avatar);
+
   return (
     <>
       <Box
-        key={author.id}
         sx={{
           p: 2,
         }}
@@ -25,7 +28,7 @@ const AuthorCard = ({ author }: { author: AccountEntity }) => {
         >
           <Box
             component={"img"}
-            src={author.avatar ?? ""}
+            src={avatar ?? ""}
             sx={{
               width: "100%",
               height: "100%",
@@ -74,8 +77,10 @@ export function AuthorsCarousel({ array }: { array: AccountEntity[] }) {
         responsive={responsive}
         removeArrowOnDeviceType={["sm", "xs"]}
       >
-        {array.map((item) => (
-          <AuthorCard key={item.id} author={item} />
+        {array.map((item, index) => (
+          <Box key={index}>
+            <AuthorCard author={item} />
+          </Box>
         ))}
       </CustomCarousel>
     </>

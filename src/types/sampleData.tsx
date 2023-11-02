@@ -1,7 +1,10 @@
-import { bannerImage, defaultAvt } from "@/assets/exportImage";
+import { bannerPath, defaultAvtPath } from "@/assets/exportImage";
 import {
   AccountEntity,
+  CartEntity,
+  Cart_ItemEntity,
   IngredientEntity,
+  Ingredient_TypeEntity,
   Nutrition_InfoEntity,
   OccasionEntity,
   RecipeEntity,
@@ -9,12 +12,98 @@ import {
   Recipe_IngredientEntity,
 } from "./type";
 
+export const accounts: AccountEntity[] = [
+  {
+    id: 1,
+    username: "nguoidung1",
+    password: "matkhau1",
+    name: "Người Dùng Một",
+    avatar: defaultAvtPath,
+    introduction:
+      "Lorem Ipsum chỉ đơn giản là một đoạn văn bản giả, được dùng vào việc trình bày và dàn trang phục vụ cho in ấn. Lorem Ipsum đã được sử dụng như một văn bản chuẩn cho ngành công nghiệp in ấn từ những năm 1500, khi một họa sĩ vô danh ghép nhiều đoạn văn bản với nhau để tạo thành một bản mẫu văn bản.",
+  },
+  {
+    id: 2,
+    username: "nguoidung2",
+    password: "matkhau2",
+    name: "Người Dùng Hai",
+    avatar: defaultAvtPath,
+    introduction:
+      "Lorem Ipsum chỉ đơn giản là một đoạn văn bản giả, được dùng vào việc trình bày và dàn trang phục vụ cho in ấn. Lorem Ipsum đã được sử dụng như một văn bản chuẩn cho ngành công nghiệp in ấn từ những năm 1500, khi một họa sĩ vô danh ghép nhiều đoạn văn bản với nhau để tạo thành một bản mẫu văn bản.",
+  },
+  {
+    id: 3,
+    username: "nguoidung3",
+    password: "matkhau3",
+    name: "Người Dùng Ba",
+    avatar: defaultAvtPath,
+    introduction:
+      "Lorem Ipsum chỉ đơn giản là một đoạn văn bản giả, được dùng vào việc trình bày và dàn trang phục vụ cho in ấn. Lorem Ipsum đã được sử dụng như một văn bản chuẩn cho ngành công nghiệp in ấn từ những năm 1500, khi một họa sĩ vô danh ghép nhiều đoạn văn bản với nhau để tạo thành một bản mẫu văn bản.",
+  },
+  {
+    id: 4,
+    username: "nguoidung4",
+    password: "matkhau4",
+    name: "Người Dùng Bốn",
+    avatar: defaultAvtPath,
+    introduction: "Xin chào mọi người, tôi là Người Dùng Bốn.",
+  },
+  {
+    id: 5,
+    username: "nguoidung5",
+    password: "matkhau5",
+    name: "Người Dùng Năm",
+    avatar: defaultAvtPath,
+    introduction: "Chúc mọi người một ngày tốt lành! Tôi là Người Dùng Năm.",
+  },
+  {
+    id: 6,
+    username: "nguoidung6",
+    password: "matkhau6",
+    name: "Người Dùng Sáu",
+    avatar: defaultAvtPath,
+    introduction: "Rất vui được gặp bạn. Tôi là Người Dùng Sáu.",
+  },
+  {
+    id: 7,
+    username: "nguoidung7",
+    password: "matkhau7",
+    name: "Người Dùng Bảy",
+    avatar: defaultAvtPath,
+    introduction: "Chào bạn, tôi là Người Dùng Bảy.",
+  },
+  {
+    id: 8,
+    username: "nguoidung8",
+    password: "matkhau8",
+    name: "Người Dùng Tám",
+    avatar: defaultAvtPath,
+    introduction: "Xin chào, tôi là Người Dùng Tám.",
+  },
+  {
+    id: 9,
+    username: "nguoidung9",
+    password: "matkhau9",
+    name: "Người Dùng Chín",
+    avatar: defaultAvtPath,
+    introduction: "Chúc mọi người một ngày vui vẻ! Tôi là Người Dùng Chín.",
+  },
+  {
+    id: 10,
+    username: "nguoidung10",
+    password: "matkhau10",
+    name: "Người Dùng Mười",
+    avatar: defaultAvtPath,
+    introduction: "Rất vui được làm quen với bạn. Tôi là Người Dùng Mười.",
+  },
+];
+
 export const recipes: RecipeEntity[] = [
   {
     id: 1,
     name: "Recipe 1",
     rating: 4.5,
-    totalTime: 60,
+    totalTime: "60",
     active_time: 30,
     serving_size: 4,
     introduction:
@@ -30,7 +119,7 @@ export const recipes: RecipeEntity[] = [
     id: 2,
     name: "Recipe 2",
     rating: 3.8,
-    totalTime: 45,
+    totalTime: "45",
     active_time: 20,
     serving_size: 2,
     introduction: "This is recipe 2",
@@ -45,7 +134,7 @@ export const recipes: RecipeEntity[] = [
     id: 3,
     name: "Recipe 3",
     rating: 4.2,
-    totalTime: 75,
+    totalTime: "75",
     active_time: 40,
     serving_size: 3,
     introduction: "This is recipe 3",
@@ -60,7 +149,7 @@ export const recipes: RecipeEntity[] = [
     id: 4,
     name: "Recipe 4",
     rating: 3.5,
-    totalTime: 90,
+    totalTime: "90",
     active_time: 50,
     serving_size: 6,
     introduction: "This is recipe 4",
@@ -75,7 +164,7 @@ export const recipes: RecipeEntity[] = [
     id: 5,
     name: "Recipe 5",
     rating: 4.0,
-    totalTime: 55,
+    totalTime: "55",
     active_time: 25,
     serving_size: 2,
     introduction: "This is recipe 5",
@@ -90,7 +179,7 @@ export const recipes: RecipeEntity[] = [
     id: 6,
     name: "Recipe 6",
     rating: 4.8,
-    totalTime: 120,
+    totalTime: "120",
     active_time: 60,
     serving_size: 8,
     introduction: "This is recipe 6",
@@ -105,7 +194,7 @@ export const recipes: RecipeEntity[] = [
     id: 7,
     name: "Recipe 7",
     rating: 3.2,
-    totalTime: 30,
+    totalTime: "30",
     active_time: 15,
     serving_size: 1,
     introduction: "This is recipe 7",
@@ -120,7 +209,7 @@ export const recipes: RecipeEntity[] = [
     id: 8,
     name: "Recipe 8",
     rating: 4.6,
-    totalTime: 70,
+    totalTime: "70",
     active_time: 35,
     serving_size: 4,
     introduction: "This is recipe 8",
@@ -135,7 +224,7 @@ export const recipes: RecipeEntity[] = [
     id: 9,
     name: "Recipe 9",
     rating: 3.7,
-    totalTime: 50,
+    totalTime: "50",
     active_time: 25,
     serving_size: 3,
     introduction: "This is recipe 9",
@@ -150,7 +239,7 @@ export const recipes: RecipeEntity[] = [
     id: 10,
     name: "Recipe 10",
     rating: 4.4,
-    totalTime: 80,
+    totalTime: "80",
     active_time: 45,
     serving_size: 5,
     introduction: "This is recipe 10",
@@ -183,6 +272,20 @@ export const recipeIngredients: Recipe_IngredientEntity[] = [
     amount: 5,
     recipe_id: 1,
     ingredient_id: 3,
+    note: "Hello, this is another sample note",
+  },
+  {
+    id: 4,
+    amount: 2,
+    recipe_id: 2,
+    ingredient_id: 1,
+    note: "Hello, this is another sample note",
+  },
+  {
+    id: 5,
+    amount: 3,
+    recipe_id: 2,
+    ingredient_id: 2,
     note: "Hello, this is another sample note",
   },
 ];
@@ -218,7 +321,8 @@ export const ingredients: IngredientEntity[] = [
   {
     id: 1,
     name: "Bơ",
-    image: "Nguyen-Lieu/San-Pham-Bo-Sua-Trung/bo.jpg",
+    image:
+      "https://www.sidechef.com/ingredient/small/434769be-6df9-493e-8b3b-31264065311f.jpg?d=96x96",
     measurement_unit_id: 1,
     type_id: 1,
     nutrition_info_id: 1,
@@ -228,7 +332,8 @@ export const ingredients: IngredientEntity[] = [
   {
     id: 2,
     name: "Táo",
-    image: "Nguyen-Lieu/Trai-Cay/trai-tao.jpg",
+    image:
+      "https://www.sidechef.com/ingredient/small/434769be-6df9-493e-8b3b-31264065311f.jpg?d=96x96",
     measurement_unit_id: 2,
     type_id: 2,
     nutrition_info_id: 2,
@@ -238,7 +343,8 @@ export const ingredients: IngredientEntity[] = [
   {
     id: 3,
     name: "Chuối",
-    image: "Nguyen-Lieu/Trai-Cay/trai-chuoi.jpg",
+    image:
+      "https://www.sidechef.com/ingredient/small/434769be-6df9-493e-8b3b-31264065311f.jpg?d=96x96",
     measurement_unit_id: 3,
     type_id: 3,
     nutrition_info_id: 3,
@@ -317,162 +423,91 @@ export const ingredients: IngredientEntity[] = [
   },
 ];
 
+export const ingredientTypes: Ingredient_TypeEntity[] = [
+  {
+    id: 1,
+    name: "Cá",
+  },
+  {
+    id: 2,
+    name: "Thịt",
+  },
+  {
+    id: 3,
+    name: "Trái cây",
+  },
+];
+
 export const occasions: OccasionEntity[] = [
   {
     id: 1,
     name: "Tết Nguyên Đán",
     description: "Lễ Tết truyền thống của Việt Nam",
     start_at: new Date(new Date().getFullYear(), 0, 1),
-    image: bannerImage,
+    image: bannerPath,
   },
   {
     id: 2,
     name: "Ngày Quốc khánh",
     description: "Ngày Quốc khánh Việt Nam",
     start_at: new Date(new Date().getFullYear(), 8, 2),
-    image: bannerImage,
+    image: bannerPath,
   },
   {
     id: 3,
     name: "Ngày Lao động",
     description: "Lễ Quốc tế lao động",
     start_at: new Date(new Date().getFullYear(), 4, 1),
-    image: bannerImage,
+    image: bannerPath,
   },
   {
     id: 4,
     name: "Ngày Quốc tế Phụ nữ",
     description: "Ngày Quốc tế của Phụ nữ",
     start_at: new Date(new Date().getFullYear(), 2, 8),
-    image: bannerImage,
+    image: bannerPath,
   },
   {
     id: 5,
     name: "Ngày Quốc tế Hạnh phúc",
     description: "Ngày Quốc tế Hạnh phúc",
     start_at: new Date(new Date().getFullYear(), 2, 20),
-    image: bannerImage,
+    image: bannerPath,
   },
   {
     id: 6,
     name: "Ngày Quốc tế Thiếu nhi",
     description: "Ngày Quốc tế Thiếu nhi",
     start_at: new Date(new Date().getFullYear(), 5, 1),
-    image: bannerImage,
+    image: bannerPath,
   },
   {
     id: 7,
     name: "Ngày Quốc tế Dân số",
     description: "Ngày Quốc tế Dân số",
     start_at: new Date(new Date().getFullYear(), 6, 11),
-    image: bannerImage,
+    image: bannerPath,
   },
   {
     id: 8,
     name: "Ngày Quốc tế Hòa bình",
     description: "Ngày Quốc tế Hòa bình",
     start_at: new Date(new Date().getFullYear(), 8, 21),
-    image: bannerImage,
+    image: bannerPath,
   },
   {
     id: 9,
     name: "Ngày Quốc tế Người cao tuổi",
     description: "Ngày Quốc tế Người cao tuổi",
     start_at: new Date(new Date().getFullYear(), 9, 1),
-    image: bannerImage,
+    image: bannerPath,
   },
   {
     id: 10,
     name: "Ngày Quốc tế Áo trắng",
     description: "Ngày Quốc tế Áo trắng",
     start_at: new Date(new Date().getFullYear(), 4, 5),
-    image: bannerImage,
-  },
-];
-
-export const accounts: AccountEntity[] = [
-  {
-    id: 1,
-    username: "nguoidung1",
-    password: "matkhau1",
-    name: "Người Dùng Một",
-    avatar: defaultAvt,
-    introduction:
-      "Lorem Ipsum chỉ đơn giản là một đoạn văn bản giả, được dùng vào việc trình bày và dàn trang phục vụ cho in ấn. Lorem Ipsum đã được sử dụng như một văn bản chuẩn cho ngành công nghiệp in ấn từ những năm 1500, khi một họa sĩ vô danh ghép nhiều đoạn văn bản với nhau để tạo thành một bản mẫu văn bản.",
-  },
-  {
-    id: 2,
-    username: "nguoidung2",
-    password: "matkhau2",
-    name: "Người Dùng Hai",
-    avatar: defaultAvt,
-    introduction:
-      "Lorem Ipsum chỉ đơn giản là một đoạn văn bản giả, được dùng vào việc trình bày và dàn trang phục vụ cho in ấn. Lorem Ipsum đã được sử dụng như một văn bản chuẩn cho ngành công nghiệp in ấn từ những năm 1500, khi một họa sĩ vô danh ghép nhiều đoạn văn bản với nhau để tạo thành một bản mẫu văn bản.",
-  },
-  {
-    id: 3,
-    username: "nguoidung3",
-    password: "matkhau3",
-    name: "Người Dùng Ba",
-    avatar: defaultAvt,
-    introduction:
-      "Lorem Ipsum chỉ đơn giản là một đoạn văn bản giả, được dùng vào việc trình bày và dàn trang phục vụ cho in ấn. Lorem Ipsum đã được sử dụng như một văn bản chuẩn cho ngành công nghiệp in ấn từ những năm 1500, khi một họa sĩ vô danh ghép nhiều đoạn văn bản với nhau để tạo thành một bản mẫu văn bản.",
-  },
-  {
-    id: 4,
-    username: "nguoidung4",
-    password: "matkhau4",
-    name: "Người Dùng Bốn",
-    avatar: defaultAvt,
-    introduction: "Xin chào mọi người, tôi là Người Dùng Bốn.",
-  },
-  {
-    id: 5,
-    username: "nguoidung5",
-    password: "matkhau5",
-    name: "Người Dùng Năm",
-    avatar: defaultAvt,
-    introduction: "Chúc mọi người một ngày tốt lành! Tôi là Người Dùng Năm.",
-  },
-  {
-    id: 6,
-    username: "nguoidung6",
-    password: "matkhau6",
-    name: "Người Dùng Sáu",
-    avatar: defaultAvt,
-    introduction: "Rất vui được gặp bạn. Tôi là Người Dùng Sáu.",
-  },
-  {
-    id: 7,
-    username: "nguoidung7",
-    password: "matkhau7",
-    name: "Người Dùng Bảy",
-    avatar: defaultAvt,
-    introduction: "Chào bạn, tôi là Người Dùng Bảy.",
-  },
-  {
-    id: 8,
-    username: "nguoidung8",
-    password: "matkhau8",
-    name: "Người Dùng Tám",
-    avatar: defaultAvt,
-    introduction: "Xin chào, tôi là Người Dùng Tám.",
-  },
-  {
-    id: 9,
-    username: "nguoidung9",
-    password: "matkhau9",
-    name: "Người Dùng Chín",
-    avatar: defaultAvt,
-    introduction: "Chúc mọi người một ngày vui vẻ! Tôi là Người Dùng Chín.",
-  },
-  {
-    id: 10,
-    username: "nguoidung10",
-    password: "matkhau10",
-    name: "Người Dùng Mười",
-    avatar: defaultAvt,
-    introduction: "Rất vui được làm quen với bạn. Tôi là Người Dùng Mười.",
+    image: bannerPath,
   },
 ];
 
@@ -493,5 +528,58 @@ export const nutritionInfos: Nutrition_InfoEntity[] = [
     calcium: 150,
     iron: 2,
     potassium: 400,
+  },
+];
+
+export const carts: CartEntity[] = [
+  {
+    id: 1,
+    account_id: 1,
+    recipe_id: 1,
+    serving_size: 4,
+  },
+  {
+    id: 2,
+    account_id: 1,
+    recipe_id: 2,
+    serving_size: 2,
+  },
+];
+
+export const cartItems: Cart_ItemEntity[] = [
+  {
+    id: 1,
+    cart_id: 1,
+    ingredient_id: 1,
+    amount: 5,
+    isBought: true,
+  },
+  {
+    id: 2,
+    cart_id: 1,
+    ingredient_id: 2,
+    amount: 2,
+    isBought: true,
+  },
+  {
+    id: 3,
+    cart_id: 1,
+    ingredient_id: 3,
+    amount: 5,
+    isBought: false,
+  },
+  {
+    id: 4,
+    cart_id: 2,
+    ingredient_id: 1,
+    amount: 2,
+    isBought: false,
+  },
+  {
+    id: 5,
+    cart_id: 2,
+    ingredient_id: 2,
+    amount: 3,
+    isBought: false,
   },
 ];

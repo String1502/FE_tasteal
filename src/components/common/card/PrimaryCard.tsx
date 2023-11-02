@@ -16,7 +16,9 @@ import {
   StarRounded,
 } from "@mui/icons-material";
 import { RecipeEntity } from "../../../types/type";
-import { curveShape, defaultAvt } from "@/assets/exportImage";
+import { curveShapePath } from "@/assets/exportImage";
+import { dateTimeToMinutes } from "@/utils/format";
+import useFirebaseImage from "@/lib/hooks/useFirebaseImage";
 
 const imgHeight = "224px";
 const padding = 2;
@@ -28,6 +30,9 @@ export function PrimaryCard({
   props?: CardProps;
   recipe: RecipeEntity;
 }) {
+  const image = useFirebaseImage(recipe?.image);
+  const authorAvatar = useFirebaseImage(recipe?.Account?.avatar);
+  const curveShapeImg = useFirebaseImage(curveShapePath);
   return (
     <>
       <Box>
@@ -48,7 +53,8 @@ export function PrimaryCard({
           <CardMedia
             component="img"
             height={imgHeight}
-            image="https://www.sidechef.com/recipe/d49b0c1d-e63e-4aac-afcc-b337b0cd1bff.jpg?d=1408x1120"
+            // image="https://www.sidechef.com/recipe/d49b0c1d-e63e-4aac-afcc-b337b0cd1bff.jpg?d=1408x1120"
+            image={image}
             alt={recipe.name}
           />
           <Checkbox
@@ -91,7 +97,7 @@ export function PrimaryCard({
               color="common.white"
               sx={{ fontWeight: "bold" }}
             >
-              {recipe.totalTime} phút
+              {dateTimeToMinutes(recipe.totalTime)} phút
             </Typography>
           </Box>
 
@@ -104,7 +110,7 @@ export function PrimaryCard({
               height: "30px",
               zIndex: 2,
               transform: "translateY(-95%)",
-              backgroundImage: `url(${curveShape})`,
+              backgroundImage: `url(${curveShapeImg})`,
               backgroundRepeat: "no-repeat",
               backgroundSize: "contain",
               backgroundPosition: "center",
@@ -112,7 +118,7 @@ export function PrimaryCard({
           >
             <Avatar
               alt="Remy Sharp"
-              src={defaultAvt}
+              src={authorAvatar}
               sx={{
                 width: "40px",
                 height: "40px",
@@ -137,7 +143,13 @@ export function PrimaryCard({
               emptyIcon={<StarRounded fontSize="inherit" />}
               size="small"
             />
-            <Typography variant="body2" sx={{ fontWeight: "bold" }}>
+            <Typography
+              variant="body2"
+              sx={{ fontWeight: "bold" }}
+              whiteSpace={"nowrap"}
+              textOverflow={"ellipsis"}
+              overflow={"hidden"}
+            >
               {recipe.name}
             </Typography>
 

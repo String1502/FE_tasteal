@@ -1,9 +1,10 @@
-import { bannerImage } from "@/assets/exportImage";
+import { bannerPath } from "@/assets/exportImage";
 import OccasionService from "@/lib/services/occasionService";
 import { OccasionEntity } from "@/types/type";
 import { Box, Button, Container, Typography, useTheme } from "@mui/material";
 import React from "react";
 import { SearchTextField } from "../search/SearchTextField";
+import useFirebaseImage from "@/lib/hooks/useFirebaseImage";
 
 const height = "480px";
 
@@ -14,6 +15,8 @@ export function Banner() {
     undefined
   );
 
+  const image = useFirebaseImage(occasion?.image);
+
   React.useEffect(() => {
     const fetchData = async () => {
       setOccasion(await OccasionService.GetCurrentOccassions());
@@ -21,15 +24,13 @@ export function Banner() {
     fetchData();
   }, []);
 
-  console.log(occasion);
-
   return (
     <>
       <Box
         sx={{
           width: "100%",
           height: height,
-          backgroundImage: `url(${bannerImage})`,
+          backgroundImage: `url(${image})`,
           backgroundSize: "cover",
           backgroundPosition: "center",
           backgroundRepeat: "no-repeat",

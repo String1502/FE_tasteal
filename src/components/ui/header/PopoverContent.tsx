@@ -1,4 +1,5 @@
-import { popoverImage } from "@/assets/exportImage";
+import { popoverImage, popoverPath } from "@/assets/exportImage";
+import useFirebaseImage from "@/lib/hooks/useFirebaseImage";
 import { Box, Container, Grid, Typography } from "@mui/material";
 import React from "react";
 import { DefaultTuKhoas, TuKhoa } from "../../../pages/Search";
@@ -24,7 +25,7 @@ export function PopoverContent() {
     React.useState<IngredientEntity[]>(defaultIngredients);
   const [occasions, setOccasions] =
     React.useState<OccasionEntity[]>(defaultOccasions);
-
+  const popoverPathImage = useFirebaseImage(popoverPath);
   return (
     <>
       <Container
@@ -47,7 +48,7 @@ export function PopoverContent() {
                 aspectRatio: "1/1",
                 border: 1,
                 borderColor: "secondary.main",
-                backgroundImage: `url(${popoverImage})`,
+                backgroundImage: `url(${popoverPathImage})`,
                 backgroundSize: "cover",
                 backgroundPosition: "center",
                 backgroundRepeat: "no-repeat",
