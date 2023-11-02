@@ -42,10 +42,14 @@ export const ImagePicker: FC<ImagePickerProps> = ({ file, onChange }) => {
           justifyContent: "center",
           alignItems: "center",
           borderRadius: "24px",
+          borderWidth: 1,
+          borderStyle: "solid",
+          borderColor: "grey.600",
           "&:hover": {
             cursor: "pointer",
             backgroundColor: "#ffccbb",
           },
+          transition: "all 0.2s ease-in-out",
         }}
       >
         <Stack alignItems={"center"} visibility={file ? "hidden" : "visible"}>

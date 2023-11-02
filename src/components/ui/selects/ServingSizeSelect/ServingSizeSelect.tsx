@@ -39,6 +39,7 @@ export const ServingSizeSelect: React.FunctionComponent<
         bgcolor: "secondary.main",
         typography: "subtitle1",
         fontWeight: 800,
+        transition: "all 0.2s ease-in-out",
         ...props.sx,
       }}
       MenuProps={{
