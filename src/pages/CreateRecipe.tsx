@@ -96,12 +96,31 @@ const CreateRecipe: React.FunctionComponent = () => {
 
   //#endregion
 
+  //#region Methods
+
+  const filterOccasions = useCallback(
+    (occasions: ChipValue[]) => {
+      return occasions.filter((occasion) => {
+        return !selectedOccasions.some(
+          (selectedOccasion) => selectedOccasion.id === occasion.id
+        );
+      });
+    },
+    [selectedOccasions]
+  );
+
+  //#endregion
+
   //#region UseMemos
 
   const canCreateRecipe = useMemo(
     () => newRecipe.title && newRecipe.ingredients.length > 0,
     [newRecipe]
   );
+
+  const filteredOccasions = useMemo(() => {
+    return filterOccasions(mockOccasions);
+  }, [filterOccasions]);
 
   //#endregion
 
@@ -213,11 +232,13 @@ const CreateRecipe: React.FunctionComponent = () => {
               <Stack gap={1}>
                 <FormLabel>Occasions</FormLabel>
                 <Autocomplete
-                  options={mockOccasions}
+                  options={filteredOccasions}
                   getOptionLabel={(o) => o.name}
+                  title="Select occasions"
                   placeholder="Select occasions"
+                  noOptionsText="No occasions found"
                   renderInput={(params) => (
-                    <TastealTextField {...params} label="Autocomplete" />
+                    <TastealTextField {...params} label="Select occasions" />
                   )}
                   onChange={(_, value) => handleSelectOccasion(value)}
                 />
