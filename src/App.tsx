@@ -8,13 +8,14 @@ import {
 import React from "react";
 import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
 import CreateRecipe from "./pages/CreateRecipe";
+import { ForgotPass } from "./pages/ForgotPass";
+import { Grocery } from "./pages/Grocery";
 import Home from "./pages/Home";
+import MealPlanner from "./pages/MealPlanner";
 import Search from "./pages/Search";
 import { SignIn } from "./pages/SignIn";
 import { SignUp } from "./pages/SignUp";
-import MealPlanner from "./pages/MealPlanner";
 import { SignUpEmail } from "./pages/SignUpEmail";
-import { ForgotPass } from "./pages/ForgotPass";
 import { getMode } from "./theme/muiTheme";
 import { Grocery } from "./pages/Grocery";
 import TastealHashLoader from "./components/common/progress/TastealHashLoader";

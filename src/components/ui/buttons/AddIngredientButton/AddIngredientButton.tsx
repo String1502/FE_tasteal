@@ -6,7 +6,9 @@ const AddIngredientButton: React.FunctionComponent<ButtonProps> = (props) => {
       {...props}
       variant="contained"
       sx={{
-        borderRadius: 8,
+        borderRadius: 4,
+        border: "1px solid",
+        borderColor: "grey.400",
         bgcolor: "#F0F0F0",
         color: "#777d86",
         boxShadow: "none",
