@@ -17,7 +17,6 @@ import { SignIn } from "./pages/SignIn";
 import { SignUp } from "./pages/SignUp";
 import { SignUpEmail } from "./pages/SignUpEmail";
 import { getMode } from "./theme/muiTheme";
-import { Grocery } from "./pages/Grocery";
 import TastealHashLoader from "./components/common/progress/TastealHashLoader";
 
 export const ColorModeContext = React.createContext({
