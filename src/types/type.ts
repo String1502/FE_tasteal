@@ -115,6 +115,7 @@ export type PlanItemEntity = {
   plan_id: number;
   recipe_id: number;
   serving_size: number;
+  order: number;
   Plan?: PlanEntity | undefined;
   Recipe?: RecipeEntity | undefined;
 };

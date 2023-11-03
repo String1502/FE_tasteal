@@ -17,6 +17,457 @@ import {
 } from "@mui/icons-material";
 import { WeekNavigation } from "@/components/ui/mealPlan/WeekNavigation.tsx";
 import WeekDateItem from "@/components/ui/mealPlan/WeekDateItem.tsx";
+import { AccountEntity, PlanItemEntity } from "@/types/type";
+import AccountService from "@/lib/services/accountService";
+import PlanItemService from "@/lib/services/planItemService";
+
+import { DragDropContext, DropResult } from "react-beautiful-dnd";
+
+export type DateDisplay = {
+  label: string;
+  date?: string;
+  borderRight?: boolean;
+  borderBottom?: boolean;
+  planItems?: PlanItemEntity[];
+};
+
+const initialWeekDates: DateDisplay[] = [
+  {
+    label: "Thứ hai",
+    borderRight: true,
+    borderBottom: true,
+  },
+  {
+    label: "Thứ ba",
+    borderRight: true,
+    borderBottom: true,
+  },
+  {
+    label: "Thứ tư",
+    borderRight: true,
+    borderBottom: true,
+  },
+  {
+    label: "Thứ năm",
+    borderRight: false,
+    borderBottom: true,
+  },
+  {
+    label: "Thứ sáu",
+    borderRight: true,
+    borderBottom: false,
+  },
+  {
+    label: "Thứ bảy",
+    borderRight: true,
+    borderBottom: false,
+  },
+  {
+    label: "Chủ nhật",
+    borderRight: true,
+    borderBottom: false,
+  },
+];
+
+const MealPlanner: React.FC = () => {
+  //#region Week đếm số
+  const [weekCounter, setWeekCounter] = React.useState(0);
+  function handleChangeWeekCounter(increment: number) {
+    setWeekCounter((prev) => prev + increment);
+  }
+  //#endregion
+
+  const [accountData, setAccountData] = React.useState<
+    AccountEntity | undefined
+  >(undefined);
+
+  const [weekDates, setWeekDates] = React.useState<DateDisplay[]>([]);
+
+  const [planItemData, setPlanItemData] = React.useState<PlanItemEntity[]>([]);
+
+  function getWeekDates(offset: number): string[] {
+    const currentDate = new Date();
+    const currentDay = currentDate.getDay(); // Lấy ngày trong tuần của ngày hiện tại (0 là Chủ Nhật, 1 là thứ Hai, ..., 6 là thứ Bảy)
+
+    const startOfWeek = new Date(currentDate);
+    startOfWeek.setDate(
+      currentDate.getDate() - currentDay + (currentDay === 0 ? -6 : 1)
+    ); // Đặt ngày bắt đầu tuần
+    startOfWeek.setDate(startOfWeek.getDate() + 7 * offset); // Áp dụng offset
+
+    const endOfWeek = new Date(startOfWeek);
+    endOfWeek.setDate(endOfWeek.getDate() + 6); // Ngày kết thúc tuần là ngày bắt đầu + 6
+
+    const dates: string[] = [];
+
+    for (
+      let day = new Date(startOfWeek);
+      day <= endOfWeek;
+      day.setDate(day.getDate() + 1)
+    ) {
+      const dateString = new Date(day.getTime()).toISOString().split("T")[0];
+      dates.push(dateString);
+    }
+
+    return dates;
+  }
+
+  //#region UseEffect
+
+  useEffect(() => {
+    async function fetchData() {
+      const account = await AccountService.GetById(1);
+
+      setAccountData(account);
+
+      const planItems = await PlanItemService.GetPlanItemsByAccountId(
+        account?.id
+      );
+
+      if (!planItems) {
+        return;
+      }
+
+      setPlanItemData(planItems);
+      setWeekCounter(0);
+      const dates = getWeekDates(0);
+      const data: DateDisplay[] = [];
+
+      for (let i = 0; i < initialWeekDates.length; i++) {
+        const date = dates[i];
+        if (date) {
+          data.push({
+            ...initialWeekDates[i],
+            date,
+            planItems: planItems
+              .filter((item) => {
+                const itemDate = new Date(item.Plan?.date);
+                return itemDate.toISOString().split("T")[0] === date;
+              })
+              .sort((a, b) => {
+                return a.order - b.order;
+              }),
+          });
+        }
+      }
+
+      setWeekDates(data);
+    }
+    fetchData();
+  }, []);
+
+  useEffect(() => {
+    const dates = getWeekDates(weekCounter);
+    const data: DateDisplay[] = [];
+
+    for (let i = 0; i < initialWeekDates.length; i++) {
+      const date = dates[i];
+      if (date) {
+        data.push({
+          ...initialWeekDates[i],
+          date,
+          planItems: planItemData
+            .filter((item) => {
+              const itemDate = new Date(item.Plan?.date);
+              return itemDate.toISOString().split("T")[0] === date;
+            })
+            .sort((a, b) => {
+              return a.order - b.order;
+            }),
+        });
+      }
+    }
+
+    setWeekDates(data);
+  }, [weekCounter]);
+
+  useEffect(() => {
+    setWeekDates((prev) => {
+      return prev.map((date) => {
+        return {
+          ...date,
+          planItems: planItemData
+            .filter((item) => {
+              const itemDate = new Date(item.Plan?.date);
+              return itemDate.toISOString().split("T")[0] === date.date;
+            })
+            .sort((a, b) => {
+              return a.order - b.order;
+            }),
+        };
+      });
+    });
+  }, [planItemData]);
+
+  //#endregion
+
+  //#region Drag and Drop
+  const [isDragging, setIsDragging] = useState(false);
+
+  const onDragStart = (dragStart: DropResult) => {
+    setIsDragging(true);
+    console.log(dragStart);
+  };
+  const onDragEnd = (dropResult: DropResult) => {
+    setIsDragging(false);
+
+    if (
+      !dropResult.destination ||
+      !dropResult.source ||
+      !dropResult.draggableId
+    )
+      return;
+    if (
+      dropResult.destination.index === dropResult.source.index &&
+      dropResult.destination.droppableId === dropResult.source.droppableId
+    ) {
+      return;
+    }
+
+    let oldDate = new Date(dropResult.source.droppableId);
+    let newDate = new Date(dropResult.destination.droppableId);
+
+    const planItemMove = {
+      id: parseInt(dropResult.draggableId),
+      from: oldDate,
+      to: newDate,
+      fromIndex: dropResult.source.index,
+      toIndex: dropResult.destination.index,
+    };
+
+    const planItem = planItemData.find((item) => item.id === planItemMove.id);
+
+    let finalPlanItemData = [
+      ...planItemData.filter(
+        (item) =>
+          item.Plan?.date.getTime() !== oldDate.getTime() &&
+          item.Plan?.date.getTime() !== newDate.getTime()
+      ),
+    ];
+
+    if (planItemMove.from.getTime() !== planItemMove.to.getTime()) {
+      let sourceArray = planItemData
+        .filter(
+          (item) => item.Plan?.date.getTime() === planItemMove.from.getTime()
+        )
+        .sort((a, b) => {
+          return a.order - b.order;
+        });
+      sourceArray.splice(planItemMove.fromIndex, 1);
+      sourceArray = sourceArray.map((item, index) => {
+        return {
+          ...item,
+          order: index + 1,
+        };
+      });
+
+      let destinationArray = planItemData
+        .filter(
+          (item) => item.Plan?.date.getTime() === planItemMove.to.getTime()
+        )
+        .sort((a, b) => {
+          return a.order - b.order;
+        });
+
+      const existRecipe = destinationArray
+        .map((item) => item.Recipe.id)
+        .findIndex((id) => id === planItem.Recipe.id);
+
+      if (existRecipe !== -1) {
+        if (confirm("Công thức trùng lặp! Bạn vẫn muốn thêm?")) {
+        } else {
+          return;
+        }
+      }
+
+      destinationArray.splice(planItemMove.toIndex, 0, {
+        ...planItem,
+        Plan: {
+          ...planItem.Plan,
+          date: planItemMove.to,
+        },
+      });
+      destinationArray = destinationArray.map((item, index) => {
+        return {
+          ...item,
+          order: index + 1,
+        };
+      });
+
+      finalPlanItemData = [
+        ...finalPlanItemData,
+        ...sourceArray,
+        ...destinationArray,
+      ];
+    } else {
+      let sourceArray = planItemData
+        .filter(
+          (item) => item.Plan?.date.getTime() === planItemMove.from.getTime()
+        )
+        .sort((a, b) => {
+          return a.order - b.order;
+        });
+
+      sourceArray.splice(planItemMove.fromIndex, 1);
+      sourceArray.splice(planItemMove.toIndex, 0, {
+        ...planItem,
+        Plan: {
+          ...planItem.Plan,
+          date: planItemMove.to,
+        },
+      });
+
+      sourceArray = sourceArray.map((item, index) => {
+        return {
+          ...item,
+          order: index + 1,
+        };
+      });
+      finalPlanItemData = [...finalPlanItemData, ...sourceArray];
+    }
+
+    setPlanItemData(finalPlanItemData);
+  };
+
+  //#endregion
+
+  function handleRemovePlanItem(id: number) {
+    const planItemDelete = planItemData.find((item) => item.id === id);
+
+    const newPlanItemData = planItemData
+      .filter((item) => item.id !== id)
+      .map((item) => {
+        if (
+          item.Plan?.date.getTime() === planItemDelete?.Plan?.date.getTime() &&
+          item.order >= planItemDelete?.order
+        ) {
+          return {
+            ...item,
+            order: item.order - 1,
+          };
+        }
+        return {
+          ...item,
+        };
+      });
+
+    setPlanItemData(newPlanItemData);
+  }
+
+  return (
+    <Layout>
+      <Grid container alignItems={"stretch"} justifyContent={"center"}>
+        <Grid item xs={12}>
+          <Container
+            sx={{
+              py: 3,
+            }}
+          >
+            <Grid
+              sx={{ width: "100%" }}
+              container
+              justifyContent={"center"}
+              alignItems={"center"}
+              spacing={{
+                xs: 3,
+                md: 2,
+              }}
+            >
+              <Grid item xs={12} md={4}>
+                <Typography
+                  variant="h5"
+                  sx={{
+                    fontWeight: "900",
+                    textTransform: "uppercase",
+                  }}
+                >
+                  Lịch ăn của tôi
+                </Typography>
+              </Grid>
+
+              <Grid
+                item
+                xs={12}
+                md={4}
+                sx={{
+                  display: {
+                    xs: "none",
+                    md: "block",
+                  },
+                }}
+              >
+                <WeekNavigation
+                  weekCounter={weekCounter}
+                  handleChangeWeekCounter={handleChangeWeekCounter}
+                />
+              </Grid>
+
+              <Grid item xs={12} md={4}>
+                <ActionSection />
+              </Grid>
+
+              <Grid
+                item
+                xs={12}
+                sx={{
+                  display: {
+                    xs: "block",
+                    md: "none",
+                  },
+                }}
+              >
+                <WeekNavigation
+                  weekCounter={weekCounter}
+                  handleChangeWeekCounter={handleChangeWeekCounter}
+                />
+              </Grid>
+            </Grid>
+          </Container>
+        </Grid>
+
+        <Grid item xs={12}>
+          <Box
+            sx={{
+              backgroundColor: "secondary.main",
+              py: 4,
+            }}
+          >
+            <Container>
+              <DragDropContext onDragStart={onDragStart} onDragEnd={onDragEnd}>
+                <Box
+                  sx={{
+                    width: "100%",
+                    borderRadius: 4,
+                    overflow: "hidden",
+                    backgroundColor: "background.default",
+                  }}
+                >
+                  <Grid
+                    container
+                    justifyContent={"flex-start"}
+                    alignItems={"stretch"}
+                  >
+                    {weekDates.map((item, index) => (
+                      <Grid item xs={12} md={3} key={index}>
+                        <WeekDateItem
+                          isDragging={isDragging}
+                          weekDates={item}
+                          handleRemovePlanItem={handleRemovePlanItem}
+                        />
+                      </Grid>
+                    ))}
+                  </Grid>
+                </Box>
+              </DragDropContext>
+            </Container>
+          </Box>
+        </Grid>
+      </Grid>
+    </Layout>
+  );
+};
+
+export default MealPlanner;
 
 const ActionSection = () => {
   const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(
@@ -153,202 +604,3 @@ const ActionSection = () => {
     </>
   );
 };
-
-export type DateDisplay = {
-  label: string;
-  borderRight?: boolean;
-  borderBottom?: boolean;
-};
-
-const daysInWeek: DateDisplay[] = [
-  {
-    label: "Thứ hai",
-    borderRight: true,
-    borderBottom: true,
-  },
-  {
-    label: "Thứ ba",
-    borderRight: true,
-    borderBottom: true,
-  },
-  {
-    label: "Thứ tư",
-    borderRight: true,
-    borderBottom: true,
-  },
-  {
-    label: "Thứ năm",
-    borderRight: false,
-    borderBottom: true,
-  },
-  {
-    label: "Thứ sáu",
-    borderRight: true,
-    borderBottom: false,
-  },
-  {
-    label: "Thứ bảy",
-    borderRight: true,
-    borderBottom: false,
-  },
-  {
-    label: "Chủ nhật",
-    borderRight: true,
-    borderBottom: false,
-  },
-];
-
-const MealPlanner: React.FC = () => {
-  const [weekCounter, setWeekCounter] = React.useState(0);
-  function handleChangeWeekCounter(increment: number) {
-    setWeekCounter((prev) => prev + increment);
-  }
-
-  const [weekDates, setWeekDates] = React.useState<Date[]>([]);
-
-  function getWeekDates(offset: number): Date[] {
-    const currentDate = new Date();
-    const currentDay = currentDate.getDay(); // Lấy ngày trong tuần của ngày hiện tại (0 là Chủ Nhật, 1 là thứ Hai, ..., 6 là thứ Bảy)
-
-    const startOfWeek = new Date(currentDate);
-    startOfWeek.setDate(
-      currentDate.getDate() - currentDay + (currentDay === 0 ? -6 : 1)
-    ); // Đặt ngày bắt đầu tuần
-    startOfWeek.setDate(startOfWeek.getDate() + 7 * offset); // Áp dụng offset
-
-    const endOfWeek = new Date(startOfWeek);
-    endOfWeek.setDate(endOfWeek.getDate() + 6); // Ngày kết thúc tuần là ngày bắt đầu + 6
-
-    const dates: Date[] = [];
-
-    for (
-      let day = new Date(startOfWeek);
-      day <= endOfWeek;
-      day.setDate(day.getDate() + 1)
-    ) {
-      dates.push(new Date(day));
-    }
-
-    return dates;
-  }
-
-  useEffect(() => {
-    setWeekCounter(0);
-    setWeekDates(getWeekDates(0));
-  }, []);
-
-  useEffect(() => {
-    setWeekDates(getWeekDates(weekCounter));
-  }, [weekCounter]);
-
-  return (
-    <Layout>
-      <Grid container alignItems={"stretch"} justifyContent={"center"}>
-        <Grid item xs={12}>
-          <Container
-            sx={{
-              py: 3,
-            }}
-          >
-            <Grid
-              sx={{ width: "100%" }}
-              container
-              justifyContent={"center"}
-              alignItems={"center"}
-              spacing={{
-                xs: 3,
-                md: 2,
-              }}
-            >
-              <Grid item xs={12} md={4}>
-                <Typography
-                  variant="h5"
-                  sx={{
-                    fontWeight: "900",
-                    textTransform: "uppercase",
-                  }}
-                >
-                  Lịch ăn của tôi
-                </Typography>
-              </Grid>
-
-              <Grid
-                item
-                xs={12}
-                md={4}
-                sx={{
-                  display: {
-                    xs: "none",
-                    md: "block",
-                  },
-                }}
-              >
-                <WeekNavigation
-                  weekCounter={weekCounter}
-                  handleChangeWeekCounter={handleChangeWeekCounter}
-                />
-              </Grid>
-
-              <Grid item xs={12} md={4}>
-                <ActionSection />
-              </Grid>
-
-              <Grid
-                item
-                xs={12}
-                sx={{
-                  display: {
-                    xs: "block",
-                    md: "none",
-                  },
-                }}
-              >
-                <WeekNavigation
-                  weekCounter={weekCounter}
-                  handleChangeWeekCounter={handleChangeWeekCounter}
-                />
-              </Grid>
-            </Grid>
-          </Container>
-        </Grid>
-
-        <Grid item xs={12}>
-          <Box
-            sx={{
-              backgroundColor: "secondary.main",
-              py: 4,
-            }}
-          >
-            <Container>
-              <Box
-                sx={{
-                  width: "100%",
-                  borderRadius: 4,
-                  overflow: "hidden",
-                  backgroundColor: "background.default",
-                }}
-              >
-                <Grid
-                  container
-                  justifyContent={"flex-start"}
-                  alignItems={"stretch"}
-                >
-                  {daysInWeek.map((item, index) => (
-                    <Grid item xs={12} md={3} key={index}>
-                      <WeekDateItem
-                        dateDisplay={item}
-                        date={weekDates[index]}
-                      />
-                    </Grid>
-                  ))}
-                </Grid>
-              </Box>
-            </Container>
-          </Box>
-        </Grid>
-      </Grid>
-    </Layout>
-  );
-};
-
-export default MealPlanner;

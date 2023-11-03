@@ -7,6 +7,8 @@ import {
   Ingredient_TypeEntity,
   Nutrition_InfoEntity,
   OccasionEntity,
+  PlanEntity,
+  PlanItemEntity,
   RecipeEntity,
   Recipe_DirectionEntity,
   Recipe_IngredientEntity,
@@ -581,5 +583,105 @@ export const cartItems: Cart_ItemEntity[] = [
     ingredient_id: 2,
     amount: 3,
     isBought: false,
+  },
+];
+
+export const plans: PlanEntity[] = [
+  {
+    id: 1,
+    account_id: 1,
+    date: new Date("2023-10-30"),
+  },
+  {
+    id: 2,
+    account_id: 1,
+    date: new Date("2023-10-31"),
+  },
+  {
+    id: 3,
+    account_id: 1,
+    date: new Date("2023-11-01"),
+  },
+  {
+    id: 4,
+    account_id: 1,
+    date: new Date("2023-11-02"),
+  },
+  {
+    id: 5,
+    account_id: 1,
+    date: new Date("2023-11-03"),
+  },
+  {
+    id: 6,
+    account_id: 1,
+    date: new Date("2023-11-04"),
+  },
+  {
+    id: 7,
+    account_id: 1,
+    date: new Date("2023-11-05"),
+  },
+  {
+    id: 8,
+    account_id: 1,
+    date: new Date("2023-10-29"),
+  },
+];
+
+// id: number;
+// plan_id: number;
+// recipe_id: number;
+// serving_size: number;
+
+export const planItems: PlanItemEntity[] = [
+  {
+    id: 1,
+    plan_id: 1,
+    recipe_id: 1,
+    order: 1,
+    serving_size: 4,
+  },
+  {
+    id: 2,
+    plan_id: 1,
+    recipe_id: 2,
+    order: 2,
+    serving_size: 2,
+  },
+  {
+    id: 3,
+    plan_id: 2,
+    recipe_id: 1,
+    order: 1,
+    serving_size: 4,
+  },
+  {
+    id: 4,
+    plan_id: 3,
+    recipe_id: 3,
+    order: 1,
+    serving_size: 3,
+  },
+  {
+    id: 5,
+    plan_id: 3,
+    recipe_id: 4,
+    order: 2,
+    serving_size: 3,
+  },
+  {
+    id: 6,
+    plan_id: 3,
+    recipe_id: 5,
+    order: 3,
+    serving_size: 3,
+  },
+  {
+    id: 7,
+    plan_id: 8,
+    recipe_id: 1,
+    order: 1,
+    serving_size: 4,
   },
 ];
