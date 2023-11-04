@@ -102,6 +102,15 @@ class RecipeService {
 
     return recipes;
   }
+
+  //#region POST
+
+  /**
+   * Create a new recipe
+   */
+  public static async CreateRecipe(data: CreateRecipeModel) {}
+
+  //#endregion
 }
 
 export default RecipeService;

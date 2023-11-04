@@ -34,6 +34,17 @@ class AccountService {
     );
   }
 
+  /**
+   * 
+   * @param uid - The uid of the account
+   */
+  public static GetByUid(uid: string) {
+    // Simulate delay of 1 second
+    simulateDelay(1);
+
+
+  }
+
   public static async GetMostContributedAccounts(
     limit: number
   ): Promise<AccountEntity[]> {
