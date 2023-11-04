@@ -2,6 +2,7 @@ import { recipes as recipesSampleData } from "@/types/sampleData";
 import { RecipeEntity } from "@/types/type";
 import simulateDelay from "@/utils/promises/stimulateDelay";
 import { API_PATH, DEFAULT_PAGE } from "../constants/common";
+import { RecipePostModel } from "../models/dtos/reicpeDTO";
 
 /**
  * Represents a service for managing occasions.
@@ -108,7 +109,7 @@ class RecipeService {
   /**
    * Create a new recipe
    */
-  public static async CreateRecipe(data: CreateRecipeModel) {}
+  public static async CreateRecipe(data: RecipePostModel) {}
 
   //#endregion
 }
