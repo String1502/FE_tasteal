@@ -1,4 +1,7 @@
 import RoundedButton from "@/components/common/buttons/RoundedButton";
+import ChipsDisplayer, {
+  ChipValue,
+} from "@/components/common/collections/ChipsDisplayer";
 import ImagePicker from "@/components/common/files/ImagePicker";
 import TastealTextField from "@/components/common/textFields/TastealTextField";
 import FormLabel from "@/components/common/typos/FormLabel";
@@ -7,8 +10,10 @@ import IngredientSelector from "@/components/ui/collections/IngredientSelector";
 import { IngredientItemData } from "@/components/ui/collections/IngredientSelector/types";
 import NewIngredientModal from "@/components/ui/modals/NewIngredientModal";
 import ServingSizeSelect from "@/components/ui/selects/ServingSizeSelect";
+import Layout from "@/layout/Layout";
 import { SERVING_SIZES } from "@/lib/constants/options";
 import {
+  Autocomplete,
   Box,
   Card,
   CardContent,
@@ -17,7 +22,39 @@ import {
   RadioGroup,
   Stack,
 } from "@mui/material";
-import { useCallback, useMemo, useState } from "react";
+import { ChangeEventHandler, useCallback, useMemo, useState } from "react";
+
+/**
+ * Because api resopnse is a whole object, so I'll mock occasion instead of create
+ * a whole new service for it.
+ */
+const mockOccasions = [
+  {
+    id: 1,
+    name: "Lunar New Year",
+  },
+  {
+    id: 2,
+    name: "Chrismas",
+  },
+  {
+    id: 3,
+    name: "Halloween",
+  },
+  {
+    id: 4,
+    name: "Birthday",
+  },
+  {
+    id: 5,
+    name: "Wedding",
+  },
+  {
+    id: 6,
+    name: "Thanksgiving",
+  },
+];
+
 /**
  * Represents a new recipe.
  */
@@ -58,6 +95,23 @@ const CreateRecipe: React.FunctionComponent = () => {
   );
   const [newRecipe, setNewRecipe] = useState<NewRecipe>(DEFAULT_NEW_RECIPE);
 
+  const [selectedOccasions, setSelectedOccasions] = useState<ChipValue[]>([]);
+
+  //#endregion
+
+  //#region Methods
+
+  const filterOccasions = useCallback(
+    (occasions: ChipValue[]) => {
+      return occasions.filter((occasion) => {
+        return !selectedOccasions.some(
+          (selectedOccasion) => selectedOccasion.id === occasion.id
+        );
+      });
+    },
+    [selectedOccasions]
+  );
+
   //#endregion
 
   //#region UseMemos
@@ -66,6 +120,10 @@ const CreateRecipe: React.FunctionComponent = () => {
     () => newRecipe.title && newRecipe.ingredients.length > 0,
     [newRecipe]
   );
+
+  const filteredOccasions = useMemo(() => {
+    return filterOccasions(mockOccasions);
+  }, [filterOccasions]);
 
   //#endregion
 
@@ -108,12 +166,22 @@ const CreateRecipe: React.FunctionComponent = () => {
     setRecipeThumbnailFile(file);
   }, []);
 
+  const handleSelectedOccasionsChange = useCallback((value: ChipValue[]) => {
+    setSelectedOccasions(value);
+  }, []);
+
+  const handleSelectOccasion = useCallback((value: ChipValue | null) => {
+    if (value) {
+      setSelectedOccasions((prev) => [...prev, value]);
+    }
+  }, []);
+
   //#endregion
 
   console.log(newRecipe);
 
   return (
-    <>
+    <Layout>
       <Box
         sx={{
           display: "flex",
@@ -162,6 +230,24 @@ const CreateRecipe: React.FunctionComponent = () => {
                   ingredients={newRecipe.ingredients}
                   onChange={handleIngredientsChange}
                   onOpen={handleIngredientSelectModalOpen}
+                />
+              </Stack>
+              <Stack gap={1}>
+                <FormLabel>Occasions</FormLabel>
+                <Autocomplete
+                  options={filteredOccasions}
+                  getOptionLabel={(o) => o.name}
+                  title="Select occasions"
+                  placeholder="Select occasions"
+                  noOptionsText="No occasions found"
+                  renderInput={(params) => (
+                    <TastealTextField {...params} label="Select occasions" />
+                  )}
+                  onChange={(_, value) => handleSelectOccasion(value)}
+                />
+                <ChipsDisplayer
+                  chips={selectedOccasions}
+                  onChange={handleSelectedOccasionsChange}
                 />
               </Stack>
               <Stack>
@@ -230,7 +316,7 @@ const CreateRecipe: React.FunctionComponent = () => {
         onClose={handleIngredientSelectModalClose}
         onAddIngredient={handleAddIngredient}
       />
-    </>
+    </Layout>
   );
 };
 

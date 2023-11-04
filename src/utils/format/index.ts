@@ -29,9 +29,12 @@ export function dateTimeToMinutes(value: string | number): number {
   return Math.round(totalMinutes);
 }
 
-export function dateToDDMMYYYY(date: Date | undefined): string {
+export function dateToDDMMYYYY(date: string | Date | undefined): string {
   if (!date) {
     return "";
+  }
+  if (typeof date === "string") {
+    date = new Date(date);
   }
   const day = formatNumberWithLeadingZero(date.getDate());
   const month = formatNumberWithLeadingZero(date.getMonth() + 1);
