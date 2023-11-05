@@ -80,7 +80,7 @@ export type Nutrition_InfoEntity = {
   sugars: number;
   protein: number;
   sodium: number;
-  vitaminD: number;
+  vitamin_d: number;
   calcium: number;
   iron: number;
   potassium: number;

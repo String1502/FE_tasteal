@@ -15,8 +15,9 @@ import ServingSizeSelect from "@/components/ui/selects/ServingSizeSelect";
 import Layout from "@/layout/Layout";
 import { SERVING_SIZES } from "@/lib/constants/options";
 import { uploadImage } from "@/lib/firebase/image";
+import useIngredients from "@/lib/hooks/useIngredients";
 import {
-  DirectionPostmModel,
+  DirectionPostModel,
   IngredientPostModel,
   RecipePostModel,
 } from "@/lib/models/dtos/reicpeDTO";
@@ -27,7 +28,6 @@ import {
   Box,
   Card,
   CardContent,
-  Direction,
   FormControlLabel,
   Radio,
   RadioGroup,
@@ -106,7 +106,7 @@ const DEFAULT_NEW_RECIPE: NewRecipe = {
 
 const resolveDirectionImage = (
   direction: DirectionEditorItemValue
-): Promise<DirectionPostmModel> => {
+): Promise<DirectionPostModel> => {
   if (direction.imageFile) {
     const { imageFile: file, ...others } = direction;
 
@@ -132,7 +132,7 @@ const resolveDirectionImage = (
       return Promise.resolve(dir);
     }
 
-    const withImageDirection: DirectionPostmModel = {
+    const withImageDirection: DirectionPostModel = {
       ...others,
       image: path,
     };
@@ -226,6 +226,8 @@ const CreateRecipe: React.FunctionComponent = () => {
       is_private: newRecipe.isPrivate,
       rating: 0,
     };
+
+    return postData;
   }, [
     newRecipe.authorNote,
     newRecipe.directions,

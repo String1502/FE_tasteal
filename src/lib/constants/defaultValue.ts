@@ -28,7 +28,7 @@ export const DEFAULT_NUTRITION_VALUE: Nutrition_InfoEntity = {
   sugars: 0,
   protein: 0,
   sodium: 0,
-  vitaminD: 0,
+  vitamin_d: 0,
   calcium: 0,
   iron: 0,
   potassium: 0,

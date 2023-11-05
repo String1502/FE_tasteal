@@ -8,6 +8,7 @@ export const API_BASE_URL = "https://apitasteal.azurewebsites.net/";
  */
 export const API_END_POINT = {
   CREATE_RECIPE: "/api/v2/Recipe/Add",
+  GET_ALL_INGREDIENTS: "/api/v2/Ingredient/getall",
 } as const;
 
 /**
