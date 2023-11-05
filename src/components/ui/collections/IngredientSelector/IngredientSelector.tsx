@@ -1,6 +1,6 @@
+import CollectionItemAddButton from "@/components/common/buttons/CollectionItemAddButton";
 import { Stack } from "@mui/material";
 import { useCallback } from "react";
-import { AddIngredientButton } from "../../buttons/AddIngredientButton";
 import IngredientItem from "./IngredientItem";
 import { IngredientItemData } from "./types";
 
@@ -33,7 +33,7 @@ export const IngredientSelector: React.FunctionComponent<{
           ))}
       </Stack>
 
-      <AddIngredientButton onClick={handleNewClick} />
+      <CollectionItemAddButton label={'Thêm nguyên liệu'} onClick={handleNewClick} />
     </>
   );
 };

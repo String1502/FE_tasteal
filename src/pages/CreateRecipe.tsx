@@ -6,23 +6,39 @@ import ImagePicker from "@/components/common/files/ImagePicker";
 import TastealTextField from "@/components/common/textFields/TastealTextField";
 import FormLabel from "@/components/common/typos/FormLabel";
 import FormTitle from "@/components/common/typos/FormTitle";
+import DirectionEditor from "@/components/ui/collections/DirectionEditor";
+import { DirectionEditorItemValue } from "@/components/ui/collections/DirectionEditor/DirectionEditorItem/DirectionEditorItem";
 import IngredientSelector from "@/components/ui/collections/IngredientSelector";
 import { IngredientItemData } from "@/components/ui/collections/IngredientSelector/types";
 import NewIngredientModal from "@/components/ui/modals/NewIngredientModal";
 import ServingSizeSelect from "@/components/ui/selects/ServingSizeSelect";
 import Layout from "@/layout/Layout";
 import { SERVING_SIZES } from "@/lib/constants/options";
+import { uploadImage } from "@/lib/firebase/image";
+import {
+  DirectionPostmModel,
+  IngredientPostModel,
+  RecipePostModel,
+} from "@/lib/models/dtos/reicpeDTO";
+import { createDebugStringFormatter } from "@/utils/debug/formatter";
+import { minuteToTimeString } from "@/utils/format";
 import {
   Autocomplete,
   Box,
   Card,
   CardContent,
+  Direction,
   FormControlLabel,
   Radio,
   RadioGroup,
   Stack,
 } from "@mui/material";
-import { ChangeEventHandler, useCallback, useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
+
+/**
+ * Create debug string
+ */
+const createDebugString = createDebugStringFormatter("CreateRecipe");
 
 /**
  * Because api resopnse is a whole object, so I'll mock occasion instead of create
@@ -59,16 +75,18 @@ const mockOccasions = [
  * Represents a new recipe.
  */
 type NewRecipe = {
-  /** The title of the recipe. */
-  title: string;
+  /** The name of the recipe. */
+  name: string;
+  /** The introduction for the recipe. */
+  introduction: string;
   /** The image URL of the recipe. */
   image: string;
   /** The serving size of the recipe. */
   servingSize: number;
   /** The list of ingredients for the recipe. */
   ingredients: IngredientItemData[];
-  /** The cooking instructions for the recipe. */
-  cookingInstruction: string;
+  /** The list of directions for the recipe. */
+  directions: DirectionEditorItemValue[];
   /** Any additional notes from the author. */
   authorNote: string;
   /** Indicates if the recipe is private. */
@@ -76,13 +94,65 @@ type NewRecipe = {
 };
 
 const DEFAULT_NEW_RECIPE: NewRecipe = {
-  title: "",
+  name: "",
   image: "",
   servingSize: 1,
   ingredients: [],
-  cookingInstruction: "",
+  directions: [],
+  introduction: "",
   authorNote: "",
   isPrivate: true,
+};
+
+const resolveDirectionImage = (
+  direction: DirectionEditorItemValue
+): Promise<DirectionPostmModel> => {
+  if (direction.imageFile) {
+    const { imageFile: file, ...others } = direction;
+
+    let path = "";
+    let error = false;
+
+    uploadImage(file)
+      .then((imagePath) => {
+        path = imagePath;
+      })
+      .catch((e) => {
+        console.log(createDebugString("Failed to upload a blob or file!"), e);
+        error = true;
+      });
+
+    if (error) {
+      const dir = {
+        step: direction.step,
+        direction: direction.direction,
+        image: "",
+      };
+
+      return Promise.resolve(dir);
+    }
+
+    const withImageDirection: DirectionPostmModel = {
+      ...others,
+      image: path,
+    };
+
+    return Promise.resolve(withImageDirection);
+  } else {
+    const dir = {
+      step: direction.step,
+      direction: direction.direction,
+      image: "",
+    };
+
+    return Promise.resolve(dir);
+  }
+};
+
+const resolveDirectionsImage = (
+  directions: DirectionEditorItemValue[]
+): Promise<DirectionEditorItemValue[]> => {
+  return Promise.all(directions.map(resolveDirectionImage));
 };
 
 const CreateRecipe: React.FunctionComponent = () => {
@@ -117,13 +187,55 @@ const CreateRecipe: React.FunctionComponent = () => {
   //#region UseMemos
 
   const canCreateRecipe = useMemo(
-    () => newRecipe.title && newRecipe.ingredients.length > 0,
+    () => newRecipe.name && newRecipe.ingredients.length > 0,
     [newRecipe]
   );
 
   const filteredOccasions = useMemo(() => {
     return filterOccasions(mockOccasions);
   }, [filterOccasions]);
+
+  //#endregion
+
+  //#region Methods
+
+  const createPostData = useCallback((): RecipePostModel => {
+    let directionsWithImage;
+
+    resolveDirectionsImage(newRecipe.directions).then((directions) => {
+      directionsWithImage = directions;
+    });
+
+    const postData: RecipePostModel = {
+      name: newRecipe.name,
+      introduction: newRecipe.introduction,
+      image: newRecipe.image,
+      total_time: minuteToTimeString(15),
+      active_time: minuteToTimeString(5),
+      serving_size: newRecipe.servingSize,
+      ingredients: newRecipe.ingredients.map(
+        (ingredient) =>
+          ({
+            id: ingredient.ingredientId,
+            amount: ingredient.amount,
+          } as IngredientPostModel)
+      ),
+      directions: directionsWithImage,
+      author_note: newRecipe.authorNote,
+      author: "uid",
+      is_private: newRecipe.isPrivate,
+      rating: 0,
+    };
+  }, [
+    newRecipe.authorNote,
+    newRecipe.directions,
+    newRecipe.image,
+    newRecipe.ingredients,
+    newRecipe.introduction,
+    newRecipe.isPrivate,
+    newRecipe.name,
+    newRecipe.servingSize,
+  ]);
 
   //#endregion
 
@@ -176,9 +288,22 @@ const CreateRecipe: React.FunctionComponent = () => {
     }
   }, []);
 
-  //#endregion
+  const handleDirectionsChange = useCallback(
+    (directions: DirectionEditorItemValue[]) => {
+      setNewRecipe((prev) => ({
+        ...prev,
+        directions: directions,
+      }));
+    },
+    []
+  );
 
-  console.log(newRecipe);
+  const handleCreateRecipe = useCallback(() => {
+    const postData = createPostData();
+    console.log(postData);
+  }, [createPostData]);
+
+  //#endregion
 
   return (
     <Layout>
@@ -200,11 +325,41 @@ const CreateRecipe: React.FunctionComponent = () => {
               <Stack>
                 <FormLabel>Recipe Title</FormLabel>
                 <TastealTextField
-                  value={newRecipe.title}
+                  value={newRecipe.name}
                   onChange={(e) =>
-                    handleNewRecipeFieldChange("title", e.target.value)
+                    handleNewRecipeFieldChange("name", e.target.value)
                   }
                   placeholder="Type your recipe name here"
+                />
+              </Stack>
+              <Stack>
+                <FormLabel>Introduction (Optional)</FormLabel>
+                <TastealTextField
+                  value={newRecipe.introduction}
+                  onChange={(e) =>
+                    handleNewRecipeFieldChange("introduction", e.target.value)
+                  }
+                  multiline
+                  rows={2}
+                  placeholder={`Add introduction (e.g "transfer to a small bowl")`}
+                />
+              </Stack>
+              <Stack gap={1}>
+                <FormLabel>Occasions</FormLabel>
+                <Autocomplete
+                  options={filteredOccasions}
+                  getOptionLabel={(o) => o.name}
+                  title="Select occasions"
+                  placeholder="Select occasions"
+                  noOptionsText="No occasions found"
+                  renderInput={(params) => (
+                    <TastealTextField {...params} label="Select occasions" />
+                  )}
+                  onChange={(_, value) => handleSelectOccasion(value)}
+                />
+                <ChipsDisplayer
+                  chips={selectedOccasions}
+                  onChange={handleSelectedOccasionsChange}
                 />
               </Stack>
               <Stack>
@@ -232,37 +387,11 @@ const CreateRecipe: React.FunctionComponent = () => {
                   onOpen={handleIngredientSelectModalOpen}
                 />
               </Stack>
-              <Stack gap={1}>
-                <FormLabel>Occasions</FormLabel>
-                <Autocomplete
-                  options={filteredOccasions}
-                  getOptionLabel={(o) => o.name}
-                  title="Select occasions"
-                  placeholder="Select occasions"
-                  noOptionsText="No occasions found"
-                  renderInput={(params) => (
-                    <TastealTextField {...params} label="Select occasions" />
-                  )}
-                  onChange={(_, value) => handleSelectOccasion(value)}
-                />
-                <ChipsDisplayer
-                  chips={selectedOccasions}
-                  onChange={handleSelectedOccasionsChange}
-                />
-              </Stack>
               <Stack>
-                <FormLabel>Cooking Instructions (Optional)</FormLabel>
-                <TastealTextField
-                  value={newRecipe.cookingInstruction}
-                  onChange={(e) =>
-                    handleNewRecipeFieldChange(
-                      "cookingInstruction",
-                      e.target.value
-                    )
-                  }
-                  multiline
-                  rows={2}
-                  placeholder={`Add one or multiple steps (e.g "transfer to a small bowl")`}
+                <FormLabel>Directions</FormLabel>
+                <DirectionEditor
+                  directions={newRecipe.directions}
+                  onChange={handleDirectionsChange}
                 />
               </Stack>
               <Stack>
@@ -302,7 +431,11 @@ const CreateRecipe: React.FunctionComponent = () => {
                 </RadioGroup>
               </Stack>
               <Stack>
-                <RoundedButton variant="contained" disabled={!canCreateRecipe}>
+                <RoundedButton
+                  variant="contained"
+                  disabled={!canCreateRecipe}
+                  onClick={handleCreateRecipe}
+                >
                   DONE
                 </RoundedButton>
               </Stack>

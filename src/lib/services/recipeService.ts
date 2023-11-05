@@ -110,18 +110,20 @@ class RecipeService {
   /**
    * Create a new recipe
    */
-  public static async CreateRecipe(postData: RecipePostModel) {
+  public static async CreateRecipe(postData: RecipePostModel): Promise<void> {
     fetch(getApiUrl("CREATE_RECIPE"), {
-      method: 'POST',
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
       body: JSON.stringify(postData),
-    }).then(
-() => {}
-    ).catch(
-      (e) => console.error('[RecipeService.CreateRecipe] POST failed!', e),
-    )
+    })
+      .then((response: unknown) => {
+        console.log("[RecipeService.CreateRecipe] POST succeeded!", response);
+      })
+      .catch((e) =>
+        console.error("[RecipeService.CreateRecipe] POST failed!", e)
+      );
   }
 
   //#endregion

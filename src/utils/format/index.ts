@@ -45,3 +45,17 @@ export function dateToDDMMYYYY(date: string | Date | undefined): string {
 export function formatNumberWithLeadingZero(number: number): string {
   return number < 10 ? `0${number}` : `${number}`;
 }
+
+/**
+ * Convert minutes to a time string
+ *
+ * @param minutes - Minutes to convert
+ * @returns A time string in format like "1h50m30s"
+ */
+export function minuteToTimeString(minutes: number) {
+  const hours = Math.floor(minutes / 60);
+  const remainingMinutes = minutes % 60;
+  const DEFAULT_SECONDS = 0;
+
+  return `${hours}h${remainingMinutes}m${DEFAULT_SECONDS}s`;
+}

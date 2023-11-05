@@ -4,13 +4,12 @@
 
 //#region Request
 
-export type Ingredient = {
-  name: string;
+export type IngredientPostModel = {
+  id: number;
   amount: number;
-  isLiquid: boolean;
 };
 
-export type Direction = {
+export type DirectionPostmModel = {
   step: number;
   direction: string;
   image: string;
@@ -24,15 +23,15 @@ export type RecipePostModel = {
   name: string;
   rating: number;
   image: string;
-  totalTime: string;
-  activeTime: string;
-  servingSize: number;
+  total_time: string;
+  active_time: string;
+  serving_size: number;
   introduction: string;
-  authorNote: string;
-  isPrivate: boolean;
+  author_note: string;
+  is_private: boolean;
   author: string;
-  ingredients: Ingredient[];
-  directions: Direction[];
+  ingredients: IngredientPostModel[];
+  directions: DirectionPostmModel[];
 };
 
 //#endregion
@@ -46,40 +45,8 @@ export type RecipeCreateResponse = {
   id: number;
   name: string;
   rating: number;
-  totalTime: {
-    ticks: number;
-    days: number;
-    hours: number;
-    milliseconds: number;
-    microseconds: number;
-    nanoseconds: number;
-    minutes: number;
-    seconds: number;
-    totalDays: number;
-    totalHours: number;
-    totalMilliseconds: number;
-    totalMicroseconds: number;
-    totalNanoseconds: number;
-    totalMinutes: number;
-    totalSeconds: number;
-  };
-  active_time: {
-    ticks: number;
-    days: number;
-    hours: number;
-    milliseconds: number;
-    microseconds: number;
-    nanoseconds: number;
-    minutes: number;
-    seconds: number;
-    totalDays: number;
-    totalHours: number;
-    totalMilliseconds: number;
-    totalMicroseconds: number;
-    totalNanoseconds: number;
-    totalMinutes: number;
-    totalSeconds: number;
-  };
+  total_time: Date;
+  active_time: Date;
   serving_size: number;
   introduction: string;
   author_note: string;
@@ -87,8 +54,8 @@ export type RecipeCreateResponse = {
   image: string;
   author: string;
   nutrition_info_id: number;
-  createdAt: string;
-  updatedAt: string;
+  created_at: string;
+  updated_at: string;
   account: {
     uid: string;
     name: string;
@@ -118,7 +85,7 @@ export type RecipeCreateResponse = {
     image: string;
     nutrition_info_id: number;
     type_id: number;
-    isLiquid: boolean;
+    is_liquid: boolean;
     ratio: number;
     amount: number;
     note: string;
