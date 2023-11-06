@@ -14,14 +14,13 @@ import NewIngredientModal from "@/components/ui/modals/NewIngredientModal";
 import ServingSizeSelect from "@/components/ui/selects/ServingSizeSelect";
 import Layout from "@/layout/Layout";
 import { SERVING_SIZES } from "@/lib/constants/options";
+import { STORAGE_PATH } from "@/lib/constants/storage";
 import { uploadImage } from "@/lib/firebase/image";
-import useIngredients from "@/lib/hooks/useIngredients";
-import {
-  DirectionPostModel,
-  IngredientPostModel,
-  RecipePostModel,
-} from "@/lib/models/dtos/reicpeDTO";
+import { Direction } from "@/lib/models/dtos/common";
+import { RecipePostModel } from "@/lib/models/dtos/reicpeDTO";
+import RecipeService from "@/lib/services/recipeService";
 import { createDebugStringFormatter } from "@/utils/debug/formatter";
+import { getFileExtension } from "@/utils/file";
 import { minuteToTimeString } from "@/utils/format";
 import {
   Autocomplete,
@@ -34,6 +33,7 @@ import {
   Stack,
 } from "@mui/material";
 import { useCallback, useMemo, useState } from "react";
+import { v4 as uuidv4 } from "uuid";
 
 /**
  * Create debug string
@@ -104,55 +104,46 @@ const DEFAULT_NEW_RECIPE: NewRecipe = {
   isPrivate: true,
 };
 
-const resolveDirectionImage = (
-  direction: DirectionEditorItemValue
-): Promise<DirectionPostModel> => {
-  if (direction.imageFile) {
-    const { imageFile: file, ...others } = direction;
+const resolveDirectionImage = async (
+  direction: DirectionEditorItemValue,
+  imageId: string,
+  step: number
+): Promise<Omit<Direction, "recipe_id">> => {
+  const { imageFile, ...others } = direction;
 
-    let path = "";
-    let error = false;
+  if (imageFile) {
+    try {
+      const path = await uploadImage(
+        imageFile,
+        `${STORAGE_PATH.DIRECTION}/${imageId}[${step}].${getFileExtension(
+          imageFile.name
+        )}`
+      );
 
-    uploadImage(file)
-      .then((imagePath) => {
-        path = imagePath;
-      })
-      .catch((e) => {
-        console.log(createDebugString("Failed to upload a blob or file!"), e);
-        error = true;
-      });
-
-    if (error) {
-      const dir = {
-        step: direction.step,
-        direction: direction.direction,
-        image: "",
+      return {
+        ...others,
+        image: path,
       };
-
-      return Promise.resolve(dir);
+    } catch (e) {
+      throw new Error("Failed to upload a blob or file!");
     }
-
-    const withImageDirection: DirectionPostModel = {
-      ...others,
-      image: path,
-    };
-
-    return Promise.resolve(withImageDirection);
-  } else {
-    const dir = {
-      step: direction.step,
-      direction: direction.direction,
-      image: "",
-    };
-
-    return Promise.resolve(dir);
   }
+
+  return Promise.resolve({
+    ...others,
+    image: "",
+  });
 };
 
 const resolveDirectionsImage = (
-  directions: DirectionEditorItemValue[]
-): Promise<DirectionEditorItemValue[]> => {
-  return Promise.all(directions.map(resolveDirectionImage));
+  directions: DirectionEditorItemValue[],
+  imageId: string
+): Promise<Omit<Direction, "recipe_id">[]> => {
+  return Promise.all(
+    directions.map((dir, index) =>
+      resolveDirectionImage(dir, imageId, index + 1)
+    )
+  );
 };
 
 const CreateRecipe: React.FunctionComponent = () => {
@@ -199,27 +190,33 @@ const CreateRecipe: React.FunctionComponent = () => {
 
   //#region Methods
 
-  const createPostData = useCallback((): RecipePostModel => {
-    let directionsWithImage;
+  const createPostData = useCallback(async (): Promise<RecipePostModel> => {
+    const IMAGE_ID = uuidv4();
 
-    resolveDirectionsImage(newRecipe.directions).then((directions) => {
-      directionsWithImage = directions;
-    });
+    let path = `${STORAGE_PATH.RECIPE}/${IMAGE_ID}.${getFileExtension(
+      recipeThumbnailFile.name
+    )}`;
+
+    path = await uploadImage(recipeThumbnailFile, path);
+
+    const directionsWithImage = await resolveDirectionsImage(
+      newRecipe.directions,
+      IMAGE_ID
+    );
 
     const postData: RecipePostModel = {
       name: newRecipe.name,
       introduction: newRecipe.introduction,
-      image: newRecipe.image,
+      image: path,
       total_time: minuteToTimeString(15),
       active_time: minuteToTimeString(5),
       serving_size: newRecipe.servingSize,
-      ingredients: newRecipe.ingredients.map(
-        (ingredient) =>
-          ({
-            id: ingredient.ingredientId,
-            amount: ingredient.amount,
-          } as IngredientPostModel)
-      ),
+      ingredients: newRecipe.ingredients.map((ingredient) => ({
+        id: ingredient.ingredientId,
+        name: ingredient.name,
+        amount: ingredient.amount,
+        isLiquid: ingredient.isLiquid,
+      })),
       directions: directionsWithImage,
       author_note: newRecipe.authorNote,
       author: "uid",
@@ -231,12 +228,12 @@ const CreateRecipe: React.FunctionComponent = () => {
   }, [
     newRecipe.authorNote,
     newRecipe.directions,
-    newRecipe.image,
     newRecipe.ingredients,
     newRecipe.introduction,
     newRecipe.isPrivate,
     newRecipe.name,
     newRecipe.servingSize,
+    recipeThumbnailFile,
   ]);
 
   //#endregion
@@ -300,9 +297,20 @@ const CreateRecipe: React.FunctionComponent = () => {
     []
   );
 
-  const handleCreateRecipe = useCallback(() => {
-    const postData = createPostData();
-    console.log(postData);
+  const handleCreateRecipe = useCallback(async () => {
+    try {
+      const postData = await createPostData();
+      console.log(postData);
+      RecipeService.CreateRecipe(postData)
+        .then((response) => {
+          console.log(response);
+        })
+        .catch((msg) => {
+          console.log(createDebugString(msg));
+        });
+    } catch (e) {
+      console.log(createDebugString(e));
+    }
   }, [createPostData]);
 
   //#endregion
@@ -358,6 +366,9 @@ const CreateRecipe: React.FunctionComponent = () => {
                     <TastealTextField {...params} label="Select occasions" />
                   )}
                   onChange={(_, value) => handleSelectOccasion(value)}
+                  isOptionEqualToValue={(option, value) =>
+                    option.id === value.id
+                  }
                 />
                 <ChipsDisplayer
                   chips={selectedOccasions}

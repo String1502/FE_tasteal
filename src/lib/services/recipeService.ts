@@ -3,7 +3,7 @@ import { RecipeEntity } from "@/types/type";
 import simulateDelay from "@/utils/promises/stimulateDelay";
 import { getApiUrl } from "../constants/api";
 import { API_PATH, DEFAULT_PAGE } from "../constants/common";
-import { RecipePostModel } from "../models/dtos/reicpeDTO";
+import { RecipePostModel, RecipePostResponse } from "../models/dtos/reicpeDTO";
 
 /**
  * Represents a service for managing occasions.
@@ -110,20 +110,28 @@ class RecipeService {
   /**
    * Create a new recipe
    */
-  public static async CreateRecipe(postData: RecipePostModel): Promise<void> {
-    fetch(getApiUrl("CREATE_RECIPE"), {
+  public static async CreateRecipe(
+    postData: RecipePostModel
+  ): Promise<RecipePostResponse> {
+    return fetch(getApiUrl("CREATE_RECIPE"), {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify(postData),
     })
-      .then((response: unknown) => {
-        console.log("[RecipeService.CreateRecipe] POST succeeded!", response);
+      .then((response: Response) => {
+        return response.json();
       })
-      .catch((e) =>
-        console.error("[RecipeService.CreateRecipe] POST failed!", e)
-      );
+      .then((data: RecipePostResponse) => {
+        console.log("[RecipeService.CreateRecipe] POST succeeded!", data);
+        return Promise.resolve(data);
+      })
+      .catch((e) => {
+        const msg = "POST fail!";
+        console.error(`[RecipeService.CreateRecipe] ${msg}`, e);
+        return Promise.reject(msg);
+      });
   }
 
   //#endregion

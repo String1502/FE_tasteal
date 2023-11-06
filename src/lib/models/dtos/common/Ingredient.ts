@@ -6,7 +6,7 @@ export type Ingredient = {
   image: string;
   nutrition_info_id: number;
   type_id: number;
-  is_liquid: boolean;
+  isLiquid: boolean;
   ratio: number;
   amount: number;
   note: string;

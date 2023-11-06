@@ -24,6 +24,7 @@ export type RecipePostModel = {
   ingredients: {
     id: number;
     amount: number;
+    isLiquid: boolean;
   }[];
   directions: {
     step: number;
@@ -39,7 +40,7 @@ export type RecipePostModel = {
 /**
  * Represents a recipe create response.
  */
-export type RecipeCreateResponse = {
+export type RecipePostResponse = Partial<{
   id: number;
   name: string;
   rating: number;
@@ -58,7 +59,7 @@ export type RecipeCreateResponse = {
   nutrition_info: NutritionInfo;
   ingredients: Ingredient[];
   direction: (Direction & { recipeEntity: string })[];
-}[];
+}>[];
 
 //#endregion
 

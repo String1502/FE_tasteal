@@ -3,8 +3,7 @@ import { getApiUrl } from "../constants/api";
 import { IngredientGetAllResponse } from "../models/dtos/ingredientDTO";
 
 const useIngredients = () => {
-  const [ingredients, setIngredients] =
-    useState<IngredientGetAllResponse>(null);
+  const [ingredients, setIngredients] = useState<IngredientGetAllResponse>([]);
 
   useEffect(() => {
     fetch(getApiUrl("GET_ALL_INGREDIENTS"))
@@ -14,7 +13,7 @@ const useIngredients = () => {
       })
       .catch((error) => {
         console.log(error);
-        setIngredients(null);
+        setIngredients([]);
       });
   }, []);
 

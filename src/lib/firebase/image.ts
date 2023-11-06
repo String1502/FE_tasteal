@@ -37,22 +37,13 @@ export async function uploadImage(
   file: File,
   ...path: string[]
 ): Promise<string> {
-  const storageRef = ref(storage, path.join("/"));
-
-  let imagePath = "";
-
-  uploadBytes(storageRef, file)
-    .then((snapshot) => {
-      console.log(debugStringFormatter("Uploaded a blob or file!"), snapshot);
-      imagePath = snapshot.ref.fullPath;
-    })
-    .catch((e) => {
-      console.log(debugStringFormatter("Failed to upload a blob or file!"), e);
-    });
-
-  if (path) {
-    return Promise.resolve(imagePath);
-  } else {
-    return Promise.reject(imagePath);
+  try {
+    const storageRef = ref(storage, path.join("/"));
+    const snapshot = await uploadBytes(storageRef, file);
+    console.log(debugStringFormatter("Uploaded a blob or file!"), snapshot);
+    return snapshot.ref.fullPath;
+  } catch (e) {
+    console.log(debugStringFormatter("Failed to upload a blob or file!"), e);
+    return Promise.reject("");
   }
 }
