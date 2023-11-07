@@ -1,4 +1,4 @@
-import { Recipe_DirectionEntity } from "@/types/type";
+import { Recipe_DirectionEntity } from "@/lib/models/entities/Recipe_DirectionEntity/Recipe_DirectionEntity";
 import { Stack, Typography } from "@mui/material";
 import { FC } from "react";
 

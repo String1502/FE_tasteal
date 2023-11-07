@@ -11,7 +11,6 @@ import { OccasionsList } from "@/components/ui/home/OccasionsList";
 import { RecipesCarousel } from "@/components/ui/home/RecipesCarousel";
 import AccountService from "@/lib/services/accountService";
 import OccasionService from "@/lib/services/occasionService";
-import { AccountEntity, OccasionEntity, RecipeEntity } from "@/types/type";
 import {
   Box,
   Button,
@@ -26,6 +25,9 @@ import { useNavigate } from "react-router-dom";
 import Layout from "../layout/Layout";
 import RecipeService from "@/lib/services/recipeService";
 import useFirebaseImage from "@/lib/hooks/useFirebaseImage";
+import { AccountEntity } from "@/lib/models/entities/AccountEntity/AccountEntity";
+import { OccasionEntity } from "@/lib/models/entities/OccasionEntity/OccasionEntity";
+import { RecipeEntity } from "@/lib/models/entities/RecipeEntity/RecipeEntity";
 
 const typoProps: TypographyProps = {
   variant: "h6",
@@ -146,10 +148,9 @@ function Home() {
             sx={{
               backgroundColor: "secondary.main",
               py: 12,
-              minHeight: "75vh",
               display: "flex",
               justifyContent: "center",
-              alignItems: "center",
+              alignItems: "flex-start",
             }}
           >
             <Container>
@@ -174,10 +175,9 @@ function Home() {
             sx={{
               backgroundColor: "secondary.main",
               py: 12,
-              minHeight: "75vh",
               display: "flex",
               justifyContent: "center",
-              alignItems: "center",
+              alignItems: "flex-start",
             }}
           >
             <Container>

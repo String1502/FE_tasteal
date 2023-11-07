@@ -5,7 +5,7 @@ import { FC, useEffect, useMemo, useState } from "react";
 import IngredientDisplayerItemProps from "../types/IngredientDisplayerItemProps";
 
 const IngredientDisplayerItem: FC<IngredientDisplayerItemProps> = ({
-  value: { Ingredient, amount },
+  value: { ingredient: Ingredient, amount },
   servingSize,
 }) => {
   const [resolvedUrl, setResolvedUrl] = useState("");

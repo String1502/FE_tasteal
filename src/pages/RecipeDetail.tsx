@@ -14,19 +14,17 @@ import Layout from "@/layout/Layout";
 import { N_A_VALUE } from "@/lib/constants/common";
 import { DEFAULT_NUTRITION_VALUE } from "@/lib/constants/defaultValue";
 import useFirebaseImage from "@/lib/hooks/useFirebaseImage";
+import { AccountEntity } from "@/lib/models/entities/AccountEntity/AccountEntity";
+import { Nutrition_InfoEntity } from "@/lib/models/entities/Nutrition_InfoEntity/Nutrition_InfoEntity";
+import { Recipe_DirectionEntity } from "@/lib/models/entities/Recipe_DirectionEntity/Recipe_DirectionEntity";
+import { Recipe_IngredientEntity } from "@/lib/models/entities/Recipe_IngredientEntity/Recipe_IngredientEntity";
+import { RecipeEntity } from "@/lib/models/entities/RecipeEntity/RecipeEntity";
 import AccountService from "@/lib/services/accountService";
 import IngredientService from "@/lib/services/ingredientService";
 import NutritionService from "@/lib/services/NutrionInfoService";
 import RecipeDirectionService from "@/lib/services/RecipeDirectionService";
 import RecipeIngredientService from "@/lib/services/RecipeIngredientService";
 import RecipeService from "@/lib/services/recipeService";
-import {
-  AccountEntity,
-  Nutrition_InfoEntity,
-  RecipeEntity,
-  Recipe_DirectionEntity,
-  Recipe_IngredientEntity,
-} from "@/types/type";
 import { createDebugStringFormatter } from "@/utils/debug/formatter";
 import {
   Add,
@@ -161,8 +159,8 @@ const RecipeDetail: FC = () => {
         ).then((ingredients) => {
           // Asign references
           for (const recipeIngredient of recipeIngredients) {
-            recipeIngredient.Recipe = recipe;
-            recipeIngredient.Ingredient =
+            recipeIngredient.recipe = recipe;
+            recipeIngredient.ingredient =
               ingredients.filter(
                 (i) => i.id === recipeIngredient.ingredient_id
               )[0] ?? null;
@@ -355,7 +353,7 @@ const RecipeDetail: FC = () => {
                   RecipeDetailStringConstants.DEFAULT_INSTRUCTION}
               </Typography>
 
-              <RecipeTimeInfo totalTime={recipe?.totalTime ?? ""} />
+              <RecipeTimeInfo totalTime={recipe?.totalTime.toString() ?? ""} />
 
               <IngredientDisplayer ingredients={recipeIngredients} />
 

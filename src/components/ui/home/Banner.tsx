@@ -1,10 +1,10 @@
 import { bannerPath } from "@/assets/exportImage";
 import OccasionService from "@/lib/services/occasionService";
-import { OccasionEntity } from "@/types/type";
 import { Box, Button, Container, Typography, useTheme } from "@mui/material";
 import React from "react";
 import { SearchTextField } from "../search/SearchTextField";
 import useFirebaseImage from "@/lib/hooks/useFirebaseImage";
+import { OccasionEntity } from "@/lib/models/entities/OccasionEntity/OccasionEntity";
 
 const height = "480px";
 

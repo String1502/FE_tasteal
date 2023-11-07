@@ -1,7 +1,7 @@
 import { PrimaryCard } from "@/components/common/card/PrimaryCard";
 import { CustomCarousel } from "@/components/common/carousel/CustomeCarousel";
 import { responsive } from "@/lib/constants/responsiveCarousel";
-import { RecipeEntity } from "@/types/type";
+import { RecipeEntity } from "@/lib/models/entities/RecipeEntity/RecipeEntity";
 import { Typography } from "@mui/material";
 import { FC } from "react";
 

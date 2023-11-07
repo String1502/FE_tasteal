@@ -1,7 +1,7 @@
-import { accounts as accountsSampleData } from "@/types/sampleData";
-import { AccountEntity } from "@/types/type";
+import { accounts as accountsSampleData } from "@/lib/constants/sampleData";
 import simulateDelay from "@/utils/promises/stimulateDelay";
 import { API_PATH } from "../constants/common";
+import { AccountEntity } from "../models/entities/AccountEntity/AccountEntity";
 
 /**
  * Represents a service for managing accounts.
@@ -23,26 +23,24 @@ class AccountService {
   /**
    * Get account by id
    *
-   * @param id - The id of the account
+   * @param uid - The id of the account
    */
-  public static GetById(id: number) {
+  public static GetById(uid: string) {
     // Simulate delay of 1 second
     simulateDelay(1);
 
     return Promise.resolve(
-      accountsSampleData.find((account) => account.id === id)
+      accountsSampleData.find((account) => account.uid === uid)
     );
   }
 
   /**
-   * 
+   *
    * @param uid - The uid of the account
    */
   public static GetByUid(uid: string) {
     // Simulate delay of 1 second
     simulateDelay(1);
-
-
   }
 
   public static async GetMostContributedAccounts(

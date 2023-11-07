@@ -2,10 +2,10 @@ import {
   cartItems as cartItemSampleData,
   ingredients as ingredientSampleData,
   ingredientTypes,
-} from "@/types/sampleData";
-import { Cart_ItemEntity } from "@/types/type";
+} from "@/lib/constants/sampleData";
 import simulateDelay from "@/utils/promises/stimulateDelay";
 import CartService from "./cartService";
+import { Cart_ItemEntity } from "../models/entities/Cart_ItemEntity/Cart_ItemEntity";
 
 class CartItemService {
   public static async GetAllCartItems(): Promise<Cart_ItemEntity[]> {
@@ -15,7 +15,7 @@ class CartItemService {
     const ingredients = ingredientSampleData.map((ingredient) => {
       return {
         ...ingredient,
-        Ingredient_Type: ingredientTypes.find(
+        ingredient_type: ingredientTypes.find(
           (type) => type.id === ingredient.type_id
         ),
       };
@@ -24,9 +24,9 @@ class CartItemService {
     let cartItems: Cart_ItemEntity[] = cartItemSampleData.map((item) => {
       return {
         ...item,
-        Cart: carts.find((cart) => cart.id === item.cart_id),
-        Ingredient: ingredients.find(
-          (ingredient) => ingredient.id === item.ingredient_id
+        cart: carts.find((cart) => cart.id === item.cartId),
+        ingredient: ingredients.find(
+          (ingredient) => ingredient.id === item.ingredientId
         ),
       };
     });
@@ -39,7 +39,7 @@ class CartItemService {
   ): Promise<Cart_ItemEntity[]> {
     const cartItems = await this.GetAllCartItems();
     return Promise.resolve(
-      cartItems.filter((item) => cartIds.includes(item.cart_id))
+      cartItems.filter((item) => cartIds.includes(item.cartId))
     );
   }
 }

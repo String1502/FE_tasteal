@@ -15,10 +15,10 @@ import {
   BookmarkRounded,
   StarRounded,
 } from "@mui/icons-material";
-import { RecipeEntity } from "../../../types/type";
 import { curveShapePath } from "@/assets/exportImage";
 import { dateTimeToMinutes } from "@/utils/format";
 import useFirebaseImage from "@/lib/hooks/useFirebaseImage";
+import { RecipeEntity } from "@/lib/models/entities/RecipeEntity/RecipeEntity";
 
 const imgHeight = "224px";
 const padding = 2;
@@ -31,7 +31,7 @@ export function PrimaryCard({
   recipe: RecipeEntity;
 }) {
   const image = useFirebaseImage(recipe?.image);
-  const authorAvatar = useFirebaseImage(recipe?.Account?.avatar);
+  const authorAvatar = useFirebaseImage(recipe?.account?.avatar);
   const curveShapeImg = useFirebaseImage(curveShapePath);
   return (
     <>
@@ -97,7 +97,12 @@ export function PrimaryCard({
               color="common.white"
               sx={{ fontWeight: "bold" }}
             >
-              {dateTimeToMinutes(recipe.totalTime)} phút
+              {recipe.totalTime.toLocaleString("vi-VN", {
+                minute: "numeric",
+                second: "numeric",
+                hour: "numeric",
+              })}{" "}
+              phút
             </Typography>
           </Box>
 

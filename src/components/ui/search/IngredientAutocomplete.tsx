@@ -1,3 +1,4 @@
+import { IngredientEntity } from "@/lib/models/entities/IngredientEntity/IngredientEntity";
 import { CheckBox, CheckBoxOutlineBlank } from "@mui/icons-material";
 import {
   Autocomplete,
@@ -7,7 +8,6 @@ import {
   Paper,
   TextField,
 } from "@mui/material";
-import { IngredientEntity } from "../../../types/type";
 import React from "react";
 
 const icon = <CheckBoxOutlineBlank fontSize="small" />;

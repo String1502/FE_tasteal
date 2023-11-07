@@ -1,9 +1,9 @@
 import SectionHeading from "@/components/common/typos/SectionHeading";
-import { Recipe_IngredientEntity } from "@/types/type";
 import { Stack, Typography } from "@mui/material";
 import { FC, useCallback, useState } from "react";
 import ServingSizeSelect from "../../selects/ServingSizeSelect";
 import IngredientDisplayerItemList from "../IngredientDisplayerItemList";
+import { Recipe_IngredientEntity } from "@/lib/models/entities/Recipe_IngredientEntity/Recipe_IngredientEntity";
 
 export type IngredientDisplayerProps = {
   ingredients: Recipe_IngredientEntity[];

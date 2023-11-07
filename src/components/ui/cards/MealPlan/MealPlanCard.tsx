@@ -12,10 +12,11 @@ import {
   Typography,
 } from "@mui/material";
 import { Clear, RotateLeftRounded, StarRounded } from "@mui/icons-material";
-import { PlanItemEntity, RecipeEntity } from "../../../../types/type";
 import { curveShapePath } from "@/assets/exportImage";
 import useFirebaseImage from "@/lib/hooks/useFirebaseImage";
 import { Draggable } from "react-beautiful-dnd";
+import { Plan_ItemEntity } from "@/lib/models/entities/Plan_ItemEntity/Plan_ItemEntity";
+import { RecipeEntity } from "@/lib/models/entities/RecipeEntity/RecipeEntity";
 
 const imgHeight = "148px";
 const padding = 2;
@@ -28,13 +29,13 @@ export function MealPlanCard({
   ...props
 }: {
   index: number;
-  planItem: PlanItemEntity;
+  planItem: Plan_ItemEntity;
   recipe: RecipeEntity;
   handleRemovePlanItem: (id: number) => void;
   props?: CardProps;
 }) {
   const curveShapeImg = useFirebaseImage(curveShapePath);
-  const authorAvatar = useFirebaseImage(recipe?.Account?.avatar);
+  const authorAvatar = useFirebaseImage(recipe?.account?.avatar);
   return (
     <>
       <Draggable
@@ -137,7 +138,7 @@ export function MealPlanCard({
                     color="common.white"
                     sx={{ fontWeight: "bold" }}
                   >
-                    {recipe.totalTime} phút
+                    {recipe.totalTime.toString()} phút
                   </Typography>
                 </Box>
                 <Box

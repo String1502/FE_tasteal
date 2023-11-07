@@ -1,23 +1,19 @@
 import { PopoverRecipes } from "@/components/ui/grocery/PopoverRecipes";
 import { RecipesServingSizeCarousel } from "@/components/ui/grocery/RecipesServingSizeCarousel";
 import Layout from "@/layout/Layout";
+import { AccountEntity } from "@/lib/models/entities/AccountEntity/AccountEntity";
+import { CartEntity } from "@/lib/models/entities/CartEntity/CartEntity";
+import { Cart_ItemEntity } from "@/lib/models/entities/Cart_ItemEntity/Cart_ItemEntity";
+import { Ingredient_TypeEntity } from "@/lib/models/entities/Ingredient_TypeEntity/Ingredient_TypeEntity";
 import CartItemService from "@/lib/services/CartItemService";
 import CartService from "@/lib/services/cartService";
-import { accounts } from "@/types/sampleData";
+import { accounts } from "@/lib/constants/sampleData";
 import {
-  AccountEntity,
-  CartEntity,
-  Cart_ItemEntity,
-  Ingredient_TypeEntity,
-} from "@/types/type";
-import {
-  AddCircleRounded,
   CheckCircleRounded,
   RadioButtonUncheckedRounded,
 } from "@mui/icons-material";
 import {
   Box,
-  Button,
   Checkbox,
   Container,
   FormControlLabel,
@@ -31,7 +27,7 @@ export function Grocery() {
   const [cartData, setCartData] = useState<CartEntity[]>([]);
 
   const [accountData, setAccountData] = useState<AccountEntity | undefined>(
-    accounts.find((account) => account.id === 1)
+    accounts.find((account) => account.uid === "1")
   );
 
   const [cartItemData, setCartItemData] = useState<Cart_ItemEntity[]>([]);
@@ -39,7 +35,7 @@ export function Grocery() {
   useEffect(() => {
     const fetchData = async () => {
       const finalCartData = await CartService.GetCartByAccountId(
-        accountData?.id
+        accountData?.uid
       );
 
       setCartData(finalCartData);
@@ -53,10 +49,10 @@ export function Grocery() {
     fetchData();
   }, []);
 
-  function handleChangeCartItemData(id: number) {
+  function handleChangeCartItemData(cartId: number, ingredientId: number) {
     setCartItemData((prev) => {
       return prev.map((item) => {
-        if (item.id === id) {
+        if (item.cartId === cartId && item.ingredientId === ingredientId) {
           return {
             ...item,
             isBought: !item.isBought,
@@ -90,7 +86,7 @@ export function Grocery() {
 
     setCartItemData((prev) => {
       return prev.map((item) => {
-        if (item.cart_id === cartId) {
+        if (item.cartId === cartId) {
           return {
             ...item,
             amount: item.amount * rate,
@@ -133,7 +129,7 @@ export function Grocery() {
                 {
                   cartItemData
                     .map((item) => {
-                      return item.Ingredient?.id;
+                      return item.ingredient?.id;
                     })
                     .filter(function (item, pos, self) {
                       return self.indexOf(item) == pos;
@@ -209,16 +205,16 @@ export function Grocery() {
 
               <Grid item xs={12} lg={8}>
                 <CartItemFrame label="Đã mua">
-                  {cartItemData.map((item) => {
+                  {cartItemData.map((item, index) => {
                     if (item.isBought) {
                       return (
                         <CartItemCheckBox
-                          key={item.id}
+                          key={index}
                           item={item}
                           total={() => {
                             let total = 0;
                             cartItemData.forEach((x) => {
-                              if (x.ingredient_id == item.ingredient_id) {
+                              if (x.ingredientId == item.ingredientId) {
                                 total += x.amount;
                               }
                             });
@@ -244,7 +240,7 @@ function CartItemContent({
   handleChangeCartItemData,
 }: {
   cartItemData: Cart_ItemEntity[];
-  handleChangeCartItemData: (id: number) => void;
+  handleChangeCartItemData: (cartId: number, ingredientId: number) => void;
 }) {
   const [ingredientTypeData, setIngredientTypeData] = useState<
     Ingredient_TypeEntity[]
@@ -255,8 +251,8 @@ function CartItemContent({
       let ingredientTypes: Ingredient_TypeEntity[] = [];
       if (cartItemData.length > 0) {
         cartItemData.forEach((item) => {
-          if (item.Ingredient?.Ingredient_Type) {
-            ingredientTypes.push(item.Ingredient.Ingredient_Type);
+          if (item.ingredient?.Ingredient_Type) {
+            ingredientTypes.push(item.ingredient.Ingredient_Type);
           }
         });
         ingredientTypes = ingredientTypes.filter(function (item, pos) {
@@ -275,16 +271,16 @@ function CartItemContent({
         return (
           <Grid key={type.id} item xs={12} lg={8}>
             <CartItemFrame label={type.name}>
-              {cartItemData.map((item) => {
-                if (item.Ingredient?.type_id == type.id && !item.isBought) {
+              {cartItemData.map((item, index) => {
+                if (item.ingredient?.type_id == type.id && !item.isBought) {
                   return (
                     <CartItemCheckBox
-                      key={item.id}
+                      key={index}
                       item={item}
                       total={() => {
                         let total = 0;
                         cartItemData.forEach((x) => {
-                          if (x.ingredient_id == item.ingredient_id) {
+                          if (x.ingredientId == item.ingredientId) {
                             total += x.amount;
                           }
                         });
@@ -347,7 +343,7 @@ function CartItemCheckBox({
 }: {
   item: Cart_ItemEntity;
   total?: () => number;
-  handleChangeCartItemData: (id: number) => void;
+  handleChangeCartItemData: (cartId: number, ingredientId: number) => void;
 }) {
   const typoProps: TypographyProps = {
     variant: "body2",
@@ -360,7 +356,7 @@ function CartItemCheckBox({
   const [isBought, setIsBought] = useState(item.isBought);
 
   useEffect(() => {
-    handleChangeCartItemData(item.id);
+    handleChangeCartItemData(item.cartId, item.ingredientId);
   }, [isBought]);
 
   return (
@@ -397,7 +393,7 @@ function CartItemCheckBox({
         >
           <Box
             component={"img"}
-            src={item.Ingredient?.image}
+            src={item.ingredient?.image}
             sx={{
               height: "60px",
               aspectRatio: "1/1",
@@ -413,9 +409,9 @@ function CartItemCheckBox({
               height: "fit-content",
             }}
           >
-            <Typography {...typoProps}>{item.Cart?.Recipe?.name}</Typography>
+            <Typography {...typoProps}>{item.cart?.recipe?.name}</Typography>
             <Typography {...typoProps} fontWeight={900}>
-              {item.Ingredient?.name}
+              {item.ingredient?.name}
             </Typography>
             <Typography {...typoProps}>
               {Math.ceil(item.amount)}

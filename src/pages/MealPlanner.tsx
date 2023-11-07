@@ -17,18 +17,19 @@ import {
 } from "@mui/icons-material";
 import { WeekNavigation } from "@/components/ui/mealPlan/WeekNavigation.tsx";
 import WeekDateItem from "@/components/ui/mealPlan/WeekDateItem.tsx";
-import { AccountEntity, PlanItemEntity } from "@/types/type";
 import AccountService from "@/lib/services/accountService";
 import PlanItemService from "@/lib/services/planItemService";
 
 import { DragDropContext, DropResult } from "react-beautiful-dnd";
+import { AccountEntity } from "@/lib/models/entities/AccountEntity/AccountEntity";
+import { Plan_ItemEntity } from "@/lib/models/entities/Plan_ItemEntity/Plan_ItemEntity";
 
 export type DateDisplay = {
   label: string;
   date?: string;
   borderRight?: boolean;
   borderBottom?: boolean;
-  planItems?: PlanItemEntity[];
+  planItems?: Plan_ItemEntity[];
 };
 
 const initialWeekDates: DateDisplay[] = [
@@ -83,7 +84,7 @@ const MealPlanner: React.FC = () => {
 
   const [weekDates, setWeekDates] = React.useState<DateDisplay[]>([]);
 
-  const [planItemData, setPlanItemData] = React.useState<PlanItemEntity[]>([]);
+  const [planItemData, setPlanItemData] = React.useState<Plan_ItemEntity[]>([]);
 
   function getWeekDates(offset: number): string[] {
     const currentDate = new Date();
@@ -121,7 +122,7 @@ const MealPlanner: React.FC = () => {
       setAccountData(account);
 
       const planItems = await PlanItemService.GetPlanItemsByAccountId(
-        account?.id
+        account?.uid
       );
 
       if (!planItems) {
@@ -141,7 +142,7 @@ const MealPlanner: React.FC = () => {
             date,
             planItems: planItems
               .filter((item) => {
-                const itemDate = new Date(item.Plan?.date);
+                const itemDate = new Date(item.plan?.date);
                 return itemDate.toISOString().split("T")[0] === date;
               })
               .sort((a, b) => {
@@ -168,7 +169,7 @@ const MealPlanner: React.FC = () => {
           date,
           planItems: planItemData
             .filter((item) => {
-              const itemDate = new Date(item.Plan?.date);
+              const itemDate = new Date(item.plan?.date);
               return itemDate.toISOString().split("T")[0] === date;
             })
             .sort((a, b) => {
@@ -188,7 +189,7 @@ const MealPlanner: React.FC = () => {
           ...date,
           planItems: planItemData
             .filter((item) => {
-              const itemDate = new Date(item.Plan?.date);
+              const itemDate = new Date(item.plan?.date);
               return itemDate.toISOString().split("T")[0] === date.date;
             })
             .sort((a, b) => {
@@ -240,15 +241,15 @@ const MealPlanner: React.FC = () => {
     let finalPlanItemData = [
       ...planItemData.filter(
         (item) =>
-          item.Plan?.date.getTime() !== oldDate.getTime() &&
-          item.Plan?.date.getTime() !== newDate.getTime()
+          item.plan?.date.getTime() !== oldDate.getTime() &&
+          item.plan?.date.getTime() !== newDate.getTime()
       ),
     ];
 
     if (planItemMove.from.getTime() !== planItemMove.to.getTime()) {
       let sourceArray = planItemData
         .filter(
-          (item) => item.Plan?.date.getTime() === planItemMove.from.getTime()
+          (item) => item.plan?.date.getTime() === planItemMove.from.getTime()
         )
         .sort((a, b) => {
           return a.order - b.order;
@@ -263,15 +264,15 @@ const MealPlanner: React.FC = () => {
 
       let destinationArray = planItemData
         .filter(
-          (item) => item.Plan?.date.getTime() === planItemMove.to.getTime()
+          (item) => item.plan?.date.getTime() === planItemMove.to.getTime()
         )
         .sort((a, b) => {
           return a.order - b.order;
         });
 
       const existRecipe = destinationArray
-        .map((item) => item.Recipe.id)
-        .findIndex((id) => id === planItem.Recipe.id);
+        .map((item) => item.recipe.id)
+        .findIndex((id) => id === planItem.recipe.id);
 
       if (existRecipe !== -1) {
         if (confirm("Công thức trùng lặp! Bạn vẫn muốn thêm?")) {
@@ -282,8 +283,8 @@ const MealPlanner: React.FC = () => {
 
       destinationArray.splice(planItemMove.toIndex, 0, {
         ...planItem,
-        Plan: {
-          ...planItem.Plan,
+        plan: {
+          ...planItem.plan,
           date: planItemMove.to,
         },
       });
@@ -302,7 +303,7 @@ const MealPlanner: React.FC = () => {
     } else {
       let sourceArray = planItemData
         .filter(
-          (item) => item.Plan?.date.getTime() === planItemMove.from.getTime()
+          (item) => item.plan?.date.getTime() === planItemMove.from.getTime()
         )
         .sort((a, b) => {
           return a.order - b.order;
@@ -311,8 +312,8 @@ const MealPlanner: React.FC = () => {
       sourceArray.splice(planItemMove.fromIndex, 1);
       sourceArray.splice(planItemMove.toIndex, 0, {
         ...planItem,
-        Plan: {
-          ...planItem.Plan,
+        plan: {
+          ...planItem.plan,
           date: planItemMove.to,
         },
       });
@@ -338,7 +339,7 @@ const MealPlanner: React.FC = () => {
       .filter((item) => item.id !== id)
       .map((item) => {
         if (
-          item.Plan?.date.getTime() === planItemDelete?.Plan?.date.getTime() &&
+          item.plan?.date.getTime() === planItemDelete?.plan?.date.getTime() &&
           item.order >= planItemDelete?.order
         ) {
           return {

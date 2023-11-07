@@ -1,7 +1,7 @@
 import { CustomCarousel } from "@/components/common/carousel/CustomeCarousel";
 import { cardWidth, responsive } from "@/lib/constants/responsiveCarousel";
 import useFirebaseImage from "@/lib/hooks/useFirebaseImage";
-import { AccountEntity } from "@/types/type";
+import { AccountEntity } from "@/lib/models/entities/AccountEntity/AccountEntity";
 import { Box, Typography } from "@mui/material";
 
 const AuthorCard = ({ author }: { author: AccountEntity }) => {
@@ -73,16 +73,37 @@ const AuthorCard = ({ author }: { author: AccountEntity }) => {
 export function AuthorsCarousel({ array }: { array: AccountEntity[] }) {
   return (
     <>
-      <CustomCarousel
-        responsive={responsive}
-        removeArrowOnDeviceType={["sm", "xs"]}
-      >
-        {array.map((item, index) => (
-          <Box key={index}>
-            <AuthorCard author={item} />
-          </Box>
-        ))}
-      </CustomCarousel>
+      {array && array.length > 0 ? (
+        <CustomCarousel
+          responsive={responsive}
+          removeArrowOnDeviceType={["sm", "xs"]}
+        >
+          {array.map((item, index) => (
+            <Box key={index}>
+              <AuthorCard author={item} />
+            </Box>
+          ))}
+        </CustomCarousel>
+      ) : (
+        <Box
+          sx={{
+            width: "100%",
+            height: "200px",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <Typography
+            color={"gray.main"}
+            variant="h2"
+            fontWeight={"bold"}
+            fontFamily={"Dancing Script"}
+          >
+            Chưa có tác giả nào :(
+          </Typography>
+        </Box>
+      )}
     </>
   );
 }

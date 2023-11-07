@@ -1,21 +1,23 @@
-import { planItems as planItemSampleData } from "@/types/sampleData";
-import { PlanEntity, PlanItemEntity, RecipeEntity } from "@/types/type";
+import { planItems as planItemSampleData } from "@/lib/constants/sampleData";
 import simulateDelay from "@/utils/promises/stimulateDelay";
 import PlanService from "./planService";
 import RecipeService from "./recipeService";
+import { PlanEntity } from "../models/entities/PlanEntity/PlanEntity";
+import { Plan_ItemEntity } from "../models/entities/Plan_ItemEntity/Plan_ItemEntity";
+import { RecipeEntity } from "../models/entities/RecipeEntity/RecipeEntity";
 
 class PlanItemService {
-  public static async GetAllPlanItems(): Promise<PlanItemEntity[]> {
+  public static async GetAllPlanItems(): Promise<Plan_ItemEntity[]> {
     simulateDelay(1);
 
     const plans: PlanEntity[] = await PlanService.GetAllPlans();
     const recipes: RecipeEntity[] = await RecipeService.GetAllRecipes();
 
-    let planItemss: PlanItemEntity[] = planItemSampleData.map((planItem) => {
+    let planItemss: Plan_ItemEntity[] = planItemSampleData.map((planItem) => {
       return {
         ...planItem,
-        Plan: plans.find((plan) => plan.id === planItem.plan_id),
-        Recipe: recipes.find((recipe) => recipe.id === planItem.recipe_id),
+        plan: plans.find((plan) => plan.id === planItem.planId),
+        recipe: recipes.find((recipe) => recipe.id === planItem.recipeId),
       };
     });
 
@@ -24,19 +26,19 @@ class PlanItemService {
 
   public static async GetPlanItemsByPlanId(
     planId: number | undefined
-  ): Promise<PlanItemEntity[]> {
+  ): Promise<Plan_ItemEntity[]> {
     if (!planId) {
       return Promise.resolve([]);
     }
     const allPlanItems = await this.GetAllPlanItems();
     return Promise.resolve(
-      allPlanItems.filter((planItem) => planItem.plan_id === planId)
+      allPlanItems.filter((planItem) => planItem.planId === planId)
     );
   }
 
   public static async GetPlanItemsByAccountId(
-    accountId: number | undefined
-  ): Promise<PlanItemEntity[]> {
+    accountId: string | undefined
+  ): Promise<Plan_ItemEntity[]> {
     if (!accountId) {
       return Promise.resolve([]);
     }
@@ -47,7 +49,7 @@ class PlanItemService {
       return Promise.resolve([]);
     }
 
-    let result: PlanItemEntity[] = [];
+    let result: Plan_ItemEntity[] = [];
 
     await Promise.all(
       planIds.map(async (planId) => {

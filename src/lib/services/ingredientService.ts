@@ -1,7 +1,7 @@
-import { ingredients } from "@/types/sampleData";
-import { IngredientEntity } from "@/types/type";
+import { ingredients } from "@/lib/constants/sampleData";
 import simulateDelay from "@/utils/promises/stimulateDelay";
 import { API_PATH } from "../constants/common";
+import { IngredientEntity } from "../models/entities/IngredientEntity/IngredientEntity";
 
 /**
  * Represents a service for managing ingredients.

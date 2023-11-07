@@ -1,7 +1,7 @@
-import { recipeIngredients } from "@/types/sampleData";
-import { Recipe_IngredientEntity } from "@/types/type";
+import { recipeIngredients } from "@/lib/constants/sampleData";
 import { createDebugStringFormatter } from "@/utils/debug/formatter";
 import simulateDelay from "@/utils/promises/stimulateDelay";
+import { Recipe_IngredientEntity } from "../models/entities/Recipe_IngredientEntity/Recipe_IngredientEntity";
 
 /**
  * Page identifier for debug purpose.

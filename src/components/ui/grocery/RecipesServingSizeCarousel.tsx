@@ -1,7 +1,7 @@
 import { CustomCarousel } from "@/components/common/carousel/CustomeCarousel";
 import { SERVING_SIZES } from "@/lib/constants/options";
 import { cardWidth, responsive } from "@/lib/constants/responsiveCarousel";
-import { CartEntity } from "@/types/type";
+import { CartEntity } from "@/lib/models/entities/CartEntity/CartEntity";
 import { CloseRounded, PeopleRounded } from "@mui/icons-material";
 import {
   Box,
@@ -61,7 +61,7 @@ const SecondaryCard = ({
             component="img"
             height={imgHeight}
             image="https://www.sidechef.com/recipe/d49b0c1d-e63e-4aac-afcc-b337b0cd1bff.jpg?d=1408x1120"
-            alt={cart.Recipe?.name}
+            alt={cart.recipe?.name}
           />
           <IconButton
             size="small"
@@ -142,7 +142,7 @@ const SecondaryCard = ({
               textOverflow={"ellipsis"}
               overflow={"hidden"}
             >
-              {cart.Recipe?.name}
+              {cart.recipe?.name}
             </Typography>
           </CardContent>
         </Card>
