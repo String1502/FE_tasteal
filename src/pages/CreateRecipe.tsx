@@ -219,7 +219,7 @@ const CreateRecipe: React.FunctionComponent = () => {
       })),
       directions: directionsWithImage,
       author_note: newRecipe.authorNote,
-      author: "uid",
+      author: "13b865f7-d6a6-4204-a349-7f379b232f0c",
       is_private: newRecipe.isPrivate,
       rating: 0,
     };

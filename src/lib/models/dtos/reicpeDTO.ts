@@ -65,4 +65,57 @@ export type RecipePostResponse = Partial<{
 
 //#endregion
 
+//#region /api/v2/Recipe/GetRecipe
+
+//#region Request (empty)
+
+//#endregion
+
+//#region Response
+
+export type RelatedRecipe = {
+  id: number;
+  name: string;
+  image: string;
+  totalTime: string;
+  rating: number;
+  ingredientAmount: 0;
+  author: {
+    uid: string;
+    name: string;
+    avatar: string;
+    introduction: string;
+    recipeCount: number | null;
+  };
+};
+
+/**
+ * Represents a recipe get response.
+ */
+export type RecipeGetResponse = Partial<{
+  name: string;
+  rating: number;
+  totalTime: string;
+  serving_size: number;
+  introduction: string;
+  author_note: string | null;
+  image: string;
+  author: Account & { recipeCount: number | null };
+  ingredients: {
+    name: string;
+    image: string;
+    amount: number;
+    isLiquid: boolean;
+  }[];
+  nutrition_info: NutritionInfo;
+  directions: Omit<Direction, "recipe_id">[];
+  comments: unknown[];
+  createAt: string;
+  relatedRecipes: RelatedRecipe[];
+}>;
+
+//#endregion
+
+//#endregion
+
 //#endregion

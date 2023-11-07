@@ -1,4 +1,3 @@
-import { defaultAvtPath } from "@/assets/exportImage";
 import TastealIconButton from "@/components/common/buttons/TastealIconButton";
 import TastealTextField from "@/components/common/textFields/TastealTextField";
 import BigSectionHeading from "@/components/common/typos/BigSectionHeading/BigSectionHeading";
@@ -13,20 +12,8 @@ import NutrionPerServingModal from "@/components/ui/modals/NutrionPerServingModa
 import Layout from "@/layout/Layout";
 import { N_A_VALUE } from "@/lib/constants/common";
 import { DEFAULT_NUTRITION_VALUE } from "@/lib/constants/defaultValue";
-import useFirebaseImage from "@/lib/hooks/useFirebaseImage";
-import AccountService from "@/lib/services/accountService";
-import IngredientService from "@/lib/services/ingredientService";
-import NutritionService from "@/lib/services/NutrionInfoService";
-import RecipeDirectionService from "@/lib/services/RecipeDirectionService";
-import RecipeIngredientService from "@/lib/services/RecipeIngredientService";
+import { RecipeGetResponse } from "@/lib/models/dtos/reicpeDTO";
 import RecipeService from "@/lib/services/recipeService";
-import {
-  AccountEntity,
-  Nutrition_InfoEntity,
-  RecipeEntity,
-  Recipe_DirectionEntity,
-  Recipe_IngredientEntity,
-} from "@/types/type";
 import { createDebugStringFormatter } from "@/utils/debug/formatter";
 import {
   Add,
@@ -79,198 +66,68 @@ const RecipeDetail: FC = () => {
   //#region UseHooks
 
   const { id } = useParams();
-  const authorImage = useFirebaseImage(defaultAvtPath);
 
   //#endregion
 
   //#region UseStates
 
-  const [recipe, setRecipe] = useState<RecipeEntity | null>(null);
-  const [directions, setDirections] = useState<Recipe_DirectionEntity[]>([]);
-  const [recipeIngredients, setRecipeIngredients] = useState<
-    Recipe_IngredientEntity[]
-  >([]);
-  const [author, setAuthor] = useState<AccountEntity | null>(null);
-  const [sameAccountRecipes, setSameAccountRecipes] = useState<RecipeEntity[]>(
-    []
-  );
-  const [nutritionInfo, setNutrionInfo] = useState<Nutrition_InfoEntity | null>(
-    null
-  );
+  const [recipe, setRecipe] = useState<RecipeGetResponse | null>(null);
 
-  const [rating, setRating] = useState(0);
-
-  const [nutrionPerServingModalOpen, setNutrionPerServingModalOpen] =
+  const [nutritionPerServingModalOpen, setNutritionPerServingModalOpen] =
     useState(false);
 
   //#endregion
 
   //#region Functions
 
-  /**
-   * Fetch recipe with id params from url then update state.
-   */
-  const getRecipe = useCallback((): Promise<string> => {
-    if (!id) {
-      return Promise.reject("Invalid recipe id.");
-    }
-
-    return RecipeService.GetById(parseInt(id))
-      .then((recipe) => {
-        if (recipe) {
-          setRecipe(recipe);
-          return Promise.resolve("successful!");
-        } else {
-          setRecipe(null);
-          return Promise.reject("Recipe not found.");
-        }
-      })
-      .catch((err) => {
-        return Promise.reject(`Fail to fetch recipe from service: ${err}.`);
-      });
-  }, [id]);
-
-  /**
-   * Fetch recipe's directions then update state.
-   */
-  const getDirections = useCallback((): Promise<string> => {
-    if (!recipe) {
-      return Promise.reject("Current recipe has null value.");
-    }
-
-    return RecipeDirectionService.GetByRecipeId(recipe.id).then(
-      (directions) => {
-        setDirections(directions);
-        return Promise.resolve("successful!");
-      }
-    );
-  }, [recipe]);
-
-  /**
-   * Fetch recipe's ingredients then update state.
-   */
-  const getIngredients = useCallback((): Promise<string> => {
-    if (!recipe) {
-      return Promise.reject("Current recipe has null value.");
-    }
-
-    return RecipeIngredientService.GetByRecipeId(recipe.id).then(
-      (recipeIngredients) => {
-        IngredientService.GetByIds(
-          recipeIngredients.map((r) => r.ingredient_id)
-        ).then((ingredients) => {
-          // Asign references
-          for (const recipeIngredient of recipeIngredients) {
-            recipeIngredient.Recipe = recipe;
-            recipeIngredient.Ingredient =
-              ingredients.filter(
-                (i) => i.id === recipeIngredient.ingredient_id
-              )[0] ?? null;
-          }
-          setRecipeIngredients(recipeIngredients);
-        });
-
-        return Promise.resolve("successful!");
-      }
-    );
-  }, [recipe]);
-
-  const getAuthor = useCallback(() => {
-    if (!recipe) {
-      return Promise.reject("Current recipe has null value.");
-    }
-
-    if (!recipe.author) {
-      return Promise.reject("Recipe's author id is invalid");
-    }
-
-    return AccountService.GetById(recipe.author).then((author) => {
-      setAuthor(author ?? null);
-      return Promise.resolve(author);
-    });
-  }, [recipe]);
-
-  const getSameAccountRecipes = useCallback(() => {
-    if (!recipe) {
-      return Promise.reject("Current recipe has null value.");
-    }
-
-    if (!recipe.author) {
-      return Promise.reject("Recipe's author id is invalid");
-    }
-
-    return RecipeService.GetByAccountId(recipe.author).then((recipes) => {
-      setSameAccountRecipes(recipes);
-    });
-  }, [recipe]);
-
-  const getNutritionInfo = useCallback(() => {
-    if (!recipe) {
-      return Promise.reject("Current recipe has null value.");
-    }
-
-    if (!recipe.nutrition_info_id) {
-      return Promise.reject("Recipe's nutrition info id is invalid");
-    }
-
-    return NutritionService.GetById(recipe.nutrition_info_id).then(
-      (nutrition) => {
-        setNutrionInfo(nutrition ?? null);
-        return Promise.resolve(nutrition);
-      }
-    );
-  }, [recipe]);
-
   //#endregion
 
-  //region Callbacks
+  //#region Callbacks
 
   const handleNutrionPerServingModalClose = useCallback(() => {
-    setNutrionPerServingModalOpen(false);
-  }, [setNutrionPerServingModalOpen]);
+    setNutritionPerServingModalOpen(false);
+  }, [setNutritionPerServingModalOpen]);
 
   //#endregion
 
   //#region UseEffects
 
   useEffect(() => {
-    getRecipe()
-      .then(() => {
-        getDirections().catch((msg) => console.log(debugStringFormatter(msg)));
-        getIngredients().catch((msg) => console.log(debugStringFormatter(msg)));
-        getAuthor()
-          .then(() =>
-            getSameAccountRecipes().catch((msg) =>
-              console.log(debugStringFormatter(msg))
-            )
-          )
-          .catch((msg) => console.log(debugStringFormatter(msg)));
-        getNutritionInfo().catch((msg) =>
-          console.log(debugStringFormatter(msg))
-        );
+    console.log("run");
+    if (!id) {
+      setRecipe(null);
+      console.log(debugStringFormatter("Failed to get recipe id"));
+      return;
+    }
+
+    const parsedId = parseInt(id);
+
+    RecipeService.GetById(parsedId)
+      .then((recipe) => {
+        setRecipe(recipe);
+        console.log(debugStringFormatter("Get recipe data"));
       })
-      .catch((msg) => console.log(debugStringFormatter(msg)));
-  }, [
-    getAuthor,
-    getDirections,
-    getIngredients,
-    getNutritionInfo,
-    getRecipe,
-    getSameAccountRecipes,
-    id,
-  ]);
+      .catch(() => {
+        setRecipe(null);
+        console.log(debugStringFormatter("Failed to get recipe data"));
+      });
+  }, [id]);
 
   //#endregion
 
   //#region UseMemos
 
   const recipeBrief = useMemo(() => {
-    const ingredientCount = recipeIngredients.length;
-    const directionCount = directions.length;
-    const totalTime = recipe?.totalTime ?? 0;
+    if (!recipe) {
+      return RecipeDetailStringConstants.DEFAULT_NAME;
+    }
+
+    const ingredientCount = recipe.ingredients.length;
+    const directionCount = recipe.directions.length;
+    const totalTime = recipe.totalTime;
 
     return `${ingredientCount} INGREDIENTS • ${directionCount} STEPS • ${totalTime} MIN`;
-  }, [directions.length, recipe?.totalTime, recipeIngredients.length]);
+  }, [recipe]);
 
   //#endregion
 
@@ -357,11 +214,11 @@ const RecipeDetail: FC = () => {
 
               <RecipeTimeInfo totalTime={recipe?.totalTime ?? ""} />
 
-              <IngredientDisplayer ingredients={recipeIngredients} />
+              <IngredientDisplayer ingredients={recipe.ingredients} />
 
               <NutrionPerServingInfo
-                onClick={() => setNutrionPerServingModalOpen(true)}
-                nutritionInfo={nutritionInfo ?? DEFAULT_NUTRITION_VALUE}
+                onClick={() => setNutritionPerServingModalOpen(true)}
+                nutritionInfo={recipe.nutrition_info ?? DEFAULT_NUTRITION_VALUE}
               />
 
               <Stack>
@@ -415,9 +272,11 @@ const RecipeDetail: FC = () => {
             <SimpleContainer sx={{ mt: 2 }}>
               <Box display={"flex"} flexDirection={"column"} gap={1}>
                 <Stack direction="row" alignItems={"center"} gap={2}>
-                  <Avatar src={authorImage} />
+                  <Avatar src={recipe.author.avatar} />
                   <Link>
-                    <Typography fontWeight={"bold"}>{author?.name}</Typography>
+                    <Typography fontWeight={"bold"}>
+                      {recipe.author.name}
+                    </Typography>
                   </Link>
                 </Stack>
                 <Typography color="gray">{`Hello this is my {not implemented yet} introduction.`}</Typography>
@@ -447,7 +306,7 @@ const RecipeDetail: FC = () => {
             </Stack>
 
             <Stack gap={2}>
-              {directions.map((direction, index) => (
+              {recipe.directions.map((direction, index) => (
                 <DirectionItem key={index} value={direction} />
               ))}
             </Stack>
@@ -544,7 +403,7 @@ const RecipeDetail: FC = () => {
               alignItems={"center"}
             >
               <BigSectionHeading>
-                More from {author?.name ?? "{AuthorName}"} at SideChef
+                More from {recipe.author.name || "{AuthorName}"} at SideChef
               </BigSectionHeading>
               <Button
                 sx={{
@@ -562,7 +421,7 @@ const RecipeDetail: FC = () => {
               </Button>
             </Box>
             <Box>
-              <SameAuthorRecipesCarousel recipes={sameAccountRecipes} />
+              <SameAuthorRecipesCarousel recipes={recipe.relatedRecipes} />
             </Box>
           </Box>
 
@@ -580,9 +439,9 @@ const RecipeDetail: FC = () => {
       </Box>
 
       <NutrionPerServingModal
-        open={nutrionPerServingModalOpen}
+        open={nutritionPerServingModalOpen}
         onClose={handleNutrionPerServingModalClose}
-        nutritionInfo={nutritionInfo ?? DEFAULT_NUTRITION_VALUE}
+        nutritionInfo={recipe.nutrition_info}
       />
     </Layout>
   );

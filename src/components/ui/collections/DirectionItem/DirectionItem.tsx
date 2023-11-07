@@ -1,9 +1,9 @@
-import { Recipe_DirectionEntity } from "@/types/type";
+import { Direction } from "@/lib/models/dtos/common";
 import { Stack, Typography } from "@mui/material";
 import { FC } from "react";
 
 type DirectionItemProps = {
-  value: Recipe_DirectionEntity;
+  value: Omit<Direction, "recipe_id">;
 };
 
 const DirectionItem: FC<DirectionItemProps> = ({ value }) => {

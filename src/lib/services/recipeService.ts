@@ -3,7 +3,11 @@ import { RecipeEntity } from "@/types/type";
 import simulateDelay from "@/utils/promises/stimulateDelay";
 import { getApiUrl } from "../constants/api";
 import { API_PATH, DEFAULT_PAGE } from "../constants/common";
-import { RecipePostModel, RecipePostResponse } from "../models/dtos/reicpeDTO";
+import {
+  RecipeGetResponse,
+  RecipePostModel,
+  RecipePostResponse,
+} from "../models/dtos/reicpeDTO";
 
 /**
  * Represents a service for managing occasions.
@@ -23,13 +27,24 @@ class RecipeService {
     return Promise.resolve(recipesSampleData);
   }
 
-  public static GetById(id: number): Promise<RecipeEntity | undefined> {
-    // Simulate delay of 1 second
-    simulateDelay(1);
-
-    return Promise.resolve(
-      recipesSampleData.find((recipe) => recipe.id === id)
-    );
+  /**
+   * Get recipe detail data by id.
+   * NOTE: This method is not implemented yet.
+   *
+   * @param id - The id of the recipe.
+   * @returns - The recipe detail data.
+   */
+  public static GetById(id: number): Promise<RecipeGetResponse> {
+    return fetch(`${getApiUrl("GET_RECIPE")}?id=${id}`, {
+      method: "GET",
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        return Promise.resolve({});
+      })
+      .catch((error) => {
+        return Promise.reject(error);
+      });
   }
 
   /**

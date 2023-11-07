@@ -1,5 +1,12 @@
 import { NutritionInfo } from ".";
 
+export type SimpleIngredient = {
+  name: string;
+  image: string;
+  amount: number;
+  isLiquid: boolean;
+};
+
 export type Ingredient = {
   id: number;
   name: string;

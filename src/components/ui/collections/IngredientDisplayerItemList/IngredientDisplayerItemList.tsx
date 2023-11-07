@@ -12,9 +12,9 @@ const IngredientDisplayerItemList: FC<IngredientDisplayerItemListProps> = ({
       divider={<Divider sx={{ borderColor: "primary.main", opacity: 0.4 }} />}
       gap={2}
     >
-      {ingredients.map((ingredient) => (
+      {ingredients.map((ingredient, index) => (
         <IngredientDisplayerItem
-          key={ingredient.id}
+          key={index}
           value={ingredient}
           servingSize={servingSize}
         />

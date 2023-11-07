@@ -1,7 +1,7 @@
-import { Recipe_IngredientEntity } from "@/types/type";
+import { SimpleIngredient } from "@/lib/models/dtos/common";
 
 type IngredientDisplayerItemListProps = {
-  ingredients: Recipe_IngredientEntity[];
+  ingredients: SimpleIngredient[];
   servingSize: number;
 };
 
