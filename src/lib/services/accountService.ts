@@ -2,6 +2,8 @@ import { accounts as accountsSampleData } from "@/lib/constants/sampleData";
 import simulateDelay from "@/utils/promises/stimulateDelay";
 import { API_PATH } from "../constants/common";
 import { AccountEntity } from "../models/entities/AccountEntity/AccountEntity";
+import { getApiUrl } from "../constants/api";
+import { PageFilter } from "../models/dtos/Request/PageFilter/PageFilter";
 
 /**
  * Represents a service for managing accounts.
@@ -25,22 +27,13 @@ class AccountService {
    *
    * @param uid - The id of the account
    */
-  public static GetById(uid: string) {
+  public static GetByUid(uid: string) {
     // Simulate delay of 1 second
     simulateDelay(1);
 
     return Promise.resolve(
       accountsSampleData.find((account) => account.uid === uid)
     );
-  }
-
-  /**
-   *
-   * @param uid - The uid of the account
-   */
-  public static GetByUid(uid: string) {
-    // Simulate delay of 1 second
-    simulateDelay(1);
   }
 
   public static async GetMostContributedAccounts(
@@ -57,11 +50,11 @@ class AccountService {
         pageSize: limit,
         page: 0,
         isDescend: true,
-      }),
+      } as PageFilter),
     };
 
-    await fetch(`${API_PATH}/api/v2/Home/authors`, requestOptions)
-      .then((response) => response.json())
+    fetch(getApiUrl("GET_MOST_CONTRIBUTED_ACCOUNTS"), requestOptions)
+      .then((res) => res.json())
       .then((data) => {
         accounts = data;
       })

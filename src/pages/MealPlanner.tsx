@@ -117,7 +117,7 @@ const MealPlanner: React.FC = () => {
 
   useEffect(() => {
     async function fetchData() {
-      const account = await AccountService.GetById(1);
+      const account = await AccountService.GetByUid(1);
 
       setAccountData(account);
 

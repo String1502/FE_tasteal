@@ -182,7 +182,7 @@ const RecipeDetail: FC = () => {
       return Promise.reject("Recipe's author id is invalid");
     }
 
-    return AccountService.GetById(recipe.author).then((author) => {
+    return AccountService.GetByUid(recipe.author).then((author) => {
       setAuthor(author ?? null);
       return Promise.resolve(author);
     });
