@@ -7,6 +7,7 @@ import {
 } from "@mui/material";
 import React from "react";
 import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
+import TastealHashLoader from "./components/common/progress/TastealHashLoader";
 import CreateRecipe from "./pages/CreateRecipe";
 import { ForgotPass } from "./pages/ForgotPass";
 import { Grocery } from "./pages/Grocery";
@@ -17,7 +18,6 @@ import { SignIn } from "./pages/SignIn";
 import { SignUp } from "./pages/SignUp";
 import { SignUpEmail } from "./pages/SignUpEmail";
 import { getMode } from "./theme/muiTheme";
-import TastealHashLoader from "./components/common/progress/TastealHashLoader";
 
 export const ColorModeContext = React.createContext({
   toggleColorMode: () => {},
@@ -66,8 +66,8 @@ function App() {
               <Route path="/signup" element={<SignUp />} />
               <Route path="/signupemail" element={<SignUpEmail />} />
               <Route path="/forgotpass" element={<ForgotPass />} />
-              <Route path="/create-recipe" element={<CreateRecipe />} />
-              <Route path="/recipe-detail/:id" element={<RecipeDetail />} />
+              <Route path="/recipe/create" element={<CreateRecipe />} />
+              <Route path="/recipe/:id" element={<RecipeDetail />} />
               <Route path="/grocery" element={<Grocery />} />
               <Route path="/mealplanner" element={<MealPlanner />} />
               {/* Thêm các tuyến đường khác */}

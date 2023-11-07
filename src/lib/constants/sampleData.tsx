@@ -459,7 +459,7 @@ export const nutritionInfos: Nutrition_InfoEntity[] = [
     sugars: 10,
     protein: 15,
     sodium: 300,
-    vitaminD: 10,
+    vitamin_d: 10,
     calcium: 150,
     iron: 2,
     potassium: 400,

@@ -8,8 +8,8 @@ export function dateTimeToMinutes(value: string | number): number {
   if (typeof value === "number") {
     return value;
   }
-  var parts = value.split(/[:.]/);
-  var totalMinutes = 0;
+  const parts = value.split(/[:.]/);
+  let totalMinutes = 0;
 
   if (parts.length === 3) {
     // Đối với định dạng "hh:mm:ss"
@@ -44,4 +44,24 @@ export function dateToDDMMYYYY(date: string | Date | undefined): string {
 
 export function formatNumberWithLeadingZero(number: number): string {
   return number < 10 ? `0${number}` : `${number}`;
+}
+
+/**
+ * Convert minutes to a time string
+ *
+ * @param minutes - Minutes to convert
+ * @returns A time string in format like "1h50m30s"
+ */
+export function minuteToTimeString(minutes: number) {
+  const date = new Date();
+
+  const hours = Math.floor(minutes / 60);
+  const remainingMinutes = minutes % 60;
+
+  date.setHours(hours);
+  date.setMinutes(remainingMinutes);
+  date.setSeconds(0);
+  date.setMilliseconds(0);
+
+  return date.toISOString();
 }

@@ -115,13 +115,22 @@ class RecipeService {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
+        "Content-Type": "application/json",
       },
       body: JSON.stringify(postData),
     })
-      .then(() => {})
-      .catch((e) =>
-        console.error("[RecipeService.CreateRecipe] POST failed!", e)
-      );
+      .then((response: Response) => {
+        return response.json();
+      })
+      .then((data: RecipePostResponse) => {
+        console.log("[RecipeService.CreateRecipe] POST succeeded!", data);
+        return Promise.resolve(data);
+      })
+      .catch((e) => {
+        const msg = "POST fail!";
+        console.error(`[RecipeService.CreateRecipe] ${msg}`, e);
+        return Promise.reject(msg);
+      });
   }
 
   //#endregion
