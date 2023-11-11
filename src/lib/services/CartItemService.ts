@@ -21,7 +21,7 @@ class CartItemService {
       };
     });
 
-    let cartItems: Cart_ItemEntity[] = cartItemSampleData.map((item) => {
+    const cartItems: Cart_ItemEntity[] = cartItemSampleData.map((item) => {
       return {
         ...item,
         Cart: carts.find((cart) => cart.id === item.cart_id),

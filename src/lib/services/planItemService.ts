@@ -11,7 +11,7 @@ class PlanItemService {
     const plans: PlanEntity[] = await PlanService.GetAllPlans();
     const recipes: RecipeEntity[] = await RecipeService.GetAllRecipes();
 
-    let planItemss: PlanItemEntity[] = planItemSampleData.map((planItem) => {
+    const planItemss: PlanItemEntity[] = planItemSampleData.map((planItem) => {
       return {
         ...planItem,
         Plan: plans.find((plan) => plan.id === planItem.plan_id),

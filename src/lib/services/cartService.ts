@@ -6,7 +6,7 @@ class CartService {
   public static GetAllCarts(): Promise<CartEntity[]> {
     simulateDelay(1);
 
-    let carts: CartEntity[] = cartSampleData.map((cart) => {
+    const carts: CartEntity[] = cartSampleData.map((cart) => {
       return {
         ...cart,
         Account: accounts.find((account) => account.id === cart.account_id),

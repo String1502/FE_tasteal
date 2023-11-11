@@ -14,7 +14,7 @@ const SameAuthorRecipesCarousel: FC<SameAuthorRecipesCarouselProps> = ({
 }) => {
   return (
     <>
-      {recipes.length > 0 ? (
+      {recipes && recipes.length > 0 ? (
         <>
           <CustomCarousel
             responsive={responsive}

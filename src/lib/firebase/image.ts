@@ -25,10 +25,10 @@ export const resolveImagePathAsync = createCacheAsyncFunction(
 
     try {
       const url = await getDownloadURL(storageRef);
-      return Promise.resolve(url);
+      return url;
     } catch (error) {
       console.log(debugStringFormatter("Failed to get image url"), error);
-      return Promise.resolve("");
+      return "";
     }
   }
 );
@@ -44,6 +44,6 @@ export async function uploadImage(
     return snapshot.ref.fullPath;
   } catch (e) {
     console.log(debugStringFormatter("Failed to upload a blob or file!"), e);
-    return Promise.reject("");
+    return "";
   }
 }

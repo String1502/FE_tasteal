@@ -36,14 +36,12 @@ class RecipeService {
    */
   public static GetById(id: number): Promise<RecipeGetResponse> {
     return fetch(`${getApiUrl("GET_RECIPE")}?id=${id}`, {
-      method: "GET",
+      method: "POST",
     })
       .then((response) => response.json())
-      .then((data) => {
-        return Promise.resolve({});
-      })
-      .catch((error) => {
-        return Promise.reject(error);
+      .then((data) => data)
+      .catch((err) => {
+        throw err;
       });
   }
 
@@ -140,12 +138,12 @@ class RecipeService {
       })
       .then((data: RecipePostResponse) => {
         console.log("[RecipeService.CreateRecipe] POST succeeded!", data);
-        return Promise.resolve(data);
+        return data;
       })
       .catch((e) => {
         const msg = "POST fail!";
         console.error(`[RecipeService.CreateRecipe] ${msg}`, e);
-        return Promise.reject(msg);
+        throw new Error(msg);
       });
   }
 

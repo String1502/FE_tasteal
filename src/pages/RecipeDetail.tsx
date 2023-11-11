@@ -93,7 +93,6 @@ const RecipeDetail: FC = () => {
   //#region UseEffects
 
   useEffect(() => {
-    console.log("run");
     if (!id) {
       setRecipe(null);
       console.log(debugStringFormatter("Failed to get recipe id"));
@@ -118,6 +117,8 @@ const RecipeDetail: FC = () => {
   //#region UseMemos
 
   const recipeBrief = useMemo(() => {
+    console.log("recipe", recipe);
+
     if (!recipe) {
       return RecipeDetailStringConstants.DEFAULT_NAME;
     }
@@ -214,11 +215,13 @@ const RecipeDetail: FC = () => {
 
               <RecipeTimeInfo totalTime={recipe?.totalTime ?? ""} />
 
-              <IngredientDisplayer ingredients={recipe.ingredients} />
+              <IngredientDisplayer ingredients={recipe?.ingredients ?? []} />
 
               <NutrionPerServingInfo
                 onClick={() => setNutritionPerServingModalOpen(true)}
-                nutritionInfo={recipe.nutrition_info ?? DEFAULT_NUTRITION_VALUE}
+                nutritionInfo={
+                  recipe?.nutrition_info ?? DEFAULT_NUTRITION_VALUE
+                }
               />
 
               <Stack>
@@ -272,10 +275,10 @@ const RecipeDetail: FC = () => {
             <SimpleContainer sx={{ mt: 2 }}>
               <Box display={"flex"} flexDirection={"column"} gap={1}>
                 <Stack direction="row" alignItems={"center"} gap={2}>
-                  <Avatar src={recipe.author.avatar} />
+                  <Avatar src={recipe?.author.avatar} />
                   <Link>
                     <Typography fontWeight={"bold"}>
-                      {recipe.author.name}
+                      {recipe?.author.name}
                     </Typography>
                   </Link>
                 </Stack>
@@ -306,7 +309,7 @@ const RecipeDetail: FC = () => {
             </Stack>
 
             <Stack gap={2}>
-              {recipe.directions.map((direction, index) => (
+              {recipe?.directions.map((direction, index) => (
                 <DirectionItem key={index} value={direction} />
               ))}
             </Stack>
@@ -403,7 +406,7 @@ const RecipeDetail: FC = () => {
               alignItems={"center"}
             >
               <BigSectionHeading>
-                More from {recipe.author.name || "{AuthorName}"} at SideChef
+                More from {recipe?.author.name || "{AuthorName}"} at SideChef
               </BigSectionHeading>
               <Button
                 sx={{
@@ -421,7 +424,7 @@ const RecipeDetail: FC = () => {
               </Button>
             </Box>
             <Box>
-              <SameAuthorRecipesCarousel recipes={recipe.relatedRecipes} />
+              <SameAuthorRecipesCarousel recipes={recipe?.relatedRecipes} />
             </Box>
           </Box>
 
@@ -441,7 +444,7 @@ const RecipeDetail: FC = () => {
       <NutrionPerServingModal
         open={nutritionPerServingModalOpen}
         onClose={handleNutrionPerServingModalClose}
-        nutritionInfo={recipe.nutrition_info}
+        nutritionInfo={recipe?.nutrition_info}
       />
     </Layout>
   );
