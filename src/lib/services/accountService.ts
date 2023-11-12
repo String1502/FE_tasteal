@@ -1,7 +1,8 @@
-import { accounts as accountsSampleData } from "@/types/sampleData";
-import { AccountEntity } from "@/types/type";
+import { accounts as accountsSampleData } from "@/lib/constants/sampleData";
 import simulateDelay from "@/utils/promises/stimulateDelay";
-import { API_PATH } from "../constants/common";
+import { getApiUrl } from "../constants/api";
+import { PageFilter } from "../models/dtos/Request/PageFilter/PageFilter";
+import { AccountEntity } from "../models/entities/AccountEntity/AccountEntity";
 
 /**
  * Represents a service for managing accounts.
@@ -23,24 +24,15 @@ class AccountService {
   /**
    * Get account by id
    *
-   * @param id - The id of the account
-   */
-  public static GetById(id: number) {
-    // Simulate delay of 1 second
-    simulateDelay(1);
-
-    return Promise.resolve(
-      accountsSampleData.find((account) => account.id === id)
-    );
-  }
-
-  /**
-   *
-   * @param uid - The uid of the account
+   * @param uid - The id of the account
    */
   public static GetByUid(uid: string) {
     // Simulate delay of 1 second
     simulateDelay(1);
+
+    return Promise.resolve(
+      accountsSampleData.find((account) => account.uid === uid)
+    );
   }
 
   public static async GetMostContributedAccounts(
@@ -57,11 +49,11 @@ class AccountService {
         pageSize: limit,
         page: 0,
         isDescend: true,
-      }),
+      } as PageFilter),
     };
 
-    await fetch(`${API_PATH}/api/v2/Home/authors`, requestOptions)
-      .then((response) => response.json())
+    fetch(getApiUrl("GET_MOST_CONTRIBUTED_ACCOUNTS"), requestOptions)
+      .then((res) => res.json())
       .then((data) => {
         accounts = data;
       })

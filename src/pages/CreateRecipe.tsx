@@ -16,8 +16,8 @@ import Layout from "@/layout/Layout";
 import { SERVING_SIZES } from "@/lib/constants/options";
 import { STORAGE_PATH } from "@/lib/constants/storage";
 import { uploadImage } from "@/lib/firebase/image";
+import { RecipeReq } from "@/lib/models/dtos/Request/RecipeReq/RecipeReq";
 import { Direction } from "@/lib/models/dtos/common";
-import { RecipePostModel } from "@/lib/models/dtos/reicpeDTO";
 import RecipeService from "@/lib/services/recipeService";
 import { createDebugStringFormatter } from "@/utils/debug/formatter";
 import { getFileExtension } from "@/utils/file";
@@ -190,7 +190,7 @@ const CreateRecipe: React.FunctionComponent = () => {
 
   //#region Methods
 
-  const createPostData = useCallback(async (): Promise<RecipePostModel> => {
+  const createPostData = useCallback(async (): Promise<RecipeReq> => {
     const IMAGE_ID = uuidv4();
 
     let path = `${STORAGE_PATH.RECIPE}/${IMAGE_ID}.${getFileExtension(
@@ -204,11 +204,11 @@ const CreateRecipe: React.FunctionComponent = () => {
       IMAGE_ID
     );
 
-    const postData: RecipePostModel = {
+    const postData: RecipeReq = {
       name: newRecipe.name,
       introduction: newRecipe.introduction,
       image: path,
-      total_time: minuteToTimeString(15),
+      totalTime: minuteToTimeString(15),
       active_time: minuteToTimeString(5),
       serving_size: newRecipe.servingSize,
       ingredients: newRecipe.ingredients.map((ingredient) => ({
@@ -217,7 +217,7 @@ const CreateRecipe: React.FunctionComponent = () => {
         amount: ingredient.amount,
         isLiquid: ingredient.isLiquid,
       })),
-      directions: directionsWithImage,
+      direction: directionsWithImage,
       author_note: newRecipe.authorNote,
       author: "13b865f7-d6a6-4204-a349-7f379b232f0c",
       is_private: newRecipe.isPrivate,

@@ -97,7 +97,12 @@ export function PrimaryCard({
               color="common.white"
               sx={{ fontWeight: "bold" }}
             >
-              {dateTimeToMinutes(recipe.totalTime)} phút
+              {recipe.totalTime.toLocaleString("vi-VN", {
+                minute: "numeric",
+                second: "numeric",
+                hour: "numeric",
+              })}{" "}
+              phút
             </Typography>
           </Box>
 

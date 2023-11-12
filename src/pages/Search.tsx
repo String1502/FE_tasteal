@@ -4,10 +4,10 @@ import { CheckBoxButton } from "../components/ui/search/CheckBoxButton.tsx";
 import { PrimaryCard } from "../components/common/card/PrimaryCard.tsx";
 import { SearchFilter } from "../components/ui/search/SearchFilter.tsx";
 import Layout from "../layout/Layout";
-import { recipes } from "../types/sampleData";
-import { RecipeEntity } from "../types/type";
+import { recipes } from "../lib/constants/sampleData.tsx";
 import { SearchTextField } from "@/components/ui/search/SearchTextField.tsx";
 import { removeDiacritics } from "@/utils/format/index.ts";
+import { RecipeEntity } from "@/lib/models/entities/RecipeEntity/RecipeEntity.ts";
 
 export type TuKhoa = {
   label: string;

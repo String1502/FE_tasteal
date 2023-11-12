@@ -1,7 +1,7 @@
-import { occasions as occasionsSampleData } from "@/types/sampleData";
-import { OccasionEntity } from "@/types/type";
+import { occasions as occasionsSampleData } from "@/lib/constants/sampleData";
 import simulateDelay from "@/utils/promises/stimulateDelay";
 import { API_PATH } from "../constants/common";
+import { OccasionEntity } from "../models/entities/OccasionEntity/OccasionEntity";
 
 /**
  * Represents a service for managing occasions.
@@ -15,10 +15,7 @@ class OccasionService {
   public static async GetAllOccasions(): Promise<OccasionEntity[]> {
     let result: OccasionEntity[] = [];
     const requestOptions = {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json; charset=UTF-8",
-      },
+      method: "GET",
     };
 
     await fetch(`${API_PATH}/api/v2/Home/getoccasion`, requestOptions)

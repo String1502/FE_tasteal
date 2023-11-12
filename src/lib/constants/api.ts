@@ -9,11 +9,23 @@ export const API_PATH = `${API_BASE_URL}${API_VERSION}`;
  * List of API endpoints.
  */
 export const API_END_POINT = {
-  // RECIPE
-  CREATE_RECIPE: "/Recipe/Add",
-  GET_RECIPE: "/Recipe/GetRecipe",
-  // INGREDIENT
-  GET_ALL_INGREDIENTS: "/Ingredient/getall",
+  // Recipe
+  CREATE_RECIPE: "Recipe/Add",
+  SEARCH_RECIPE: "Recipe/Search",
+  GET_RECIPE: "Recipe/GetRecipe",
+  // Ingredient
+  GET_ALL_INGREDIENTS: "Ingredient/getall",
+  // Home
+  GET_OCCASION: "Home/getoccasion",
+  GET_RECIPE_BY_DATETIME: "Home/recipebydatetime",
+  GET_RECIPE_BY_RATING: "Home/recipebyrating",
+  GET_MOST_CONTRIBUTED_ACCOUNTS: "Home/authors",
+  // Cart
+  GET_ALL_CART_BY_ACCOUNT_ID: "Cart/getall",
+  DELETE_ALL_CART_BY_ACCOUNT_ID: "Cart/allcart",
+  UPDATE_CART: "Cart/servingsize",
+  GET_CART_ITEM_BY_CART_ID: "Cart/cartitem",
+  DELETE_CART_BY_ID: "Cart/cart",
 } as const;
 
 /**

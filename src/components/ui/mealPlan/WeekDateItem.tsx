@@ -1,6 +1,4 @@
 import { DateDisplay } from "@/pages/MealPlanner";
-
-import { RecipeEntity } from "@/types/type";
 import { dateToDDMMYYYY } from "@/utils/format";
 import { Box, TextField, Typography } from "@mui/material";
 import { useState } from "react";
@@ -8,6 +6,7 @@ import { MealPlanCard } from "../cards/MealPlan/MealPlanCard";
 import { AddRecipeButton } from "./AddRecipeButton";
 import { HighlightAltRounded } from "@mui/icons-material";
 import { Droppable } from "react-beautiful-dnd";
+import { RecipeEntity } from "@/lib/models/entities/RecipeEntity/RecipeEntity";
 
 const NoteTextField = () => {
   const [isFocus, setIsFocus] = useState(false);
@@ -162,7 +161,7 @@ function WeekDateItem({
                         index={index}
                         planItem={item}
                         key={index}
-                        recipe={item.Recipe as RecipeEntity}
+                        recipe={item.recipe as RecipeEntity}
                         handleRemovePlanItem={handleRemovePlanItem}
                       />
                     )

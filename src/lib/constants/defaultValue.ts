@@ -1,5 +1,6 @@
 import { IngredientItemData } from "@/components/ui/collections/IngredientSelector/types";
-import { Nutrition_InfoEntity } from "@/types/type";
+// import { DEFAULT_UNIT_OPTION } from "./options";
+import { Nutrition_InfoEntity } from "../models/entities/Nutrition_InfoEntity/Nutrition_InfoEntity";
 
 /**
  * This constant represents the default data for an ingredient item.
@@ -9,6 +10,7 @@ export const DEFAULT_INGREDIENT_ITEM_DATA: IngredientItemData = {
   ingredientId: 0,
   name: "",
   amount: 0,
+  isLiquid: false,
 };
 
 /**
@@ -26,7 +28,7 @@ export const DEFAULT_NUTRITION_VALUE: Nutrition_InfoEntity = {
   sugars: 0,
   protein: 0,
   sodium: 0,
-  vitamin_d: 0,
+  vitaminD: 0,
   calcium: 0,
   iron: 0,
   potassium: 0,

@@ -1,37 +1,24 @@
 import { PopoverRecipes } from "@/components/ui/grocery/PopoverRecipes";
 import { RecipesServingSizeCarousel } from "@/components/ui/grocery/RecipesServingSizeCarousel";
 import Layout from "@/layout/Layout";
+import { AccountEntity } from "@/lib/models/entities/AccountEntity/AccountEntity";
+import { CartEntity } from "@/lib/models/entities/CartEntity/CartEntity";
+import { Cart_ItemEntity } from "@/lib/models/entities/Cart_ItemEntity/Cart_ItemEntity";
 import CartItemService from "@/lib/services/CartItemService";
 import CartService from "@/lib/services/cartService";
-import { accounts } from "@/types/sampleData";
-import {
-  AccountEntity,
-  CartEntity,
-  Cart_ItemEntity,
-  Ingredient_TypeEntity,
-} from "@/types/type";
-import {
-  AddCircleRounded,
-  CheckCircleRounded,
-  RadioButtonUncheckedRounded,
-} from "@mui/icons-material";
-import {
-  Box,
-  Button,
-  Checkbox,
-  Container,
-  FormControlLabel,
-  Grid,
-  Typography,
-  TypographyProps,
-} from "@mui/material";
+import { accounts } from "@/lib/constants/sampleData";
+import { Box, Container, Grid, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
+import CartItemContent from "@/components/ui/grocery/CartItemContent";
+import CartItemFrame from "@/components/ui/grocery/CartItemFrame";
+import CartItemCheckBox from "@/components/ui/grocery/CartItemCheckBox";
+import AddYourOwnItem from "@/components/ui/grocery/AddYourOwnItem";
 
 export function Grocery() {
   const [cartData, setCartData] = useState<CartEntity[]>([]);
 
   const [accountData, setAccountData] = useState<AccountEntity | undefined>(
-    accounts.find((account) => account.id === 1)
+    accounts.find((account) => account.uid === "1")
   );
 
   const [cartItemData, setCartItemData] = useState<Cart_ItemEntity[]>([]);
@@ -39,7 +26,7 @@ export function Grocery() {
   useEffect(() => {
     const fetchData = async () => {
       const finalCartData = await CartService.GetCartByAccountId(
-        accountData?.id
+        accountData?.uid
       );
 
       setCartData(finalCartData);
@@ -51,12 +38,12 @@ export function Grocery() {
       }
     };
     fetchData();
-  }, []);
+  }, [accountData]);
 
-  function handleChangeCartItemData(id: number) {
+  function handleChangeCartItemData(cartId: number, ingredientId: number) {
     setCartItemData((prev) => {
       return prev.map((item) => {
-        if (item.id === id) {
+        if (item.cartId === cartId && item.ingredientId === ingredientId) {
           return {
             ...item,
             isBought: !item.isBought,
@@ -90,7 +77,7 @@ export function Grocery() {
 
     setCartItemData((prev) => {
       return prev.map((item) => {
-        if (item.cart_id === cartId) {
+        if (item.cartId === cartId) {
           return {
             ...item,
             amount: item.amount * rate,
@@ -133,7 +120,7 @@ export function Grocery() {
                 {
                   cartItemData
                     .map((item) => {
-                      return item.Ingredient?.id;
+                      return item.ingredient?.id;
                     })
                     .filter(function (item, pos, self) {
                       return self.indexOf(item) == pos;
@@ -172,35 +159,9 @@ export function Grocery() {
                 </Typography>
               </Grid>
 
-              {/* <Grid item xs={12} lg={8}>
-                <Button
-                  variant="contained"
-                  sx={{
-                    width: "100%",
-                    backgroundColor: "white",
-                    color: "primary.main",
-                    "&:hover": {
-                      backgroundColor: "white",
-                      color: "primary.main",
-                    },
-                    px: 3,
-                    py: 1.2,
-                    boxShadow: "none",
-                  }}
-                  startIcon={<AddCircleRounded fontSize="large" />}
-                >
-                  <Typography
-                    variant="caption"
-                    sx={{
-                      width: "100%",
-                      textAlign: "left",
-                    }}
-                    fontWeight={"bold"}
-                  >
-                    Thêm nguyên liệu
-                  </Typography>
-                </Button>
-              </Grid> */}
+              <Grid item xs={12} lg={8}>
+                <AddYourOwnItem />
+              </Grid>
 
               <CartItemContent
                 cartItemData={cartItemData}
@@ -209,16 +170,16 @@ export function Grocery() {
 
               <Grid item xs={12} lg={8}>
                 <CartItemFrame label="Đã mua">
-                  {cartItemData.map((item) => {
+                  {cartItemData.map((item, index) => {
                     if (item.isBought) {
                       return (
                         <CartItemCheckBox
-                          key={item.id}
+                          key={index}
                           item={item}
                           total={() => {
                             let total = 0;
                             cartItemData.forEach((x) => {
-                              if (x.ingredient_id == item.ingredient_id) {
+                              if (x.ingredientId == item.ingredientId) {
                                 total += x.amount;
                               }
                             });
@@ -236,198 +197,5 @@ export function Grocery() {
         </Box>
       </Layout>
     </>
-  );
-}
-
-function CartItemContent({
-  cartItemData,
-  handleChangeCartItemData,
-}: {
-  cartItemData: Cart_ItemEntity[];
-  handleChangeCartItemData: (id: number) => void;
-}) {
-  const [ingredientTypeData, setIngredientTypeData] = useState<
-    Ingredient_TypeEntity[]
-  >([]);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      let ingredientTypes: Ingredient_TypeEntity[] = [];
-      if (cartItemData.length > 0) {
-        cartItemData.forEach((item) => {
-          if (item.Ingredient?.Ingredient_Type) {
-            ingredientTypes.push(item.Ingredient.Ingredient_Type);
-          }
-        });
-        ingredientTypes = ingredientTypes.filter(function (item, pos) {
-          return ingredientTypes.indexOf(item) == pos;
-        });
-      }
-
-      setIngredientTypeData(ingredientTypes);
-    };
-    fetchData();
-  }, [cartItemData]);
-
-  return (
-    <>
-      {ingredientTypeData.map((type) => {
-        return (
-          <Grid key={type.id} item xs={12} lg={8}>
-            <CartItemFrame label={type.name}>
-              {cartItemData.map((item) => {
-                if (item.Ingredient?.type_id == type.id && !item.isBought) {
-                  return (
-                    <CartItemCheckBox
-                      key={item.id}
-                      item={item}
-                      total={() => {
-                        let total = 0;
-                        cartItemData.forEach((x) => {
-                          if (x.ingredient_id == item.ingredient_id) {
-                            total += x.amount;
-                          }
-                        });
-                        return total;
-                      }}
-                      handleChangeCartItemData={handleChangeCartItemData}
-                    />
-                  );
-                }
-              })}
-            </CartItemFrame>
-          </Grid>
-        );
-      })}
-    </>
-  );
-}
-
-function CartItemFrame({
-  children,
-  label,
-}: {
-  children?: React.ReactNode;
-  label: string;
-}) {
-  return (
-    <>
-      <Box
-        sx={{
-          width: "100%",
-          background: "white",
-          borderRadius: 4,
-          px: 3,
-          pt: 2,
-          pb: 1,
-        }}
-      >
-        <Typography
-          variant="body1"
-          sx={{
-            width: "100%",
-            textAlign: "left",
-            mb: 1,
-            color: "grey.600",
-          }}
-          fontWeight={900}
-        >
-          {label}
-        </Typography>
-        {children}
-      </Box>
-    </>
-  );
-}
-
-function CartItemCheckBox({
-  item,
-  total,
-  handleChangeCartItemData,
-}: {
-  item: Cart_ItemEntity;
-  total?: () => number;
-  handleChangeCartItemData: (id: number) => void;
-}) {
-  const typoProps: TypographyProps = {
-    variant: "body2",
-    fontWeight: "light",
-    sx: {
-      width: "100%",
-    },
-  };
-
-  const [isBought, setIsBought] = useState(item.isBought);
-
-  useEffect(() => {
-    handleChangeCartItemData(item.id);
-  }, [isBought]);
-
-  return (
-    <FormControlLabel
-      sx={{
-        width: "100%",
-        py: 1,
-        borderTop: 1,
-        borderColor: "grey.300",
-        ".MuiFormControlLabel-label": {
-          width: "100%",
-        },
-        mx: 0,
-      }}
-      labelPlacement="start"
-      control={
-        <Checkbox
-          checked={isBought}
-          onChange={() => {
-            setIsBought(!isBought);
-          }}
-          icon={<RadioButtonUncheckedRounded />}
-          checkedIcon={<CheckCircleRounded />}
-        />
-      }
-      label={
-        <Box
-          sx={{
-            display: "flex",
-            alignItems: "center",
-            width: "100%",
-            opacity: isBought ? 0.65 : 1,
-          }}
-        >
-          <Box
-            component={"img"}
-            src={item.Ingredient?.image}
-            sx={{
-              height: "60px",
-              aspectRatio: "1/1",
-              objectFit: "contain",
-              borderRadius: "50%",
-              objectPosition: "center",
-              mr: 2,
-            }}
-          />
-          <Box
-            sx={{
-              flexGrow: 1,
-              height: "fit-content",
-            }}
-          >
-            <Typography {...typoProps}>{item.Cart?.Recipe?.name}</Typography>
-            <Typography {...typoProps} fontWeight={900}>
-              {item.Ingredient?.name}
-            </Typography>
-            <Typography {...typoProps}>
-              {Math.ceil(item.amount)}
-              {total ? (
-                <span style={{ color: "grey" }}> /{Math.ceil(total())}</span>
-              ) : (
-                ""
-              )}
-            </Typography>
-          </Box>
-        </Box>
-      }
-    />
   );
 }

@@ -1,13 +1,10 @@
-import { recipes as recipesSampleData } from "@/types/sampleData";
-import { RecipeEntity } from "@/types/type";
+import { recipes as recipesSampleData } from "@/lib/constants/sampleData";
 import simulateDelay from "@/utils/promises/stimulateDelay";
 import { getApiUrl } from "../constants/api";
 import { API_PATH, DEFAULT_PAGE } from "../constants/common";
-import {
-  RecipeGetResponse,
-  RecipePostModel,
-  RecipePostResponse,
-} from "../models/dtos/reicpeDTO";
+import { RecipeReq } from "../models/dtos/Request/RecipeReq/RecipeReq";
+import { RecipeGetResponse } from "../models/dtos/reicpeDTO";
+import { RecipeEntity } from "../models/entities/RecipeEntity/RecipeEntity";
 
 /**
  * Represents a service for managing occasions.
@@ -51,7 +48,7 @@ class RecipeService {
    * @param accountId - The id of the account.
    * @returns
    */
-  public static GetByAccountId(accountId: number) {
+  public static GetByAccountId(accountId: string) {
     // Simulate delay of 1 second
     simulateDelay(1);
 
@@ -123,10 +120,8 @@ class RecipeService {
   /**
    * Create a new recipe
    */
-  public static async CreateRecipe(
-    postData: RecipePostModel
-  ): Promise<RecipePostResponse> {
-    return fetch(getApiUrl("CREATE_RECIPE"), {
+  public static async CreateRecipe(postData: RecipeReq) {
+    fetch(getApiUrl("CREATE_RECIPE"), {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -136,7 +131,7 @@ class RecipeService {
       .then((response: Response) => {
         return response.json();
       })
-      .then((data: RecipePostResponse) => {
+      .then((data: RecipeReq) => {
         console.log("[RecipeService.CreateRecipe] POST succeeded!", data);
         return data;
       })

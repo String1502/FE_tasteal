@@ -1,5 +1,5 @@
 import useFirebaseImage from "@/lib/hooks/useFirebaseImage";
-import { OccasionEntity } from "@/types/type";
+import { OccasionEntity } from "@/lib/models/entities/OccasionEntity/OccasionEntity";
 import { Box, Button, Link, Stack, Typography } from "@mui/material";
 
 export function OccasionsList({ occasions }: { occasions: OccasionEntity[] }) {

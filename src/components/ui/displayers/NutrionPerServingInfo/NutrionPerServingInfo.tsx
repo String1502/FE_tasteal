@@ -1,8 +1,8 @@
 import SectionHeading from "@/components/common/typos/SectionHeading";
-import { Nutrition_InfoEntity } from "@/types/type";
 import { Button, Grid, Stack } from "@mui/material";
 import { FC } from "react";
 import NutrionInfo, { NutrionType } from "./NutrionInfo/NutrionInfo";
+import { Nutrition_InfoEntity } from "@/lib/models/entities/Nutrition_InfoEntity/Nutrition_InfoEntity";
 
 export type NutrionPerServingInfoProps = {
   nutritionInfo: Nutrition_InfoEntity;

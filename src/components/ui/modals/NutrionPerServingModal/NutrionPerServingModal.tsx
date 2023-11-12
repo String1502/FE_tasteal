@@ -1,5 +1,5 @@
 import { DEFAULT_NUTRITION_VALUE } from "@/lib/constants/defaultValue";
-import { Nutrition_InfoEntity } from "@/types/type";
+import { Nutrition_InfoEntity } from "@/lib/models/entities/Nutrition_InfoEntity/Nutrition_InfoEntity";
 import {
   Box,
   Button,

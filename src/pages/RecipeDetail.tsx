@@ -213,7 +213,7 @@ const RecipeDetail: FC = () => {
                   RecipeDetailStringConstants.DEFAULT_INSTRUCTION}
               </Typography>
 
-              <RecipeTimeInfo totalTime={recipe?.totalTime ?? ""} />
+              <RecipeTimeInfo totalTime={recipe?.totalTime.toString() ?? ""} />
 
               <IngredientDisplayer ingredients={recipe?.ingredients ?? []} />
 
