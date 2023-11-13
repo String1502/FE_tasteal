@@ -1,10 +1,10 @@
+import { getApiUrl } from "@/lib/constants/api";
 import { recipes as recipesSampleData } from "@/lib/constants/sampleData";
+import { RecipeReq } from "@/lib/models/dtos/Request/RecipeReq/RecipeReq";
+import { RecipeRes } from "@/lib/models/dtos/Response/RecipeRes/RecipeRes";
+import { RecipeEntity } from "@/lib/models/entities/RecipeEntity/RecipeEntity";
 import simulateDelay from "@/utils/promises/stimulateDelay";
-import { getApiUrl } from "../constants/api";
 import { API_PATH, DEFAULT_PAGE } from "../constants/common";
-import { RecipeReq } from "../models/dtos/Request/RecipeReq/RecipeReq";
-import { RecipeGetResponse } from "../models/dtos/reicpeDTO";
-import { RecipeEntity } from "../models/entities/RecipeEntity/RecipeEntity";
 
 /**
  * Represents a service for managing occasions.
@@ -31,7 +31,7 @@ class RecipeService {
    * @param id - The id of the recipe.
    * @returns - The recipe detail data.
    */
-  public static GetById(id: number): Promise<RecipeGetResponse> {
+  public static GetById(id: number): Promise<RecipeRes> {
     return fetch(`${getApiUrl("GET_RECIPE")}?id=${id}`, {
       method: "POST",
     })

@@ -1,8 +1,12 @@
 import { accounts as accountsSampleData } from "@/lib/constants/sampleData";
+import { createDebugStringFormatter } from "@/utils/debug/formatter";
 import simulateDelay from "@/utils/promises/stimulateDelay";
 import { getApiUrl } from "../constants/api";
+import AccountReq from "../models/dtos/Request/AccountReq/AccountReq";
 import { PageFilter } from "../models/dtos/Request/PageFilter/PageFilter";
 import { AccountEntity } from "../models/entities/AccountEntity/AccountEntity";
+
+const createDebugString = createDebugStringFormatter("AccountService");
 
 /**
  * Represents a service for managing accounts.
@@ -62,6 +66,37 @@ class AccountService {
       });
 
     return accounts;
+  }
+
+  /**
+   * Create a new account in database with uid generated in the firebase authentication
+   *
+   * @param accountReq - Account Request
+   */
+  public static async SignUpAccount(accountReq: AccountReq): Promise<boolean> {
+    const url = getApiUrl("SIGNUP_USER");
+    const requestOptions = {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(accountReq),
+    };
+
+    return fetch(url, requestOptions)
+      .then((response) => {
+        if (response.ok) {
+          console.log(createDebugString("User signup success"));
+          return true;
+        } else {
+          createDebugString("User signup failed");
+          return false;
+        }
+      })
+      .catch((err) => {
+        console.log(createDebugString("User signup failed"), err);
+        return false;
+      });
   }
 }
 

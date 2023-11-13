@@ -18,7 +18,6 @@ import {
   Stack,
   Typography,
 } from "@mui/material";
-import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 export function SignUp() {

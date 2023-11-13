@@ -14,17 +14,11 @@ import { auth, googleProvider } from "@/lib/firebase/config";
 import useFirebaseImage from "@/lib/hooks/useFirebaseImage";
 import { Facebook, Google } from "@mui/icons-material";
 import { signInWithPopup } from "firebase/auth";
-import { useCallback, useState } from "react";
+import { useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 
 export function SignIn() {
   //#region States
-
-  const [signUpInfo, setSignUpInfo] = useState<{
-    name: string;
-    email: string;
-    password: string;
-  }>({ name: "", email: "", password: "" });
 
   //#endregion
 

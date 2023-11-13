@@ -4,7 +4,7 @@ import { auth } from "./config";
 /**
  * Create user with email and password
  */
-export const createUserEmail = (
+export const createEmailUser = (
   email: string,
   password: string
 ): Promise<UserCredential> => {

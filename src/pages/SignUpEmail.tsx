@@ -1,8 +1,8 @@
 import { defaultAvtPath, signInImagePath } from "@/assets/exportImage";
-import { auth } from "@/lib/firebase/config";
+import { createEmailUser } from "@/lib/firebase/auth";
 import useFirebaseImage from "@/lib/hooks/useFirebaseImage";
+import AccountService from "@/lib/services/accountService";
 import { createDebugStringFormatter } from "@/utils/debug/formatter";
-import { SettingsSystemDaydreamRounded } from "@mui/icons-material";
 import {
   Box,
   Button,
@@ -13,10 +13,6 @@ import {
   TextFieldProps,
   Typography,
 } from "@mui/material";
-import {
-  createUserWithEmailAndPassword,
-  signInWithEmailAndPassword,
-} from "firebase/auth";
 import { useCallback, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -61,9 +57,28 @@ export function SignUpEmail() {
   //#endregion
 
   const handleSignUp = useCallback(() => {
-    createUserWithEmailAndPassword(auth, signUpInfo.email, signUpInfo.password)
+    createEmailUser(signUpInfo.email, signUpInfo.password)
       .then((userCredential) => {
         console.log(createDebugString("Sign up successfully"), userCredential);
+
+        const uid = userCredential.user.uid;
+
+        const accountReq = {
+          name: signUpInfo.name,
+          uid: uid,
+        };
+
+        AccountService.SignUpAccount(accountReq)
+          .then((isSuccess) => {
+            if (isSuccess) {
+              console.log(createDebugString("Sign up successfully"));
+            } else {
+              console.log(createDebugString("Sign up failed"));
+            }
+          })
+          .catch((error) => {
+            console.log(createDebugString("Sign up failed"), error);
+          });
       })
       .catch((error) =>
         console.log(createDebugString("Sign up failed"), error)
