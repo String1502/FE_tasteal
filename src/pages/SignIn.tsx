@@ -1,23 +1,50 @@
 import {
   Box,
   Button,
-  Grid,
-  Stack,
-  Typography,
-  TextField,
   Container,
   Divider,
+  Grid,
+  Stack,
+  TextField,
+  Typography,
 } from "@mui/material";
 
-import { Facebook, Google } from "@mui/icons-material";
 import { signInImagePath } from "@/assets/exportImage";
-import { useNavigate } from "react-router-dom";
+import { auth, googleProvider } from "@/lib/firebase/config";
 import useFirebaseImage from "@/lib/hooks/useFirebaseImage";
+import { Facebook, Google } from "@mui/icons-material";
+import { signInWithPopup } from "firebase/auth";
+import { useCallback, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 export function SignIn() {
+  //#region States
+
+  const [signUpInfo, setSignUpInfo] = useState<{
+    name: string;
+    email: string;
+    password: string;
+  }>({ name: "", email: "", password: "" });
+
+  //#endregion
+
   const navigate = useNavigate();
 
   const signInImage = useFirebaseImage(signInImagePath);
+
+  //#region Handlers
+
+  const handleSignInWithGoogle = useCallback(() => {
+    signInWithPopup(auth, googleProvider)
+      .then((userCredential) => {
+        console.log("[AUTH] Sign in with Google successfully", userCredential);
+      })
+      .catch((error) => {
+        console.log("[AUTH] Sign in with Google failed", error);
+      });
+  }, []);
+
+  //#endregion
 
   return (
     <>
@@ -151,6 +178,7 @@ export function SignIn() {
                     fontWeight: "bold",
                   }}
                   startIcon={<Google fontSize="large" />}
+                  onClick={handleSignInWithGoogle}
                 >
                   Tiếp tục với Google
                 </Button>

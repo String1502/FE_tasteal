@@ -1,21 +1,79 @@
 import { defaultAvtPath, signInImagePath } from "@/assets/exportImage";
+import { auth } from "@/lib/firebase/config";
 import useFirebaseImage from "@/lib/hooks/useFirebaseImage";
+import { createDebugStringFormatter } from "@/utils/debug/formatter";
+import { SettingsSystemDaydreamRounded } from "@mui/icons-material";
 import {
   Box,
   Button,
+  Container,
   Grid,
   Stack,
-  Typography,
   TextField,
-  Container,
   TextFieldProps,
+  Typography,
 } from "@mui/material";
+import {
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+} from "firebase/auth";
+import { useCallback, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
+const DEBUG_IDENTIFIER = "[SignUpEmail]";
+const createDebugString = createDebugStringFormatter(DEBUG_IDENTIFIER);
+
 export function SignUpEmail() {
+  //#region Hooks
+
   const navigate = useNavigate();
   const authorImage = useFirebaseImage(defaultAvtPath);
   const signInImage = useFirebaseImage(signInImagePath);
+
+  //#endregion
+
+  //#region States
+
+  const [signUpInfo, setSignUpInfo] = useState<{
+    name: string;
+    email: string;
+    password: string;
+  }>({ name: "", email: "", password: "" });
+
+  //#endregion
+
+  //#region Handlers
+
+  //#region SignupInfo Change Handler
+
+  const handleNameChange = useCallback((name: string) => {
+    setSignUpInfo((prev) => ({ ...prev, name: name }));
+  }, []);
+
+  const handleEmailChange = useCallback((email: string) => {
+    setSignUpInfo((prev) => ({ ...prev, email: email }));
+  }, []);
+
+  const handlePasswordChange = useCallback((password: string) => {
+    setSignUpInfo((prev) => ({ ...prev, password: password }));
+  }, []);
+
+  //#endregion
+
+  const handleSignUp = useCallback(() => {
+    createUserWithEmailAndPassword(auth, signUpInfo.email, signUpInfo.password)
+      .then((userCredential) => {
+        console.log(createDebugString("Sign up successfully"), userCredential);
+      })
+      .catch((error) =>
+        console.log(createDebugString("Sign up failed"), error)
+      );
+  }, [signUpInfo]);
+
+  //#endregion
+
+  console.log(signUpInfo);
+
   return (
     <>
       <Grid
@@ -169,12 +227,26 @@ export function SignUpEmail() {
                   {...typoProps}
                   placeholder="Chúng tôi có thể gọi bạn là?"
                   type="name"
+                  value={signUpInfo.name}
+                  onChange={(e) => {
+                    handleNameChange(e.target.value);
+                  }}
                 />
-                <TextField {...typoProps} placeholder="Email" type="email" />
+                <TextField
+                  {...typoProps}
+                  placeholder="Email"
+                  type="email"
+                  value={signUpInfo.email}
+                  onChange={(e) => {
+                    handleEmailChange(e.target.value);
+                  }}
+                />
                 <TextField
                   {...typoProps}
                   placeholder="Password"
                   type="password"
+                  value={signUpInfo.password}
+                  onChange={(e) => handlePasswordChange(e.target.value)}
                 />
 
                 <Button
@@ -191,9 +263,7 @@ export function SignUpEmail() {
                     fontSize: "caption.fontSize",
                     fontWeight: "bold",
                   }}
-                  onClick={() => {
-                    navigate("/signin");
-                  }}
+                  onClick={handleSignUp}
                 >
                   ĐĂNG KÝ
                 </Button>

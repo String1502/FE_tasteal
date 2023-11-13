@@ -1,14 +1,5 @@
-import {
-  Box,
-  Button,
-  Grid,
-  Stack,
-  Typography,
-  Checkbox,
-  FormControlLabel,
-  Link,
-  Container,
-} from "@mui/material";
+import { defaultAvtPath, signInImagePath } from "@/assets/exportImage";
+import useFirebaseImage from "@/lib/hooks/useFirebaseImage";
 import {
   CheckCircleRounded,
   Facebook,
@@ -16,14 +7,29 @@ import {
   MailOutline,
   RadioButtonUncheckedRounded,
 } from "@mui/icons-material";
-import { defaultAvtPath, signInImagePath } from "@/assets/exportImage";
+import {
+  Box,
+  Button,
+  Checkbox,
+  Container,
+  FormControlLabel,
+  Grid,
+  Link,
+  Stack,
+  Typography,
+} from "@mui/material";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import useFirebaseImage from "@/lib/hooks/useFirebaseImage";
 
 export function SignUp() {
+  //#region Hooks
+
   const navigate = useNavigate();
   const authorImage = useFirebaseImage(defaultAvtPath);
   const signInImage = useFirebaseImage(signInImagePath);
+
+  //#endregion
+
   return (
     <>
       <Grid
