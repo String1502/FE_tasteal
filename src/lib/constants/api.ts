@@ -2,7 +2,7 @@
  * The base URL of the API.
  */
 export const API_BASE_URL = "https://apitasteal.azurewebsites.net/";
-export const API_VERSION = "api/v2";
+export const API_VERSION = "api/v2/";
 export const API_PATH = `${API_BASE_URL}${API_VERSION}`;
 
 /**
