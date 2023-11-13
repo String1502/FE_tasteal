@@ -1,4 +1,5 @@
 import { defaultAvtPath, signInImagePath } from "@/assets/exportImage";
+import { auth, googleProvider } from "@/lib/firebase/config";
 import useFirebaseImage from "@/lib/hooks/useFirebaseImage";
 import {
   CheckCircleRounded,
@@ -18,6 +19,8 @@ import {
   Stack,
   Typography,
 } from "@mui/material";
+import { signInWithPopup } from "firebase/auth";
+import { useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 
 export function SignUp() {
@@ -26,6 +29,21 @@ export function SignUp() {
   const navigate = useNavigate();
   const authorImage = useFirebaseImage(defaultAvtPath);
   const signInImage = useFirebaseImage(signInImagePath);
+
+  //#endregion
+
+  //#region Handlers
+
+  const handleSignInWithGoogle = useCallback(() => {
+    signInWithPopup(auth, googleProvider)
+      .then((userCredential) => {
+        console.log("[AUTH] Sign in with Google successfully", userCredential);
+        navigate("/");
+      })
+      .catch((error) => {
+        console.log("[AUTH] Sign in with Google failed", error);
+      });
+  }, [navigate]);
 
   //#endregion
 
@@ -198,6 +216,7 @@ export function SignUp() {
                     fontWeight: "bold",
                   }}
                   startIcon={<Google fontSize="large" />}
+                  onClick={handleSignInWithGoogle}
                 >
                   Tiếp tục với Google
                 </Button>

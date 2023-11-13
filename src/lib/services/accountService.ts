@@ -69,34 +69,34 @@ class AccountService {
   }
 
   /**
-   * Create a new account in database with uid generated in the firebase authentication
+   * Create a new account in the database with the UID generated in the Firebase authentication.
    *
    * @param accountReq - Account Request
    */
   public static async SignUpAccount(accountReq: AccountReq): Promise<boolean> {
-    const url = getApiUrl("SIGNUP_USER");
-    const requestOptions = {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(accountReq),
-    };
+    try {
+      const url = getApiUrl("SIGNUP_USER");
+      const requestOptions = {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(accountReq),
+      };
 
-    return fetch(url, requestOptions)
-      .then((response) => {
-        if (response.ok) {
-          console.log(createDebugString("User signup success"));
-          return true;
-        } else {
-          createDebugString("User signup failed");
-          return false;
-        }
-      })
-      .catch((err) => {
-        console.log(createDebugString("User signup failed"), err);
+      const response = await fetch(url, requestOptions);
+
+      if (response.ok) {
+        console.log(createDebugString("User signup success"));
+        return true;
+      } else {
+        console.log(createDebugString("User signup failed"));
         return false;
-      });
+      }
+    } catch (err) {
+      console.log(createDebugString("User signup failed"), err);
+      return false;
+    }
   }
 }
 

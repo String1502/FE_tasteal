@@ -8,6 +8,7 @@ import {
 import React from "react";
 import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
 import TastealHashLoader from "./components/common/progress/TastealHashLoader";
+import { SnackbarProvider } from "./lib/hooks/snackbar/context";
 import CreateRecipe from "./pages/CreateRecipe";
 import { ForgotPass } from "./pages/ForgotPass";
 import { Grocery } from "./pages/Grocery";
@@ -28,6 +29,7 @@ interface AppContextState {
 }
 
 export const AppContext = React.createContext<AppContextState>({
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   handleSpinner: (value: boolean) => {},
 });
 
@@ -43,9 +45,7 @@ function App() {
     }),
     []
   );
-
   const theme = React.useMemo(() => createTheme(getMode(mode)), [mode]);
-
   const [spinner, setSpinner] = React.useState<boolean>(false);
 
   function handleSpinner(value: boolean) {
@@ -57,22 +57,24 @@ function App() {
       <ColorModeContext.Provider value={colorMode}>
         <CssBaseline />
         <ThemeProvider theme={theme}>
-          <TastealHashLoader spinner={spinner} />
-          <Router>
-            <Routes>
-              <Route path="/" element={<Home />} />
-              <Route path="/search" element={<Search />} />
-              <Route path="/signin" element={<SignIn />} />
-              <Route path="/signup" element={<SignUp />} />
-              <Route path="/signupemail" element={<SignUpEmail />} />
-              <Route path="/forgotpass" element={<ForgotPass />} />
-              <Route path="/recipe/create" element={<CreateRecipe />} />
-              <Route path="/recipe/:id" element={<RecipeDetail />} />
-              <Route path="/grocery" element={<Grocery />} />
-              <Route path="/mealplanner" element={<MealPlanner />} />
-              {/* Thêm các tuyến đường khác */}
-            </Routes>
-          </Router>
+          <SnackbarProvider>
+            <TastealHashLoader spinner={spinner} />
+            <Router>
+              <Routes>
+                <Route path="/" element={<Home />} />
+                <Route path="/search" element={<Search />} />
+                <Route path="/signin" element={<SignIn />} />
+                <Route path="/signup" element={<SignUp />} />
+                <Route path="/signupemail" element={<SignUpEmail />} />
+                <Route path="/forgotpass" element={<ForgotPass />} />
+                <Route path="/recipe/create" element={<CreateRecipe />} />
+                <Route path="/recipe/:id" element={<RecipeDetail />} />
+                <Route path="/grocery" element={<Grocery />} />
+                <Route path="/mealplanner" element={<MealPlanner />} />
+                {/* Thêm các tuyến đường khác */}
+              </Routes>
+            </Router>
+          </SnackbarProvider>
         </ThemeProvider>
       </ColorModeContext.Provider>
     </AppContext.Provider>
