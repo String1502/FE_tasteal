@@ -1,4 +1,4 @@
-import { popoverImage, popoverPath } from "@/assets/exportImage";
+import { popoverPath } from "@/assets/exportImage";
 import useFirebaseImage from "@/lib/hooks/useFirebaseImage";
 import { Box, Container, Grid, Typography } from "@mui/material";
 import React from "react";
@@ -6,9 +6,10 @@ import { DefaultTuKhoas, TuKhoa } from "../../../pages/Search";
 import {
   ingredients as defaultIngredients,
   occasions as defaultOccasions,
-} from "../../../types/sampleData";
-import { IngredientEntity, OccasionEntity } from "../../../types/type";
+} from "../../../lib/constants/sampleData";
 import { CustomLink } from "./CustomLink";
+import { IngredientEntity } from "@/lib/models/entities/IngredientEntity/IngredientEntity";
+import { OccasionEntity } from "@/lib/models/entities/OccasionEntity/OccasionEntity";
 
 const gridItemSX = {
   height: "100%",

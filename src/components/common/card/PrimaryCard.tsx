@@ -1,3 +1,12 @@
+import { curveShapePath } from "@/assets/exportImage";
+import useFirebaseImage from "@/lib/hooks/useFirebaseImage";
+import { RelatedRecipe } from "@/lib/models/dtos/reicpeDTO";
+import { dateTimeToMinutes } from "@/utils/format";
+import {
+  BookmarkBorderRounded,
+  BookmarkRounded,
+  StarRounded,
+} from "@mui/icons-material";
 import {
   Avatar,
   Box,
@@ -10,15 +19,6 @@ import {
   Rating,
   Typography,
 } from "@mui/material";
-import {
-  BookmarkBorderRounded,
-  BookmarkRounded,
-  StarRounded,
-} from "@mui/icons-material";
-import { RecipeEntity } from "../../../types/type";
-import { curveShapePath } from "@/assets/exportImage";
-import { dateTimeToMinutes } from "@/utils/format";
-import useFirebaseImage from "@/lib/hooks/useFirebaseImage";
 
 const imgHeight = "224px";
 const padding = 2;
@@ -28,10 +28,10 @@ export function PrimaryCard({
   ...props
 }: {
   props?: CardProps;
-  recipe: RecipeEntity;
+  recipe: RelatedRecipe;
 }) {
   const image = useFirebaseImage(recipe?.image);
-  const authorAvatar = useFirebaseImage(recipe?.Account?.avatar);
+  const authorAvatar = useFirebaseImage(recipe.author.avatar);
   const curveShapeImg = useFirebaseImage(curveShapePath);
   return (
     <>
@@ -97,7 +97,12 @@ export function PrimaryCard({
               color="common.white"
               sx={{ fontWeight: "bold" }}
             >
-              {dateTimeToMinutes(recipe.totalTime)} phút
+              {recipe.totalTime.toLocaleString("vi-VN", {
+                minute: "numeric",
+                second: "numeric",
+                hour: "numeric",
+              })}{" "}
+              phút
             </Typography>
           </Box>
 

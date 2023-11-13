@@ -1,7 +1,7 @@
-import { ingredients } from "@/types/sampleData";
-import { IngredientEntity } from "@/types/type";
+import { ingredients } from "@/lib/constants/sampleData";
 import simulateDelay from "@/utils/promises/stimulateDelay";
-import { API_PATH } from "../constants/common";
+import { IngredientEntity } from "../models/entities/IngredientEntity/IngredientEntity";
+import { getApiUrl } from "../constants/api";
 
 /**
  * Represents a service for managing ingredients.
@@ -14,7 +14,7 @@ class IngredientService {
    */
   public static async GetAll(): Promise<IngredientEntity[]> {
     let result: IngredientEntity[] = [];
-    await fetch(`${API_PATH}/api/v2/Ingredient/getall`)
+    await fetch(getApiUrl("GET_ALL_INGREDIENTS"))
       .then((res) => res.json())
       .then((data) => {
         result = data;

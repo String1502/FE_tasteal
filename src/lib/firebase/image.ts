@@ -1,6 +1,6 @@
 import createCacheAsyncFunction from "@/utils/cache/createCacheAsyncFunction";
 import { createDebugStringFormatter } from "@/utils/debug/formatter";
-import { getDownloadURL, ref } from "firebase/storage";
+import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { storage } from "./config";
 
 /**
@@ -25,10 +25,25 @@ export const resolveImagePathAsync = createCacheAsyncFunction(
 
     try {
       const url = await getDownloadURL(storageRef);
-      return Promise.resolve(url);
+      return url;
     } catch (error) {
       console.log(debugStringFormatter("Failed to get image url"), error);
-      return Promise.resolve("");
+      return "";
     }
   }
 );
+
+export async function uploadImage(
+  file: File,
+  ...path: string[]
+): Promise<string> {
+  try {
+    const storageRef = ref(storage, path.join("/"));
+    const snapshot = await uploadBytes(storageRef, file);
+    console.log(debugStringFormatter("Uploaded a blob or file!"), snapshot);
+    return snapshot.ref.fullPath;
+  } catch (e) {
+    console.log(debugStringFormatter("Failed to upload a blob or file!"), e);
+    return "";
+  }
+}

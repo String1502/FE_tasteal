@@ -1,4 +1,4 @@
-import { nutritionInfos } from "@/types/sampleData";
+import { nutritionInfos } from "@/lib/constants/sampleData";
 import simulateDelay from "@/utils/promises/stimulateDelay";
 
 /**

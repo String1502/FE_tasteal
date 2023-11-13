@@ -1,5 +1,5 @@
 import { DEFAULT_NUTRITION_VALUE } from "@/lib/constants/defaultValue";
-import { Nutrition_InfoEntity } from "@/types/type";
+import { Nutrition_InfoEntity } from "@/lib/models/entities/Nutrition_InfoEntity/Nutrition_InfoEntity";
 import {
   Box,
   Button,
@@ -48,7 +48,7 @@ const NutrionPerServingModal: React.FunctionComponent<{
         sugars: 0,
         protein: 0,
         sodium: 0,
-        vitaminD: 0,
+        vitamin_d: 0,
         calcium: 0,
         iron: 0,
         potassium: 0,
@@ -65,7 +65,7 @@ const NutrionPerServingModal: React.FunctionComponent<{
       sugars: calculatePercentage(nutritionInfo.sugars, 50),
       protein: calculatePercentage(nutritionInfo.protein, 50),
       sodium: calculatePercentage(nutritionInfo.sodium, 2400),
-      vitaminD: calculatePercentage(nutritionInfo.vitaminD, YOUR_DAILY_VALUE),
+      vitamin_d: calculatePercentage(nutritionInfo.vitamin_d, YOUR_DAILY_VALUE),
       calcium: calculatePercentage(nutritionInfo.calcium, YOUR_DAILY_VALUE),
       iron: calculatePercentage(nutritionInfo.iron, YOUR_DAILY_VALUE),
       potassium: calculatePercentage(nutritionInfo.potassium, YOUR_DAILY_VALUE),
@@ -161,8 +161,8 @@ const NutrionPerServingModal: React.FunctionComponent<{
                 />
                 <NutritionTableRow
                   name="Vitamin D"
-                  value={nutritionInfo.vitaminD}
-                  percent={nutritionInfoPercentage.vitaminD}
+                  value={nutritionInfo.vitamin_d}
+                  percent={nutritionInfoPercentage.vitamin_d}
                 />
                 <NutritionTableRow
                   name="Calcium"

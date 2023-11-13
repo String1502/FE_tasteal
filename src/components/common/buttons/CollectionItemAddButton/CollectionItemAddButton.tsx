@@ -1,6 +1,14 @@
 import { Add } from "@mui/icons-material";
 import { Button, ButtonProps, Typography } from "@mui/material";
-const AddIngredientButton: React.FunctionComponent<ButtonProps> = (props) => {
+
+/**
+ * Default label for CollectionItemAddButton
+ */
+const DEFAULT_LABEL = "Add";
+
+const CollectionItemAddButton: React.FunctionComponent<
+  ButtonProps & { label?: string }
+> = (props) => {
   return (
     <Button
       {...props}
@@ -25,10 +33,10 @@ const AddIngredientButton: React.FunctionComponent<ButtonProps> = (props) => {
     >
       <Add />
       <Typography ml={1} fontSize={18}>
-        Add Ingredient
+        {props.label || DEFAULT_LABEL}
       </Typography>
     </Button>
   );
 };
 
-export default AddIngredientButton;
+export default CollectionItemAddButton;

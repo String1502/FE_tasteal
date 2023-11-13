@@ -1,8 +1,7 @@
 import RoundedButton from "@/components/common/buttons/RoundedButton";
 import TastealTextField from "@/components/common/textFields/TastealTextField";
 import { DEFAULT_INGREDIENT_ITEM_DATA } from "@/lib/constants/defaultValue";
-import { DEFAULT_UNIT_OPTION, UNIT_OPTIONS } from "@/lib/constants/options";
-import IngredientService from "@/lib/services/IngredientService";
+import useIngredients from "@/lib/hooks/useIngredients";
 import {
   Autocomplete,
   Box,
@@ -12,9 +11,8 @@ import {
   Typography,
 } from "@mui/material";
 import { nanoid } from "nanoid";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { IngredientItemData } from "../../collections/IngredientSelector/types";
-import IngredientData from "./types/IngredientData";
 
 const NewIngredientModal: React.FunctionComponent<{
   open: boolean;
@@ -26,27 +24,13 @@ const NewIngredientModal: React.FunctionComponent<{
   const [newIngredientItem, setNewIngredientItem] =
     useState<IngredientItemData>(DEFAULT_INGREDIENT_ITEM_DATA);
 
-  const [ingredients, setIngredients] = useState<IngredientData[]>([]);
+  const ingredientOptions = useIngredients();
 
   //#endregion
 
   //#region UseEffects
 
   // Fetch ingredients
-  useEffect(() => {
-    IngredientService.GetAll().then((res) => {
-      const mappedIngredients: IngredientData[] = [];
-
-      for (const ingredient of res) {
-        mappedIngredients.push({
-          id: ingredient.id,
-          name: ingredient.name,
-        });
-      }
-
-      setIngredients(mappedIngredients);
-    });
-  }, []);
 
   //#endregion
 
@@ -69,12 +53,14 @@ const NewIngredientModal: React.FunctionComponent<{
       }
 
       // Find the ingredient with the matching ID.
-      const ingredient = ingredients.find((ingredient) => ingredient.id === id);
+      const ingredient = ingredientOptions.find(
+        (ingredient) => ingredient.id === id
+      );
 
       // If the ingredient is found, return its name. Otherwise, return an empty string.
       return ingredient ? ingredient.name : "";
     },
-    [ingredients]
+    [ingredientOptions]
   );
 
   //#endregion
@@ -102,7 +88,7 @@ const NewIngredientModal: React.FunctionComponent<{
 
   const handleIngredientChange = useCallback(
     (ingredientId: number | null) => {
-      const ingredient = ingredients.find(
+      const ingredient = ingredientOptions.find(
         (ingredient) => ingredient.id === ingredientId
       );
 
@@ -116,11 +102,12 @@ const NewIngredientModal: React.FunctionComponent<{
         id: nanoid(6),
         ingredientId: ingredient.id,
         name: ingredient.name,
+        isLiquid: ingredient.isLiquid,
       };
 
       setNewIngredientItem(item);
     },
-    [ingredients]
+    [ingredientOptions]
   );
 
   //#endregion
@@ -167,62 +154,33 @@ const NewIngredientModal: React.FunctionComponent<{
                 handleIngredientChange(newValue);
               }}
               disablePortal
-              options={[0, ...ingredients.map((i) => i.id)]}
+              options={[0, ...ingredientOptions.map((i) => i.id)]}
               renderInput={(params) => (
                 <TastealTextField {...params} placeholder="Enter Ingredient" />
               )}
             />
 
-            <Stack direction={"row"}>
-              <TastealTextField
-                autoComplete="off"
-                InputProps={{
-                  sx: {
-                    borderBottomRightRadius: 0,
-                    borderTopRightRadius: 0,
-                  },
-                }}
-                onChange={(e) =>
-                  setNewIngredientItem({
-                    ...newIngredientItem,
-                    amount: Number(e.target.value),
-                  })
-                }
-                placeholder="Enter Quantity"
-                sx={{
-                  flex: 1,
-                }}
-                type="number"
-                value={newIngredientItem.amount || ""}
-              />
-
-              <Autocomplete
-                value={newIngredientItem.unit}
-                options={UNIT_OPTIONS}
-                getOptionLabel={(option) => option.name}
-                onChange={(_, newValue) => {
-                  setNewIngredientItem({
-                    ...newIngredientItem,
-                    unit: newValue ?? DEFAULT_UNIT_OPTION,
-                  });
-                }}
-                disablePortal
-                sx={{ width: 300, flex: 1 }}
-                renderInput={(params) => (
-                  <TastealTextField
-                    {...params}
-                    defaultValue={"--"}
-                    InputProps={{
-                      ...params.InputProps,
-                      sx: {
-                        borderTopLeftRadius: 0,
-                        borderBottomLeftRadius: 0,
-                      },
-                    }}
-                  />
-                )}
-              />
-            </Stack>
+            <TastealTextField
+              autoComplete="off"
+              InputProps={{
+                sx: {
+                  borderBottomRightRadius: 0,
+                  borderTopRightRadius: 0,
+                },
+              }}
+              onChange={(e) =>
+                setNewIngredientItem({
+                  ...newIngredientItem,
+                  amount: Number(e.target.value),
+                })
+              }
+              placeholder="Enter Quantity"
+              sx={{
+                flex: 1,
+              }}
+              type="number"
+              value={newIngredientItem.amount || ""}
+            />
 
             <RoundedButton
               variant="contained"

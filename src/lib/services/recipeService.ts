@@ -1,7 +1,10 @@
-import { recipes as recipesSampleData } from "@/types/sampleData";
-import { RecipeEntity } from "@/types/type";
+import { recipes as recipesSampleData } from "@/lib/constants/sampleData";
 import simulateDelay from "@/utils/promises/stimulateDelay";
+import { getApiUrl } from "../constants/api";
 import { API_PATH, DEFAULT_PAGE } from "../constants/common";
+import { RecipeReq } from "../models/dtos/Request/RecipeReq/RecipeReq";
+import { RecipeGetResponse } from "../models/dtos/reicpeDTO";
+import { RecipeEntity } from "../models/entities/RecipeEntity/RecipeEntity";
 
 /**
  * Represents a service for managing occasions.
@@ -21,13 +24,22 @@ class RecipeService {
     return Promise.resolve(recipesSampleData);
   }
 
-  public static GetById(id: number): Promise<RecipeEntity | undefined> {
-    // Simulate delay of 1 second
-    simulateDelay(1);
-
-    return Promise.resolve(
-      recipesSampleData.find((recipe) => recipe.id === id)
-    );
+  /**
+   * Get recipe detail data by id.
+   * NOTE: This method is not implemented yet.
+   *
+   * @param id - The id of the recipe.
+   * @returns - The recipe detail data.
+   */
+  public static GetById(id: number): Promise<RecipeGetResponse> {
+    return fetch(`${getApiUrl("GET_RECIPE")}?id=${id}`, {
+      method: "POST",
+    })
+      .then((response) => response.json())
+      .then((data) => data)
+      .catch((err) => {
+        throw err;
+      });
   }
 
   /**
@@ -36,7 +48,7 @@ class RecipeService {
    * @param accountId - The id of the account.
    * @returns
    */
-  public static GetByAccountId(accountId: number) {
+  public static GetByAccountId(accountId: string) {
     // Simulate delay of 1 second
     simulateDelay(1);
 
@@ -102,6 +114,35 @@ class RecipeService {
 
     return recipes;
   }
+
+  //#region POST
+
+  /**
+   * Create a new recipe
+   */
+  public static async CreateRecipe(postData: RecipeReq) {
+    fetch(getApiUrl("CREATE_RECIPE"), {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(postData),
+    })
+      .then((response: Response) => {
+        return response.json();
+      })
+      .then((data: RecipeReq) => {
+        console.log("[RecipeService.CreateRecipe] POST succeeded!", data);
+        return data;
+      })
+      .catch((e) => {
+        const msg = "POST fail!";
+        console.error(`[RecipeService.CreateRecipe] ${msg}`, e);
+        throw new Error(msg);
+      });
+  }
+
+  //#endregion
 }
 
 export default RecipeService;

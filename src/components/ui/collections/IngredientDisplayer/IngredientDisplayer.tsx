@@ -1,12 +1,12 @@
 import SectionHeading from "@/components/common/typos/SectionHeading";
-import { Recipe_IngredientEntity } from "@/types/type";
+import { SimpleIngredient } from "@/lib/models/dtos/common";
 import { Stack, Typography } from "@mui/material";
 import { FC, useCallback, useState } from "react";
 import ServingSizeSelect from "../../selects/ServingSizeSelect";
 import IngredientDisplayerItemList from "../IngredientDisplayerItemList";
 
 export type IngredientDisplayerProps = {
-  ingredients: Recipe_IngredientEntity[];
+  ingredients: SimpleIngredient[];
 };
 
 const IngredientDisplayer: FC<IngredientDisplayerProps> = ({ ingredients }) => {

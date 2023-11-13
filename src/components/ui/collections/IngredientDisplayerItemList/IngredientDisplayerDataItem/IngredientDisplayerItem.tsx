@@ -5,7 +5,7 @@ import { FC, useEffect, useMemo, useState } from "react";
 import IngredientDisplayerItemProps from "../types/IngredientDisplayerItemProps";
 
 const IngredientDisplayerItem: FC<IngredientDisplayerItemProps> = ({
-  value: { Ingredient, amount },
+  value,
   servingSize,
 }) => {
   const [resolvedUrl, setResolvedUrl] = useState("");
@@ -20,17 +20,17 @@ const IngredientDisplayerItem: FC<IngredientDisplayerItemProps> = ({
       }
     }
 
-    if (!Ingredient?.image) {
+    if (value.image) {
       setResolvedUrl("");
       return;
     }
 
-    resolveUrl(Ingredient.image);
-  }, [Ingredient?.image]);
+    resolveUrl(value.image);
+  }, [value.image]);
 
   const ingredientAmount = useMemo(() => {
-    return amount * (servingSize ?? 1);
-  }, [amount, servingSize]);
+    return value.amount * (servingSize ?? 1);
+  }, [value.amount, servingSize]);
 
   return (
     <Grid container alignItems={"center"}>
@@ -50,9 +50,7 @@ const IngredientDisplayerItem: FC<IngredientDisplayerItemProps> = ({
       </Grid>
       <Grid item xs={2}>
         <Typography fontSize={12} color="primary.main">
-          {`${ingredientAmount} ${MeasurementUnitResolver(
-            Ingredient?.isLiquid
-          )}`}
+          {`${ingredientAmount} ${MeasurementUnitResolver(value?.isLiquid)}`}
         </Typography>
       </Grid>
       <Grid item xs={8}>
@@ -62,7 +60,7 @@ const IngredientDisplayerItem: FC<IngredientDisplayerItemProps> = ({
           fontWeight={"bold"}
           textAlign={"left"}
         >
-          {Ingredient?.name ?? "N/A"}
+          {value?.name ?? "N/A"}
         </Link>
       </Grid>
     </Grid>

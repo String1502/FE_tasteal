@@ -1,11 +1,12 @@
 import { DateDisplay } from "@/pages/MealPlanner";
-import { recipes } from "@/types/sampleData";
-import { RecipeEntity } from "@/types/type";
 import { dateToDDMMYYYY } from "@/utils/format";
 import { Box, TextField, Typography } from "@mui/material";
-import React, { useState } from "react";
+import { useState } from "react";
 import { MealPlanCard } from "../cards/MealPlan/MealPlanCard";
 import { AddRecipeButton } from "./AddRecipeButton";
+import { HighlightAltRounded } from "@mui/icons-material";
+import { Droppable } from "react-beautiful-dnd";
+import { RecipeEntity } from "@/lib/models/entities/RecipeEntity/RecipeEntity";
 
 const NoteTextField = () => {
   const [isFocus, setIsFocus] = useState(false);
@@ -46,13 +47,14 @@ const NoteTextField = () => {
 };
 
 function WeekDateItem({
-  dateDisplay,
-  date,
+  isDragging,
+  weekDates,
+  handleRemovePlanItem,
 }: {
-  dateDisplay: DateDisplay;
-  date: Date;
+  isDragging: boolean;
+  weekDates: DateDisplay;
+  handleRemovePlanItem: (id: number) => void;
 }) {
-  const [resultItem, setResultItem] = React.useState<RecipeEntity[]>(recipes);
   return (
     <>
       <Box
@@ -60,9 +62,9 @@ function WeekDateItem({
           display: "flex",
           flexDirection: "column",
           height: "100%",
-          p: 3,
-          borderRight: dateDisplay.borderRight ? 1 : 0,
-          borderBottom: dateDisplay.borderBottom ? 1 : 0,
+          p: 1,
+          borderRight: weekDates.borderRight ? 1 : 0,
+          borderBottom: weekDates.borderBottom ? 1 : 0,
           borderColor: "grey.300",
           gap: 2,
         }}
@@ -72,6 +74,7 @@ function WeekDateItem({
             display: "flex",
             justifyContent: "space-between",
             alignItems: "center",
+            p: 2,
           }}
         >
           <Box>
@@ -83,7 +86,7 @@ function WeekDateItem({
               variant="body1"
               fontWeight={"bold"}
             >
-              {dateDisplay.label}
+              {weekDates.label}
             </Typography>
             <Typography
               variant="caption"
@@ -93,17 +96,80 @@ function WeekDateItem({
                 lineHeight: 0.5,
               }}
             >
-              {dateToDDMMYYYY(date)}
+              {dateToDDMMYYYY(weekDates.date)}
             </Typography>
           </Box>
 
           <AddRecipeButton />
         </Box>
 
-        <NoteTextField />
+        <Box
+          sx={{
+            width: "100%",
+            p: 2,
+          }}
+        >
+          <NoteTextField />
+        </Box>
 
-        {resultItem.length > 0 && (
-          <MealPlanCard recipe={resultItem[0] as RecipeEntity} />
+        {weekDates.date && (
+          <Droppable
+            droppableId={weekDates.date}
+            type="group"
+            key={weekDates.date}
+          >
+            {(provided, snapshot) => (
+              <Box
+                ref={provided.innerRef}
+                {...provided.droppableProps}
+                sx={{
+                  display: "flex",
+                  flexDirection: "column",
+                  justifyContent: "flex-start",
+                  alignItems: "center",
+                  width: "100%",
+                  height: "100%",
+                  overflow: "visible",
+                  borderRadius: 2,
+                  p: 2,
+                  gap: 4,
+                  backgroundColor: isDragging ? "grey.200" : "",
+                  transition: "all 0.3s ease-in-out",
+                }}
+              >
+                <Box
+                  sx={{
+                    width: "100%",
+                    display: weekDates.planItems.length === 0 ? "flex" : "none",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    height: "200px",
+                    transition: "all 0.3s ease-in-out",
+                  }}
+                >
+                  <HighlightAltRounded
+                    sx={{
+                      color: "grey.500",
+                      fontSize: 80,
+                    }}
+                  />
+                </Box>
+                {weekDates.planItems.map(
+                  (item, index) =>
+                    item && (
+                      <MealPlanCard
+                        index={index}
+                        planItem={item}
+                        key={index}
+                        recipe={item.recipe as RecipeEntity}
+                        handleRemovePlanItem={handleRemovePlanItem}
+                      />
+                    )
+                )}
+                {provided.placeholder}
+              </Box>
+            )}
+          </Droppable>
         )}
       </Box>
     </>

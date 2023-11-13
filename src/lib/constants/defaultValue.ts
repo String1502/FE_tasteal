@@ -1,6 +1,6 @@
 import { IngredientItemData } from "@/components/ui/collections/IngredientSelector/types";
-import { Nutrition_InfoEntity } from "@/types/type";
-import { DEFAULT_UNIT_OPTION } from "./options";
+// import { DEFAULT_UNIT_OPTION } from "./options";
+import { Nutrition_InfoEntity } from "../models/entities/Nutrition_InfoEntity/Nutrition_InfoEntity";
 
 /**
  * This constant represents the default data for an ingredient item.
@@ -10,7 +10,7 @@ export const DEFAULT_INGREDIENT_ITEM_DATA: IngredientItemData = {
   ingredientId: 0,
   name: "",
   amount: 0,
-  unit: DEFAULT_UNIT_OPTION,
+  isLiquid: false,
 };
 
 /**
