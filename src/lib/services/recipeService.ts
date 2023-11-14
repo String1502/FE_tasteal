@@ -3,7 +3,6 @@ import simulateDelay from "@/utils/promises/stimulateDelay";
 import { getApiUrl } from "../constants/api";
 import { API_PATH, DEFAULT_PAGE } from "../constants/common";
 import { RecipeReq } from "../models/dtos/Request/RecipeReq/RecipeReq";
-import { RecipeGetResponse } from "../models/dtos/reicpeDTO";
 import { RecipeEntity } from "../models/entities/RecipeEntity/RecipeEntity";
 
 /**
