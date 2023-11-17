@@ -3,4 +3,7 @@ export type AccountEntity = {
   name?: string;
   avatar?: string;
   introduction?: string;
+  link?: string;
+  slogan?: string;
+  quote?: string;
 };

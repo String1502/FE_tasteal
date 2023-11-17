@@ -4,9 +4,8 @@ import { RecipeEntity } from "../RecipeEntity/RecipeEntity";
 export type Recipe_IngredientEntity = {
   recipe_id: number;
   ingredient_id: number;
-  amount?: number;
+  amount_per_serving?: number;
   note?: string;
-  is_required?: boolean;
   recipe?: RecipeEntity;
   ingredient?: IngredientEntity;
 };
