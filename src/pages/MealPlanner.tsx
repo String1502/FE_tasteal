@@ -86,6 +86,8 @@ const MealPlanner: React.FC = () => {
 
   const [planItemData, setPlanItemData] = React.useState<Plan_ItemEntity[]>([]);
 
+  console.log(planItemData);
+
   function getWeekDates(offset: number): string[] {
     const currentDate = new Date();
     const currentDay = currentDate.getDay(); // Lấy ngày trong tuần của ngày hiện tại (0 là Chủ Nhật, 1 là thứ Hai, ..., 6 là thứ Bảy)

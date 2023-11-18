@@ -8,6 +8,7 @@ import { recipes } from "../lib/constants/sampleData.tsx";
 import { SearchTextField } from "@/components/ui/search/SearchTextField.tsx";
 import { removeDiacritics } from "@/utils/format/index.ts";
 import { RecipeEntity } from "@/lib/models/entities/RecipeEntity/RecipeEntity.ts";
+import RecipeService from "@/lib/services/recipeService.ts";
 
 export type TuKhoa = {
   label: string;
@@ -57,6 +58,14 @@ type Filter = {
 
 function Search() {
   const [resultItem, setResultItem] = React.useState<RecipeEntity[]>(recipes);
+
+  useEffect(() => {
+    async function fetchData() {
+      // setResultItem(await RecipeService.SearchRecipes(filter));
+    }
+
+    fetchData();
+  }, []);
 
   //#region Search
 

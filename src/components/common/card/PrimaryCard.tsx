@@ -1,6 +1,6 @@
 import { curveShapePath } from "@/assets/exportImage";
 import useFirebaseImage from "@/lib/hooks/useFirebaseImage";
-import { RelatedRecipe } from "@/lib/models/dtos/reicpeDTO";
+import { RecipeEntity } from "@/lib/models/entities/RecipeEntity/RecipeEntity";
 import { dateTimeToMinutes } from "@/utils/format";
 import {
   BookmarkBorderRounded,
@@ -28,10 +28,10 @@ export function PrimaryCard({
   ...props
 }: {
   props?: CardProps;
-  recipe: RelatedRecipe;
+  recipe: RecipeEntity;
 }) {
-  const image = useFirebaseImage(recipe?.image);
-  const authorAvatar = useFirebaseImage(recipe.author.avatar);
+  const image = useFirebaseImage(recipe?.image ?? "");
+  const authorAvatar = useFirebaseImage(recipe.account?.avatar ?? "");
   const curveShapeImg = useFirebaseImage(curveShapePath);
   return (
     <>
@@ -97,11 +97,7 @@ export function PrimaryCard({
               color="common.white"
               sx={{ fontWeight: "bold" }}
             >
-              {recipe.totalTime.toLocaleString("vi-VN", {
-                minute: "numeric",
-                second: "numeric",
-                hour: "numeric",
-              })}{" "}
+              {dateTimeToMinutes(recipe.totalTime)}
               phút
             </Typography>
           </Box>

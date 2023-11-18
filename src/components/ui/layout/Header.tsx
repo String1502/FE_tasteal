@@ -146,7 +146,7 @@ export function Header(props: Props) {
                 <PopoverContent />
               </ButtonHoverPopover>
 
-              <CustomHeaderLink href="#" label="Lịch ăn" />
+              <CustomHeaderLink href="/mealplanner" label="Lịch ăn" />
 
               <CustomHeaderLink href="#" label="Tủ lạnh" />
             </Box>

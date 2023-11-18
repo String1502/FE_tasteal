@@ -17,6 +17,7 @@ import useFirebaseImage from "@/lib/hooks/useFirebaseImage";
 import { Draggable } from "react-beautiful-dnd";
 import { Plan_ItemEntity } from "@/lib/models/entities/Plan_ItemEntity/Plan_ItemEntity";
 import { RecipeEntity } from "@/lib/models/entities/RecipeEntity/RecipeEntity";
+import { dateTimeToMinutes } from "@/utils/format";
 
 const imgHeight = "148px";
 const padding = 2;
@@ -138,7 +139,7 @@ export function MealPlanCard({
                     color="common.white"
                     sx={{ fontWeight: "bold" }}
                   >
-                    {recipe.totalTime.toString()} phút
+                    {dateTimeToMinutes(recipe.totalTime)} phút
                   </Typography>
                 </Box>
                 <Box

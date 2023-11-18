@@ -5,6 +5,7 @@ import { RecipeRes } from "@/lib/models/dtos/Response/RecipeRes/RecipeRes";
 import { RecipeEntity } from "@/lib/models/entities/RecipeEntity/RecipeEntity";
 import simulateDelay from "@/utils/promises/stimulateDelay";
 import { API_PATH, DEFAULT_PAGE } from "../constants/common";
+import { RecipeSearchReq } from "../models/dtos/Request/RecipeSearchReq/RecipeSearchReq";
 
 /**
  * Represents a service for managing occasions.
@@ -16,11 +17,6 @@ class RecipeService {
    * @return {Promise<RecipeEntity[]>}
    */
   public static GetAllRecipes(): Promise<RecipeEntity[]> {
-    // Simulate delay of 1 second
-    simulateDelay(1);
-
-    // Return a promise that resolves with the occasions array
-
     return Promise.resolve(recipesSampleData);
   }
 
@@ -83,6 +79,8 @@ class RecipeService {
         console.error("Lỗi:", error);
       });
 
+    console.log(recipes);
+
     return recipes;
   }
 
@@ -115,6 +113,33 @@ class RecipeService {
     return recipes;
   }
 
+  public static async SearchRecipes(
+    filter: RecipeSearchReq
+  ): Promise<RecipeEntity[]> {
+    let recipes: RecipeEntity[] = [];
+
+    const requestOptions = {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json; charset=UTF-8",
+      },
+      body: JSON.stringify({
+        ...filter,
+      }),
+    };
+
+    await fetch(getApiUrl("SEARCH_RECIPE"), requestOptions)
+      .then((response) => response.json())
+      .then((data) => {
+        recipes = data;
+        console.log(data);
+      })
+      .catch((error) => {
+        console.error("Lỗi:", error);
+      });
+
+    return recipes;
+  }
   //#region POST
 
   /**

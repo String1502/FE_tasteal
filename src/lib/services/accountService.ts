@@ -5,6 +5,7 @@ import { getApiUrl } from "../constants/api";
 import AccountReq from "../models/dtos/Request/AccountReq/AccountReq";
 import { PageFilter } from "../models/dtos/Request/PageFilter/PageFilter";
 import { AccountEntity } from "../models/entities/AccountEntity/AccountEntity";
+import { AuthorRes } from "../models/dtos/Response/AuthorRes/AuthorRes";
 
 const createDebugString = createDebugStringFormatter("AccountService");
 
@@ -41,9 +42,7 @@ class AccountService {
 
   public static async GetMostContributedAccounts(
     limit: number
-  ): Promise<AccountEntity[]> {
-    let accounts: AccountEntity[] = [];
-
+  ): Promise<AccountReq[]> {
     const requestOptions = {
       method: "POST",
       headers: {
@@ -51,21 +50,25 @@ class AccountService {
       },
       body: JSON.stringify({
         pageSize: limit,
-        page: 0,
+        page: 1,
         isDescend: true,
       } as PageFilter),
     };
 
-    fetch(getApiUrl("GET_MOST_CONTRIBUTED_ACCOUNTS"), requestOptions)
-      .then((res) => res.json())
-      .then((data) => {
-        accounts = data;
-      })
-      .catch((error) => {
-        console.error("Lỗi:", error);
-      });
+    let result: AccountReq[] = [];
 
-    return accounts;
+    Promise.all([
+      fetch(getApiUrl("GET_MOST_CONTRIBUTED_ACCOUNTS"), requestOptions)
+        .then((res) => res.json())
+        .then((data) => {
+          result = data;
+        })
+        .catch((error) => {
+          console.error("Lỗi:", error);
+        }),
+    ]);
+
+    return Promise.resolve(result);
   }
 
   /**
