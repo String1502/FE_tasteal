@@ -1,14 +1,6 @@
-import {
-  Box,
-  Button,
-  Grid,
-  Stack,
-  Typography,
-  Checkbox,
-  FormControlLabel,
-  Link,
-  Container,
-} from "@mui/material";
+import { defaultAvtPath, signInImagePath } from "@/assets/exportImage";
+import { auth, googleProvider } from "@/lib/firebase/config";
+import useFirebaseImage from "@/lib/hooks/useFirebaseImage";
 import {
   CheckCircleRounded,
   Facebook,
@@ -16,14 +8,45 @@ import {
   MailOutline,
   RadioButtonUncheckedRounded,
 } from "@mui/icons-material";
-import { defaultAvtPath, signInImagePath } from "@/assets/exportImage";
+import {
+  Box,
+  Button,
+  Checkbox,
+  Container,
+  FormControlLabel,
+  Grid,
+  Link,
+  Stack,
+  Typography,
+} from "@mui/material";
+import { signInWithPopup } from "firebase/auth";
+import { useCallback } from "react";
 import { useNavigate } from "react-router-dom";
-import useFirebaseImage from "@/lib/hooks/useFirebaseImage";
 
 export function SignUp() {
+  //#region Hooks
+
   const navigate = useNavigate();
   const authorImage = useFirebaseImage(defaultAvtPath);
   const signInImage = useFirebaseImage(signInImagePath);
+
+  //#endregion
+
+  //#region Handlers
+
+  const handleSignInWithGoogle = useCallback(() => {
+    signInWithPopup(auth, googleProvider)
+      .then((userCredential) => {
+        console.log("[AUTH] Sign in with Google successfully", userCredential);
+        navigate("/");
+      })
+      .catch((error) => {
+        console.log("[AUTH] Sign in with Google failed", error);
+      });
+  }, [navigate]);
+
+  //#endregion
+
   return (
     <>
       <Grid
@@ -193,6 +216,7 @@ export function SignUp() {
                     fontWeight: "bold",
                   }}
                   startIcon={<Google fontSize="large" />}
+                  onClick={handleSignInWithGoogle}
                 >
                   Tiếp tục với Google
                 </Button>

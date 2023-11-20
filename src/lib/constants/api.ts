@@ -2,7 +2,7 @@
  * The base URL of the API.
  */
 export const API_BASE_URL = "https://apitasteal.azurewebsites.net/";
-export const API_VERSION = "api/v2";
+export const API_VERSION = "api/v2/";
 export const API_PATH = `${API_BASE_URL}${API_VERSION}`;
 
 /**
@@ -26,6 +26,8 @@ export const API_END_POINT = {
   UPDATE_CART: "Cart/servingsize",
   GET_CART_ITEM_BY_CART_ID: "Cart/cartitem",
   DELETE_CART_BY_ID: "Cart/cart",
+  // USER
+  SIGNUP_USER: "User/signup",
 } as const;
 
 /**

@@ -12,7 +12,7 @@ import NutrionPerServingModal from "@/components/ui/modals/NutrionPerServingModa
 import Layout from "@/layout/Layout";
 import { N_A_VALUE } from "@/lib/constants/common";
 import { DEFAULT_NUTRITION_VALUE } from "@/lib/constants/defaultValue";
-import { RecipeGetResponse } from "@/lib/models/dtos/reicpeDTO";
+import { RecipeRes } from "@/lib/models/dtos/Response/RecipeRes/RecipeRes";
 import RecipeService from "@/lib/services/recipeService";
 import { createDebugStringFormatter } from "@/utils/debug/formatter";
 import {
@@ -71,9 +71,9 @@ const RecipeDetail: FC = () => {
 
   //#region UseStates
 
-  const [recipe, setRecipe] = useState<RecipeGetResponse | null>(null);
+  const [ recipe, setRecipe ] = useState<RecipeRes | null>(null);
 
-  const [nutritionPerServingModalOpen, setNutritionPerServingModalOpen] =
+  const [ nutritionPerServingModalOpen, setNutritionPerServingModalOpen ] =
     useState(false);
 
   //#endregion
@@ -86,7 +86,7 @@ const RecipeDetail: FC = () => {
 
   const handleNutrionPerServingModalClose = useCallback(() => {
     setNutritionPerServingModalOpen(false);
-  }, [setNutritionPerServingModalOpen]);
+  }, [ setNutritionPerServingModalOpen ]);
 
   //#endregion
 
@@ -110,7 +110,7 @@ const RecipeDetail: FC = () => {
         setRecipe(null);
         console.log(debugStringFormatter("Failed to get recipe data"));
       });
-  }, [id]);
+  }, [ id ]);
 
   //#endregion
 
@@ -128,7 +128,7 @@ const RecipeDetail: FC = () => {
     const totalTime = recipe.totalTime;
 
     return `${ingredientCount} INGREDIENTS • ${directionCount} STEPS • ${totalTime} MIN`;
-  }, [recipe]);
+  }, [ recipe ]);
 
   //#endregion
 

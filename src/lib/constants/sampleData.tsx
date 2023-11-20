@@ -11,6 +11,8 @@ import { Plan_ItemEntity } from "@/lib/models/entities/Plan_ItemEntity/Plan_Item
 import { Recipe_DirectionEntity } from "@/lib/models/entities/Recipe_DirectionEntity/Recipe_DirectionEntity";
 import { Recipe_IngredientEntity } from "@/lib/models/entities/Recipe_IngredientEntity/Recipe_IngredientEntity";
 import { RecipeEntity } from "@/lib/models/entities/RecipeEntity/RecipeEntity";
+import { CookBookEntity } from "../models/entities/CookBookEntity/CookBookEntity";
+import { CookBook_RecipeEntity } from "../models/entities/CookBook_RecipeEntity/CookBook_RecipeEntity";
 
 export const accounts: AccountEntity[] = [
   {
@@ -86,8 +88,8 @@ export const recipes: RecipeEntity[] = [
     id: 1,
     name: "Recipe 1",
     rating: 4.5,
-    totalTime: new Date(" 2022-01-01T00:30:00.000Z"),
-    active_time: new Date(" 2022-01-01T00:30:00.000Z"),
+    totalTime: new Date("2022-01-01T00:30:00.000Z"),
+    active_time: new Date("2022-01-01T00:30:00.000Z"),
     serving_size: 4,
     introduction:
       "This is recipe 1.Lorem ipsum dolor sit, amet consectetur adipisicing elit. Consequatur voluptatum sequi hic eum labore ex iste laudantium alias cum facilis, eveniet aliquid, laborum suscipit exercitationem?",
@@ -102,8 +104,8 @@ export const recipes: RecipeEntity[] = [
     id: 2,
     name: "Recipe 2",
     rating: 3.8,
-    totalTime: new Date(" 2022-01-01T00:30:00.000Z"),
-    active_time: new Date(" 2022-01-01T00:30:00.000Z"),
+    totalTime: new Date("2022-01-01T00:30:00.000Z"),
+    active_time: new Date("2022-01-01T00:30:00.000Z"),
     serving_size: 2,
     introduction: "This is recipe 2",
     author_note: "Author's note for recipe 2",
@@ -117,8 +119,8 @@ export const recipes: RecipeEntity[] = [
     id: 3,
     name: "Recipe 3",
     rating: 4.2,
-    totalTime: new Date(" 2022-01-01T00:30:00.000Z"),
-    active_time: new Date(" 2022-01-01T00:30:00.000Z"),
+    totalTime: new Date("2022-01-01T00:30:00.000Z"),
+    active_time: new Date("2022-01-01T00:30:00.000Z"),
     serving_size: 3,
     introduction: "This is recipe 3",
     author_note: "Author's note for recipe 3",
@@ -132,8 +134,8 @@ export const recipes: RecipeEntity[] = [
     id: 4,
     name: "Recipe 4",
     rating: 3.5,
-    totalTime: new Date(" 2022-01-01T00:30:00.000Z"),
-    active_time: new Date(" 2022-01-01T00:30:00.000Z"),
+    totalTime: new Date("2022-01-01T00:30:00.000Z"),
+    active_time: new Date("2022-01-01T00:30:00.000Z"),
     serving_size: 6,
     introduction: "This is recipe 4",
     author_note: "Author's note for recipe 4",
@@ -147,8 +149,8 @@ export const recipes: RecipeEntity[] = [
     id: 5,
     name: "Recipe 5",
     rating: 4.0,
-    totalTime: new Date(" 2022-01-01T00:30:00.000Z"),
-    active_time: new Date(" 2022-01-01T00:30:00.000Z"),
+    totalTime: new Date("2022-01-01T00:30:00.000Z"),
+    active_time: new Date("2022-01-01T00:30:00.000Z"),
     serving_size: 2,
     introduction: "This is recipe 5",
     author_note: "Author's note for recipe 5",
@@ -162,8 +164,8 @@ export const recipes: RecipeEntity[] = [
     id: 6,
     name: "Recipe 6",
     rating: 4.8,
-    totalTime: new Date(" 2022-01-01T00:30:00.000Z"),
-    active_time: new Date(" 2022-01-01T00:30:00.000Z"),
+    totalTime: new Date("2022-01-01T00:30:00.000Z"),
+    active_time: new Date("2022-01-01T00:30:00.000Z"),
     serving_size: 8,
     introduction: "This is recipe 6",
     author_note: "Author's note for recipe 6",
@@ -177,8 +179,8 @@ export const recipes: RecipeEntity[] = [
     id: 7,
     name: "Recipe 7",
     rating: 3.2,
-    totalTime: new Date(" 2022-01-01T00:30:00.000Z"),
-    active_time: new Date(" 2022-01-01T00:30:00.000Z"),
+    totalTime: new Date("2022-01-01T00:30:00.000Z"),
+    active_time: new Date("2022-01-01T00:30:00.000Z"),
     serving_size: 1,
     introduction: "This is recipe 7",
     author_note: "Author's note for recipe 7",
@@ -192,8 +194,8 @@ export const recipes: RecipeEntity[] = [
     id: 8,
     name: "Recipe 8",
     rating: 4.6,
-    totalTime: new Date(" 2022-01-01T00:30:00.000Z"),
-    active_time: new Date(" 2022-01-01T00:30:00.000Z"),
+    totalTime: new Date("2022-01-01T00:30:00.000Z"),
+    active_time: new Date("2022-01-01T00:30:00.000Z"),
     serving_size: 4,
     introduction: "This is recipe 8",
     author_note: "Author's note for recipe 8",
@@ -237,31 +239,31 @@ export const recipes: RecipeEntity[] = [
 
 export const recipeIngredients: Recipe_IngredientEntity[] = [
   {
-    amount: 5,
+    amount_per_serving: 5,
     recipe_id: 1,
     ingredient_id: 1,
     note: "Hello, this is a sample note",
   },
   {
-    amount: 2,
+    amount_per_serving: 2,
     recipe_id: 1,
     ingredient_id: 2,
     note: "Hello, this is another sample note",
   },
   {
-    amount: 5,
+    amount_per_serving: 5,
     recipe_id: 1,
     ingredient_id: 3,
     note: "Hello, this is another sample note",
   },
   {
-    amount: 2,
+    amount_per_serving: 2,
     recipe_id: 2,
     ingredient_id: 1,
     note: "Hello, this is another sample note",
   },
   {
-    amount: 3,
+    amount_per_serving: 3,
     recipe_id: 2,
     ingredient_id: 2,
     note: "Hello, this is another sample note",
@@ -408,40 +410,40 @@ export const occasions: OccasionEntity[] = [
     id: 1,
     name: "Tết Nguyên Đán",
     description: "Lễ Tết truyền thống của Việt Nam",
-    start_at: new Date(new Date().getFullYear(), 0, 1).getMonth() + 1,
-    end_at: new Date(new Date().getFullYear(), 11, 31).getMonth() + 1,
+    start_at: new Date(new Date().getFullYear(), 0, 1),
+    end_at: new Date(new Date().getFullYear(), 11, 31),
     image: bannerPath,
   },
   {
     id: 2,
     name: "Ngày Quốc khánh",
     description: "Ngày Quốc khánh Việt Nam",
-    start_at: new Date(new Date().getFullYear(), 8, 2).getMonth() + 1,
-    end_at: new Date(new Date().getFullYear(), 11, 31).getMonth() + 1,
+    start_at: new Date(new Date().getFullYear(), 8, 2),
+    end_at: new Date(new Date().getFullYear(), 11, 31),
     image: bannerPath,
   },
   {
     id: 3,
     name: "Ngày Lao động",
     description: "Lễ Quốc tế lao động",
-    start_at: new Date(new Date().getFullYear(), 4, 1).getMonth() + 1,
-    end_at: new Date(new Date().getFullYear(), 11, 31).getMonth() + 1,
+    start_at: new Date(new Date().getFullYear(), 4, 1),
+    end_at: new Date(new Date().getFullYear(), 11, 31),
     image: bannerPath,
   },
   {
     id: 4,
     name: "Ngày Quốc tế Phụ nữ",
     description: "Ngày Quốc tế của Phụ nữ",
-    start_at: new Date(new Date().getFullYear(), 2, 8).getMonth() + 1,
-    end_at: new Date(new Date().getFullYear(), 11, 31).getMonth() + 1,
+    start_at: new Date(new Date().getFullYear(), 2, 8),
+    end_at: new Date(new Date().getFullYear(), 11, 31),
     image: bannerPath,
   },
   {
     id: 5,
     name: "Ngày Quốc tế Hạnh phúc",
     description: "Ngày Quốc tế Hạnh phúc",
-    start_at: new Date(new Date().getFullYear(), 2, 20).getMonth() + 1,
-    end_at: new Date(new Date().getFullYear(), 11, 31).getMonth() + 1,
+    start_at: new Date(new Date().getFullYear(), 2, 20),
+    end_at: new Date(new Date().getFullYear(), 11, 31),
     image: bannerPath,
   },
 ];
@@ -557,11 +559,6 @@ export const plans: PlanEntity[] = [
   },
 ];
 
-// id: number;
-// plan_id: number;
-// recipe_id: number;
-// serving_size: number;
-
 export const planItems: Plan_ItemEntity[] = [
   {
     id: 1,
@@ -611,5 +608,47 @@ export const planItems: Plan_ItemEntity[] = [
     recipeId: 1,
     order: 1,
     serving_size: 4,
+  },
+];
+
+export const cookbooks: CookBookEntity[] = [
+  {
+    id: 1,
+    name: "Cookbook 1",
+    owner: "1",
+  },
+  {
+    id: 2,
+    name: "Cookbook 2",
+    owner: "1",
+  },
+  {
+    id: 3,
+    name: "Cookbook 3",
+    owner: "1",
+  },
+  {
+    id: 4,
+    name: "Cookbook 4",
+    owner: "1",
+  },
+];
+
+export const cookbookRecipes: CookBook_RecipeEntity[] = [
+  {
+    cook_book_id: 1,
+    recipe_id: 1,
+  },
+  {
+    cook_book_id: 1,
+    recipe_id: 2,
+  },
+  {
+    cook_book_id: 2,
+    recipe_id: 3,
+  },
+  {
+    cook_book_id: 2,
+    recipe_id: 4,
   },
 ];

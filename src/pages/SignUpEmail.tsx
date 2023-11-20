@@ -1,21 +1,105 @@
 import { defaultAvtPath, signInImagePath } from "@/assets/exportImage";
+import { createEmailUser } from "@/lib/firebase/auth";
+import { useSnackbarService } from "@/lib/hooks/snackbar/hook";
 import useFirebaseImage from "@/lib/hooks/useFirebaseImage";
+import AccountService from "@/lib/services/accountService";
+import { createDebugStringFormatter } from "@/utils/debug/formatter";
 import {
   Box,
   Button,
+  CircularProgress,
+  Container,
   Grid,
   Stack,
-  Typography,
   TextField,
-  Container,
   TextFieldProps,
+  Typography,
 } from "@mui/material";
+import { useCallback, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
+const DEBUG_IDENTIFIER = "[SignUpEmail]";
+const createDebugString = createDebugStringFormatter(DEBUG_IDENTIFIER);
+
 export function SignUpEmail() {
+  //#region Hooks
+
   const navigate = useNavigate();
   const authorImage = useFirebaseImage(defaultAvtPath);
   const signInImage = useFirebaseImage(signInImagePath);
+  const [openSnackbar] = useSnackbarService();
+
+  //#endregion
+
+  //#region States
+
+  const [signUpInfo, setSignUpInfo] = useState<{
+    name: string;
+    email: string;
+    password: string;
+  }>({ name: "", email: "", password: "" });
+
+  const [isLoading, setIsLoading] = useState(false);
+
+  //#endregion
+
+  //#region Handlers
+
+  //#region SignupInfo Change Handler
+
+  const handleNameChange = useCallback((name: string) => {
+    setSignUpInfo((prev) => ({ ...prev, name: name }));
+  }, []);
+
+  const handleEmailChange = useCallback((email: string) => {
+    setSignUpInfo((prev) => ({ ...prev, email: email }));
+  }, []);
+
+  const handlePasswordChange = useCallback((password: string) => {
+    setSignUpInfo((prev) => ({ ...prev, password: password }));
+  }, []);
+
+  //#endregion
+
+  const handleSignUp = useCallback(() => {
+    setIsLoading(true);
+
+    createEmailUser(signUpInfo.email, signUpInfo.password)
+      .then((userCredential) => {
+        const uid = userCredential.user.uid;
+
+        const accountReq = {
+          uid: uid,
+          name: signUpInfo.name,
+        };
+
+        AccountService.SignUpAccount(accountReq)
+          .then((isSuccess) => {
+            if (isSuccess) {
+              console.log(createDebugString("Sign up successfully"));
+              openSnackbar("Đăng ký thành công!");
+              navigate("/signin");
+            } else {
+              console.log(createDebugString("Sign up failed"));
+              openSnackbar("Đăng ký thất bại!", "warning");
+            }
+          })
+          .catch((error) => {
+            console.log(createDebugString("Sign up failed"), error);
+            openSnackbar("Đăng ký thất bại!", "warning");
+          });
+      })
+      .catch((error) => {
+        console.log(createDebugString("Sign up failed"), error);
+        openSnackbar("Đăng ký thất bại!", "warning");
+      })
+      .finally(() => setIsLoading(false));
+  }, [openSnackbar, signUpInfo.email, signUpInfo.name, signUpInfo.password]);
+
+  //#endregion
+
+  console.log(signUpInfo);
+
   return (
     <>
       <Grid
@@ -169,17 +253,35 @@ export function SignUpEmail() {
                   {...typoProps}
                   placeholder="Chúng tôi có thể gọi bạn là?"
                   type="name"
+                  value={signUpInfo.name}
+                  onChange={(e) => {
+                    handleNameChange(e.target.value);
+                  }}
+                  disabled={isLoading}
                 />
-                <TextField {...typoProps} placeholder="Email" type="email" />
+                <TextField
+                  {...typoProps}
+                  placeholder="Email"
+                  type="email"
+                  value={signUpInfo.email}
+                  onChange={(e) => {
+                    handleEmailChange(e.target.value);
+                  }}
+                  disabled={isLoading}
+                />
                 <TextField
                   {...typoProps}
                   placeholder="Password"
                   type="password"
+                  value={signUpInfo.password}
+                  onChange={(e) => handlePasswordChange(e.target.value)}
+                  disabled={isLoading}
                 />
 
                 <Button
                   variant="contained"
                   sx={{
+                    gap: 1,
                     width: "100%",
                     py: 1.2,
                     backgroundColor: "primary",
@@ -191,11 +293,17 @@ export function SignUpEmail() {
                     fontSize: "caption.fontSize",
                     fontWeight: "bold",
                   }}
-                  onClick={() => {
-                    navigate("/signin");
-                  }}
+                  onClick={handleSignUp}
+                  disabled={isLoading}
                 >
-                  ĐĂNG KÝ
+                  {isLoading ? (
+                    <>
+                      ĐĂNG KÝ
+                      <CircularProgress size={16} />
+                    </>
+                  ) : (
+                    "ĐĂNG KÝ"
+                  )}
                 </Button>
               </Box>
             </Stack>

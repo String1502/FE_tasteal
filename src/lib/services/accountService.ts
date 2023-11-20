@@ -1,8 +1,13 @@
 import { accounts as accountsSampleData } from "@/lib/constants/sampleData";
+import { createDebugStringFormatter } from "@/utils/debug/formatter";
 import simulateDelay from "@/utils/promises/stimulateDelay";
 import { getApiUrl } from "../constants/api";
+import AccountReq from "../models/dtos/Request/AccountReq/AccountReq";
 import { PageFilter } from "../models/dtos/Request/PageFilter/PageFilter";
 import { AccountEntity } from "../models/entities/AccountEntity/AccountEntity";
+import { AuthorRes } from "../models/dtos/Response/AuthorRes/AuthorRes";
+
+const createDebugString = createDebugStringFormatter("AccountService");
 
 /**
  * Represents a service for managing accounts.
@@ -37,9 +42,7 @@ class AccountService {
 
   public static async GetMostContributedAccounts(
     limit: number
-  ): Promise<AccountEntity[]> {
-    let accounts: AccountEntity[] = [];
-
+  ): Promise<AccountReq[]> {
     const requestOptions = {
       method: "POST",
       headers: {
@@ -47,21 +50,56 @@ class AccountService {
       },
       body: JSON.stringify({
         pageSize: limit,
-        page: 0,
+        page: 1,
         isDescend: true,
       } as PageFilter),
     };
 
-    fetch(getApiUrl("GET_MOST_CONTRIBUTED_ACCOUNTS"), requestOptions)
-      .then((res) => res.json())
-      .then((data) => {
-        accounts = data;
-      })
-      .catch((error) => {
-        console.error("Lỗi:", error);
-      });
+    let result: AccountReq[] = [];
 
-    return accounts;
+    Promise.all([
+      fetch(getApiUrl("GET_MOST_CONTRIBUTED_ACCOUNTS"), requestOptions)
+        .then((res) => res.json())
+        .then((data) => {
+          result = data;
+        })
+        .catch((error) => {
+          console.error("Lỗi:", error);
+        }),
+    ]);
+
+    return Promise.resolve(result);
+  }
+
+  /**
+   * Create a new account in the database with the UID generated in the Firebase authentication.
+   *
+   * @param accountReq - Account Request
+   */
+  public static async SignUpAccount(accountReq: AccountReq): Promise<boolean> {
+    try {
+      const url = getApiUrl("SIGNUP_USER");
+      const requestOptions = {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(accountReq),
+      };
+
+      const response = await fetch(url, requestOptions);
+
+      if (response.ok) {
+        console.log(createDebugString("User signup success"));
+        return true;
+      } else {
+        console.log(createDebugString("User signup failed"));
+        return false;
+      }
+    } catch (err) {
+      console.log(createDebugString("User signup failed"), err);
+      return false;
+    }
   }
 }
 

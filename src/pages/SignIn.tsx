@@ -1,23 +1,83 @@
 import {
   Box,
   Button,
-  Grid,
-  Stack,
-  Typography,
-  TextField,
   Container,
   Divider,
+  Grid,
+  Stack,
+  TextField,
+  Typography,
 } from "@mui/material";
 
-import { Facebook, Google } from "@mui/icons-material";
 import { signInImagePath } from "@/assets/exportImage";
-import { useNavigate } from "react-router-dom";
+import { signInEmailUser } from "@/lib/firebase/auth";
+import { auth, googleProvider } from "@/lib/firebase/config";
+import { useSnackbarService } from "@/lib/hooks/snackbar/hook";
 import useFirebaseImage from "@/lib/hooks/useFirebaseImage";
+import { Facebook, Google } from "@mui/icons-material";
+import { signInWithPopup } from "firebase/auth";
+import { useCallback, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 export function SignIn() {
-  const navigate = useNavigate();
+  //#region Hooks
 
+  const navigate = useNavigate();
   const signInImage = useFirebaseImage(signInImagePath);
+  const [openSnackbar] = useSnackbarService();
+
+  //#endregion
+
+  //#region States
+
+  const [signInInfo, setSignInInfo] = useState<{
+    email: string;
+    password: string;
+  }>({ email: "", password: "" });
+
+  //#endregion
+
+  //#region Handlers
+
+  const handleSignInWithEmailAndPassword = useCallback(() => {
+    signInEmailUser(signInInfo.email, signInInfo.password)
+      .then((userCredential) => {
+        openSnackbar("Đăng nhập thành công!", "success");
+        navigate("/");
+      })
+      .catch((error) => {
+        openSnackbar("Đăng nhập thất bại!", "warning");
+      });
+  }, [navigate, openSnackbar, signInInfo.email, signInInfo.password]);
+
+  const handleSignInWithGoogle = useCallback(() => {
+    signInWithPopup(auth, googleProvider)
+      .then((userCredential) => {
+        console.log("[AUTH] Sign in with Google successfully", userCredential);
+        navigate("/");
+      })
+      .catch((error) => {
+        console.log("[AUTH] Sign in with Google failed", error);
+      });
+  }, [navigate]);
+
+  const handleSignInWithFacebook = useCallback(() => {
+    openSnackbar("Chức năng chưa được hiện thực!", "warning");
+  }, [openSnackbar]);
+
+  //#region Sign In Info Change
+
+  const handleEmailChange = useCallback((email) => {
+    setSignInInfo((prev) => ({ ...prev, email: email }));
+  }, []);
+
+  const handlePasswordChange = useCallback((password) => {
+    setSignInInfo((prev) => ({ ...prev, password: password }));
+  }, []);
+
+  //#endregion
+
+  //#endregion
 
   return (
     <>
@@ -151,6 +211,7 @@ export function SignIn() {
                     fontWeight: "bold",
                   }}
                   startIcon={<Google fontSize="large" />}
+                  onClick={handleSignInWithGoogle}
                 >
                   Tiếp tục với Google
                 </Button>
@@ -171,6 +232,7 @@ export function SignIn() {
                     fontWeight: "bold",
                   }}
                   startIcon={<Facebook fontSize="large" />}
+                  onClick={handleSignInWithFacebook}
                 >
                   Tiếp tục với Facebook
                 </Button>
@@ -213,6 +275,8 @@ export function SignIn() {
                     px: 1.5,
                   },
                 }}
+                value={signInInfo.email}
+                onChange={(e) => handleEmailChange(e.target.value)}
               />
 
               {/*Cái ô nhập password*/}
@@ -232,6 +296,8 @@ export function SignIn() {
                     px: 1.5,
                   },
                 }}
+                value={signInInfo.password}
+                onChange={(e) => handlePasswordChange(e.target.value)}
               />
 
               {/*Text quên mật khẩu*/}
@@ -250,6 +316,7 @@ export function SignIn() {
 
               {/*Nút đăng nhập*/}
               <Button
+                onClick={handleSignInWithEmailAndPassword}
                 variant="contained"
                 color="primary"
                 sx={{

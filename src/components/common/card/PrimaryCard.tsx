@@ -1,10 +1,16 @@
 import { curveShapePath } from "@/assets/exportImage";
 import useFirebaseImage from "@/lib/hooks/useFirebaseImage";
-import { RelatedRecipe } from "@/lib/models/dtos/reicpeDTO";
+import { AccountEntity } from "@/lib/models/entities/AccountEntity/AccountEntity";
+import { CookBookEntity } from "@/lib/models/entities/CookBookEntity/CookBookEntity";
+import { RecipeEntity } from "@/lib/models/entities/RecipeEntity/RecipeEntity";
+import AccountService from "@/lib/services/accountService";
+import CookbookService from "@/lib/services/cookbookService";
 import { dateTimeToMinutes } from "@/utils/format";
 import {
+  ArrowRightRounded,
   BookmarkBorderRounded,
   BookmarkRounded,
+  DoubleArrowRounded,
   StarRounded,
 } from "@mui/icons-material";
 import {
@@ -16,23 +22,63 @@ import {
   CardMedia,
   CardProps,
   Checkbox,
+  CheckboxProps,
+  ListItemIcon,
+  Menu,
+  MenuItem,
   Rating,
   Typography,
 } from "@mui/material";
+import { useEffect, useState } from "react";
 
 const imgHeight = "224px";
 const padding = 2;
 
 export function PrimaryCard({
   recipe,
+  saveCheckBoxProps,
   ...props
 }: {
   props?: CardProps;
-  recipe: RelatedRecipe;
+  saveCheckBoxProps?: CheckboxProps;
+  recipe: RecipeEntity;
 }) {
-  const image = useFirebaseImage(recipe?.image);
-  const authorAvatar = useFirebaseImage(recipe.author.avatar);
+  const image = useFirebaseImage(recipe?.image ?? "");
+  const authorAvatar = useFirebaseImage(recipe.account?.avatar ?? "");
   const curveShapeImg = useFirebaseImage(curveShapePath);
+
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const open = Boolean(anchorEl);
+  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
+  const [accountData, setAccountData] = useState<AccountEntity | undefined>(
+    undefined
+  );
+  const [Cookbooks, setCookbooks] = useState<CookBookEntity[]>([]);
+
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const account = await AccountService.GetByUid("1");
+
+        setAccountData(account);
+
+        const cookbooks = await CookbookService.GetCookbooksByAccountId(
+          account.uid
+        );
+        setCookbooks(cookbooks);
+      } catch (error) {
+        console.log(error);
+      }
+    }
+    fetchData();
+  }, []);
+
   return (
     <>
       <Box>
@@ -75,6 +121,11 @@ export function PrimaryCard({
             }}
             icon={<BookmarkBorderRounded sx={{ color: "#fff" }} />}
             checkedIcon={<BookmarkRounded sx={{ color: "#fff" }} />}
+            onClick={(e: any) => {
+              e.preventDefault();
+              handleClick(e);
+            }}
+            {...saveCheckBoxProps}
           />
 
           <Box
@@ -97,12 +148,7 @@ export function PrimaryCard({
               color="common.white"
               sx={{ fontWeight: "bold" }}
             >
-              {recipe.totalTime.toLocaleString("vi-VN", {
-                minute: "numeric",
-                second: "numeric",
-                hour: "numeric",
-              })}{" "}
-              phút
+              {dateTimeToMinutes(recipe.totalTime)} phút
             </Typography>
           </Box>
 
@@ -173,6 +219,41 @@ export function PrimaryCard({
           </CardContent>
         </Card>
       </Box>
+
+      <Menu
+        anchorEl={anchorEl}
+        open={open}
+        onClose={handleClose}
+        slotProps={{
+          paper: {
+            sx: {
+              background: "white",
+              borderRadius: 4,
+              width: "200px",
+            },
+          },
+        }}
+      >
+        {Cookbooks.map((cookbook) => {
+          return (
+            <MenuItem key={cookbook.id} onClick={handleClose}>
+              <ListItemIcon>
+                <ArrowRightRounded color="primary" fontSize="small" />
+              </ListItemIcon>
+              <Typography
+                variant="body2"
+                color="primary"
+                fontWeight={"bold"}
+                whiteSpace={"nowrap"}
+                textOverflow={"ellipsis"}
+                overflow={"hidden"}
+              >
+                {cookbook.name}
+              </Typography>
+            </MenuItem>
+          );
+        })}
+      </Menu>
     </>
   );
 }

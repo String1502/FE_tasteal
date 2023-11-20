@@ -1,4 +1,4 @@
-export type AccountEntity = {
+type AccountReq = {
   uid: string;
   name?: string;
   avatar?: string;
@@ -7,3 +7,5 @@ export type AccountEntity = {
   slogan?: string;
   quote?: string;
 };
+
+export default AccountReq;
