@@ -19,6 +19,7 @@ import { SignIn } from "./pages/SignIn";
 import { SignUp } from "./pages/SignUp";
 import { SignUpEmail } from "./pages/SignUpEmail";
 import { getMode } from "./theme/muiTheme";
+import MySavedRecipes from "./pages/MySavedRecipes";
 
 export const ColorModeContext = React.createContext({
   toggleColorMode: () => {},
@@ -71,6 +72,7 @@ function App() {
                 <Route path="/recipe/:id" element={<RecipeDetail />} />
                 <Route path="/grocery" element={<Grocery />} />
                 <Route path="/mealplanner" element={<MealPlanner />} />
+                <Route path="/mysavedrecipes" element={<MySavedRecipes />} />
                 {/* Thêm các tuyến đường khác */}
               </Routes>
             </Router>

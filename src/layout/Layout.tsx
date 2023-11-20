@@ -3,7 +3,13 @@ import React from "react";
 import { Footer } from "../components/ui/layout/Footer";
 import { Header } from "../components/ui/layout/Header";
 
-function Layout({ children }: { children: React.ReactNode }) {
+function Layout({
+  withFooter = true,
+  children,
+}: {
+  withFooter?: boolean;
+  children: React.ReactNode;
+}) {
   return (
     <Box
       component={"div"}
@@ -13,8 +19,14 @@ function Layout({ children }: { children: React.ReactNode }) {
       }}
     >
       <Header />
-      {children}
-      <Footer />
+      <Box
+        sx={{
+          minHeight: "100vh",
+        }}
+      >
+        {children}
+      </Box>
+      {withFooter && <Footer />}
     </Box>
   );
 }

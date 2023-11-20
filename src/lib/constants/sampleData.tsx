@@ -11,6 +11,8 @@ import { Plan_ItemEntity } from "@/lib/models/entities/Plan_ItemEntity/Plan_Item
 import { Recipe_DirectionEntity } from "@/lib/models/entities/Recipe_DirectionEntity/Recipe_DirectionEntity";
 import { Recipe_IngredientEntity } from "@/lib/models/entities/Recipe_IngredientEntity/Recipe_IngredientEntity";
 import { RecipeEntity } from "@/lib/models/entities/RecipeEntity/RecipeEntity";
+import { CookBookEntity } from "../models/entities/CookBookEntity/CookBookEntity";
+import { CookBook_RecipeEntity } from "../models/entities/CookBook_RecipeEntity/CookBook_RecipeEntity";
 
 export const accounts: AccountEntity[] = [
   {
@@ -557,11 +559,6 @@ export const plans: PlanEntity[] = [
   },
 ];
 
-// id: number;
-// plan_id: number;
-// recipe_id: number;
-// serving_size: number;
-
 export const planItems: Plan_ItemEntity[] = [
   {
     id: 1,
@@ -611,5 +608,47 @@ export const planItems: Plan_ItemEntity[] = [
     recipeId: 1,
     order: 1,
     serving_size: 4,
+  },
+];
+
+export const cookbooks: CookBookEntity[] = [
+  {
+    id: 1,
+    name: "Cookbook 1",
+    owner: "1",
+  },
+  {
+    id: 2,
+    name: "Cookbook 2",
+    owner: "1",
+  },
+  {
+    id: 3,
+    name: "Cookbook 3",
+    owner: "1",
+  },
+  {
+    id: 4,
+    name: "Cookbook 4",
+    owner: "1",
+  },
+];
+
+export const cookbookRecipes: CookBook_RecipeEntity[] = [
+  {
+    cook_book_id: 1,
+    recipe_id: 1,
+  },
+  {
+    cook_book_id: 1,
+    recipe_id: 2,
+  },
+  {
+    cook_book_id: 2,
+    recipe_id: 3,
+  },
+  {
+    cook_book_id: 2,
+    recipe_id: 4,
   },
 ];

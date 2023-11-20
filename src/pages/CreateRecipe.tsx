@@ -396,7 +396,7 @@ const CreateRecipe: React.FunctionComponent = () => {
   //#endregion
 
   return (
-    <Layout>
+    <Layout withFooter={false}>
       <Box
         sx={{
           display: "flex",
