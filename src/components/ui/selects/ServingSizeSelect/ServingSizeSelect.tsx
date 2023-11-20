@@ -12,18 +12,19 @@ export type ServingSizeSelectProps = {
   servingSize: number;
   onServingSizeChange: (servingSize: number) => void;
   sizes?: number[];
+  disabled?: boolean;
 } & Omit<SelectProps<number>, "onChange" | "value">;
 
 export const ServingSizeSelect: React.FunctionComponent<
   ServingSizeSelectProps
-> = ({ servingSize, onServingSizeChange, sizes = SERVING_SIZES, ...props }) => {
+> = ({ servingSize, onServingSizeChange, sizes = SERVING_SIZES, disabled = false, ...props }) => {
   const handleServingSizeChange = useCallback(
     (e: SelectChangeEvent<number>) => {
       const value = e.target.value;
 
       onServingSizeChange(typeof value === "number" ? value : parseInt(value));
     },
-    [onServingSizeChange]
+    [ onServingSizeChange ]
   );
 
   return (
@@ -49,6 +50,7 @@ export const ServingSizeSelect: React.FunctionComponent<
           ...props.MenuProps?.sx,
         },
       }}
+      disabled={disabled}
     >
       {sizes.map((size, index) => (
         <MenuItem key={index} value={size}>

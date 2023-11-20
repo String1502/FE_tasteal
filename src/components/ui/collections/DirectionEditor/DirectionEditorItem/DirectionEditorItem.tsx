@@ -21,7 +21,7 @@ type ImageProps = {
 const Image: React.FC<ImageProps> = ({ url = "", onRemove }) => {
   //#region UseStates
 
-  const [isHovered, setIsHovered] = useState(false);
+  const [ isHovered, setIsHovered ] = useState(false);
 
   //#endregion
 
@@ -29,7 +29,7 @@ const Image: React.FC<ImageProps> = ({ url = "", onRemove }) => {
 
   const handleRemoveImage = useCallback(() => {
     onRemove && onRemove();
-  }, [onRemove]);
+  }, [ onRemove ]);
 
   //#endregion
 
@@ -92,18 +92,20 @@ export type DirectionEditorItemProps = {
   value: DirectionEditorItemValue;
   onChange: (value: DirectionEditorItemValue) => void;
   onRemove: () => void;
+  disabled: boolean;
 };
 
 const DirectionEditorItem: React.FC<DirectionEditorItemProps> = ({
   value,
   onChange,
   onRemove,
+  disabled = false,
 }) => {
   //#region UseMemos
 
   const url = useMemo(() => {
     return (value.imageFile && URL.createObjectURL(value.imageFile!)) || "";
-  }, [value.imageFile]);
+  }, [ value.imageFile ]);
 
   //#endregion
 
@@ -116,7 +118,7 @@ const DirectionEditorItem: React.FC<DirectionEditorItemProps> = ({
         direction: desc,
       });
     },
-    [onChange, value]
+    [ onChange, value ]
   );
 
   const handleImageFileChange = useCallback(
@@ -126,7 +128,7 @@ const DirectionEditorItem: React.FC<DirectionEditorItemProps> = ({
         imageFile: file,
       });
     },
-    [onChange, value]
+    [ onChange, value ]
   );
 
   //#endregion
@@ -169,6 +171,7 @@ const DirectionEditorItem: React.FC<DirectionEditorItemProps> = ({
           fullWidth
           value={value.direction}
           onChange={(e) => handleDescriptionChange(e.target.value)}
+          disabled={disabled}
         />
 
         <Image url={url} onRemove={() => handleImageFileChange(null)} />
@@ -182,12 +185,13 @@ const DirectionEditorItem: React.FC<DirectionEditorItemProps> = ({
               display: "none",
             }
           }
+          disabled={disabled}
         >
           Thêm hình ảnh
           <input
             hidden
             type="file"
-            onChange={(e) => handleImageFileChange(e.target.files![0])}
+            onChange={(e) => handleImageFileChange(e.target.files![ 0 ])}
           />
         </Button>
       </AccordionDetails>

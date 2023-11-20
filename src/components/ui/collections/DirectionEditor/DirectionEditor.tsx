@@ -23,21 +23,23 @@ function createDefaultDirection(step: number): DirectionEditorItemValue {
 type DirectionEditorProps = {
   directions: DirectionEditorItemValue[];
   onChange: (directions: DirectionEditorItemValue[]) => void;
+  disabled: boolean;
 };
 
 const DirectionEditor: React.FC<DirectionEditorProps> = ({
   directions,
   onChange,
+  disabled,
 }) => {
   //#region Handlers
 
   const handleAdd = useCallback(() => {
-    onChange([...directions, createDefaultDirection(directions.length + 1)]);
-  }, [directions, onChange]);
+    onChange([ ...directions, createDefaultDirection(directions.length + 1) ]);
+  }, [ directions, onChange ]);
 
   const handleItemValueChange = useCallback(
     (step: number, value: DirectionEditorItemValue) => {
-      const cloned = [...directions];
+      const cloned = [ ...directions ];
       cloned.splice(
         directions.findIndex((dir) => dir.step === step),
         1,
@@ -45,19 +47,19 @@ const DirectionEditor: React.FC<DirectionEditorProps> = ({
       );
       onChange(cloned);
     },
-    [directions, onChange]
+    [ directions, onChange ]
   );
 
   const handleRemoveItem = useCallback(
     (step) => {
-      const cloned = [...directions];
+      const cloned = [ ...directions ];
       cloned.splice(
         directions.findIndex((dir) => dir.step === step),
         1
       );
       onChange(cloned);
     },
-    [directions, onChange]
+    [ directions, onChange ]
   );
 
   //#endregion
@@ -70,12 +72,14 @@ const DirectionEditor: React.FC<DirectionEditorProps> = ({
           value={dir}
           onChange={(value) => handleItemValueChange(dir.step, value)}
           onRemove={() => handleRemoveItem(dir.step)}
+          disabled={disabled}
         />
       ))}
 
       <CollectionItemAddButton
         label="Thêm bước hướng dẫn"
         onClick={handleAdd}
+        disabled={disabled}
       />
     </>
   );
