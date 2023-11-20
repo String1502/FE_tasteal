@@ -7,12 +7,13 @@ import ItemTypography from "./ItemTypography";
 export const IngredientItem: React.FunctionComponent<IngredientItemProps> = ({
   item,
   onDelete,
+  disabled = false,
 }) => {
-  const [isHovering, setIsHovering] = useState(false);
+  const [ isHovering, setIsHovering ] = useState(false);
 
   const handleDelete = useCallback(() => {
     onDelete(item.id);
-  }, [onDelete, item.id]);
+  }, [ onDelete, item.id ]);
 
   const handleMouseEnter = useCallback(() => {
     setIsHovering(true);
@@ -31,7 +32,7 @@ export const IngredientItem: React.FunctionComponent<IngredientItemProps> = ({
       sx={{
         backgroundColor: "#F0F0F0",
         borderRadius: 8,
-        "&:hover": {
+        "&:hover": disabled ? {} : {
           cursor: "pointer",
           backgroundColor: "#E0E0E0",
         },
@@ -55,10 +56,11 @@ export const IngredientItem: React.FunctionComponent<IngredientItemProps> = ({
 
         <IconButton
           sx={{
-            opacity: isHovering ? 1 : 0,
+            opacity: disabled ? 0 : isHovering ? 1 : 0,
             transition: "opacity 0.3s ease-in-out",
           }}
           onClick={handleDelete}
+          disabled={disabled}
         >
           <DeleteOutline />
         </IconButton>

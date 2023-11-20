@@ -154,7 +154,11 @@ class RecipeService {
       body: JSON.stringify(postData),
     })
       .then((response: Response) => {
-        return response.json();
+        if (response.ok) {
+          return response.json();
+        }
+
+        return Promise.reject();
       })
       .then((data: RecipeReq) => {
         console.log("[RecipeService.CreateRecipe] POST succeeded!", data);

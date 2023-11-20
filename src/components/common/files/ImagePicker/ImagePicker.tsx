@@ -5,23 +5,24 @@ import { ChangeEventHandler, FC, useCallback, useMemo } from "react";
 export type ImagePickerProps = {
   file: File | null;
   onChange: (file: File | null) => void;
+  disabled?: boolean;
 };
 
-export const ImagePicker: FC<ImagePickerProps> = ({ file, onChange }) => {
+export const ImagePicker: FC<ImagePickerProps> = ({ file, onChange, disabled = false }) => {
   const handleFileChange = useCallback<ChangeEventHandler<HTMLInputElement>>(
     (e) => {
       if (e.target.files?.item(0)) {
         onChange(e.target.files?.item(0));
       }
     },
-    [onChange]
+    [ onChange ]
   );
 
   const previewImage = useMemo(() => {
     if (file) {
       return URL.createObjectURL(file);
     }
-  }, [file]);
+  }, [ file ]);
 
   return (
     <label
@@ -45,7 +46,7 @@ export const ImagePicker: FC<ImagePickerProps> = ({ file, onChange }) => {
           borderWidth: 1,
           borderStyle: "solid",
           borderColor: "grey.600",
-          "&:hover": {
+          "&:hover": disabled ? {} : {
             cursor: "pointer",
             backgroundColor: "#ffccbb",
           },
@@ -66,6 +67,7 @@ export const ImagePicker: FC<ImagePickerProps> = ({ file, onChange }) => {
           type="file"
           style={{ display: "none" }}
           onChange={handleFileChange}
+          disabled={disabled}
         />
       </Box>
     </label>
