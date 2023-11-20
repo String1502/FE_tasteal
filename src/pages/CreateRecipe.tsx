@@ -149,14 +149,14 @@ const resolveDirectionsImage = (
 const CreateRecipe: React.FunctionComponent = () => {
   //#region UseStates
 
-  const [ingredientSelectModalOpen, setIngredientSelectModalOpen] =
+  const [ ingredientSelectModalOpen, setIngredientSelectModalOpen ] =
     useState(false);
-  const [recipeThumbnailFile, setRecipeThumbnailFile] = useState<File | null>(
+  const [ recipeThumbnailFile, setRecipeThumbnailFile ] = useState<File | null>(
     null
   );
-  const [newRecipe, setNewRecipe] = useState<NewRecipe>(DEFAULT_NEW_RECIPE);
+  const [ newRecipe, setNewRecipe ] = useState<NewRecipe>(DEFAULT_NEW_RECIPE);
 
-  const [selectedOccasions, setSelectedOccasions] = useState<ChipValue[]>([]);
+  const [ selectedOccasions, setSelectedOccasions ] = useState<ChipValue[]>([]);
 
   //#endregion
 
@@ -170,7 +170,7 @@ const CreateRecipe: React.FunctionComponent = () => {
         );
       });
     },
-    [selectedOccasions]
+    [ selectedOccasions ]
   );
 
   //#endregion
@@ -179,12 +179,12 @@ const CreateRecipe: React.FunctionComponent = () => {
 
   const canCreateRecipe = useMemo(
     () => newRecipe.name && newRecipe.ingredients.length > 0,
-    [newRecipe]
+    [ newRecipe ]
   );
 
   const filteredOccasions = useMemo(() => {
     return filterOccasions(mockOccasions);
-  }, [filterOccasions]);
+  }, [ filterOccasions ]);
 
   //#endregion
 
@@ -241,8 +241,8 @@ const CreateRecipe: React.FunctionComponent = () => {
   //#region Handlers
 
   const handleNewRecipeFieldChange = useCallback(
-    <T extends keyof NewRecipe>(field: T, value: NewRecipe[T]) => {
-      setNewRecipe((prev) => ({ ...prev, [field]: value }));
+    <T extends keyof NewRecipe>(field: T, value: NewRecipe[ T ]) => {
+      setNewRecipe((prev) => ({ ...prev, [ field ]: value }));
     },
     []
   );
@@ -263,14 +263,14 @@ const CreateRecipe: React.FunctionComponent = () => {
         newIngredient,
       ]);
     },
-    [handleNewRecipeFieldChange, newRecipe.ingredients]
+    [ handleNewRecipeFieldChange, newRecipe.ingredients ]
   );
 
   const handleIngredientsChange = useCallback(
     (ingredients: IngredientItemData[]) => {
       handleNewRecipeFieldChange("ingredients", ingredients);
     },
-    [handleNewRecipeFieldChange]
+    [ handleNewRecipeFieldChange ]
   );
 
   const handleRecipeThumbnailChange = useCallback((file: File | null) => {
@@ -283,7 +283,7 @@ const CreateRecipe: React.FunctionComponent = () => {
 
   const handleSelectOccasion = useCallback((value: ChipValue | null) => {
     if (value) {
-      setSelectedOccasions((prev) => [...prev, value]);
+      setSelectedOccasions((prev) => [ ...prev, value ]);
     }
   }, []);
 
@@ -311,7 +311,7 @@ const CreateRecipe: React.FunctionComponent = () => {
     } catch (e) {
       console.log(createDebugString(e));
     }
-  }, [createPostData]);
+  }, [ createPostData ]);
 
   //#endregion
 

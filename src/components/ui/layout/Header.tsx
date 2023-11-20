@@ -16,21 +16,20 @@ import {
   List,
   ListItem,
   ListItemButton,
-  ListItemIcon,
   ListItemText,
   Menu,
-  MenuItem,
   Toolbar,
   Typography,
   useTheme,
 } from "@mui/material";
 import { onAuthStateChanged } from "firebase/auth";
-import React, { FC, useCallback, useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ColorModeContext } from "../../../App";
 import { ButtonHoverPopover } from "../header/ButtonHoverPopover";
 import { CustomHeaderLink } from "../header/CustomLink";
 import { PopoverContent } from "../header/PopoverContent";
+import AvatarMenuItem from "./AvatarMenuItem";
 
 interface Props {
   window?: () => Window;
@@ -379,24 +378,4 @@ export function Header(props: Props) {
   /* <Button color="inherit" onClick={colorMode.toggleColorMode}>
   Login
 </Button>; */
-}
-
-type AvatarMenuItemProps = { icon: React.ReactNode, label: string, onClick: () => void }
-
-const AvatarMenuItem: FC<AvatarMenuItemProps> = ({ icon, label, onClick }) => {
-
-  const [ isHovered, setIsHovered ] = useState(false);
-
-  return (
-    <MenuItem onClick={onClick} onMouseOver={() => setIsHovered(true)} onMouseLeave={() => setIsHovered(false)}>
-      <ListItemIcon sx={{ transition: 'all .2s ease-in-out', transform: isHovered ? 'translate(-2px, 0)' : '' }}>
-        {icon}
-      </ListItemIcon>
-      <ListItemText sx={{
-        transition: 'all .2s ease-in-out'
-      }}>
-        < Typography color='black' fontWeight='bold' fontSize={12} > {label}</Typography>
-      </ListItemText >
-    </MenuItem >
-  )
 }

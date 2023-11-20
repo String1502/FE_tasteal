@@ -71,9 +71,9 @@ const RecipeDetail: FC = () => {
 
   //#region UseStates
 
-  const [recipe, setRecipe] = useState<RecipeRes | null>(null);
+  const [ recipe, setRecipe ] = useState<RecipeRes | null>(null);
 
-  const [nutritionPerServingModalOpen, setNutritionPerServingModalOpen] =
+  const [ nutritionPerServingModalOpen, setNutritionPerServingModalOpen ] =
     useState(false);
 
   //#endregion
@@ -86,7 +86,7 @@ const RecipeDetail: FC = () => {
 
   const handleNutrionPerServingModalClose = useCallback(() => {
     setNutritionPerServingModalOpen(false);
-  }, [setNutritionPerServingModalOpen]);
+  }, [ setNutritionPerServingModalOpen ]);
 
   //#endregion
 
@@ -110,7 +110,7 @@ const RecipeDetail: FC = () => {
         setRecipe(null);
         console.log(debugStringFormatter("Failed to get recipe data"));
       });
-  }, [id]);
+  }, [ id ]);
 
   //#endregion
 
@@ -128,7 +128,7 @@ const RecipeDetail: FC = () => {
     const totalTime = recipe.totalTime;
 
     return `${ingredientCount} INGREDIENTS • ${directionCount} STEPS • ${totalTime} MIN`;
-  }, [recipe]);
+  }, [ recipe ]);
 
   //#endregion
 
