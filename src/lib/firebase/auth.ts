@@ -36,3 +36,12 @@ export const signInEmailUser = (
       throw error;
     });
 };
+
+
+/**
+ * Sign user out
+ * @returns 
+ */
+export const signOutUser = (): Promise<void> => {
+  return auth.signOut().catch(err => {throw err});
+}
