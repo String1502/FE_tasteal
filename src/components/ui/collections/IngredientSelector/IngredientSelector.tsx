@@ -8,17 +8,18 @@ export const IngredientSelector: React.FunctionComponent<{
   ingredients: IngredientItemData[];
   onChange: (ingredients: IngredientItemData[]) => void;
   onOpen: () => void;
-}> = ({ ingredients, onChange, onOpen }) => {
+  disabled: boolean;
+}> = ({ ingredients, onChange, onOpen, disabled = false }) => {
   const handleDelete = useCallback(
     (id: string) => {
       onChange(ingredients.filter((ingredient) => ingredient.id !== id));
     },
-    [ingredients, onChange]
+    [ ingredients, onChange ]
   );
 
   const handleNewClick = useCallback(() => {
     onOpen();
-  }, [onOpen]);
+  }, [ onOpen ]);
 
   return (
     <>
@@ -26,6 +27,7 @@ export const IngredientSelector: React.FunctionComponent<{
         {ingredients.length > 0 &&
           ingredients.map((ingredient, index) => (
             <IngredientItem
+              disabled={disabled}
               key={index}
               item={ingredient}
               onDelete={handleDelete}
@@ -33,7 +35,7 @@ export const IngredientSelector: React.FunctionComponent<{
           ))}
       </Stack>
 
-      <CollectionItemAddButton label={'Thêm nguyên liệu'} onClick={handleNewClick} />
+      <CollectionItemAddButton disabled={disabled} label={'Thêm nguyên liệu'} onClick={handleNewClick} />
     </>
   );
 };

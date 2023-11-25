@@ -16,6 +16,7 @@ import Layout from "@/layout/Layout";
 import { SERVING_SIZES } from "@/lib/constants/options";
 import { STORAGE_PATH } from "@/lib/constants/storage";
 import { uploadImage } from "@/lib/firebase/image";
+import { useSnackbarService } from "@/lib/hooks/snackbar/hook";
 import { RecipeReq } from "@/lib/models/dtos/Request/RecipeReq/RecipeReq";
 import { Direction } from "@/lib/models/dtos/common";
 import RecipeService from "@/lib/services/recipeService";
@@ -27,6 +28,7 @@ import {
   Box,
   Card,
   CardContent,
+  CircularProgress,
   FormControlLabel,
   Radio,
   RadioGroup,
@@ -146,7 +148,22 @@ const resolveDirectionsImage = (
   );
 };
 
+/**
+ * Local message constants
+ */
+const MESSAGE_CONSTANTS = {
+  VALIDATION: {
+    IMAGE_REQUIRED: 'Vui lòng tải ảnh đại diện!',
+  } as const,
+} as const;
+
 const CreateRecipe: React.FunctionComponent = () => {
+  //#region Hooks
+
+  const [ snackbarAlert ] = useSnackbarService();
+
+  //#endregion
+
   //#region UseStates
 
   const [ ingredientSelectModalOpen, setIngredientSelectModalOpen ] =
@@ -155,8 +172,8 @@ const CreateRecipe: React.FunctionComponent = () => {
     null
   );
   const [ newRecipe, setNewRecipe ] = useState<NewRecipe>(DEFAULT_NEW_RECIPE);
-
   const [ selectedOccasions, setSelectedOccasions ] = useState<ChipValue[]>([]);
+  const [ isCreatingRecipe, setIsCreatingRecipe ] = useState(false);
 
   //#endregion
 
@@ -190,6 +207,45 @@ const CreateRecipe: React.FunctionComponent = () => {
 
   //#region Methods
 
+  const validateNewRecipe = useCallback((): { isValid: boolean; msg: string } => {
+    let isValid = true;
+    let msg = "";
+
+    if (!newRecipe) {
+      isValid = false;
+      msg = "Dữ liệu không hợp lệ";
+    } else if (!newRecipe.name) {
+      isValid = false;
+      msg = "Tên không được để trống";
+    } else if (!newRecipe.introduction) {
+      isValid = false;
+      msg = "Mô tả không được để trống";
+    } else if (!recipeThumbnailFile) {
+      return { isValid: false, msg: MESSAGE_CONSTANTS.VALIDATION.IMAGE_REQUIRED };
+    } else if (!newRecipe.ingredients || newRecipe.ingredients.length === 0) {
+      isValid = false;
+      msg = "Vui lòng thêm nguyên liệu";
+    } else if (!newRecipe.directions || newRecipe.directions.length === 0) {
+      isValid = false;
+      msg = "Vui lòng thêm bước làm";
+    }
+
+    return { isValid, msg };
+  }, [
+    newRecipe,
+    newRecipe.name,
+    newRecipe.introduction,
+    recipeThumbnailFile,
+    newRecipe.ingredients,
+    newRecipe.ingredients.length,
+    newRecipe.directions,
+    newRecipe.directions.length
+  ]);
+
+  /**
+   * Creates a new recipe request.
+   * Data must have been validated before calling this method.
+   */
   const createPostData = useCallback(async (): Promise<RecipeReq> => {
     const IMAGE_ID = uuidv4();
 
@@ -197,7 +253,9 @@ const CreateRecipe: React.FunctionComponent = () => {
       recipeThumbnailFile.name
     )}`;
 
-    path = await uploadImage(recipeThumbnailFile, path);
+    // TODO: handle delete uploaded image incase create recipe fail.
+    path = await uploadImage(recipeThumbnailFile,
+      path);
 
     const directionsWithImage = await resolveDirectionsImage(
       newRecipe.directions,
@@ -235,6 +293,12 @@ const CreateRecipe: React.FunctionComponent = () => {
     newRecipe.servingSize,
     recipeThumbnailFile,
   ]);
+
+  const clearForm = useCallback(() => {
+    setNewRecipe(DEFAULT_NEW_RECIPE);
+    setRecipeThumbnailFile(null);
+    setSelectedOccasions([]);
+  }, [])
 
   //#endregion
 
@@ -298,18 +362,34 @@ const CreateRecipe: React.FunctionComponent = () => {
   );
 
   const handleCreateRecipe = useCallback(async () => {
+    setIsCreatingRecipe(true);
+
     try {
+      const { isValid: isLocalValid, msg: localMsg } = validateNewRecipe();
+
+      if (!isLocalValid) {
+        console.log(createDebugString(localMsg));
+        snackbarAlert(localMsg, 'warning');
+        setIsCreatingRecipe(false);
+        return;
+      }
+
       const postData = await createPostData();
-      console.log(postData);
+
       RecipeService.CreateRecipe(postData)
         .then((response) => {
           console.log(response);
+          clearForm();
+          snackbarAlert('Công thức tạo thành công!', 'success');
         })
         .catch((msg) => {
           console.log(createDebugString(msg));
         });
+
     } catch (e) {
       console.log(createDebugString(e));
+    } finally {
+      setIsCreatingRecipe(false);
     }
   }, [ createPostData ]);
 
@@ -336,6 +416,7 @@ const CreateRecipe: React.FunctionComponent = () => {
                 <FormLabel>Recipe Title</FormLabel>
                 <TastealTextField
                   value={newRecipe.name}
+                  disabled={isCreatingRecipe}
                   onChange={(e) =>
                     handleNewRecipeFieldChange("name", e.target.value)
                   }
@@ -346,6 +427,7 @@ const CreateRecipe: React.FunctionComponent = () => {
                 <FormLabel>Introduction (Optional)</FormLabel>
                 <TastealTextField
                   value={newRecipe.introduction}
+                  disabled={isCreatingRecipe}
                   onChange={(e) =>
                     handleNewRecipeFieldChange("introduction", e.target.value)
                   }
@@ -357,6 +439,7 @@ const CreateRecipe: React.FunctionComponent = () => {
               <Stack gap={1}>
                 <FormLabel>Occasions</FormLabel>
                 <Autocomplete
+                  disabled={isCreatingRecipe}
                   options={filteredOccasions}
                   getOptionLabel={(o) => o.name}
                   title="Select occasions"
@@ -380,11 +463,13 @@ const CreateRecipe: React.FunctionComponent = () => {
                 <ImagePicker
                   file={recipeThumbnailFile}
                   onChange={handleRecipeThumbnailChange}
+                  disabled={isCreatingRecipe}
                 />
               </Stack>
               <Stack>
                 <FormLabel>Serving Size</FormLabel>
                 <ServingSizeSelect
+                  disabled={isCreatingRecipe}
                   servingSize={newRecipe.servingSize}
                   sizes={SERVING_SIZES}
                   onServingSizeChange={(size) =>
@@ -395,6 +480,7 @@ const CreateRecipe: React.FunctionComponent = () => {
               <Stack>
                 <FormLabel>Ingredients</FormLabel>
                 <IngredientSelector
+                  disabled={isCreatingRecipe}
                   ingredients={newRecipe.ingredients}
                   onChange={handleIngredientsChange}
                   onOpen={handleIngredientSelectModalOpen}
@@ -403,6 +489,7 @@ const CreateRecipe: React.FunctionComponent = () => {
               <Stack>
                 <FormLabel>Directions</FormLabel>
                 <DirectionEditor
+                  disabled={isCreatingRecipe}
                   directions={newRecipe.directions}
                   onChange={handleDirectionsChange}
                 />
@@ -411,6 +498,7 @@ const CreateRecipe: React.FunctionComponent = () => {
                 <FormLabel>Author's Notes (Optional)</FormLabel>
                 <TastealTextField
                   value={newRecipe.authorNote}
+                  disabled={isCreatingRecipe}
                   onChange={(e) =>
                     handleNewRecipeFieldChange("authorNote", e.target.value)
                   }
@@ -435,21 +523,26 @@ const CreateRecipe: React.FunctionComponent = () => {
                     value={true}
                     control={<Radio />}
                     label="Not Visible to others"
+                    disabled={isCreatingRecipe}
                   />
                   <FormControlLabel
                     value={false}
                     control={<Radio />}
                     label="Generates a shareable link"
+                    disabled={isCreatingRecipe}
                   />
                 </RadioGroup>
               </Stack>
               <Stack>
                 <RoundedButton
                   variant="contained"
-                  disabled={!canCreateRecipe}
+                  disabled={isCreatingRecipe}
                   onClick={handleCreateRecipe}
+                  sx={{
+                    height: 40,
+                  }}
                 >
-                  DONE
+                  {isCreatingRecipe ? <CircularProgress size={20} /> : 'DONE'}
                 </RoundedButton>
               </Stack>
             </Stack>

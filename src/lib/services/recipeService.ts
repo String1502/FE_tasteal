@@ -1,11 +1,11 @@
 import { getApiUrl } from "@/lib/constants/api";
 import { recipes as recipesSampleData } from "@/lib/constants/sampleData";
-import { RecipeReq } from "@/lib/models/dtos/Request/RecipeReq/RecipeReq";
 import { RecipeRes } from "@/lib/models/dtos/Response/RecipeRes/RecipeRes";
-import { RecipeEntity } from "@/lib/models/entities/RecipeEntity/RecipeEntity";
 import simulateDelay from "@/utils/promises/stimulateDelay";
 import { API_PATH, DEFAULT_PAGE } from "../constants/common";
+import { RecipeReq } from "../models/dtos/Request/RecipeReq/RecipeReq";
 import { RecipeSearchReq } from "../models/dtos/Request/RecipeSearchReq/RecipeSearchReq";
+import { RecipeEntity } from "../models/entities/RecipeEntity/RecipeEntity";
 
 /**
  * Represents a service for managing occasions.
@@ -154,7 +154,11 @@ class RecipeService {
       body: JSON.stringify(postData),
     })
       .then((response: Response) => {
-        return response.json();
+        if (response.ok) {
+          return response.json();
+        }
+
+        return Promise.reject();
       })
       .then((data: RecipeReq) => {
         console.log("[RecipeService.CreateRecipe] POST succeeded!", data);
