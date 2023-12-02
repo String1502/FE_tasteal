@@ -22,7 +22,7 @@ export default function useFirebaseImage(path: string | undefined) {
         }
       })
       .catch((error) => {
-        setImage(staticPath);
+        setImage(path);
       });
   }, [path]);
 

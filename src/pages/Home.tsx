@@ -1,16 +1,5 @@
-import {
-  bannerFootImagePath,
-  mealPlanImagePath,
-  orderWhatYouNeedImagePath,
-  recipesOccasionsImagePath,
-  saveRecipesImagePath,
-} from "@/assets/exportImage";
-import { AuthorsCarousel } from "@/components/ui/home/AuthorsCarousel";
+import { bannerFootImagePath } from "@/assets/exportImage";
 import { Banner } from "@/components/ui/home/Banner";
-import { OccasionsList } from "@/components/ui/home/OccasionsList";
-import { RecipesCarousel } from "@/components/ui/home/RecipesCarousel";
-import AccountService from "@/lib/services/accountService";
-import OccasionService from "@/lib/services/occasionService";
 import {
   Box,
   Button,
@@ -20,14 +9,14 @@ import {
   Typography,
   TypographyProps,
 } from "@mui/material";
-import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Layout from "../layout/Layout";
-import RecipeService from "@/lib/services/recipeService";
 import useFirebaseImage from "@/lib/hooks/useFirebaseImage";
-import { AccountEntity } from "@/lib/models/entities/AccountEntity/AccountEntity";
-import { OccasionEntity } from "@/lib/models/entities/OccasionEntity/OccasionEntity";
-import { RecipeEntity } from "@/lib/models/entities/RecipeEntity/RecipeEntity";
+import { NewRelease_Component } from "@/components/ui/home/NewRelease_Component";
+import { WhyTasteal } from "../components/ui/home/WhyTasteal";
+import { Occasion_Component } from "../components/ui/home/Occasion_Component";
+import Trending_Component from "@/components/ui/home/Trending_Component";
+import MostContributedAuthors_Component from "@/components/ui/home/MostContributedAuthors_Component";
 
 const typoProps: TypographyProps = {
   variant: "h6",
@@ -35,89 +24,8 @@ const typoProps: TypographyProps = {
   textTransform: "uppercase",
 };
 
-const whyTastealArray = [
-  {
-    title: "Công cụ lịch ăn miễn phí",
-    image: mealPlanImagePath,
-  },
-  {
-    title: "Tất cả công thức bạn yêu thích",
-    image: saveRecipesImagePath,
-  },
-  {
-    title: "Thực đơn theo dịp đặc biệt",
-    image: recipesOccasionsImagePath,
-  },
-  {
-    title: "Chỉ mua những thứ cần thiết",
-    image: orderWhatYouNeedImagePath,
-  },
-];
-
-const WhyTasteal = ({ item }: { item: { title: string; image: string } }) => {
-  const image = useFirebaseImage(item.image);
-  return (
-    <>
-      <Box
-        sx={{
-          width: "100%",
-          justifyContent: "center",
-          alignItems: "center",
-          flexDirection: "column",
-          display: "flex",
-        }}
-      >
-        <Box
-          component={"img"}
-          src={image}
-          sx={{
-            width: "20%",
-            aspectRatio: "1/1",
-            objectFit: "contain",
-            objectPosition: "center",
-            mb: 2,
-          }}
-        />
-        <Typography
-          variant="body2"
-          fontWeight={"bold"}
-          sx={{
-            textAlign: "center",
-            textTransform: "Capitalize",
-          }}
-        >
-          {item.title}
-        </Typography>
-      </Box>
-    </>
-  );
-};
-
 function Home() {
   const bannerFootImage = useFirebaseImage(bannerFootImagePath);
-
-  const [newReleases, setNewReleases] = useState<RecipeEntity[]>([]);
-
-  const [trending, setTrending] = useState<RecipeEntity[]>([]);
-
-  const [occasions, setOccasions] = useState<OccasionEntity[]>([]);
-
-  const [mostContributedAuthors, setMostContributedAuthors] = useState<
-    AccountEntity[]
-  >([]);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      setNewReleases(await RecipeService.GetNewReleaseRecipes(10));
-      setTrending(await RecipeService.GetTrendingRecipes(10));
-      setMostContributedAuthors(
-        await AccountService.GetMostContributedAccounts(10)
-      );
-      setOccasions(await OccasionService.GetAllOccasions());
-    };
-    fetchData();
-  }, []);
-
   const navigate = useNavigate();
   return (
     <Layout>
@@ -132,6 +40,7 @@ function Home() {
           my: 4,
         }}
       >
+        {/* Vừa ra mắt */}
         <Grid item xs={12}>
           <Container>
             <Typography {...typoProps}>Vừa ra mắt</Typography>
@@ -139,10 +48,11 @@ function Home() {
               Các công thức nấu ăn nhanh, mới, dễ đi chợ giúp bạn tiết kiệm thời
               gian và tiền bạc.
             </Typography>
-            <RecipesCarousel array={newReleases} />
+            <NewRelease_Component />
           </Container>
         </Grid>
 
+        {/* Công thức theo dịp */}
         <Grid item xs={12}>
           <Box
             sx={{
@@ -155,21 +65,23 @@ function Home() {
           >
             <Container>
               <Typography {...typoProps}>Công thức theo dịp</Typography>
-              <OccasionsList occasions={occasions} />
+              <Occasion_Component />
             </Container>
           </Box>
         </Grid>
 
+        {/* Thịnh hành */}
         <Grid item xs={12}>
           <Container>
             <Typography {...typoProps}>Thịnh hành</Typography>
             <Typography variant="body1">
               Những công thức được mọi người yêu thích nhất!
             </Typography>
-            <RecipesCarousel array={trending} />
+            <Trending_Component />
           </Container>
         </Grid>
 
+        {/* Đóng góp nhiều nhất */}
         <Grid item xs={12}>
           <Box
             sx={{
@@ -201,11 +113,12 @@ function Home() {
                 cho đến các đầu bếp bậc thầy của chúng tôi từ khắp nơi trên thế
                 giới.
               </Typography>
-              <AuthorsCarousel array={mostContributedAuthors} />
+              <MostContributedAuthors_Component />
             </Container>
           </Box>
         </Grid>
 
+        {/* Với Tasteal */}
         <Grid item xs={12}>
           <Container>
             <Typography
@@ -227,17 +140,12 @@ function Home() {
                 pb: 6,
               }}
             >
-              {whyTastealArray.map((item, index) => {
-                return (
-                  <Grid key={index} item xs={6} md={3}>
-                    <WhyTasteal item={item} />
-                  </Grid>
-                );
-              })}
+              <WhyTasteal />
             </Grid>
           </Container>
         </Grid>
 
+        {/* Foot Banner */}
         <Grid item xs={12}>
           <Container>
             <Box

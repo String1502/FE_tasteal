@@ -1,13 +1,10 @@
 import { CustomCarousel } from "@/components/common/carousel/CustomeCarousel";
+import BoxImage from "@/components/common/image/BoxImage";
 import { cardWidth, responsive } from "@/lib/constants/responsiveCarousel";
-import useFirebaseImage from "@/lib/hooks/useFirebaseImage";
 import { AccountEntity } from "@/lib/models/entities/AccountEntity/AccountEntity";
 import { Box, Typography } from "@mui/material";
 
 const AuthorCard = ({ author }: { author: AccountEntity }) => {
-  const avatar = useFirebaseImage(author?.avatar);
-  console.log(avatar);
-
   return (
     <>
       <Box
@@ -18,7 +15,7 @@ const AuthorCard = ({ author }: { author: AccountEntity }) => {
         <Box
           sx={{
             width: { xs: "100%", sm: cardWidth },
-            aspectRatio: "1/1.4",
+            aspectRatio: "1/1.3",
             borderRadius: 6,
             boxShadow: 1,
             position: "relative",
@@ -26,15 +23,9 @@ const AuthorCard = ({ author }: { author: AccountEntity }) => {
             mb: 2,
           }}
         >
-          <Box
-            component={"img"}
-            src={avatar ?? ""}
+          <BoxImage
+            src={author?.avatar ?? ""}
             sx={{
-              width: "100%",
-              height: "100%",
-              objectFit: "cover",
-              objectPosition: "center",
-              position: "relative",
               transition: "all 0.25s ease-in-out",
               "&:hover": {
                 transform: "scale(1.2) ",
@@ -44,13 +35,30 @@ const AuthorCard = ({ author }: { author: AccountEntity }) => {
         </Box>
         <Typography
           variant="body1"
+          fontWeight={"regular"}
+          fontStyle={"italic"}
+          whiteSpace={"nowrap"}
+          textOverflow={"ellipsis"}
+          textTransform={"uppercase"}
+          overflow={"hidden"}
+          width={"100%"}
+        >
+          {author.quote == "" || !author.quote
+            ? "TASTEAL AUTHOR"
+            : author.quote}
+        </Typography>
+        <Typography
+          variant="body1"
           fontWeight={"bold"}
           whiteSpace={"nowrap"}
           textOverflow={"ellipsis"}
           overflow={"hidden"}
           width={"100%"}
+          sx={{
+            my: 1.5,
+          }}
         >
-          {author.name}
+          {author.name == "" || !author.name ? "Vô danh" : author.name}
         </Typography>
         <Typography
           variant="body2"
@@ -63,7 +71,9 @@ const AuthorCard = ({ author }: { author: AccountEntity }) => {
             WebkitBoxOrient: "vertical",
           }}
         >
-          {author.introduction}
+          {author.introduction == "" || !author.introduction
+            ? "Nếu được chọn một lần nữa, có lẽ tôi vẫn chọn như vậy."
+            : author.introduction}
         </Typography>
       </Box>
     </>

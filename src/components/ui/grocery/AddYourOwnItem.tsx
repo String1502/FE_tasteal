@@ -1,3 +1,4 @@
+import BoxImage from "@/components/common/image/BoxImage";
 import useFirebaseImage from "@/lib/hooks/useFirebaseImage";
 import { IngredientEntity } from "@/lib/models/entities/IngredientEntity/IngredientEntity";
 import IngredientService from "@/lib/services/ingredientService";
@@ -9,10 +10,8 @@ import {
   Dialog,
   DialogActions,
   DialogContent,
-  DialogContentText,
   DialogTitle,
   IconButton,
-  InputAdornment,
   TextField,
   Typography,
   Zoom,
@@ -244,20 +243,15 @@ function AddYourOwnItem() {
 export default AddYourOwnItem;
 
 function IngredientRenderOption({ item }: { item: IngredientEntity }) {
-  const image = useFirebaseImage(item?.image);
   return (
     <>
-      <Box
-        component={"img"}
-        src={image}
+      <BoxImage
+        src={item?.image}
         alt={item.name}
-        loading="lazy"
         sx={{
           width: 48,
           height: 48,
           borderRadius: "50%",
-          objectFit: "cover",
-          objectPosition: "center",
           border: 1,
           borderColor: "grey.300",
         }}

@@ -1,3 +1,4 @@
+import BoxImage from "@/components/common/image/BoxImage";
 import { IngredientEntity } from "@/lib/models/entities/IngredientEntity/IngredientEntity";
 import { CheckBox, CheckBoxOutlineBlank } from "@mui/icons-material";
 import {
@@ -95,13 +96,11 @@ export function IngredientAutocomplete({
               checked={selected}
             />
 
-            <Box
-              component={"img"}
-              loading="lazy"
-              width="28px"
+            <BoxImage
               src={`https://www.sidechef.com/ingredient/small/7cae3481-86d3-434d-a784-ceaf8ddfce62.jpg?d=96x96`}
-              alt=""
+              alt={option.name}
               sx={{
+                width: "28px",
                 borderRadius: 2,
                 mr: 1,
               }}

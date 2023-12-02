@@ -36,6 +36,7 @@ import {
 } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 import useFirebaseImage from "@/lib/hooks/useFirebaseImage";
+import BoxImage from "@/components/common/image/BoxImage";
 
 type CookbookChoosingType = {
   Cookbook: CookBookEntity;
@@ -192,14 +193,11 @@ function MySavedRecipes() {
                 width: "40%",
               }}
             >
-              <Box
-                component={"img"}
+              <BoxImage
                 src="https://www.sidechef.com/static/images/3feb6c9a2065479a6792.png"
+                alt="Empty"
                 sx={{
-                  width: "100%",
-
                   objectFit: "contain",
-                  objectPosition: "center",
                 }}
               />
               <Typography
@@ -276,10 +274,6 @@ function CookBook({
     }
   }, [choosing]);
 
-  const image = useFirebaseImage(
-    choosing?.CookbookRecipes[0]?.RecipeEntity?.image
-  );
-
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const openMenuContext = Boolean(anchorEl);
   const handleRightClick = (event: React.MouseEvent<HTMLElement>) => {
@@ -324,13 +318,9 @@ function CookBook({
           }
         }}
       >
-        <Box
-          component={"img"}
-          src={image}
+        <BoxImage
+          src={choosing?.CookbookRecipes[0]?.RecipeEntity?.image}
           sx={{
-            objectFit: "cover",
-            objectPosition: "center",
-            width: "100%",
             aspectRatio: "1/1",
             borderRadius: "50%",
             border: 3,

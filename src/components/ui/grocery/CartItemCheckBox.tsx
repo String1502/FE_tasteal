@@ -1,3 +1,4 @@
+import BoxImage from "@/components/common/image/BoxImage";
 import { Cart_ItemEntity } from "@/lib/models/entities/Cart_ItemEntity/Cart_ItemEntity";
 import {
   CheckCircleRounded,
@@ -64,15 +65,13 @@ function CartItemCheckBox({
             opacity: isBought ? 0.65 : 1,
           }}
         >
-          <Box
-            component={"img"}
+          <BoxImage
             src={item.ingredient?.image}
             sx={{
               height: "60px",
               aspectRatio: "1/1",
               objectFit: "contain",
               borderRadius: "50%",
-              objectPosition: "center",
               mr: 2,
             }}
           />

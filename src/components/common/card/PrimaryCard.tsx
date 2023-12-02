@@ -27,9 +27,10 @@ import {
   Menu,
   MenuItem,
   Rating,
+  Skeleton,
   Typography,
 } from "@mui/material";
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 
 const imgHeight = "224px";
 const padding = 2;
@@ -56,18 +57,12 @@ export function PrimaryCard({
     setAnchorEl(null);
   };
 
-  const [accountData, setAccountData] = useState<AccountEntity | undefined>(
-    undefined
-  );
   const [Cookbooks, setCookbooks] = useState<CookBookEntity[]>([]);
 
   useEffect(() => {
     async function fetchData() {
       try {
         const account = await AccountService.GetByUid("1");
-
-        setAccountData(account);
-
         const cookbooks = await CookbookService.GetCookbooksByAccountId(
           account.uid
         );
@@ -102,6 +97,14 @@ export function PrimaryCard({
             // image="https://www.sidechef.com/recipe/d49b0c1d-e63e-4aac-afcc-b337b0cd1bff.jpg?d=1408x1120"
             image={image}
             alt={recipe.name}
+            loading="lazy"
+            sx={{
+              opacity: 0,
+              transition: "all 0.2s ease-in-out",
+            }}
+            onLoad={(e) => {
+              e.currentTarget.style.opacity = "1";
+            }}
           />
           <Checkbox
             size="small"
@@ -177,6 +180,11 @@ export function PrimaryCard({
                 top: "80%",
                 left: "50%",
                 transform: "translate(-50%, -50%)",
+                opacity: 0,
+                transition: "all 0.2s ease-in-out",
+              }}
+              onLoad={(e) => {
+                e.currentTarget.style.opacity = "1";
               }}
             />
           </Box>
