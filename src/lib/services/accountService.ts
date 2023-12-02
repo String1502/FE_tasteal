@@ -57,18 +57,17 @@ class AccountService {
 
     let result: AccountReq[] = [];
 
-    Promise.all([
-      fetch(getApiUrl("GET_MOST_CONTRIBUTED_ACCOUNTS"), requestOptions)
-        .then((res) => res.json())
-        .then((data) => {
-          result = data;
-        })
-        .catch((error) => {
-          console.error("Lỗi:", error);
-        }),
-    ]);
+    await fetch(getApiUrl("GET_MOST_CONTRIBUTED_ACCOUNTS"), requestOptions)
+      .then((res) => res.json())
+      .then((data) => {
+        result = data;
+        console.log(data);
+      })
+      .catch((error) => {
+        console.error("Lỗi:", error);
+      });
 
-    return Promise.resolve(result);
+    return result;
   }
 
   /**

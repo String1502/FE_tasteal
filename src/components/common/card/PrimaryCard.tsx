@@ -10,7 +10,7 @@ import {
   ArrowRightRounded,
   BookmarkBorderRounded,
   BookmarkRounded,
-  DoubleArrowRounded,
+  PlayArrowRounded,
   StarRounded,
 } from "@mui/icons-material";
 import {
@@ -238,7 +238,7 @@ export function PrimaryCard({
           return (
             <MenuItem key={cookbook.id} onClick={handleClose}>
               <ListItemIcon>
-                <ArrowRightRounded color="primary" fontSize="small" />
+                <PlayArrowRounded color="primary" fontSize="small" />
               </ListItemIcon>
               <Typography
                 variant="body2"

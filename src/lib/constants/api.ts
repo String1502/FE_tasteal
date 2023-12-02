@@ -28,6 +28,7 @@ export const API_END_POINT = {
   DELETE_CART_BY_ID: "Cart/cart",
   // USER
   SIGNUP_USER: "User/signup",
+  UPDATEUSER: "/User/updateuser",
 } as const;
 
 /**

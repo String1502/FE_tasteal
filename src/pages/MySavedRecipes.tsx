@@ -28,9 +28,11 @@ import CookbookRecipeService from "@/lib/services/cookbookRecipeService";
 import { PrimaryCard } from "@/components/common/card/PrimaryCard";
 import {
   AddCircleOutlineRounded,
+  ArrowRightRounded,
   BookmarkBorderRounded,
   DeleteRounded,
   DriveFileRenameOutlineRounded,
+  PlayArrowRounded,
 } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 import useFirebaseImage from "@/lib/hooks/useFirebaseImage";
@@ -171,7 +173,10 @@ function MySavedRecipes() {
               {choosing?.CookbookRecipes.length > 0 &&
                 choosing?.CookbookRecipes.map((item, i) => (
                   <Grid item xs={12} sm={6} md={4} lg={3} key={i}>
-                    <CustomCard cookbookRecipe={item} />
+                    <CustomCard
+                      cookbookRecipe={item}
+                      cookbookData={cookbookData}
+                    />
                   </Grid>
                 ))}
             </Grid>
@@ -495,19 +500,43 @@ function CookBook({
 
 function CustomCard({
   cookbookRecipe,
+  cookbookData,
 }: {
   cookbookRecipe: CookBook_RecipeEntity;
+  cookbookData: CookBookEntity[];
 }) {
+  //#region Dialog Xóa recipe khỏi cookbook
   const [openDelete, setOpenDelete] = React.useState(false);
   const handleOpenDelete = () => setOpenDelete(true);
   const handleCloseDelete = () => setOpenDelete(false);
+  //#endregion
 
-  const checkboxProps: CheckboxProps = {
-    checked: true,
-    onClick: () => {
-      handleOpenDelete();
-    },
+  //#region Di chuyển recipe tới cookbook khác
+  const [openMove, setOpenMove] = React.useState(false);
+  const handleOpenMove = () => setOpenMove(true);
+  const handleCloseMove = () => setOpenMove(false);
+  const [moveToNewCookbook_Id, setMoveToNewCookbook_Id] = React.useState(-1);
+  //#endregion
+
+  //#region Menu context
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const open = Boolean(anchorEl);
+  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setAnchorEl(event.currentTarget);
   };
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+  //#endregion
+
+  const checkboxProps: CheckboxProps = useMemo(() => {
+    return {
+      checked: true,
+      onClick: (e: any) => {
+        handleClick(e);
+      },
+    };
+  }, []);
 
   return (
     <>
@@ -516,6 +545,127 @@ function CustomCard({
         saveCheckBoxProps={checkboxProps}
       />
 
+      {/* Menu context */}
+      <Menu
+        anchorEl={anchorEl}
+        open={open}
+        onClose={handleClose}
+        slotProps={{
+          paper: {
+            sx: {
+              background: "white",
+              borderRadius: 4,
+              width: "200px",
+            },
+          },
+        }}
+      >
+        {cookbookData.map((cookbook) => {
+          if (cookbook.id == cookbookRecipe.cook_book_id) {
+            return null;
+          }
+          return (
+            <MenuItem
+              key={cookbook.id}
+              onClick={() => {
+                handleOpenMove();
+                setMoveToNewCookbook_Id(cookbook.id);
+                handleClose();
+              }}
+            >
+              <ListItemIcon>
+                <PlayArrowRounded color="primary" fontSize="small" />
+              </ListItemIcon>
+              <Typography
+                variant="body2"
+                color="primary"
+                fontWeight={"bold"}
+                whiteSpace={"nowrap"}
+                textOverflow={"ellipsis"}
+                overflow={"hidden"}
+              >
+                {cookbook.name}
+              </Typography>
+            </MenuItem>
+          );
+        })}
+
+        <MenuItem
+          onClick={() => {
+            handleOpenDelete();
+            handleClose();
+          }}
+        >
+          <ListItemIcon>
+            <DeleteRounded color="error" fontSize="small" />
+          </ListItemIcon>
+          <Typography
+            variant="body2"
+            color="error"
+            fontWeight={"bold"}
+            whiteSpace={"nowrap"}
+            textOverflow={"ellipsis"}
+            overflow={"hidden"}
+          >
+            Xóa
+          </Typography>
+        </MenuItem>
+      </Menu>
+
+      {/* Dialog di chuyển */}
+      <Dialog
+        open={openMove}
+        onClose={handleCloseMove}
+        PaperProps={{
+          ...DialogPaperProps,
+        }}
+      >
+        <DialogTitle>
+          <Typography variant="body1" fontWeight={"bold"} textAlign={"center"}>
+            Bạn muốn di chuyển công thức?
+          </Typography>
+        </DialogTitle>
+        <DialogContent>
+          <Typography variant="body1">
+            Công thức sẽ di chuyển đến{" "}
+            {
+              cookbookData.find(
+                (cookbook) => cookbook.id == moveToNewCookbook_Id
+              )?.name
+            }
+          </Typography>
+        </DialogContent>
+        <DialogActions
+          sx={{
+            justifyContent: "center",
+          }}
+        >
+          <Button
+            sx={{
+              width: "150px",
+            }}
+            size="small"
+            variant="outlined"
+            onClick={handleCloseMove}
+          >
+            Hủy
+          </Button>
+          <Button
+            sx={{
+              width: "150px",
+            }}
+            size="small"
+            variant="contained"
+            color="primary"
+            onClick={handleCloseMove}
+            autoFocus
+          >
+            Xác nhận
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* Dialog xóa */}
       <Dialog
         open={openDelete}
         onClose={handleCloseDelete}
