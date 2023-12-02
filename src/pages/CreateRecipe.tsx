@@ -19,6 +19,7 @@ import { uploadImage } from '@/lib/firebase/image';
 import { useSnackbarService } from '@/lib/hooks/useSnackbar';
 import { RecipeReq } from '@/lib/models/dtos/Request/RecipeReq/RecipeReq';
 import { Direction } from '@/lib/models/dtos/common';
+import OccasionService from '@/lib/services/occasionService';
 import RecipeService from '@/lib/services/recipeService';
 import { createDebugStringFormatter } from '@/utils/debug/formatter';
 import { getFileExtension } from '@/utils/file';
@@ -34,44 +35,13 @@ import {
     RadioGroup,
     Stack,
 } from '@mui/material';
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 
 /**
  * Create debug string
  */
 const createDebugString = createDebugStringFormatter('CreateRecipe');
-
-/**
- * Because api resopnse is a whole object, so I'll mock occasion instead of create
- * a whole new service for it.
- */
-const mockOccasions = [
-    {
-        id: 1,
-        name: 'Lunar New Year',
-    },
-    {
-        id: 2,
-        name: 'Chrismas',
-    },
-    {
-        id: 3,
-        name: 'Halloween',
-    },
-    {
-        id: 4,
-        name: 'Birthday',
-    },
-    {
-        id: 5,
-        name: 'Wedding',
-    },
-    {
-        id: 6,
-        name: 'Thanksgiving',
-    },
-];
 
 /**
  * Represents a new recipe.
@@ -163,7 +133,6 @@ const CreateRecipe: React.FunctionComponent = () => {
     const [snackbarAlert] = useSnackbarService();
 
     //#endregion
-
     //#region UseStates
 
     const [ingredientSelectModalOpen, setIngredientSelectModalOpen] =
@@ -174,9 +143,9 @@ const CreateRecipe: React.FunctionComponent = () => {
     const [newRecipe, setNewRecipe] = useState<NewRecipe>(DEFAULT_NEW_RECIPE);
     const [selectedOccasions, setSelectedOccasions] = useState<ChipValue[]>([]);
     const [isCreatingRecipe, setIsCreatingRecipe] = useState(false);
+    const [occasions, setOccasions] = useState([]);
 
     //#endregion
-
     //#region Methods
 
     const filterOccasions = useCallback(
@@ -191,20 +160,13 @@ const CreateRecipe: React.FunctionComponent = () => {
     );
 
     //#endregion
-
     //#region UseMemos
 
-    const canCreateRecipe = useMemo(
-        () => newRecipe.name && newRecipe.ingredients.length > 0,
-        [newRecipe]
-    );
-
     const filteredOccasions = useMemo(() => {
-        return filterOccasions(mockOccasions);
-    }, [filterOccasions]);
+        return filterOccasions(occasions);
+    }, [filterOccasions, occasions]);
 
     //#endregion
-
     //#region Methods
 
     const validateNewRecipe = useCallback((): {
@@ -240,16 +202,7 @@ const CreateRecipe: React.FunctionComponent = () => {
         }
 
         return { isValid, msg };
-    }, [
-        newRecipe,
-        newRecipe.name,
-        newRecipe.introduction,
-        recipeThumbnailFile,
-        newRecipe.ingredients,
-        newRecipe.ingredients.length,
-        newRecipe.directions,
-        newRecipe.directions.length,
-    ]);
+    }, [newRecipe, recipeThumbnailFile]);
 
     /**
      * Creates a new recipe request.
@@ -309,7 +262,6 @@ const CreateRecipe: React.FunctionComponent = () => {
     }, []);
 
     //#endregion
-
     //#region Handlers
 
     const handleNewRecipeFieldChange = useCallback(
@@ -399,7 +351,16 @@ const CreateRecipe: React.FunctionComponent = () => {
         } finally {
             setIsCreatingRecipe(false);
         }
-    }, [createPostData]);
+    }, [clearForm, createPostData, snackbarAlert, validateNewRecipe]);
+
+    //#endregion
+    //#region UseEffects
+
+    useEffect(() => {
+        OccasionService.GetAll()
+            .then((occasions) => setOccasions(occasions))
+            .catch(() => setOccasions([]));
+    }, []);
 
     //#endregion
 
@@ -424,9 +385,9 @@ const CreateRecipe: React.FunctionComponent = () => {
                 >
                     <CardContent>
                         <Stack gap={4}>
-                            <FormTitle>Create Your Own Recipe</FormTitle>
+                            <FormTitle>Viết công thức cho chính bạn</FormTitle>
                             <Stack>
-                                <FormLabel>Recipe Title</FormLabel>
+                                <FormLabel>Tên công thức</FormLabel>
                                 <TastealTextField
                                     value={newRecipe.name}
                                     disabled={isCreatingRecipe}
@@ -436,11 +397,13 @@ const CreateRecipe: React.FunctionComponent = () => {
                                             e.target.value
                                         )
                                     }
-                                    placeholder="Type your recipe name here"
+                                    placeholder="Nhập tên công thức"
                                 />
                             </Stack>
                             <Stack>
-                                <FormLabel>Introduction (Optional)</FormLabel>
+                                <FormLabel>
+                                    Giới thiệu (Không bắt buộc)
+                                </FormLabel>
                                 <TastealTextField
                                     value={newRecipe.introduction}
                                     disabled={isCreatingRecipe}
@@ -452,22 +415,22 @@ const CreateRecipe: React.FunctionComponent = () => {
                                     }
                                     multiline
                                     rows={2}
-                                    placeholder={`Add introduction (e.g "transfer to a small bowl")`}
+                                    placeholder={`Viết những dòng giới thiệu cho công thức của bạn`}
                                 />
                             </Stack>
                             <Stack gap={1}>
-                                <FormLabel>Occasions</FormLabel>
+                                <FormLabel>Dịp</FormLabel>
                                 <Autocomplete
                                     disabled={isCreatingRecipe}
                                     options={filteredOccasions}
                                     getOptionLabel={(o) => o.name}
-                                    title="Select occasions"
-                                    placeholder="Select occasions"
-                                    noOptionsText="No occasions found"
+                                    title="Chọn dịp"
+                                    placeholder="Chọn dịp cho công thức"
+                                    noOptionsText="Không tìm thấy dịp lễ nào"
                                     renderInput={(params) => (
                                         <TastealTextField
                                             {...params}
-                                            label="Select occasions"
+                                            label="Chọn dịp"
                                         />
                                     )}
                                     onChange={(_, value) =>
@@ -484,7 +447,7 @@ const CreateRecipe: React.FunctionComponent = () => {
                             </Stack>
                             <Stack>
                                 <FormLabel>
-                                    Add Cover Image (Optional)
+                                    Thêm hình bìa (Không bắt buộc)
                                 </FormLabel>
                                 <ImagePicker
                                     file={recipeThumbnailFile}
@@ -493,7 +456,7 @@ const CreateRecipe: React.FunctionComponent = () => {
                                 />
                             </Stack>
                             <Stack>
-                                <FormLabel>Serving Size</FormLabel>
+                                <FormLabel>Khẩu phần ăn</FormLabel>
                                 <ServingSizeSelect
                                     disabled={isCreatingRecipe}
                                     servingSize={newRecipe.servingSize}
@@ -507,7 +470,7 @@ const CreateRecipe: React.FunctionComponent = () => {
                                 />
                             </Stack>
                             <Stack>
-                                <FormLabel>Ingredients</FormLabel>
+                                <FormLabel>Nguyên liệu</FormLabel>
                                 <IngredientSelector
                                     disabled={isCreatingRecipe}
                                     ingredients={newRecipe.ingredients}
@@ -516,7 +479,7 @@ const CreateRecipe: React.FunctionComponent = () => {
                                 />
                             </Stack>
                             <Stack>
-                                <FormLabel>Directions</FormLabel>
+                                <FormLabel>Hướng dẫn</FormLabel>
                                 <DirectionEditor
                                     disabled={isCreatingRecipe}
                                     directions={newRecipe.directions}
@@ -524,7 +487,9 @@ const CreateRecipe: React.FunctionComponent = () => {
                                 />
                             </Stack>
                             <Stack>
-                                <FormLabel>Author's Notes (Optional)</FormLabel>
+                                <FormLabel>
+                                    Ghi chú của tác giả (Không bắt buộc)
+                                </FormLabel>
                                 <TastealTextField
                                     value={newRecipe.authorNote}
                                     disabled={isCreatingRecipe}
@@ -536,7 +501,7 @@ const CreateRecipe: React.FunctionComponent = () => {
                                     }
                                     multiline
                                     rows={2}
-                                    placeholder={`Add tips or tricks for this recipe`}
+                                    placeholder={`Thêm mẹo / lưu ý cho công thức này`}
                                 />
                             </Stack>
                             <Stack>
@@ -554,13 +519,13 @@ const CreateRecipe: React.FunctionComponent = () => {
                                     <FormControlLabel
                                         value={true}
                                         control={<Radio />}
-                                        label="Not Visible to others"
+                                        label="Người khác không thể xem"
                                         disabled={isCreatingRecipe}
                                     />
                                     <FormControlLabel
                                         value={false}
                                         control={<Radio />}
-                                        label="Generates a shareable link"
+                                        label="Chia sẻ công thức thông qua link"
                                         disabled={isCreatingRecipe}
                                     />
                                 </RadioGroup>
@@ -577,7 +542,7 @@ const CreateRecipe: React.FunctionComponent = () => {
                                     {isCreatingRecipe ? (
                                         <CircularProgress size={20} />
                                     ) : (
-                                        'DONE'
+                                        'Hoàn thành'
                                     )}
                                 </RoundedButton>
                             </Stack>
