@@ -1,3 +1,4 @@
+import BoxImage from "@/components/common/image/BoxImage";
 import useFirebaseImage from "@/lib/hooks/useFirebaseImage";
 import { OccasionEntity } from "@/lib/models/entities/OccasionEntity/OccasionEntity";
 import { Box, Button, Link, Stack, Typography } from "@mui/material";
@@ -24,7 +25,6 @@ export function OccasionsList({ occasions }: { occasions: OccasionEntity[] }) {
 }
 
 function OccasionCard({ item }: { item: OccasionEntity }) {
-  const image = useFirebaseImage(item?.image);
   return (
     <Box
       sx={{
@@ -53,16 +53,14 @@ function OccasionCard({ item }: { item: OccasionEntity }) {
           backgroundColor: "white",
         }}
       >
-        <Box
-          width={"100%"}
-          height={"68%"}
+        <BoxImage
+          src={item?.image}
           sx={{
-            backgroundImage: `url(${image})`,
-            backgroundSize: "cover",
-            backgroundPosition: "center",
-            backgroundRepeat: "no-repeat",
+            width: "100%",
+            height: "68%",
           }}
-        ></Box>
+        />
+
         <Box
           component={Link}
           underline="none"

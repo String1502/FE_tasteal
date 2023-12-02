@@ -160,6 +160,7 @@ function Home() {
                 backgroundSize: "cover",
                 backgroundPosition: "center",
                 backgroundRepeat: "no-repeat",
+                transition: "all 0.2s ease-in-out",
               }}
             >
               <Box

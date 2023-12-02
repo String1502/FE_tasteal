@@ -45,6 +45,7 @@ export function Banner() {
             backgroundPosition: "center",
             backgroundRepeat: "no-repeat",
             position: "relative",
+            transition: "all 0.2s ease-in-out",
           }}
         >
           <Box

@@ -1,5 +1,4 @@
 import { popoverPath } from "@/assets/exportImage";
-import useFirebaseImage from "@/lib/hooks/useFirebaseImage";
 import { Box, Container, Grid, Typography } from "@mui/material";
 import React from "react";
 import { DefaultTuKhoas, TuKhoa } from "../../../pages/Search";
@@ -10,6 +9,7 @@ import {
 import { CustomLink } from "./CustomLink";
 import { IngredientEntity } from "@/lib/models/entities/IngredientEntity/IngredientEntity";
 import { OccasionEntity } from "@/lib/models/entities/OccasionEntity/OccasionEntity";
+import BoxImage from "@/components/common/image/BoxImage";
 
 const gridItemSX = {
   height: "100%",
@@ -26,7 +26,6 @@ export function PopoverContent() {
     React.useState<IngredientEntity[]>(defaultIngredients);
   const [occasions, setOccasions] =
     React.useState<OccasionEntity[]>(defaultOccasions);
-  const popoverPathImage = useFirebaseImage(popoverPath);
   return (
     <>
       <Container
@@ -44,18 +43,15 @@ export function PopoverContent() {
           alignSelf={"stretch"}
         >
           <Grid item xs={3}>
-            <Box
+            <BoxImage
+              src={popoverPath}
               sx={{
                 aspectRatio: "1/1",
                 border: 1,
                 borderColor: "secondary.main",
-                backgroundImage: `url(${popoverPathImage})`,
-                backgroundSize: "cover",
-                backgroundPosition: "center",
-                backgroundRepeat: "no-repeat",
                 borderRadius: 2,
               }}
-            ></Box>
+            />
           </Grid>
 
           <Grid item xs={3}>
