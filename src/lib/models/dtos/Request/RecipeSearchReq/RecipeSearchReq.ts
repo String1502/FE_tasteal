@@ -9,5 +9,4 @@ export type RecipeSearchReq = {
   ActiveTime?: number;
   Calories?: CaloriesReq;
   TextSearch?: string;
-  KeyWordsFormat?: string[];
 };
