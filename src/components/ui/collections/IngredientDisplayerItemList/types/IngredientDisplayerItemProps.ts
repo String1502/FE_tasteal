@@ -1,8 +1,8 @@
-import { SimpleIngredient } from "@/lib/models/dtos/common";
+import { IngredientRes } from '@/lib/models/dtos/Response/IngredientRes/IngredientRes';
 
 type IngredientDisplayerItemProps = {
-  value: SimpleIngredient;
-  servingSize: number;
+    value: IngredientRes;
+    servingSize: number;
 };
 
 export default IngredientDisplayerItemProps;

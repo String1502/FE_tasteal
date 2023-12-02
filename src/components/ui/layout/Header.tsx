@@ -105,7 +105,7 @@ export function Header(props: Props) {
     });
 
     return () => unsubscribe();
-  });
+  }, []);
 
   //#endregion
 

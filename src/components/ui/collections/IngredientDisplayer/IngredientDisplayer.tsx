@@ -1,16 +1,16 @@
 import SectionHeading from "@/components/common/typos/SectionHeading";
-import { SimpleIngredient } from "@/lib/models/dtos/common";
-import { Stack, Typography } from "@mui/material";
 import { FC, useCallback, useState } from "react";
 import ServingSizeSelect from "../../selects/ServingSizeSelect";
 import IngredientDisplayerItemList from "../IngredientDisplayerItemList";
+import { IngredientRes } from "@/lib/models/dtos/Response/IngredientRes/IngredientRes";
+import { Stack, Typography } from "@mui/material";
 
 export type IngredientDisplayerProps = {
-  ingredients: SimpleIngredient[];
+  ingredients: IngredientRes[];
 };
 
 const IngredientDisplayer: FC<IngredientDisplayerProps> = ({ ingredients }) => {
-  const [servingSize, setServingSize] = useState(1);
+  const [ servingSize, setServingSize ] = useState(1);
 
   const handleServingSizeChange = useCallback((value: number) => {
     setServingSize(value);
