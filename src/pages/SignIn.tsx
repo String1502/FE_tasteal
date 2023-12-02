@@ -41,11 +41,11 @@ export default function SignIn() {
 
     const handleSignInWithEmailAndPassword = useCallback(() => {
         signInEmailUser(signInInfo.email, signInInfo.password)
-            .then((userCredential) => {
+            .then(() => {
                 openSnackbar('Đăng nhập thành công!', 'success');
                 navigate('/');
             })
-            .catch((error) => {
+            .catch(() => {
                 openSnackbar('Đăng nhập thất bại!', 'warning');
             });
     }, [navigate, openSnackbar, signInInfo.email, signInInfo.password]);
