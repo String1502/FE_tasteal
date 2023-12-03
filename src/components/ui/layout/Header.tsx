@@ -1,7 +1,7 @@
 import ColorModeContext from '@/lib/contexts/ColorModeContext';
 import { signOutUser } from '@/lib/firebase/auth';
 import { auth } from '@/lib/firebase/config';
-import { useSnackbarService } from '@/lib/hooks/useSnackbar';
+import useSnackbarService from '@/lib/hooks/useSnackbar';
 import { Logout, SearchRounded, ShoppingBagRounded } from '@mui/icons-material';
 import MenuIcon from '@mui/icons-material/Menu';
 import {

@@ -1,29 +1,21 @@
-import { useEffect, useState } from "react";
-import { getApiUrl } from "../constants/api";
-import { IngredientRes } from "../models/dtos/Response/IngredientRes/IngredientRes";
+import { useEffect, useState } from 'react';
+import { IngredientRes } from '../models/dtos/Response/IngredientRes/IngredientRes';
+import IngredientService from '../services/ingredientService';
 
 const useIngredients = () => {
-  const [ingredients, setIngredients] = useState<IngredientRes[]>([]);
+    const [ingredients, setIngredients] = useState<IngredientRes[]>([]);
 
-  useEffect(() => {
-    fetch(getApiUrl("GET_ALL_INGREDIENTS"))
-      .then((res) => {
-        if (res.ok) {
-          return res.json();
-        } else {
-          return Promise.reject();
-        }
-      })
-      .then((data) => {
-        console.log(data);
-        setIngredients(data);
-      })
-      .catch(() => {
-        setIngredients([]);
-      });
-  }, []);
+    useEffect(() => {
+        IngredientService.GetAll()
+            .then((ingredients) => {
+                setIngredients(ingredients);
+            })
+            .catch(() => {
+                setIngredients([]);
+            });
+    }, []);
 
-  return ingredients;
+    return ingredients;
 };
 
 export default useIngredients;

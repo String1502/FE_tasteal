@@ -15,14 +15,17 @@ import Layout from '@/layout/Layout';
 import { N_A_VALUE } from '@/lib/constants/common';
 import { DEFAULT_NUTRITION_VALUE } from '@/lib/constants/defaultValue';
 import AppContext from '@/lib/contexts/AppContext';
+import { auth } from '@/lib/firebase/config';
 import { RecipeRes } from '@/lib/models/dtos/Response/RecipeRes/RecipeRes';
 import RecipeService from '@/lib/services/recipeService';
+import createCacheAsyncFunction from '@/utils/cache/createCacheAsyncFunction';
 import { createDebugStringFormatter } from '@/utils/debug/formatter';
 import { dateTimeToMinutes } from '@/utils/format';
 import {
     Add,
     Bookmark,
     BookmarkOutlined,
+    Edit,
     Facebook,
     Mail,
     Pinterest,
@@ -43,6 +46,7 @@ import {
     Stack,
     Typography,
 } from '@mui/material';
+import { onAuthStateChanged } from 'firebase/auth';
 import {
     FC,
     useCallback,
@@ -53,7 +57,7 @@ import {
 } from 'react';
 import { useParams } from 'react-router-dom';
 
-// Mock bread crumbs data
+// Mock bread crumbs data (will be remove later)
 const breadCrumbsLinks = [
     {
         href: '/',
@@ -88,6 +92,11 @@ const RecipeDetailStringConstants = {
  */
 const debugStringFormatter = createDebugStringFormatter(PAGE_ID);
 
+/**
+ * Cached version of RecipeService.GetById
+ */
+const getRecipeById = createCacheAsyncFunction(RecipeService.GetById);
+
 const RecipeDetail: FC = () => {
     //#region Destructuring
 
@@ -99,22 +108,10 @@ const RecipeDetail: FC = () => {
     const { handleSpinner } = useContext(AppContext);
 
     //#endregion
-    //#region UseStates
+    //#region Recipe
 
     const [isRecipeFound, setIsRecipeFound] = useState(true);
     const [recipe, setRecipe] = useState<RecipeRes | null>(null);
-    const [nutritionPerServingModalOpen, setNutritionPerServingModalOpen] =
-        useState(false);
-
-    //#endregion
-    //#region Callbacks
-
-    const handleNutrionPerServingModalClose = useCallback(() => {
-        setNutritionPerServingModalOpen(false);
-    }, [setNutritionPerServingModalOpen]);
-
-    //#endregion
-    //#region UseEffects
 
     useEffect(() => {
         handleSpinner(true);
@@ -127,7 +124,7 @@ const RecipeDetail: FC = () => {
 
         const parsedId = parseInt(id);
 
-        RecipeService.GetById(parsedId)
+        getRecipeById(parsedId)
             .then((recipe) => {
                 setRecipe(recipe);
                 setIsRecipeFound(true);
@@ -142,11 +139,40 @@ const RecipeDetail: FC = () => {
     }, [handleSpinner, id]);
 
     //#endregion
-    //#region UseMemos
+    //#region Nutrition
+
+    const [nutritionPerServingModalOpen, setNutritionPerServingModalOpen] =
+        useState(false);
+
+    const handleNutrionPerServingModalClose = useCallback(() => {
+        setNutritionPerServingModalOpen(false);
+    }, [setNutritionPerServingModalOpen]);
+
+    //#endregion
+    //#region Edit Recipe
+
+    const [canEditRecipe, setCanEditRecipe] = useState(true);
+
+    useEffect(() => {
+        const unsubscribe = onAuthStateChanged(auth, (user) => {
+            if (!user) return;
+
+            if (!recipe || !recipe.author) return;
+
+            if (user.uid === recipe.author.uid) {
+                setCanEditRecipe(true);
+            } else {
+                setCanEditRecipe(false);
+            }
+        });
+
+        return () => unsubscribe();
+    }, [recipe]);
+
+    //#endregion
+    //#region Others
 
     const recipeBrief = useMemo(() => {
-        console.log('recipe', recipe);
-
         if (!recipe) {
             return RecipeDetailStringConstants.DEFAULT_NAME;
         }
@@ -155,9 +181,9 @@ const RecipeDetail: FC = () => {
         const directionCount = recipe.directions.length;
         const totalTime = recipe.totalTime;
 
-        return `${ingredientCount} INGREDIENTS • ${directionCount} STEPS • ${dateTimeToMinutes(
+        return `${ingredientCount} NGUYÊN LIỆU • ${directionCount} BƯỚC • ${dateTimeToMinutes(
             totalTime
-        )} MIN`;
+        )} PHÚT`;
     }, [recipe]);
 
     //#endregion
@@ -211,7 +237,7 @@ const RecipeDetail: FC = () => {
                                     ) : (
                                         <>
                                             <Typography>
-                                                Image not found
+                                                Không tìm thấy hình ảnh
                                             </Typography>
                                         </>
                                     )}
@@ -227,7 +253,7 @@ const RecipeDetail: FC = () => {
                                         gap={1}
                                     >
                                         <Chip
-                                            label="Recipe"
+                                            label="Công thức"
                                             sx={{
                                                 borderRadius: 1,
                                                 width: 'fit-content',
@@ -256,6 +282,17 @@ const RecipeDetail: FC = () => {
                                             {recipe?.name ??
                                                 RecipeDetailStringConstants.DEFAULT_NAME}
                                         </Typography>
+                                        <Button
+                                            startIcon={<Edit />}
+                                            variant="contained"
+                                            sx={{
+                                                display: canEditRecipe
+                                                    ? 'block'
+                                                    : 'none',
+                                            }}
+                                        >
+                                            Chỉnh sửa
+                                        </Button>
                                     </Stack>
                                 </Grid>
                             </Grid>
@@ -296,7 +333,7 @@ const RecipeDetail: FC = () => {
 
                                 <Stack>
                                     <SectionHeading>
-                                        Author's Notes
+                                        Ghi chú của tác giả
                                     </SectionHeading>
                                     <Typography
                                         color="primary.main"
@@ -342,7 +379,7 @@ const RecipeDetail: FC = () => {
                                         variant="contained"
                                         startIcon={<Bookmark />}
                                     >
-                                        SAVE RECIPE
+                                        LƯU CÔNG THỨC
                                     </Button>
                                     <Button
                                         variant="contained"
@@ -357,7 +394,7 @@ const RecipeDetail: FC = () => {
                                             },
                                         }}
                                     >
-                                        ADD TO PLAN
+                                        Thêm vào lịch ăn
                                     </Button>
                                 </Box>
                             </SimpleContainer>
@@ -409,10 +446,8 @@ const RecipeDetail: FC = () => {
                                 justifyContent={'space-between'}
                                 alignItems={'center'}
                             >
-                                <SectionHeading>
-                                    Cooking Instructions
-                                </SectionHeading>
-                                <Link href="#">HIDE IMAGES</Link>
+                                <SectionHeading>Hướng dẫn nấu</SectionHeading>
+                                <Link href="#">Ẩn hình ảnh</Link>
                             </Stack>
 
                             <Stack gap={2}>
@@ -420,6 +455,10 @@ const RecipeDetail: FC = () => {
                                     <DirectionItem
                                         key={index}
                                         value={direction}
+                                        last={
+                                            index ===
+                                            recipe.directions.length - 1
+                                        }
                                     />
                                 ))}
                             </Stack>
@@ -443,7 +482,7 @@ const RecipeDetail: FC = () => {
                                 justifyContent={'space-between'}
                             >
                                 <BigSectionHeading>
-                                    Rate & Review
+                                    Đánh giá & Review
                                 </BigSectionHeading>
                                 <Stack
                                     direction="row"
@@ -454,7 +493,7 @@ const RecipeDetail: FC = () => {
                                         fontSize={20}
                                         fontWeight={'bold'}
                                     >
-                                        Tap to rate:
+                                        Chạm để đánh giá:
                                     </Typography>
                                     <Rating
                                         size="large"
@@ -467,7 +506,7 @@ const RecipeDetail: FC = () => {
                             <TastealTextField
                                 multiline
                                 rows={4}
-                                placeholder="Leave a comment"
+                                placeholder="Để lại bình luận"
                                 fullWidth
                                 sx={{ mt: 1 }}
                             />
@@ -501,7 +540,7 @@ const RecipeDetail: FC = () => {
                                     color="primary.main"
                                     fontSize={16}
                                 >
-                                    {122} Saved (not implemented yet)
+                                    Đã lưu {122} (not implemented yet)
                                 </Typography>
                             </Box>
                             <Box
@@ -539,8 +578,8 @@ const RecipeDetail: FC = () => {
                                 alignItems={'center'}
                             >
                                 <BigSectionHeading>
-                                    More from{' '}
-                                    {recipe?.author.name || '{AuthorName}'} at
+                                    Xem thêm của{' '}
+                                    {recipe?.author.name || '{AuthorName}'} tại
                                     SideChef
                                 </BigSectionHeading>
                                 <Button
@@ -555,7 +594,7 @@ const RecipeDetail: FC = () => {
                                         },
                                     }}
                                 >
-                                    VIEW ALL
+                                    Xem tất cả
                                 </Button>
                             </Box>
                             <Box>
@@ -572,7 +611,7 @@ const RecipeDetail: FC = () => {
                                 alignItems={'center'}
                             >
                                 <BigSectionHeading>
-                                    Recommended Recipes
+                                    Công thức gợi ý
                                 </BigSectionHeading>
                             </Box>
                             <Box>{'Not yet implemented'}</Box>

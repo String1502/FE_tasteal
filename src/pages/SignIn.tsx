@@ -13,7 +13,8 @@ import { signInImagePath } from '@/assets/exportImage';
 import { signInEmailUser } from '@/lib/firebase/auth';
 import { auth, googleProvider } from '@/lib/firebase/config';
 import useFirebaseImage from '@/lib/hooks/useFirebaseImage';
-import { useSnackbarService } from '@/lib/hooks/useSnackbar';
+import usePreventSignedInUser from '@/lib/hooks/usePreventSignedInUser';
+import useSnackbarService from '@/lib/hooks/useSnackbar';
 import { Facebook, Google } from '@mui/icons-material';
 import { signInWithPopup } from 'firebase/auth';
 import { useCallback, useState } from 'react';
@@ -27,25 +28,31 @@ export default function SignIn() {
     const [openSnackbar] = useSnackbarService();
 
     //#endregion
-
-    //#region States
+    //#region Sign In Info
 
     const [signInInfo, setSignInInfo] = useState<{
         email: string;
         password: string;
     }>({ email: '', password: '' });
 
-    //#endregion
+    const handleEmailChange = useCallback((email) => {
+        setSignInInfo((prev) => ({ ...prev, email: email }));
+    }, []);
 
-    //#region Handlers
+    const handlePasswordChange = useCallback((password) => {
+        setSignInInfo((prev) => ({ ...prev, password: password }));
+    }, []);
+
+    //#endregion
+    //#region Sign In Handlers
 
     const handleSignInWithEmailAndPassword = useCallback(() => {
         signInEmailUser(signInInfo.email, signInInfo.password)
-            .then((userCredential) => {
+            .then(() => {
                 openSnackbar('Đăng nhập thành công!', 'success');
                 navigate('/');
             })
-            .catch((error) => {
+            .catch(() => {
                 openSnackbar('Đăng nhập thất bại!', 'warning');
             });
     }, [navigate, openSnackbar, signInInfo.email, signInInfo.password]);
@@ -68,17 +75,10 @@ export default function SignIn() {
         openSnackbar('Chức năng chưa được hiện thực!', 'warning');
     }, [openSnackbar]);
 
-    //#region Sign In Info Change
-
-    const handleEmailChange = useCallback((email) => {
-        setSignInInfo((prev) => ({ ...prev, email: email }));
-    }, []);
-
-    const handlePasswordChange = useCallback((password) => {
-        setSignInInfo((prev) => ({ ...prev, password: password }));
-    }, []);
-
     //#endregion
+    //#region Prevent signed in user
+
+    usePreventSignedInUser();
 
     //#endregion
 

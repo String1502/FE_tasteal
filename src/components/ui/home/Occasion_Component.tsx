@@ -1,46 +1,46 @@
-import { OccasionsList } from "@/components/ui/home/OccasionsList";
-import OccasionService from "@/lib/services/occasionService";
-import { Skeleton } from "@mui/material";
-import { Suspense, useEffect, useState } from "react";
-import { OccasionEntity } from "@/lib/models/entities/OccasionEntity/OccasionEntity";
+import { OccasionsList } from '@/components/ui/home/OccasionsList';
+import { OccasionEntity } from '@/lib/models/entities/OccasionEntity/OccasionEntity';
+import OccasionService from '@/lib/services/occasionService';
+import { Skeleton } from '@mui/material';
+import { Suspense, useEffect, useState } from 'react';
 
 const SkeletonOccasion = () => {
-  return (
-    <Skeleton
-      variant="rounded"
-      width={"100%"}
-      height={"100%"}
-      sx={{
-        aspectRatio: "1/0.7",
-      }}
-    />
-  );
+    return (
+        <Skeleton
+            variant="rounded"
+            width={'100%'}
+            height={'100%'}
+            sx={{
+                aspectRatio: '1/0.7',
+            }}
+        />
+    );
 };
 
 export function Occasion_Component() {
-  const [occasions, setOccasions] = useState<OccasionEntity[] | undefined>(
-    undefined
-  );
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        setOccasions(await OccasionService.GetAllOccasions());
-      } catch (error) {
-        console.log(error);
-        setOccasions([]);
-      }
-    };
-    fetchData();
-  }, []);
-  return (
-    <>
-      {!occasions && <SkeletonOccasion />}
+    const [occasions, setOccasions] = useState<OccasionEntity[] | undefined>(
+        undefined
+    );
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                setOccasions(await OccasionService.GetAll());
+            } catch (error) {
+                console.log(error);
+                setOccasions([]);
+            }
+        };
+        fetchData();
+    }, []);
+    return (
+        <>
+            {!occasions && <SkeletonOccasion />}
 
-      {occasions && (
-        <Suspense fallback={<SkeletonOccasion />}>
-          <OccasionsList occasions={occasions} />
-        </Suspense>
-      )}
-    </>
-  );
+            {occasions && (
+                <Suspense fallback={<SkeletonOccasion />}>
+                    <OccasionsList occasions={occasions} />
+                </Suspense>
+            )}
+        </>
+    );
 }
