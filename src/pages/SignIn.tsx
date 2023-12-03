@@ -50,12 +50,11 @@ export default function SignIn() {
         signInEmailUser(signInInfo.email, signInInfo.password)
             .then(() => {
                 openSnackbar('Đăng nhập thành công!', 'success');
-                navigate('/');
             })
             .catch(() => {
                 openSnackbar('Đăng nhập thất bại!', 'warning');
             });
-    }, [navigate, openSnackbar, signInInfo.email, signInInfo.password]);
+    }, [openSnackbar, signInInfo.email, signInInfo.password]);
 
     const handleSignInWithGoogle = useCallback(() => {
         signInWithPopup(auth, googleProvider)
@@ -64,12 +63,11 @@ export default function SignIn() {
                     '[AUTH] Sign in with Google successfully',
                     userCredential
                 );
-                navigate('/');
             })
             .catch((error) => {
                 console.log('[AUTH] Sign in with Google failed', error);
             });
-    }, [navigate]);
+    }, []);
 
     const handleSignInWithFacebook = useCallback(() => {
         openSnackbar('Chức năng chưa được hiện thực!', 'warning');
@@ -78,6 +76,7 @@ export default function SignIn() {
     //#endregion
     //#region Prevent signed in user
 
+    // TODO: fix the collision user signin check
     usePreventSignedInUser();
 
     //#endregion
