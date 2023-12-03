@@ -13,15 +13,17 @@ export function CustomHeaderLink({
     <>
       <Link
         color={color ?? "primary"}
-        variant="subtitle1"
-        fontWeight={"bold"}
+        variant="subtitle2"
         href={href}
         underline="none"
+        textTransform={"uppercase"}
         sx={{
           opacity: 0.9,
           "&:hover": {
             opacity: 1,
           },
+          fontWeight: 900,
+          lineHeight: 1,
         }}
       >
         {label}
