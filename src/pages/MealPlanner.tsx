@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import {
   Container,
   Grid,
@@ -7,11 +7,13 @@ import {
   Box,
   IconButton,
   Popover,
+  Icon,
 } from "@mui/material";
 import Layout from "../layout/Layout";
 import {
   HighlightAltRounded,
   MapsUgcRounded,
+  NoAccountsRounded,
   QuestionMarkRounded,
   RotateLeftRounded,
 } from "@mui/icons-material";
@@ -21,8 +23,8 @@ import AccountService from "@/lib/services/accountService";
 import PlanItemService from "@/lib/services/planItemService";
 
 import { DragDropContext, DropResult } from "react-beautiful-dnd";
-import { AccountEntity } from "@/lib/models/entities/AccountEntity/AccountEntity";
 import { Plan_ItemEntity } from "@/lib/models/entities/Plan_ItemEntity/Plan_ItemEntity";
+import AppContext from "@/lib/contexts/AppContext";
 
 export type DateDisplay = {
   label: string;
@@ -70,7 +72,45 @@ const initialWeekDates: DateDisplay[] = [
   },
 ];
 
+export const getStart_EndOfWeek = (
+  offset: number
+): { start: Date; end: Date } => {
+  const currentDate = new Date();
+  const currentDay = currentDate.getUTCDay();
+
+  const startOfWeek = new Date(currentDate);
+  startOfWeek.setUTCDate(
+    currentDate.getUTCDate() - currentDay + (currentDay === 0 ? -6 : 1)
+  );
+
+  startOfWeek.setUTCDate(startOfWeek.getUTCDate() + 7 * offset);
+
+  const endOfWeek = new Date(startOfWeek);
+  endOfWeek.setUTCDate(endOfWeek.getUTCDate() + 6);
+
+  return { start: startOfWeek, end: endOfWeek };
+};
+
+function getWeekDates(offset: number): string[] {
+  const { start: startOfWeek, end: endOfWeek } = getStart_EndOfWeek(offset);
+
+  const dates: string[] = [];
+
+  for (
+    let day = new Date(startOfWeek);
+    day <= endOfWeek;
+    day.setUTCDate(day.getUTCDate() + 1)
+  ) {
+    const dateString = new Date(day.getTime()).toISOString().slice(0, 10);
+    dates.push(dateString);
+  }
+
+  return dates;
+}
+
 const MealPlanner: React.FC = () => {
+  const { handleSpinner, login } = useContext(AppContext);
+
   //#region Week đếm số
   const [weekCounter, setWeekCounter] = React.useState(0);
   function handleChangeWeekCounter(increment: number) {
@@ -78,50 +118,19 @@ const MealPlanner: React.FC = () => {
   }
   //#endregion
 
-  const [accountData, setAccountData] = React.useState<
-    AccountEntity | undefined
-  >(undefined);
+  // #region Dữ liệu chính
 
   const [weekDates, setWeekDates] = React.useState<DateDisplay[]>([]);
 
   const [planItemData, setPlanItemData] = React.useState<Plan_ItemEntity[]>([]);
 
-  console.log(planItemData);
-
-  function getWeekDates(offset: number): string[] {
-    const currentDate = new Date();
-    const currentDay = currentDate.getDay(); // Lấy ngày trong tuần của ngày hiện tại (0 là Chủ Nhật, 1 là thứ Hai, ..., 6 là thứ Bảy)
-
-    const startOfWeek = new Date(currentDate);
-    startOfWeek.setDate(
-      currentDate.getDate() - currentDay + (currentDay === 0 ? -6 : 1)
-    ); // Đặt ngày bắt đầu tuần
-    startOfWeek.setDate(startOfWeek.getDate() + 7 * offset); // Áp dụng offset
-
-    const endOfWeek = new Date(startOfWeek);
-    endOfWeek.setDate(endOfWeek.getDate() + 6); // Ngày kết thúc tuần là ngày bắt đầu + 6
-
-    const dates: string[] = [];
-
-    for (
-      let day = new Date(startOfWeek);
-      day <= endOfWeek;
-      day.setDate(day.getDate() + 1)
-    ) {
-      const dateString = new Date(day.getTime()).toISOString().split("T")[0];
-      dates.push(dateString);
-    }
-
-    return dates;
-  }
+  //#endregion
 
   //#region UseEffect
 
   useEffect(() => {
-    async function fetchData() {
-      const account = await AccountService.GetByUid("1");
-
-      setAccountData(account);
+    async function fetchData(uid: string) {
+      const account = await AccountService.GetByUid(uid);
 
       const planItems = await PlanItemService.GetPlanItemsByAccountId(
         account?.uid
@@ -156,7 +165,12 @@ const MealPlanner: React.FC = () => {
 
       setWeekDates(data);
     }
-    fetchData();
+
+    handleSpinner(true);
+    if (login.isUserSignedIn == true && login.user != undefined) {
+      fetchData(login.user.uid);
+    }
+    handleSpinner(false);
   }, []);
 
   useEffect(() => {
@@ -359,113 +373,125 @@ const MealPlanner: React.FC = () => {
 
   return (
     <Layout>
-      <Grid container alignItems={"stretch"} justifyContent={"center"}>
-        <Grid item xs={12}>
-          <Container
-            sx={{
-              py: 3,
-            }}
-          >
-            <Grid
-              sx={{ width: "100%" }}
-              container
-              justifyContent={"center"}
-              alignItems={"center"}
-              spacing={{
-                xs: 3,
-                md: 2,
-              }}
-            >
-              <Grid item xs={12} md={4}>
-                <Typography
-                  variant="h5"
-                  sx={{
-                    fontWeight: "900",
-                    textTransform: "uppercase",
-                  }}
-                >
-                  Lịch ăn của tôi
-                </Typography>
-              </Grid>
-
-              <Grid
-                item
-                xs={12}
-                md={4}
+      {login.isUserSignedIn && (
+        <>
+          <Grid container alignItems={"stretch"} justifyContent={"center"}>
+            <Grid item xs={12}>
+              <Container
                 sx={{
-                  display: {
-                    xs: "none",
-                    md: "block",
-                  },
+                  py: 3,
                 }}
               >
-                <WeekNavigation
-                  weekCounter={weekCounter}
-                  handleChangeWeekCounter={handleChangeWeekCounter}
-                />
-              </Grid>
-
-              <Grid item xs={12} md={4}>
-                <ActionSection />
-              </Grid>
-
-              <Grid
-                item
-                xs={12}
-                sx={{
-                  display: {
-                    xs: "block",
-                    md: "none",
-                  },
-                }}
-              >
-                <WeekNavigation
-                  weekCounter={weekCounter}
-                  handleChangeWeekCounter={handleChangeWeekCounter}
-                />
-              </Grid>
-            </Grid>
-          </Container>
-        </Grid>
-
-        <Grid item xs={12}>
-          <Box
-            sx={{
-              backgroundColor: "secondary.main",
-              py: 4,
-            }}
-          >
-            <Container>
-              <DragDropContext onDragStart={onDragStart} onDragEnd={onDragEnd}>
-                <Box
-                  sx={{
-                    width: "100%",
-                    borderRadius: 4,
-                    overflow: "hidden",
-                    backgroundColor: "background.default",
+                <Grid
+                  sx={{ width: "100%" }}
+                  container
+                  justifyContent={"center"}
+                  alignItems={"center"}
+                  spacing={{
+                    xs: 3,
+                    md: 2,
                   }}
                 >
-                  <Grid
-                    container
-                    justifyContent={"flex-start"}
-                    alignItems={"stretch"}
-                  >
-                    {weekDates.map((item, index) => (
-                      <Grid item xs={12} md={3} key={index}>
-                        <WeekDateItem
-                          isDragging={isDragging}
-                          weekDates={item}
-                          handleRemovePlanItem={handleRemovePlanItem}
-                        />
-                      </Grid>
-                    ))}
+                  <Grid item xs={12} md={4}>
+                    <Typography
+                      variant="h5"
+                      sx={{
+                        fontWeight: "900",
+                        textTransform: "uppercase",
+                      }}
+                    >
+                      Lịch ăn của tôi
+                    </Typography>
                   </Grid>
-                </Box>
-              </DragDropContext>
-            </Container>
-          </Box>
-        </Grid>
-      </Grid>
+
+                  <Grid
+                    item
+                    xs={12}
+                    md={4}
+                    sx={{
+                      display: {
+                        xs: "none",
+                        md: "block",
+                      },
+                    }}
+                  >
+                    <WeekNavigation
+                      weekCounter={weekCounter}
+                      handleChangeWeekCounter={handleChangeWeekCounter}
+                    />
+                  </Grid>
+
+                  <Grid item xs={12} md={4}>
+                    <ActionSection />
+                  </Grid>
+
+                  <Grid
+                    item
+                    xs={12}
+                    sx={{
+                      display: {
+                        xs: "block",
+                        md: "none",
+                      },
+                    }}
+                  >
+                    <WeekNavigation
+                      weekCounter={weekCounter}
+                      handleChangeWeekCounter={handleChangeWeekCounter}
+                    />
+                  </Grid>
+                </Grid>
+              </Container>
+            </Grid>
+
+            <Grid item xs={12}>
+              <Box
+                sx={{
+                  backgroundColor: "secondary.main",
+                  py: 4,
+                }}
+              >
+                <Container>
+                  <DragDropContext
+                    onDragStart={onDragStart}
+                    onDragEnd={onDragEnd}
+                  >
+                    <Box
+                      sx={{
+                        width: "100%",
+                        borderRadius: 4,
+                        overflow: "hidden",
+                        backgroundColor: "background.default",
+                      }}
+                    >
+                      <Grid
+                        container
+                        justifyContent={"flex-start"}
+                        alignItems={"stretch"}
+                      >
+                        {weekDates.map((item, index) => (
+                          <Grid item xs={12} md={3} key={index}>
+                            <WeekDateItem
+                              isDragging={isDragging}
+                              weekDates={item}
+                              handleRemovePlanItem={handleRemovePlanItem}
+                            />
+                          </Grid>
+                        ))}
+                      </Grid>
+                    </Box>
+                  </DragDropContext>
+                </Container>
+              </Box>
+            </Grid>
+          </Grid>
+        </>
+      )}
+      {login.isUserSignedIn == false && (
+        <>
+          <h1>Lỗi đăng nhập</h1>
+        </>
+      )}
     </Layout>
   );
 };
