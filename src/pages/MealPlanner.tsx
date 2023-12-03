@@ -23,7 +23,6 @@ import AccountService from "@/lib/services/accountService";
 import PlanItemService from "@/lib/services/planItemService";
 
 import { DragDropContext, DropResult } from "react-beautiful-dnd";
-import { AccountEntity } from "@/lib/models/entities/AccountEntity/AccountEntity";
 import { Plan_ItemEntity } from "@/lib/models/entities/Plan_ItemEntity/Plan_ItemEntity";
 import AppContext from "@/lib/contexts/AppContext";
 
@@ -120,9 +119,6 @@ const MealPlanner: React.FC = () => {
   //#endregion
 
   // #region Dữ liệu chính
-  const [accountData, setAccountData] = React.useState<
-    AccountEntity | undefined
-  >(undefined);
 
   const [weekDates, setWeekDates] = React.useState<DateDisplay[]>([]);
 
@@ -135,8 +131,6 @@ const MealPlanner: React.FC = () => {
   useEffect(() => {
     async function fetchData(uid: string) {
       const account = await AccountService.GetByUid(uid);
-
-      setAccountData(account);
 
       const planItems = await PlanItemService.GetPlanItemsByAccountId(
         account?.uid
@@ -495,23 +489,7 @@ const MealPlanner: React.FC = () => {
       )}
       {login.isUserSignedIn == false && (
         <>
-          <Box
-            sx={{
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              height: "100dvh",
-            }}
-          >
-            <Icon sx={{ fontSize: "184px", overflow: "visible" }}>
-              <NoAccountsRounded
-                fontSize="inherit"
-                sx={{
-                  color: "primary.main",
-                }}
-              />
-            </Icon>
-          </Box>
+          <h1>Lỗi đăng nhập</h1>
         </>
       )}
     </Layout>
