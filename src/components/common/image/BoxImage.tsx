@@ -1,5 +1,6 @@
 import useFirebaseImage from "@/lib/hooks/useFirebaseImage";
 import { Box, BoxProps } from "@mui/material";
+import React from "react";
 
 function BoxImage({ ...props }: BoxProps & { src: string; alt?: string }) {
   const imgSrc = useFirebaseImage(props.src);
