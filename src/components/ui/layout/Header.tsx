@@ -1,6 +1,5 @@
 import ColorModeContext from "@/lib/contexts/ColorModeContext";
 import { signOutUser } from "@/lib/firebase/auth";
-import { auth } from "@/lib/firebase/config";
 import useSnackbarService from "@/lib/hooks/useSnackbar";
 import {
   BookmarkBorderRounded,
@@ -28,9 +27,9 @@ import {
   Typography,
   useTheme,
 } from "@mui/material";
-import { onAuthStateChanged } from "firebase/auth";
 import React, {
   useCallback,
+  useContext,
   useEffect,
   useMemo,
   useRef,
@@ -42,6 +41,7 @@ import { CustomHeaderLink } from "../header/CustomLink";
 import { PopoverContent } from "../header/PopoverContent";
 import AvatarMenuItem from "./AvatarMenuItem";
 import { PAGE_ROUTE } from "@/lib/constants/common";
+import AppContext from "@/lib/contexts/AppContext";
 
 interface Props {
   window?: () => Window;
@@ -84,10 +84,10 @@ export function Header(props: Props) {
 
   //#region Auth State
 
-  const [isUserSignedIn, setIsUserSignedIn] = useState<boolean | undefined>(
-    undefined
+  const { login } = useContext(AppContext);
+  const [userAvatar, setUserAvatar] = useState<string>(
+    login.user?.photoURL || ""
   );
-  const [userAvatar, setUserAvatar] = useState<string>("");
   const avatarButtonRef = useRef<HTMLButtonElement>(null);
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
   const [isAvatarMenuOpen, setIsAvatarMenuOpen] = useState<boolean>(false);
@@ -97,18 +97,8 @@ export function Header(props: Props) {
   //#region Authentication UseEffect
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      if (user) {
-        setUserAvatar(user.photoURL);
-        setIsUserSignedIn(true);
-      } else {
-        setUserAvatar("");
-        setIsUserSignedIn(false);
-      }
-    });
-
-    return () => unsubscribe();
-  }, []);
+    setUserAvatar(login.user?.photoURL || "");
+  }, [login.user]);
 
   //#endregion
 
@@ -132,16 +122,22 @@ export function Header(props: Props) {
     signOutUser()
       .then(() => {
         snackbarAlert(MESSAGE_CONSTANTS.LOGOUT_SUCESS, "success");
+        if (login.handleLogin) {
+          login.handleLogin(false);
+        }
         navigate(PAGE_ROUTE.HOME);
       })
       .catch(() => {
         snackbarAlert(MESSAGE_CONSTANTS.LOGOUT_FAIL, "warning");
+        if (login.handleLogin) {
+          login.handleLogin(false);
+        }
       });
   }, []);
 
   //#endregion
 
-  const navItems: {
+  const drawerItems: {
     label: string;
     href?: string;
     onClick?: () => void;
@@ -155,10 +151,10 @@ export function Header(props: Props) {
       { label: "Đăng ký", href: PAGE_ROUTE.SIGN_UP, isHiden: true },
       { label: "Đăng nhập", href: PAGE_ROUTE.SIGN_IN, isHiden: true },
       //
-      { label: "Tủ lạnh", href: "/", isHiden: false },
-      { label: "Giỏ đi chợ", href: PAGE_ROUTE.GROCERY, isHiden: false },
       { label: "Lịch ăn", href: PAGE_ROUTE.MEALPLANNER, isHiden: false },
+      { label: "Tủ lạnh", href: "/", isHiden: false },
       { label: "Bộ sưu tập", href: PAGE_ROUTE.MY_SAVE_RECIPES, isHiden: false },
+      { label: "Giỏ đi chợ", href: PAGE_ROUTE.GROCERY, isHiden: false },
       {
         label: "Đăng xuất",
         onClick: () => {
@@ -167,79 +163,84 @@ export function Header(props: Props) {
         isHiden: false,
       },
     ],
-    []
+    [handleSignOut]
   );
 
-  const drawer = (
-    <Box onClick={handleDrawerToggle} sx={{ textAlign: "center" }}>
-      <Typography variant="h6" sx={{ my: 2 }}>
-        MUI
-      </Typography>
-      <Divider />
-      <List>
-        {navItems
-          .filter((item) => {
-            if (item.isHiden === undefined) {
-              return true;
-            } else if (isUserSignedIn) {
-              return !item.isHiden;
-            } else {
-              return item.isHiden;
-            }
-          })
-          .map((item, i) => (
-            <ListItem key={i} disablePadding>
-              {!item.onClick && (
-                <ListItemButton
-                  sx={{ textAlign: "center" }}
-                  href={item.href ?? "#"}
-                >
-                  <ListItemText
-                    primaryTypographyProps={{
-                      sx: {
-                        fontSize: "caption.fontSize",
-                        fontWeight: "bold",
-                        textTransform: "uppercase",
-                      },
-                    }}
-                    primary={item.label}
-                  />
-                </ListItemButton>
-              )}
+  const drawer = useMemo(
+    () => (
+      <Box onClick={handleDrawerToggle} sx={{ textAlign: "center" }}>
+        <Typography variant="h6" sx={{ my: 2 }}>
+          MUI
+        </Typography>
+        <Divider />
+        <List>
+          {drawerItems
+            .filter((item) => {
+              if (item.isHiden === undefined) {
+                return true;
+              } else if (login.isUserSignedIn) {
+                return !item.isHiden;
+              } else {
+                return item.isHiden;
+              }
+            })
+            .map((item, i) => (
+              <ListItem key={i} disablePadding>
+                {!item.onClick && (
+                  <ListItemButton
+                    sx={{ textAlign: "center" }}
+                    href={item.href ?? "#"}
+                  >
+                    <ListItemText
+                      primaryTypographyProps={{
+                        sx: {
+                          fontSize: "caption.fontSize",
+                          fontWeight: "bold",
+                          textTransform: "uppercase",
+                        },
+                      }}
+                      primary={item.label}
+                    />
+                  </ListItemButton>
+                )}
 
-              {item.onClick && (
-                <ListItemButton onClick={item.onClick}>
-                  <ListItemText
-                    sx={{
-                      display: "flex",
-                      justifyContent: "center",
-                      alignItems: "center",
-                    }}
-                    primaryTypographyProps={{
-                      sx: {
-                        color: "white",
-                        backgroundColor: "primary.main",
-                        borderRadius: "40px",
-                        py: 0.5,
-                        px: 2,
-                        width: "fit-content",
-                        fontSize: "caption.fontSize",
-                        fontWeight: "bold",
-                        textTransform: "uppercase",
-                      },
-                    }}
-                    primary={item.label}
-                  />
-                </ListItemButton>
-              )}
-            </ListItem>
-          ))}
-      </List>
-    </Box>
+                {item.onClick && (
+                  <ListItemButton onClick={item.onClick}>
+                    <ListItemText
+                      sx={{
+                        display: "flex",
+                        justifyContent: "center",
+                        alignItems: "center",
+                      }}
+                      primaryTypographyProps={{
+                        sx: {
+                          color: "white",
+                          backgroundColor: "primary.main",
+                          borderRadius: "40px",
+                          py: 0.5,
+                          px: 2,
+                          width: "fit-content",
+                          fontSize: "caption.fontSize",
+                          fontWeight: "bold",
+                          textTransform: "uppercase",
+                        },
+                      }}
+                      primary={item.label}
+                    />
+                  </ListItemButton>
+                )}
+              </ListItem>
+            ))}
+        </List>
+      </Box>
+    ),
+    [drawerItems, login.isUserSignedIn, handleSignOut]
   );
 
   const container =
     window !== undefined ? () => window().document.body : undefined;
+
+  console.log(login);
 
   return (
     <Box
@@ -317,7 +318,7 @@ export function Header(props: Props) {
                 <PopoverContent />
               </ButtonHoverPopover>
 
-              {isUserSignedIn == true && (
+              {login.isUserSignedIn == true && (
                 <>
                   <CustomHeaderLink
                     href={PAGE_ROUTE.MEALPLANNER}
@@ -355,7 +356,7 @@ export function Header(props: Props) {
               </IconButton>
 
               {/* Bộ sưu tập */}
-              {isUserSignedIn == true && (
+              {login.isUserSignedIn == true && (
                 <IconButton
                   color="primary"
                   size="small"
@@ -372,22 +373,24 @@ export function Header(props: Props) {
               )}
 
               {/* Giỏ đi chợ */}
-              <IconButton
-                color="primary"
-                size="small"
-                sx={{
-                  border: 1,
-                  mr: 2,
-                }}
-                onClick={() => {
-                  navigate(PAGE_ROUTE.GROCERY);
-                }}
-              >
-                <ShoppingBagRounded fontSize="inherit" />
-              </IconButton>
+              {login.isUserSignedIn == true && (
+                <IconButton
+                  color="primary"
+                  size="small"
+                  sx={{
+                    border: 1,
+                    mr: 2,
+                  }}
+                  onClick={() => {
+                    navigate(PAGE_ROUTE.GROCERY);
+                  }}
+                >
+                  <ShoppingBagRounded fontSize="inherit" />
+                </IconButton>
+              )}
 
               {/* Avatar */}
-              {isUserSignedIn == true && (
+              {login.isUserSignedIn == true && (
                 <>
                   <ButtonBase ref={avatarButtonRef} onClick={handleAvatarClick}>
                     <Avatar
@@ -436,7 +439,7 @@ export function Header(props: Props) {
               )}
 
               {/* Nút đăng nhập/ xuất */}
-              {isUserSignedIn == false && (
+              {login.isUserSignedIn == false && (
                 <>
                   <Button
                     color="primary"

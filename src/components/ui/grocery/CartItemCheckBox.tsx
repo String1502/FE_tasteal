@@ -69,7 +69,7 @@ function CartItemCheckBox({
             src={item.ingredient?.image}
             sx={{
               height: "60px",
-              aspectRatio: "1/1",
+              width: "60px",
               objectFit: "contain",
               borderRadius: "50%",
               mr: 2,

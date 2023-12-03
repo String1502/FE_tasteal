@@ -1,6 +1,6 @@
 import RecipeDetail from "@/pages/RecipeDetail";
 import { CssBaseline, Theme, ThemeProvider } from "@mui/material";
-import React from "react";
+import React, { useContext, useEffect } from "react";
 import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
 import TastealHashLoader from "./components/common/progress/TastealHashLoader";
 import AppContext from "./lib/contexts/AppContext";
@@ -18,27 +18,35 @@ import SignIn from "./pages/SignIn";
 import SignUp from "./pages/SignUp";
 import SignUpEmail from "./pages/SignUpEmail";
 import { PAGE_ROUTE } from "./lib/constants/common";
+import { User, onAuthStateChanged } from "firebase/auth";
+import { auth } from "./lib/firebase/config";
 
 //#region AppWrapper
 
 type AppWrapperProps = {
-  handleSpinner: (value: boolean) => void;
   colorMode: {
     toggleColorMode: () => void;
   };
   theme: Theme;
   spinner: boolean;
+  //
+  handleSpinner: (value: boolean) => void;
+  login: {
+    isUserSignedIn?: boolean;
+    user?: User;
+    handleLogin: (isUserSignedIn?: boolean, user?: User) => void;
+  };
 };
 
 function AppWrapper({
   children,
-  handleSpinner,
   colorMode,
   theme,
   spinner,
+  ...contextProps
 }: React.PropsWithChildren & AppWrapperProps) {
   return (
-    <AppContext.Provider value={{ handleSpinner }}>
+    <AppContext.Provider value={{ ...contextProps }}>
       <ColorModeContext.Provider value={colorMode}>
         <CssBaseline />
         <ThemeProvider theme={theme}>
@@ -54,11 +62,28 @@ function AppWrapper({
 
 //#endregion
 
-function App() {
-  const themeProps = useTastealTheme();
+//#region AllRoutes
+function AllRoutes() {
+  const { login, handleSpinner } = useContext(AppContext);
+
+  // Check if login ?
+  useEffect(() => {
+    if (login.isUserSignedIn == undefined) {
+      handleSpinner(true);
+      const unsubscribe = onAuthStateChanged(auth, (user) => {
+        if (user && login.handleLogin) {
+          login.handleLogin(true, user);
+        } else {
+          login.handleLogin(false);
+        }
+      });
+      handleSpinner(false);
+      return () => unsubscribe();
+    }
+  }, []);
 
   return (
-    <AppWrapper {...themeProps}>
+    <>
       <Router>
         <Routes>
           <Route path={PAGE_ROUTE.HOME} element={<Home />} />
@@ -78,6 +103,17 @@ function App() {
           {/* Thêm các tuyến đường khác */}
         </Routes>
       </Router>
+    </>
+  );
+}
+//#endregion
+
+function App() {
+  const themeProps = useTastealTheme();
+
+  return (
+    <AppWrapper {...themeProps}>
+      <AllRoutes />
     </AppWrapper>
   );
 }
