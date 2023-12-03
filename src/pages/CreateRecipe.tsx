@@ -32,6 +32,8 @@ import {
     CardContent,
     CircularProgress,
     FormControlLabel,
+    Grid,
+    InputAdornment,
     Radio,
     RadioGroup,
     Stack,
@@ -62,6 +64,10 @@ type NewRecipe = {
     directions: DirectionEditorItemValue[];
     /** Any additional notes from the author. */
     authorNote: string;
+    /** The total time of the recipe.  */
+    totalTime: number;
+    /** The active time of the recipe. */
+    activeTime: number;
     /** Indicates if the recipe is private. */
     isPrivate: boolean;
 };
@@ -73,6 +79,8 @@ const DEFAULT_NEW_RECIPE: NewRecipe = {
     ingredients: [],
     directions: [],
     introduction: '',
+    totalTime: 0,
+    activeTime: 0,
     authorNote: '',
     isPrivate: true,
 };
@@ -124,13 +132,23 @@ const resolveDirectionsImage = (
  */
 const MESSAGE_CONSTANTS = {
     VALIDATION: {
+        INVALID_DATA: 'Dữ liệu không hợp lệ!',
+        NAME_REQUIRED: 'Tên không được để trống!!',
+        INTRODUCTION_REQUIRED: 'Giới thiệu không được để trống!',
+        INGREDIENT_REQUIRED: 'Vui lòng thêm nguyên liệu!',
+        DIRECTION_REQUIRED: 'Vui lòng thêm bước thực hiện!',
+        TOTAL_TIME_REQUIRED: 'Tổng thời gian không được để trống!',
+        INVALID_ACTIVE_TIME: 'Thời gian thực phải nhỏ hơn tổng thời gian!',
         IMAGE_REQUIRED: 'Vui lòng tải ảnh đại diện!',
     } as const,
 } as const;
 
 const CreateRecipe: React.FunctionComponent = () => {
+    //#region Prevent invalid user
+
     usePreventNotSignedInUser();
 
+    //#endregion
     //#region Hooks
 
     const [snackbarAlert] = useSnackbarService();
@@ -162,32 +180,36 @@ const CreateRecipe: React.FunctionComponent = () => {
         isValid: boolean;
         msg: string;
     } => {
+        function setInvalid(message: string) {
+            isValid = false;
+            msg = message;
+        }
+
         let isValid = true;
         let msg = '';
 
         if (!newRecipe) {
-            isValid = false;
-            msg = 'Dữ liệu không hợp lệ';
+            setInvalid(MESSAGE_CONSTANTS.VALIDATION.INVALID_DATA);
         } else if (!newRecipe.name) {
-            isValid = false;
-            msg = 'Tên không được để trống';
+            setInvalid(MESSAGE_CONSTANTS.VALIDATION.NAME_REQUIRED);
         } else if (!newRecipe.introduction) {
-            isValid = false;
-            msg = 'Mô tả không được để trống';
+            setInvalid(MESSAGE_CONSTANTS.VALIDATION.INTRODUCTION_REQUIRED);
         } else if (!recipeThumbnailFile) {
-            return {
-                isValid: false,
-                msg: MESSAGE_CONSTANTS.VALIDATION.IMAGE_REQUIRED,
-            };
+            setInvalid(MESSAGE_CONSTANTS.VALIDATION.IMAGE_REQUIRED);
         } else if (
             !newRecipe.ingredients ||
             newRecipe.ingredients.length === 0
         ) {
-            isValid = false;
-            msg = 'Vui lòng thêm nguyên liệu';
+            setInvalid(MESSAGE_CONSTANTS.VALIDATION.INGREDIENT_REQUIRED);
         } else if (!newRecipe.directions || newRecipe.directions.length === 0) {
-            isValid = false;
-            msg = 'Vui lòng thêm bước làm';
+            setInvalid(MESSAGE_CONSTANTS.VALIDATION.DIRECTION_REQUIRED);
+        } else if (newRecipe.totalTime <= 0) {
+            setInvalid(MESSAGE_CONSTANTS.VALIDATION.TOTAL_TIME_REQUIRED);
+        } else if (
+            newRecipe.activeTime > 0 &&
+            newRecipe.activeTime > newRecipe.totalTime
+        ) {
+            setInvalid(MESSAGE_CONSTANTS.VALIDATION.INVALID_ACTIVE_TIME);
         }
 
         return { isValid, msg };
@@ -256,6 +278,8 @@ const CreateRecipe: React.FunctionComponent = () => {
         try {
             const { isValid: isLocalValid, msg: localMsg } =
                 validateNewRecipe();
+
+            console.log('isLocalValid', isLocalValid, localMsg);
 
             if (!isLocalValid) {
                 console.log(createDebugString(localMsg));
@@ -363,6 +387,9 @@ const CreateRecipe: React.FunctionComponent = () => {
     }, []);
 
     //#endregion
+
+    console.log(newRecipe);
+
     return (
         <Layout withFooter={false}>
             <Box
@@ -484,6 +511,64 @@ const CreateRecipe: React.FunctionComponent = () => {
                                     directions={newRecipe.directions}
                                     onChange={handleDirectionsChange}
                                 />
+                            </Stack>
+                            <Stack>
+                                <FormLabel>Thời gian</FormLabel>
+                                <Grid
+                                    container
+                                    gap={1}
+                                >
+                                    <Grid
+                                        item
+                                        xs
+                                    >
+                                        <TastealTextField
+                                            value={newRecipe.totalTime}
+                                            onChange={(e) =>
+                                                handleNewRecipeFieldChange(
+                                                    'totalTime',
+                                                    parseInt(e.target.value)
+                                                )
+                                            }
+                                            placeholder="Tổng thời gian"
+                                            helperText="Tổng thời gian"
+                                            type="number"
+                                            fullWidth
+                                            InputProps={{
+                                                endAdornment: (
+                                                    <InputAdornment position="end">
+                                                        phút
+                                                    </InputAdornment>
+                                                ),
+                                            }}
+                                        />
+                                    </Grid>
+                                    <Grid
+                                        item
+                                        xs
+                                    >
+                                        <TastealTextField
+                                            value={newRecipe.activeTime}
+                                            onChange={(e) =>
+                                                handleNewRecipeFieldChange(
+                                                    'activeTime',
+                                                    parseInt(e.target.value)
+                                                )
+                                            }
+                                            placeholder="Thời gian thực"
+                                            helperText="Thời gian thực"
+                                            type="number"
+                                            fullWidth
+                                            InputProps={{
+                                                endAdornment: (
+                                                    <InputAdornment position="end">
+                                                        phút
+                                                    </InputAdornment>
+                                                ),
+                                            }}
+                                        />
+                                    </Grid>
+                                </Grid>
                             </Stack>
                             <Stack>
                                 <FormLabel>

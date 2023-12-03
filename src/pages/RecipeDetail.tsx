@@ -128,12 +128,14 @@ const RecipeDetail: FC = () => {
             .then((recipe) => {
                 setRecipe(recipe);
                 setIsRecipeFound(true);
-                console.log(debugStringFormatter('Get recipe data'));
+                console.log(
+                    debugStringFormatter('Get recipe data sucessfully!')
+                );
             })
             .catch(() => {
                 setRecipe(null);
                 setIsRecipeFound(false);
-                console.log(debugStringFormatter('Failed to get recipe data'));
+                console.log(debugStringFormatter('Failed to get recipe data!'));
             })
             .finally(() => handleSpinner(false));
     }, [handleSpinner, id]);
