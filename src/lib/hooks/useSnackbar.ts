@@ -60,4 +60,6 @@ export const useSnackbar = (): [
  *
  * @returns [handleOpenSnackbar]
  */
-export const useSnackbarService = () => useContext(SnackbarService);
+const useSnackbarService = () => useContext(SnackbarService);
+
+export default useSnackbarService;

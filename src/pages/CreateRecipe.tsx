@@ -16,7 +16,7 @@ import Layout from '@/layout/Layout';
 import { SERVING_SIZES } from '@/lib/constants/options';
 import { STORAGE_PATH } from '@/lib/constants/storage';
 import { uploadImage } from '@/lib/firebase/image';
-import { useSnackbarService } from '@/lib/hooks/useSnackbar';
+import useSnackbarService from '@/lib/hooks/useSnackbar';
 import { RecipeReq } from '@/lib/models/dtos/Request/RecipeReq/RecipeReq';
 import { Direction } from '@/lib/models/dtos/common';
 import OccasionService from '@/lib/services/occasionService';

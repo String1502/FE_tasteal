@@ -1,7 +1,7 @@
 import { defaultAvtPath, signInImagePath } from '@/assets/exportImage';
 import { createEmailUser } from '@/lib/firebase/auth';
 import useFirebaseImage from '@/lib/hooks/useFirebaseImage';
-import { useSnackbarService } from '@/lib/hooks/useSnackbar';
+import useSnackbarService from '@/lib/hooks/useSnackbar';
 import AccountService from '@/lib/services/accountService';
 import { createDebugStringFormatter } from '@/utils/debug/formatter';
 import {

@@ -1,5 +1,8 @@
 import { signInImagePath } from '@/assets/exportImage';
+import { auth } from '@/lib/firebase/config';
 import useFirebaseImage from '@/lib/hooks/useFirebaseImage';
+import usePreventSignedInUser from '@/lib/hooks/usePreventSignedInUser';
+import useSnackbarService from '@/lib/hooks/useSnackbar';
 import {
     Box,
     Button,
@@ -9,12 +12,38 @@ import {
     TextField,
     Typography,
 } from '@mui/material';
+import { sendPasswordResetEmail } from 'firebase/auth';
+import { useCallback, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 export default function ForgotPass() {
     const navigate = useNavigate();
-
     const signInImage = useFirebaseImage(signInImagePath);
+    const [snackbarAlert] = useSnackbarService();
+
+    const emailRef = useRef<HTMLInputElement>(null);
+    const [email, setEmail] = useState('');
+
+    const handleSendEmail = useCallback(() => {
+        if (!email) {
+            snackbarAlert('Vui lòng điền email', 'warning');
+            emailRef.current.focus();
+            return;
+        }
+
+        sendPasswordResetEmail(auth, email)
+            .then(() => {
+                snackbarAlert(
+                    'Đã gửi xác nhận reset mật khẩu tới email của bạn!',
+                    'success'
+                );
+            })
+            .catch(() => {
+                snackbarAlert('Đã có lỗi xảy ra! Thử lại sau!', 'warning');
+            });
+    }, [email, snackbarAlert]);
+
+    usePreventSignedInUser();
 
     return (
         <>
@@ -149,6 +178,9 @@ export default function ForgotPass() {
 
                             {/*Cái ô nhập mail*/}
                             <TextField
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
+                                ref={emailRef}
                                 placeholder="Email"
                                 variant="outlined"
                                 fullWidth
@@ -167,6 +199,7 @@ export default function ForgotPass() {
                             />
 
                             <Button
+                                onClick={handleSendEmail}
                                 variant="contained"
                                 color="primary"
                                 sx={{
