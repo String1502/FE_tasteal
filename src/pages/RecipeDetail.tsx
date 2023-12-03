@@ -15,6 +15,7 @@ import Layout from '@/layout/Layout';
 import { N_A_VALUE } from '@/lib/constants/common';
 import { DEFAULT_NUTRITION_VALUE } from '@/lib/constants/defaultValue';
 import AppContext from '@/lib/contexts/AppContext';
+import { auth } from '@/lib/firebase/config';
 import { RecipeRes } from '@/lib/models/dtos/Response/RecipeRes/RecipeRes';
 import RecipeService from '@/lib/services/recipeService';
 import createCacheAsyncFunction from '@/utils/cache/createCacheAsyncFunction';
@@ -24,6 +25,7 @@ import {
     Add,
     Bookmark,
     BookmarkOutlined,
+    Edit,
     Facebook,
     Mail,
     Pinterest,
@@ -44,6 +46,7 @@ import {
     Stack,
     Typography,
 } from '@mui/material';
+import { onAuthStateChanged } from 'firebase/auth';
 import {
     FC,
     useCallback,
@@ -89,7 +92,10 @@ const RecipeDetailStringConstants = {
  */
 const debugStringFormatter = createDebugStringFormatter(PAGE_ID);
 
-const getRecipeByid = createCacheAsyncFunction(RecipeService.GetById);
+/**
+ * Cached version of RecipeService.GetById
+ */
+const getRecipeById = createCacheAsyncFunction(RecipeService.GetById);
 
 const RecipeDetail: FC = () => {
     //#region Destructuring
@@ -102,22 +108,10 @@ const RecipeDetail: FC = () => {
     const { handleSpinner } = useContext(AppContext);
 
     //#endregion
-    //#region UseStates
+    //#region Recipe
 
     const [isRecipeFound, setIsRecipeFound] = useState(true);
     const [recipe, setRecipe] = useState<RecipeRes | null>(null);
-    const [nutritionPerServingModalOpen, setNutritionPerServingModalOpen] =
-        useState(false);
-
-    //#endregion
-    //#region Callbacks
-
-    const handleNutrionPerServingModalClose = useCallback(() => {
-        setNutritionPerServingModalOpen(false);
-    }, [setNutritionPerServingModalOpen]);
-
-    //#endregion
-    //#region UseEffects
 
     useEffect(() => {
         handleSpinner(true);
@@ -130,7 +124,7 @@ const RecipeDetail: FC = () => {
 
         const parsedId = parseInt(id);
 
-        getRecipeByid(parsedId)
+        getRecipeById(parsedId)
             .then((recipe) => {
                 setRecipe(recipe);
                 setIsRecipeFound(true);
@@ -145,7 +139,38 @@ const RecipeDetail: FC = () => {
     }, [handleSpinner, id]);
 
     //#endregion
-    //#region UseMemos
+    //#region Nutrition
+
+    const [nutritionPerServingModalOpen, setNutritionPerServingModalOpen] =
+        useState(false);
+
+    const handleNutrionPerServingModalClose = useCallback(() => {
+        setNutritionPerServingModalOpen(false);
+    }, [setNutritionPerServingModalOpen]);
+
+    //#endregion
+    //#region Edit Recipe
+
+    const [canEditRecipe, setCanEditRecipe] = useState(true);
+
+    useEffect(() => {
+        const unsubscribe = onAuthStateChanged(auth, (user) => {
+            if (!user) return;
+
+            if (!recipe || !recipe.author) return;
+
+            if (user.uid === recipe.author.uid) {
+                setCanEditRecipe(true);
+            } else {
+                setCanEditRecipe(false);
+            }
+        });
+
+        return () => unsubscribe();
+    }, [recipe]);
+
+    //#endregion
+    //#region Others
 
     const recipeBrief = useMemo(() => {
         if (!recipe) {
@@ -257,6 +282,17 @@ const RecipeDetail: FC = () => {
                                             {recipe?.name ??
                                                 RecipeDetailStringConstants.DEFAULT_NAME}
                                         </Typography>
+                                        <Button
+                                            startIcon={<Edit />}
+                                            variant="contained"
+                                            sx={{
+                                                display: canEditRecipe
+                                                    ? 'block'
+                                                    : 'none',
+                                            }}
+                                        >
+                                            Chỉnh sửa
+                                        </Button>
                                     </Stack>
                                 </Grid>
                             </Grid>

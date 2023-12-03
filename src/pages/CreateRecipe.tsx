@@ -16,6 +16,7 @@ import Layout from '@/layout/Layout';
 import { SERVING_SIZES } from '@/lib/constants/options';
 import { STORAGE_PATH } from '@/lib/constants/storage';
 import { uploadImage } from '@/lib/firebase/image';
+import usePreventNotSignedInUser from '@/lib/hooks/usePreventNotSignedInUser';
 import useSnackbarService from '@/lib/hooks/useSnackbar';
 import { RecipeReq } from '@/lib/models/dtos/Request/RecipeReq/RecipeReq';
 import { Direction } from '@/lib/models/dtos/common';
@@ -128,46 +129,34 @@ const MESSAGE_CONSTANTS = {
 } as const;
 
 const CreateRecipe: React.FunctionComponent = () => {
+    usePreventNotSignedInUser();
+
     //#region Hooks
 
     const [snackbarAlert] = useSnackbarService();
 
     //#endregion
-    //#region UseStates
+    //#region General Recipe
 
-    const [ingredientSelectModalOpen, setIngredientSelectModalOpen] =
-        useState(false);
     const [recipeThumbnailFile, setRecipeThumbnailFile] = useState<File | null>(
         null
     );
     const [newRecipe, setNewRecipe] = useState<NewRecipe>(DEFAULT_NEW_RECIPE);
-    const [selectedOccasions, setSelectedOccasions] = useState<ChipValue[]>([]);
     const [isCreatingRecipe, setIsCreatingRecipe] = useState(false);
-    const [occasions, setOccasions] = useState([]);
 
-    //#endregion
-    //#region Methods
-
-    const filterOccasions = useCallback(
-        (occasions: ChipValue[]) => {
-            return occasions.filter((occasion) => {
-                return !selectedOccasions.some(
-                    (selectedOccasion) => selectedOccasion.id === occasion.id
-                );
-            });
+    const handleNewRecipeFieldChange = useCallback(
+        <T extends keyof NewRecipe>(field: T, value: NewRecipe[T]) => {
+            setNewRecipe((prev) => ({ ...prev, [field]: value }));
         },
-        [selectedOccasions]
+        []
     );
 
-    //#endregion
-    //#region UseMemos
-
-    const filteredOccasions = useMemo(() => {
-        return filterOccasions(occasions);
-    }, [filterOccasions, occasions]);
+    const handleRecipeThumbnailChange = useCallback((file: File | null) => {
+        setRecipeThumbnailFile(file);
+    }, []);
 
     //#endregion
-    //#region Methods
+    //#region Data Actions
 
     const validateNewRecipe = useCallback((): {
         isValid: boolean;
@@ -261,66 +250,6 @@ const CreateRecipe: React.FunctionComponent = () => {
         setSelectedOccasions([]);
     }, []);
 
-    //#endregion
-    //#region Handlers
-
-    const handleNewRecipeFieldChange = useCallback(
-        <T extends keyof NewRecipe>(field: T, value: NewRecipe[T]) => {
-            setNewRecipe((prev) => ({ ...prev, [field]: value }));
-        },
-        []
-    );
-
-    const handleIngredientSelectModalOpen = useCallback(() => {
-        setIngredientSelectModalOpen(true);
-    }, []);
-
-    const handleIngredientSelectModalClose = useCallback(() => {
-        setIngredientSelectModalOpen(false);
-    }, []);
-
-    const handleAddIngredient = useCallback(
-        (newIngredient: IngredientItemData) => {
-            setIngredientSelectModalOpen(false);
-            handleNewRecipeFieldChange('ingredients', [
-                ...newRecipe.ingredients,
-                newIngredient,
-            ]);
-        },
-        [handleNewRecipeFieldChange, newRecipe.ingredients]
-    );
-
-    const handleIngredientsChange = useCallback(
-        (ingredients: IngredientItemData[]) => {
-            handleNewRecipeFieldChange('ingredients', ingredients);
-        },
-        [handleNewRecipeFieldChange]
-    );
-
-    const handleRecipeThumbnailChange = useCallback((file: File | null) => {
-        setRecipeThumbnailFile(file);
-    }, []);
-
-    const handleSelectedOccasionsChange = useCallback((value: ChipValue[]) => {
-        setSelectedOccasions(value);
-    }, []);
-
-    const handleSelectOccasion = useCallback((value: ChipValue | null) => {
-        if (value) {
-            setSelectedOccasions((prev) => [...prev, value]);
-        }
-    }, []);
-
-    const handleDirectionsChange = useCallback(
-        (directions: DirectionEditorItemValue[]) => {
-            setNewRecipe((prev) => ({
-                ...prev,
-                directions: directions,
-            }));
-        },
-        []
-    );
-
     const handleCreateRecipe = useCallback(async () => {
         setIsCreatingRecipe(true);
 
@@ -352,9 +281,80 @@ const CreateRecipe: React.FunctionComponent = () => {
             setIsCreatingRecipe(false);
         }
     }, [clearForm, createPostData, snackbarAlert, validateNewRecipe]);
+    //#endregion
+    //#region Ingredients
+
+    const [ingredientSelectModalOpen, setIngredientSelectModalOpen] =
+        useState(false);
+
+    const handleIngredientSelectModalOpen = useCallback(() => {
+        setIngredientSelectModalOpen(true);
+    }, []);
+
+    const handleIngredientSelectModalClose = useCallback(() => {
+        setIngredientSelectModalOpen(false);
+    }, []);
+
+    const handleAddIngredient = useCallback(
+        (newIngredient: IngredientItemData) => {
+            setIngredientSelectModalOpen(false);
+            handleNewRecipeFieldChange('ingredients', [
+                ...newRecipe.ingredients,
+                newIngredient,
+            ]);
+        },
+        [handleNewRecipeFieldChange, newRecipe.ingredients]
+    );
+
+    const handleIngredientsChange = useCallback(
+        (ingredients: IngredientItemData[]) => {
+            handleNewRecipeFieldChange('ingredients', ingredients);
+        },
+        [handleNewRecipeFieldChange]
+    );
 
     //#endregion
-    //#region UseEffects
+    //#region Directions
+
+    const handleDirectionsChange = useCallback(
+        (directions: DirectionEditorItemValue[]) => {
+            setNewRecipe((prev) => ({
+                ...prev,
+                directions: directions,
+            }));
+        },
+        []
+    );
+    //#endregion
+    //#region Occasions
+
+    const [occasions, setOccasions] = useState([]);
+    const [selectedOccasions, setSelectedOccasions] = useState<ChipValue[]>([]);
+
+    const filterOccasions = useCallback(
+        (occasions: ChipValue[]) => {
+            return occasions.filter((occasion) => {
+                return !selectedOccasions.some(
+                    (selectedOccasion) => selectedOccasion.id === occasion.id
+                );
+            });
+        },
+        [selectedOccasions]
+    );
+
+    const filteredOccasions = useMemo(() => {
+        return filterOccasions(occasions);
+    }, [filterOccasions, occasions]);
+
+    const handleSelectedOccasionsChange = useCallback((value: ChipValue[]) => {
+        setSelectedOccasions(value);
+    }, []);
+
+    const handleSelectOccasion = useCallback((value: ChipValue | null) => {
+        if (value) {
+            setSelectedOccasions((prev) => [...prev, value]);
+        }
+    }, []);
 
     useEffect(() => {
         OccasionService.GetAll()
@@ -363,7 +363,6 @@ const CreateRecipe: React.FunctionComponent = () => {
     }, []);
 
     //#endregion
-
     return (
         <Layout withFooter={false}>
             <Box
