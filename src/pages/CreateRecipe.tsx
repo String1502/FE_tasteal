@@ -16,7 +16,6 @@ import Layout from '@/layout/Layout';
 import { SERVING_SIZES } from '@/lib/constants/options';
 import { STORAGE_PATH } from '@/lib/constants/storage';
 import { uploadImage } from '@/lib/firebase/image';
-import usePreventNotSignedInUser from '@/lib/hooks/usePreventNotSignedInUser';
 import useSnackbarService from '@/lib/hooks/useSnackbar';
 import { RecipeReq } from '@/lib/models/dtos/Request/RecipeReq/RecipeReq';
 import { Direction } from '@/lib/models/dtos/common';
@@ -144,11 +143,6 @@ const MESSAGE_CONSTANTS = {
 } as const;
 
 const CreateRecipe: React.FunctionComponent = () => {
-    //#region Prevent invalid user
-
-    usePreventNotSignedInUser();
-
-    //#endregion
     //#region Hooks
 
     const [snackbarAlert] = useSnackbarService();
@@ -387,8 +381,6 @@ const CreateRecipe: React.FunctionComponent = () => {
     }, []);
 
     //#endregion
-
-    console.log(newRecipe);
 
     return (
         <Layout withFooter={false}>

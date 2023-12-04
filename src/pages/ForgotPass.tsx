@@ -1,7 +1,6 @@
 import { signInImagePath } from '@/assets/exportImage';
 import { auth } from '@/lib/firebase/config';
 import useFirebaseImage from '@/lib/hooks/useFirebaseImage';
-import usePreventSignedInUser from '@/lib/hooks/usePreventSignedInUser';
 import useSnackbarService from '@/lib/hooks/useSnackbar';
 import {
     Box,
@@ -42,8 +41,6 @@ export default function ForgotPass() {
                 snackbarAlert('Đã có lỗi xảy ra! Thử lại sau!', 'warning');
             });
     }, [email, snackbarAlert]);
-
-    usePreventSignedInUser();
 
     return (
         <>

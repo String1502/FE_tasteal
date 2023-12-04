@@ -1,7 +1,6 @@
 import { defaultAvtPath, signInImagePath } from '@/assets/exportImage';
 import { auth, googleProvider } from '@/lib/firebase/config';
 import useFirebaseImage from '@/lib/hooks/useFirebaseImage';
-import usePreventSignedInUser from '@/lib/hooks/usePreventSignedInUser';
 import {
     CheckCircleRounded,
     Facebook,
@@ -49,8 +48,6 @@ export default function SignUp() {
     }, [navigate]);
 
     //#endregion
-
-    usePreventSignedInUser();
 
     return (
         <>
