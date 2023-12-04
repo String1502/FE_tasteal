@@ -70,6 +70,9 @@ export function minuteToTimeString(minutes: number): string {
 
     const date = dayjs
         .utc()
+        .year(1)
+        .month(1)
+        .day(1)
         .hour(hours)
         .minute(remainingMinutes)
         .second(0)
@@ -77,5 +80,3 @@ export function minuteToTimeString(minutes: number): string {
 
     return date.toISOString();
 }
-
-console.log(minuteToTimeString(5));

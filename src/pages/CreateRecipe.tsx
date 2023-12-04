@@ -220,7 +220,6 @@ const CreateRecipe: React.FunctionComponent = () => {
             recipeThumbnailFile.name
         )}`;
 
-        // TODO: handle delete uploaded image incase create recipe fail.
         path = await uploadImage(recipeThumbnailFile, path);
 
         const directionsWithImage = await resolveDirectionsImage(
@@ -232,8 +231,8 @@ const CreateRecipe: React.FunctionComponent = () => {
             name: newRecipe.name,
             introduction: newRecipe.introduction,
             image: path,
-            totalTime: minuteToTimeString(15),
-            active_time: minuteToTimeString(5),
+            totalTime: minuteToTimeString(newRecipe.totalTime),
+            active_time: minuteToTimeString(newRecipe.activeTime),
             serving_size: newRecipe.servingSize,
             ingredients: newRecipe.ingredients.map((ingredient) => ({
                 id: ingredient.ingredientId,
@@ -250,6 +249,7 @@ const CreateRecipe: React.FunctionComponent = () => {
 
         return postData;
     }, [
+        newRecipe.activeTime,
         newRecipe.authorNote,
         newRecipe.directions,
         newRecipe.ingredients,
@@ -257,6 +257,7 @@ const CreateRecipe: React.FunctionComponent = () => {
         newRecipe.isPrivate,
         newRecipe.name,
         newRecipe.servingSize,
+        newRecipe.totalTime,
         recipeThumbnailFile,
     ]);
 
@@ -290,8 +291,11 @@ const CreateRecipe: React.FunctionComponent = () => {
                     clearForm();
                     snackbarAlert('Công thức tạo thành công!', 'success');
                 })
-                .catch((msg) => {
-                    console.log(createDebugString(msg));
+                .catch((e) => {
+                    console.log(
+                        createDebugString(e.message ?? 'Unknown error')
+                    );
+                    snackbarAlert('Công thức tạo thất bại!', 'warning');
                 });
         } catch (e) {
             console.log(createDebugString(e));
@@ -381,6 +385,8 @@ const CreateRecipe: React.FunctionComponent = () => {
     }, []);
 
     //#endregion
+
+    console.log('newRecipe', newRecipe);
 
     return (
         <Layout withFooter={false}>

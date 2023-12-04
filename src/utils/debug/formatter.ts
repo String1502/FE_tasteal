@@ -5,15 +5,15 @@
  * @returns {(string) => string} The formatter
  */
 export const createDebugStringFormatter = (pageIdentifier: string) => {
-  /**
-   * Format message for debug purpose
-   *
-   * @param {string} msg - The message to format.
-   * @returns {string} The formatted string.
-   */
-  function debugStringFormatter(msg: string) {
-    return `[${pageIdentifier}] ${msg}`;
-  }
+    /**
+     * Format message for debug purpose
+     *
+     * @param {string} msg - The message to format.
+     * @returns {string} The formatted string.
+     */
+    function debugStringFormatter(msg: string, ...path: string[]) {
+        return `[${pageIdentifier}${path ? `.${path.join('.')}` : ''}] ${msg}`;
+    }
 
-  return debugStringFormatter;
+    return debugStringFormatter;
 };
