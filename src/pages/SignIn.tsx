@@ -89,12 +89,6 @@ export default function SignIn() {
   }, [openSnackbar]);
 
   //#endregion
-  //#region Prevent signed in user
-
-    // TODO: fix the collision user signin check
-    usePreventSignedInUser();
-
-  //#endregion
 
   return (
     <>
