@@ -153,7 +153,11 @@ export function Header(props: Props) {
       //
       { label: "Lịch ăn", href: PAGE_ROUTE.MEALPLANNER, isHiden: false },
       { label: "Tủ lạnh", href: "/", isHiden: false },
-      { label: "Bộ sưu tập", href: PAGE_ROUTE.MY_SAVE_RECIPES, isHiden: false },
+      {
+        label: "Bộ sưu tập",
+        href: PAGE_ROUTE.MY_SAVED_RECIPES,
+        isHiden: false,
+      },
       { label: "Giỏ đi chợ", href: PAGE_ROUTE.GROCERY, isHiden: false },
       {
         label: "Đăng xuất",
@@ -365,7 +369,7 @@ export function Header(props: Props) {
                     mr: 2,
                   }}
                   onClick={() => {
-                    navigate(PAGE_ROUTE.MY_SAVE_RECIPES);
+                    navigate(PAGE_ROUTE.MY_SAVED_RECIPES);
                   }}
                 >
                   <BookmarkBorderRounded fontSize="inherit" />

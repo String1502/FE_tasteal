@@ -21,5 +21,5 @@ export const PAGE_ROUTE = {
   },
   GROCERY: "/grocery",
   MEALPLANNER: "/mealplanner",
-  MY_SAVE_RECIPES: "/mysaverecipes",
+  MY_SAVED_RECIPES: "/mysaverecipes",
 } as const;
