@@ -91,7 +91,8 @@ export default function SignIn() {
   //#endregion
   //#region Prevent signed in user
 
-  usePreventSignedInUser();
+    // TODO: fix the collision user signin check
+    usePreventSignedInUser();
 
   //#endregion
 
