@@ -1,10 +1,8 @@
-import { curveShapePath } from '@/assets/exportImage';
-import useFirebaseImage from '@/lib/hooks/useFirebaseImage';
+import { PageRoute } from '@/lib/constants/common';
 import { CookBookEntity } from '@/lib/models/entities/CookBookEntity/CookBookEntity';
 import { RecipeEntity } from '@/lib/models/entities/RecipeEntity/RecipeEntity';
 import AccountService from '@/lib/services/accountService';
 import CookbookService from '@/lib/services/cookbookService';
-import { dateTimeToMinutes } from '@/utils/format';
 import {
     BookmarkBorderRounded,
     BookmarkRounded,
@@ -12,12 +10,10 @@ import {
     StarRounded,
 } from '@mui/icons-material';
 import {
-    Avatar,
     Box,
     Button,
-    Card,
+    CardActionArea,
     CardContent,
-    CardMedia,
     CardProps,
     Checkbox,
     CheckboxProps,
@@ -29,9 +25,16 @@ import {
 } from '@mui/material';
 import { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import BoxImage from '../image/BoxImage';
+import CustomCard from './CustomCard';
+import TotalTimeRecipe from './TotalTimeRecipe';
+import AvatarRecipe from './AvatarRecipe';
+import RatingRecipe from './RatingRecipe';
+import NameRecipe from './NameRecipe';
+import ImageRecipe from './ImageRecipe';
 
-const imgHeight = '224px';
-const padding = 2;
+export const imgHeight = '224px';
+export const padding = 2;
 
 export function PrimaryCard({
     recipe,
@@ -43,9 +46,6 @@ export function PrimaryCard({
     recipe: RecipeEntity;
 }) {
     const navigate = useNavigate();
-    const image = useFirebaseImage(recipe?.image ?? '');
-    const authorAvatar = useFirebaseImage(recipe.account?.avatar ?? '');
-    const curveShapeImg = useFirebaseImage(curveShapePath);
 
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
     const open = Boolean(anchorEl);
@@ -74,165 +74,83 @@ export function PrimaryCard({
     }, []);
 
     const handleCardClick = useCallback(() => {
-        navigate(`/recipe/${recipe.id}`);
+        navigate(PageRoute.Recipe.Detail(recipe.id));
     }, [navigate, recipe.id]);
 
     return (
         <>
-            <Box onClick={handleCardClick}>
-                <Card
+            <CustomCard {...props}>
+                <CardActionArea onClick={handleCardClick}>
+                    <ImageRecipe
+                        imgHeight={imgHeight}
+                        recipe={recipe}
+                        quality={80}
+                    />
+                    <TotalTimeRecipe
+                        imgHeight={imgHeight}
+                        padding={padding}
+                        totalTime={recipe.totalTime}
+                    />
+
+                    <AvatarRecipe
+                        imgHeight={imgHeight}
+                        padding={padding}
+                        quality={10}
+                        account={recipe.account}
+                    />
+                </CardActionArea>
+
+                <Checkbox
+                    size="small"
                     sx={{
-                        borderRadius: '16px',
-                        transition: 'all 0.15s ease-in-out',
-                        cursor: 'pointer',
-                        boxShadow: 2,
-                        position: 'relative',
+                        position: 'absolute',
+                        top: padding * 8,
+                        right: padding * 8,
+                        zIndex: 1,
+                        backgroundColor: 'rgba(0, 0, 0, 0.4)',
+                        color: 'white',
+                        transition: 'all 0.1s ease-in-out',
                         '&:hover': {
-                            transform: 'translateY(-5px)',
-                            boxShadow: 12,
+                            backgroundColor: 'rgba(0, 0, 0, 0.5)',
+                            color: 'white',
+                            transform: 'scale(1.15)',
                         },
-                        ...props.props?.sx,
+                    }}
+                    icon={<BookmarkBorderRounded sx={{ color: 'white' }} />}
+                    checkedIcon={<BookmarkRounded sx={{ color: 'white' }} />}
+                    onClick={(e: any) => {
+                        e.preventDefault();
+                        handleClick(e);
+                    }}
+                    {...saveCheckBoxProps}
+                />
+
+                <CardContent
+                    sx={{
+                        p: padding,
                     }}
                 >
-                    <CardMedia
-                        component="img"
-                        height={imgHeight}
-                        // image="https://www.sidechef.com/recipe/d49b0c1d-e63e-4aac-afcc-b337b0cd1bff.jpg?d=1408x1120"
-                        image={image}
-                        alt={recipe.name}
-                        loading="lazy"
-                        sx={{
-                            opacity: 0,
-                            transition: 'all 0.2s ease-in-out',
-                        }}
-                        onLoad={(e) => {
-                            e.currentTarget.style.opacity = '1';
-                        }}
-                    />
-                    <Checkbox
-                        size="small"
-                        sx={{
-                            position: 'absolute',
-                            top: padding * 8,
-                            right: padding * 8,
-                            zIndex: 1,
-                            backgroundColor: 'rgba(0, 0, 0, 0.4)',
-                            color: '#fff',
-                            transition: 'all 0.1s ease-in-out',
-                            '&:hover': {
-                                backgroundColor: 'rgba(0, 0, 0, 0.5)',
-                                color: '#fff',
-                                transform: 'scale(1.15)',
-                            },
-                        }}
-                        icon={<BookmarkBorderRounded sx={{ color: '#fff' }} />}
-                        checkedIcon={<BookmarkRounded sx={{ color: '#fff' }} />}
-                        onClick={(e: any) => {
-                            e.preventDefault();
-                            handleClick(e);
-                        }}
-                        {...saveCheckBoxProps}
-                    />
+                    <RatingRecipe rating={recipe.rating} />
 
-                    <Box
+                    <NameRecipe name={recipe.name} />
+
+                    <Button
+                        variant="outlined"
                         sx={{
-                            position: 'absolute',
-                            left: 0,
+                            borderRadius: '40px',
+                            mt: 2,
                             width: '100%',
-                            top: imgHeight,
-                            zIndex: 1,
-                            px: padding,
-                            pb: 1,
-                            pt: 2,
-                            transform: 'translateY(-99%)',
-                            background:
-                                'linear-gradient(to top, rgba(0, 0, 0, 0.7),rgba(0, 0, 0, 0))',
                         }}
                     >
                         <Typography
                             variant="body2"
-                            color="common.white"
                             sx={{ fontWeight: 'bold' }}
                         >
-                            {dateTimeToMinutes(recipe.totalTime)} phút
+                            Thêm vào giỏ đi chợ
                         </Typography>
-                    </Box>
-
-                    <Box
-                        sx={{
-                            position: 'absolute',
-                            right: padding * 8,
-                            top: imgHeight,
-                            width: '80px',
-                            height: '30px',
-                            zIndex: 2,
-                            transform: 'translateY(-95%)',
-                            backgroundImage: `url(${curveShapeImg})`,
-                            backgroundRepeat: 'no-repeat',
-                            backgroundSize: 'contain',
-                            backgroundPosition: 'center',
-                        }}
-                    >
-                        <Avatar
-                            alt="Remy Sharp"
-                            src={authorAvatar}
-                            sx={{
-                                width: '40px',
-                                height: '40px',
-                                position: 'absolute',
-                                top: '80%',
-                                left: '50%',
-                                transform: 'translate(-50%, -50%)',
-                                opacity: 0,
-                                transition: 'all 0.2s ease-in-out',
-                            }}
-                            onLoad={(e) => {
-                                e.currentTarget.style.opacity = '1';
-                            }}
-                        />
-                    </Box>
-
-                    <CardContent
-                        sx={{
-                            p: padding,
-                        }}
-                    >
-                        <Rating
-                            value={recipe.rating}
-                            precision={0.5}
-                            readOnly
-                            icon={<StarRounded fontSize="inherit" />}
-                            emptyIcon={<StarRounded fontSize="inherit" />}
-                            size="small"
-                        />
-                        <Typography
-                            variant="body2"
-                            sx={{ fontWeight: 'bold' }}
-                            whiteSpace={'nowrap'}
-                            textOverflow={'ellipsis'}
-                            overflow={'hidden'}
-                        >
-                            {recipe.name}
-                        </Typography>
-
-                        <Button
-                            variant="outlined"
-                            sx={{
-                                borderRadius: '40px',
-                                mt: 2,
-                                width: '100%',
-                            }}
-                        >
-                            <Typography
-                                variant="body2"
-                                sx={{ fontWeight: 'bold' }}
-                            >
-                                Thêm vào giỏ đi chợ
-                            </Typography>
-                        </Button>
-                    </CardContent>
-                </Card>
-            </Box>
+                    </Button>
+                </CardContent>
+            </CustomCard>
 
             <Menu
                 anchorEl={anchorEl}

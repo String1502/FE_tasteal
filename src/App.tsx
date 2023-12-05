@@ -94,6 +94,10 @@ function AllRoutes() {
                 path: PageRoute.Search,
                 element: <Search />,
             },
+            {
+                path: PageRoute.Recipe.Detail(),
+                element: <RecipeDetail />,
+            },
             // Chưa đăng nhập
             {
                 path: PageRoute.SignIn,
@@ -119,11 +123,6 @@ function AllRoutes() {
             {
                 path: PageRoute.Recipe.Create,
                 element: <CreateRecipe />,
-                needSignIn: true,
-            },
-            {
-                path: PageRoute.Recipe.Detail,
-                element: <RecipeDetail />,
                 needSignIn: true,
             },
             {

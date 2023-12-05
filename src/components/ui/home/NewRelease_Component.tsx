@@ -1,17 +1,8 @@
 import { RecipeEntity } from '@/lib/models/entities/RecipeEntity/RecipeEntity';
 import RecipeService from '@/lib/services/recipeService';
-import { Skeleton } from '@mui/material';
 import { Suspense, useEffect, useState } from 'react';
 import { RecipesCarousel } from './RecipesCarousel';
-
-// TODO: CQ please move this to another file so `Fast refresh` can work.
-const SkeletonNewRelease = () => (
-    <Skeleton
-        variant="rounded"
-        height={372}
-        width={'100%'}
-    />
-);
+import { CarouselPrimaryCardSkeleton } from './CarouselPrimaryCardSkeleton';
 
 export const NewRelease_Component: React.FunctionComponent = () => {
     const [newReleases, setNewReleases] = useState<RecipeEntity[] | undefined>(
@@ -31,10 +22,10 @@ export const NewRelease_Component: React.FunctionComponent = () => {
 
     return (
         <>
-            {!newReleases && <SkeletonNewRelease />}
+            {!newReleases && <CarouselPrimaryCardSkeleton />}
 
             {newReleases && (
-                <Suspense fallback={<SkeletonNewRelease />}>
+                <Suspense fallback={<CarouselPrimaryCardSkeleton />}>
                     <RecipesCarousel array={newReleases} />
                 </Suspense>
             )}
