@@ -22,11 +22,10 @@ import { RecipeReq } from '@/lib/models/dtos/Request/RecipeReq/RecipeReq';
 import { Direction } from '@/lib/models/dtos/common';
 import OccasionService from '@/lib/services/occasionService';
 import RecipeService from '@/lib/services/recipeService';
-import { CommonErrorCode } from '@/utils/constants/error';
+import { CommonMessage } from '@/utils/constants/message';
 import { createDebugStringFormatter } from '@/utils/debug/formatter';
 import { getFileExtension } from '@/utils/file';
 import { minuteToTimeString } from '@/utils/format';
-import { ErrorInfo } from '@/utils/promises/error';
 import {
     Autocomplete,
     Box,
@@ -132,19 +131,16 @@ const resolveDirectionsImage = (
 /**
  * Local message constants
  */
-const LOCAL_MESSAGE_CONSTANTS = {
-    AUTH: {
-        AUTH_REQUIRED: 'Vui lòng đăng nhập!',
-    } as const,
-    VALIDATION: {
-        INVALID_DATA: 'Dữ liệu không hợp lệ!',
-        NAME_REQUIRED: 'Tên không được để trống!!',
-        INTRODUCTION_REQUIRED: 'Giới thiệu không được để trống!',
-        INGREDIENT_REQUIRED: 'Vui lòng thêm nguyên liệu!',
-        DIRECTION_REQUIRED: 'Vui lòng thêm bước thực hiện!',
-        TOTAL_TIME_REQUIRED: 'Tổng thời gian không được để trống!',
-        INVALID_ACTIVE_TIME: 'Thời gian thực phải nhỏ hơn tổng thời gian!',
-        IMAGE_REQUIRED: 'Vui lòng tải ảnh đại diện!',
+const LocalMessageConstant = {
+    Validation: {
+        InvalidData: 'Dữ liệu không hợp lệ!',
+        NameRequired: 'Tên không được để trống!!',
+        IntroductionRequired: 'Giới thiệu không được để trống!',
+        IngredientRequired: 'Vui lòng thêm nguyên liệu!',
+        DirectionRequired: 'Vui lòng thêm bước thực hiện!',
+        TotalTimeRequired: 'Tổng thời gian không được để trống!',
+        InvalidActiveTime: 'Thời gian thực phải nhỏ hơn tổng thời gian!',
+        ImageRequired: 'Vui lòng tải ảnh đại diện!',
     } as const,
 } as const;
 
@@ -152,7 +148,9 @@ const CreateRecipe: React.FunctionComponent = () => {
     //#region Hooks
 
     const [snackbarAlert] = useSnackbarService();
-    const app = useContext(AppContext);
+    const {
+        login: { user },
+    } = useContext(AppContext);
 
     //#endregion
     //#region General Recipe
@@ -190,29 +188,27 @@ const CreateRecipe: React.FunctionComponent = () => {
         let msg = '';
 
         if (!newRecipe) {
-            setInvalid(LOCAL_MESSAGE_CONSTANTS.VALIDATION.INVALID_DATA);
+            setInvalid(LocalMessageConstant.Validation.InvalidData);
         } else if (!newRecipe.name) {
-            setInvalid(LOCAL_MESSAGE_CONSTANTS.VALIDATION.NAME_REQUIRED);
+            setInvalid(LocalMessageConstant.Validation.NameRequired);
         } else if (!newRecipe.introduction) {
-            setInvalid(
-                LOCAL_MESSAGE_CONSTANTS.VALIDATION.INTRODUCTION_REQUIRED
-            );
+            setInvalid(LocalMessageConstant.Validation.IntroductionRequired);
         } else if (!recipeThumbnailFile) {
-            setInvalid(LOCAL_MESSAGE_CONSTANTS.VALIDATION.IMAGE_REQUIRED);
+            setInvalid(LocalMessageConstant.Validation.ImageRequired);
         } else if (
             !newRecipe.ingredients ||
             newRecipe.ingredients.length === 0
         ) {
-            setInvalid(LOCAL_MESSAGE_CONSTANTS.VALIDATION.INGREDIENT_REQUIRED);
+            setInvalid(LocalMessageConstant.Validation.IngredientRequired);
         } else if (!newRecipe.directions || newRecipe.directions.length === 0) {
-            setInvalid(LOCAL_MESSAGE_CONSTANTS.VALIDATION.DIRECTION_REQUIRED);
+            setInvalid(LocalMessageConstant.Validation.DirectionRequired);
         } else if (newRecipe.totalTime <= 0) {
-            setInvalid(LOCAL_MESSAGE_CONSTANTS.VALIDATION.TOTAL_TIME_REQUIRED);
+            setInvalid(LocalMessageConstant.Validation.TotalTimeRequired);
         } else if (
             newRecipe.activeTime > 0 &&
             newRecipe.activeTime > newRecipe.totalTime
         ) {
-            setInvalid(LOCAL_MESSAGE_CONSTANTS.VALIDATION.INVALID_ACTIVE_TIME);
+            setInvalid(LocalMessageConstant.Validation.InvalidActiveTime);
         }
 
         return { isValid, msg };
@@ -223,17 +219,13 @@ const CreateRecipe: React.FunctionComponent = () => {
      * Data must have been validated before calling this method.
      */
     const createPostData = useCallback(async (): Promise<RecipeReq> => {
-        if (!app.login.user) {
-            const error: ErrorInfo = {
-                message: LOCAL_MESSAGE_CONSTANTS.AUTH.AUTH_REQUIRED,
-                code: CommonErrorCode.Auth.AuthRequired,
-            };
-            throw error;
+        if (!user) {
+            throw new ReferenceError(CommonMessage.Auth.NullUser);
         }
 
-        const IMAGE_ID = uuidv4();
+        const imageId = uuidv4();
 
-        let path = `${StoragePath.RECIPE}/${IMAGE_ID}.${getFileExtension(
+        let path = `${StoragePath.RECIPE}/${imageId}.${getFileExtension(
             recipeThumbnailFile.name
         )}`;
 
@@ -241,7 +233,7 @@ const CreateRecipe: React.FunctionComponent = () => {
 
         const directionsWithImage = await resolveDirectionsImage(
             newRecipe.directions,
-            IMAGE_ID
+            imageId
         );
 
         const postData: RecipeReq = {
@@ -255,9 +247,9 @@ const CreateRecipe: React.FunctionComponent = () => {
                 id: ingredient.ingredientId,
                 amount: ingredient.amount,
             })),
-            direction: directionsWithImage,
+            directions: directionsWithImage,
             author_note: newRecipe.authorNote,
-            author: '13b865f7-d6a6-4204-a349-7f379b232f0c',
+            author: user.uid,
             is_private: newRecipe.isPrivate,
             rating: 0,
         };
@@ -274,6 +266,7 @@ const CreateRecipe: React.FunctionComponent = () => {
         newRecipe.servingSize,
         newRecipe.totalTime,
         recipeThumbnailFile,
+        user,
     ]);
 
     const clearForm = useCallback(() => {
@@ -302,12 +295,9 @@ const CreateRecipe: React.FunctionComponent = () => {
 
             console.log(postData);
 
-            return;
-
             RecipeService.CreateRecipe(postData)
                 .then((response) => {
                     console.log(response);
-                    clearForm();
                     snackbarAlert('Công thức tạo thành công!', 'success');
                 })
                 .catch((e) => {
@@ -318,10 +308,11 @@ const CreateRecipe: React.FunctionComponent = () => {
                 });
         } catch (e) {
             console.log(createDebugString(e));
+            snackbarAlert(e.message, 'warning');
         } finally {
             setIsCreatingRecipe(false);
         }
-    }, [clearForm, createPostData, snackbarAlert, validateNewRecipe]);
+    }, [createPostData, snackbarAlert, validateNewRecipe]);
     //#endregion
     //#region Ingredients
 

@@ -3,6 +3,6 @@
  */
 export const CommonMessage = {
     Auth: {
-        AuthRequire: 'Vui lòng đăng nhập!',
+        NullUser: 'Không tìm thấy người dùng!',
     },
 } as const;
