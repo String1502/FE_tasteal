@@ -228,7 +228,7 @@ const CreateRecipe: React.FunctionComponent = () => {
                 message: LOCAL_MESSAGE_CONSTANTS.AUTH.AUTH_REQUIRED,
                 code: CommonErrorCode.Auth.AuthRequired,
             };
-            throw new Error();
+            throw error;
         }
 
         const IMAGE_ID = uuidv4();

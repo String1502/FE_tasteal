@@ -1,21 +1,22 @@
-import { RecipeEntity } from '@/lib/models/entities/RecipeEntity/RecipeEntity';
 import BoxImage, { ImageQuality } from '../image/BoxImage';
 import { CardMedia } from '@mui/material';
 
 function ImageRecipe({
-    recipe,
+    src,
+    alt,
     imgHeight,
     quality,
 }: {
-    recipe?: RecipeEntity;
+    src: string;
+    alt: string;
     imgHeight: string | number;
     quality?: ImageQuality;
 }) {
     return (
         <CardMedia sx={{ height: imgHeight }}>
             <BoxImage
-                src={recipe?.image}
-                alt={recipe?.name}
+                src={src}
+                alt={alt}
                 quality={quality}
                 sx={{
                     height: imgHeight,

@@ -1,5 +1,5 @@
 import { Box, Container, Grid, Stack, Typography } from '@mui/material';
-import React, { useCallback, useContext, useEffect, useState } from 'react';
+import React, { useCallback, useContext, useEffect } from 'react';
 import { CheckBoxButton } from '../components/ui/search/CheckBoxButton.tsx';
 import { PrimaryCard } from '../components/common/card/PrimaryCard.tsx';
 import { SearchFilter } from '../components/ui/search/SearchFilter.tsx';

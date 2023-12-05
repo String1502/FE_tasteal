@@ -17,6 +17,7 @@ import TotalTimeRecipe from '@/components/common/card/TotalTimeRecipe';
 import AvatarRecipe from '@/components/common/card/AvatarRecipe';
 import RatingRecipe from '@/components/common/card/RatingRecipe';
 import NameRecipe from '@/components/common/card/NameRecipe';
+import ImageRecipe from '@/components/common/card/ImageRecipe';
 
 export function MealPlanCard({
     index,
@@ -49,13 +50,11 @@ export function MealPlanCard({
                     >
                         <CustomCard {...props}>
                             <CardActionArea>
-                                <BoxImage
-                                    src={recipe?.image}
-                                    alt={recipe?.name}
-                                    sx={{
-                                        height: imgHeight,
-                                        width: '100%',
-                                    }}
+                                <ImageRecipe
+                                    imgHeight={imgHeight}
+                                    src={recipe.image}
+                                    alt={recipe.name}
+                                    quality={80}
                                 />
 
                                 <Button

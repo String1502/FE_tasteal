@@ -4,7 +4,7 @@ import AppContext from '@/lib/contexts/AppContext';
 import useSnackbarService from '@/lib/hooks/useSnackbar';
 import { Box } from '@mui/material';
 import React, { useContext, useEffect } from 'react';
-import { Navigate, useNavigate } from 'react-router';
+import { useNavigate } from 'react-router';
 import SignInFirst from './SignInFirst';
 
 function CheckSignIn({

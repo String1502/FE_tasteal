@@ -22,6 +22,7 @@ import Search from './pages/Search';
 import SignIn from './pages/SignIn';
 import SignUp from './pages/SignUp';
 import SignUpEmail from './pages/SignUpEmail';
+import ScrollToTop from './components/ui/app/ScrollToTop';
 
 //#region AppWrapper
 
@@ -150,6 +151,7 @@ function AllRoutes() {
     return (
         <>
             <Router>
+                <ScrollToTop />
                 <Routes>
                     {MapRoutes.map(
                         ({ path, element, checkAlready, needSignIn }) => (

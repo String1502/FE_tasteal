@@ -7,10 +7,8 @@ import {
     BookmarkBorderRounded,
     BookmarkRounded,
     PlayArrowRounded,
-    StarRounded,
 } from '@mui/icons-material';
 import {
-    Box,
     Button,
     CardActionArea,
     CardContent,
@@ -20,12 +18,10 @@ import {
     ListItemIcon,
     Menu,
     MenuItem,
-    Rating,
     Typography,
 } from '@mui/material';
 import { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import BoxImage from '../image/BoxImage';
 import CustomCard from './CustomCard';
 import TotalTimeRecipe from './TotalTimeRecipe';
 import AvatarRecipe from './AvatarRecipe';
@@ -83,7 +79,8 @@ export function PrimaryCard({
                 <CardActionArea onClick={handleCardClick}>
                     <ImageRecipe
                         imgHeight={imgHeight}
-                        recipe={recipe}
+                        src={recipe.image}
+                        alt={recipe.name}
                         quality={80}
                     />
                     <TotalTimeRecipe
