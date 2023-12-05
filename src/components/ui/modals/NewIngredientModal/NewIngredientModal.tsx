@@ -1,6 +1,6 @@
 import RoundedButton from '@/components/common/buttons/RoundedButton';
 import TastealTextField from '@/components/common/textFields/TastealTextField';
-import { DEFAULT_INGREDIENT_ITEM_DATA } from '@/lib/constants/defaultValue';
+import { DefaultIngredientItemData } from '@/lib/constants/defaultValue';
 import useIngredients from '@/lib/hooks/useIngredients';
 import {
     Autocomplete,
@@ -22,7 +22,7 @@ const NewIngredientModal: React.FunctionComponent<{
     //#region UseStates
 
     const [newIngredientItem, setNewIngredientItem] =
-        useState<IngredientItemData>(DEFAULT_INGREDIENT_ITEM_DATA);
+        useState<IngredientItemData>(DefaultIngredientItemData);
 
     const ingredientOptions = useIngredients();
 
@@ -35,7 +35,7 @@ const NewIngredientModal: React.FunctionComponent<{
     //#region Callbacks
 
     const clearForm = useCallback(() => {
-        setNewIngredientItem(DEFAULT_INGREDIENT_ITEM_DATA);
+        setNewIngredientItem(DefaultIngredientItemData);
     }, []);
 
     /**
@@ -91,12 +91,12 @@ const NewIngredientModal: React.FunctionComponent<{
             );
 
             if (!ingredient) {
-                setNewIngredientItem(DEFAULT_INGREDIENT_ITEM_DATA);
+                setNewIngredientItem(DefaultIngredientItemData);
                 return;
             }
 
             const item: IngredientItemData = {
-                ...DEFAULT_INGREDIENT_ITEM_DATA,
+                ...DefaultIngredientItemData,
                 id: nanoid(6),
                 ingredientId: ingredient.id,
                 name: ingredient.name,

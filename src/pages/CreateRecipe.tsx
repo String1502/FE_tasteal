@@ -13,17 +13,20 @@ import { IngredientItemData } from '@/components/ui/collections/IngredientSelect
 import NewIngredientModal from '@/components/ui/modals/NewIngredientModal';
 import ServingSizeSelect from '@/components/ui/selects/ServingSizeSelect';
 import Layout from '@/layout/Layout';
-import { SERVING_SIZES } from '@/lib/constants/options';
-import { STORAGE_PATH } from '@/lib/constants/storage';
+import { ServingSizes } from '@/lib/constants/options';
+import { StoragePath } from '@/lib/constants/storage';
+import AppContext from '@/lib/contexts/AppContext';
 import { uploadImage } from '@/lib/firebase/image';
 import useSnackbarService from '@/lib/hooks/useSnackbar';
 import { RecipeReq } from '@/lib/models/dtos/Request/RecipeReq/RecipeReq';
 import { Direction } from '@/lib/models/dtos/common';
 import OccasionService from '@/lib/services/occasionService';
 import RecipeService from '@/lib/services/recipeService';
+import { CommonErrorCode } from '@/utils/constants/error';
 import { createDebugStringFormatter } from '@/utils/debug/formatter';
 import { getFileExtension } from '@/utils/file';
 import { minuteToTimeString } from '@/utils/format';
+import { ErrorInfo } from '@/utils/promises/error';
 import {
     Autocomplete,
     Box,
@@ -37,7 +40,7 @@ import {
     RadioGroup,
     Stack,
 } from '@mui/material';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 
 /**
@@ -96,7 +99,7 @@ const resolveDirectionImage = async (
             const path = await uploadImage(
                 imageFile,
                 `${
-                    STORAGE_PATH.DIRECTION
+                    StoragePath.DIRECTION
                 }/${imageId}[${step}].${getFileExtension(imageFile.name)}`
             );
 
@@ -129,7 +132,10 @@ const resolveDirectionsImage = (
 /**
  * Local message constants
  */
-const MESSAGE_CONSTANTS = {
+const LOCAL_MESSAGE_CONSTANTS = {
+    AUTH: {
+        AUTH_REQUIRED: 'Vui lòng đăng nhập!',
+    } as const,
     VALIDATION: {
         INVALID_DATA: 'Dữ liệu không hợp lệ!',
         NAME_REQUIRED: 'Tên không được để trống!!',
@@ -146,6 +152,7 @@ const CreateRecipe: React.FunctionComponent = () => {
     //#region Hooks
 
     const [snackbarAlert] = useSnackbarService();
+    const app = useContext(AppContext);
 
     //#endregion
     //#region General Recipe
@@ -183,27 +190,29 @@ const CreateRecipe: React.FunctionComponent = () => {
         let msg = '';
 
         if (!newRecipe) {
-            setInvalid(MESSAGE_CONSTANTS.VALIDATION.INVALID_DATA);
+            setInvalid(LOCAL_MESSAGE_CONSTANTS.VALIDATION.INVALID_DATA);
         } else if (!newRecipe.name) {
-            setInvalid(MESSAGE_CONSTANTS.VALIDATION.NAME_REQUIRED);
+            setInvalid(LOCAL_MESSAGE_CONSTANTS.VALIDATION.NAME_REQUIRED);
         } else if (!newRecipe.introduction) {
-            setInvalid(MESSAGE_CONSTANTS.VALIDATION.INTRODUCTION_REQUIRED);
+            setInvalid(
+                LOCAL_MESSAGE_CONSTANTS.VALIDATION.INTRODUCTION_REQUIRED
+            );
         } else if (!recipeThumbnailFile) {
-            setInvalid(MESSAGE_CONSTANTS.VALIDATION.IMAGE_REQUIRED);
+            setInvalid(LOCAL_MESSAGE_CONSTANTS.VALIDATION.IMAGE_REQUIRED);
         } else if (
             !newRecipe.ingredients ||
             newRecipe.ingredients.length === 0
         ) {
-            setInvalid(MESSAGE_CONSTANTS.VALIDATION.INGREDIENT_REQUIRED);
+            setInvalid(LOCAL_MESSAGE_CONSTANTS.VALIDATION.INGREDIENT_REQUIRED);
         } else if (!newRecipe.directions || newRecipe.directions.length === 0) {
-            setInvalid(MESSAGE_CONSTANTS.VALIDATION.DIRECTION_REQUIRED);
+            setInvalid(LOCAL_MESSAGE_CONSTANTS.VALIDATION.DIRECTION_REQUIRED);
         } else if (newRecipe.totalTime <= 0) {
-            setInvalid(MESSAGE_CONSTANTS.VALIDATION.TOTAL_TIME_REQUIRED);
+            setInvalid(LOCAL_MESSAGE_CONSTANTS.VALIDATION.TOTAL_TIME_REQUIRED);
         } else if (
             newRecipe.activeTime > 0 &&
             newRecipe.activeTime > newRecipe.totalTime
         ) {
-            setInvalid(MESSAGE_CONSTANTS.VALIDATION.INVALID_ACTIVE_TIME);
+            setInvalid(LOCAL_MESSAGE_CONSTANTS.VALIDATION.INVALID_ACTIVE_TIME);
         }
 
         return { isValid, msg };
@@ -214,9 +223,17 @@ const CreateRecipe: React.FunctionComponent = () => {
      * Data must have been validated before calling this method.
      */
     const createPostData = useCallback(async (): Promise<RecipeReq> => {
+        if (!app.login.user) {
+            const error: ErrorInfo = {
+                message: LOCAL_MESSAGE_CONSTANTS.AUTH.AUTH_REQUIRED,
+                code: CommonErrorCode.Auth.AuthRequired,
+            };
+            throw new Error();
+        }
+
         const IMAGE_ID = uuidv4();
 
-        let path = `${STORAGE_PATH.RECIPE}/${IMAGE_ID}.${getFileExtension(
+        let path = `${StoragePath.RECIPE}/${IMAGE_ID}.${getFileExtension(
             recipeThumbnailFile.name
         )}`;
 
@@ -236,9 +253,7 @@ const CreateRecipe: React.FunctionComponent = () => {
             serving_size: newRecipe.servingSize,
             ingredients: newRecipe.ingredients.map((ingredient) => ({
                 id: ingredient.ingredientId,
-                name: ingredient.name,
                 amount: ingredient.amount,
-                isLiquid: ingredient.isLiquid,
             })),
             direction: directionsWithImage,
             author_note: newRecipe.authorNote,
@@ -284,6 +299,10 @@ const CreateRecipe: React.FunctionComponent = () => {
             }
 
             const postData = await createPostData();
+
+            console.log(postData);
+
+            return;
 
             RecipeService.CreateRecipe(postData)
                 .then((response) => {
@@ -484,7 +503,7 @@ const CreateRecipe: React.FunctionComponent = () => {
                                 <ServingSizeSelect
                                     disabled={isCreatingRecipe}
                                     servingSize={newRecipe.servingSize}
-                                    sizes={SERVING_SIZES}
+                                    sizes={ServingSizes}
                                     onServingSizeChange={(size) =>
                                         handleNewRecipeFieldChange(
                                             'servingSize',

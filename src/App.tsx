@@ -1,16 +1,16 @@
 import RecipeDetail from '@/pages/RecipeDetail';
 import { CssBaseline, Theme, ThemeProvider } from '@mui/material';
+import { User, onAuthStateChanged } from 'firebase/auth';
 import React, { useContext, useEffect, useMemo } from 'react';
-import {
-    Navigate,
-    Route,
-    BrowserRouter as Router,
-    Routes,
-} from 'react-router-dom';
+import { Route, BrowserRouter as Router, Routes } from 'react-router-dom';
 import TastealHashLoader from './components/common/progress/TastealHashLoader';
+import CheckSignIn from './components/ui/app/CheckSignIn';
+import NotFound from './components/ui/app/NotFound';
+import { PageRoute } from './lib/constants/common';
 import AppContext from './lib/contexts/AppContext';
 import ColorModeContext from './lib/contexts/ColorModeContext';
 import SnackbarProvider from './lib/contexts/snackbarContext';
+import { auth } from './lib/firebase/config';
 import useTastealTheme from './lib/hooks/useTastealTheme';
 import CreateRecipe from './pages/CreateRecipe';
 import ForgotPass from './pages/ForgotPass';
@@ -22,11 +22,6 @@ import Search from './pages/Search';
 import SignIn from './pages/SignIn';
 import SignUp from './pages/SignUp';
 import SignUpEmail from './pages/SignUpEmail';
-import { PAGE_ROUTE } from './lib/constants/common';
-import { User, onAuthStateChanged } from 'firebase/auth';
-import { auth } from './lib/firebase/config';
-import NotFound from './components/ui/app/NotFound';
-import CheckSignIn from './components/ui/app/CheckSignIn';
 
 //#region AppWrapper
 
@@ -92,56 +87,57 @@ function AllRoutes() {
     const MapRoutes = useMemo(() => {
         return [
             {
-                path: PAGE_ROUTE.HOME,
+                path: PageRoute.Home,
                 element: <Home />,
             },
             {
-                path: PAGE_ROUTE.SEARCH,
+                path: PageRoute.Search,
                 element: <Search />,
-            },
-            {
-                path: PAGE_ROUTE.RECIPE.DETAIL(),
-                element: <RecipeDetail />,
             },
             // Chưa đăng nhập
             {
-                path: PAGE_ROUTE.SIGN_IN,
+                path: PageRoute.SignIn,
                 element: <SignIn />,
                 checkAlready: true,
             },
             {
-                path: PAGE_ROUTE.SIGN_UP,
+                path: PageRoute.SignUp,
                 element: <SignUp />,
                 checkAlready: true,
             },
             {
-                path: PAGE_ROUTE.SIGN_UP_EMAIL,
+                path: PageRoute.SignUpEmail,
                 element: <SignUpEmail />,
                 checkAlready: true,
             },
             {
-                path: PAGE_ROUTE.FORGOT_PASS,
+                path: PageRoute.ForgotPass,
                 element: <ForgotPass />,
                 checkAlready: true,
             },
             // Đã đăng nhập
             {
-                path: PAGE_ROUTE.RECIPE.CREATE,
+                path: PageRoute.Recipe.Create,
                 element: <CreateRecipe />,
                 needSignIn: true,
             },
             {
-                path: PAGE_ROUTE.GROCERY,
+                path: PageRoute.Recipe.Detail,
+                element: <RecipeDetail />,
+                needSignIn: true,
+            },
+            {
+                path: PageRoute.Grocery,
                 element: <Grocery />,
                 needSignIn: true,
             },
             {
-                path: PAGE_ROUTE.MEALPLANNER,
+                path: PageRoute.MealPlanner,
                 element: <MealPlanner />,
                 needSignIn: true,
             },
             {
-                path: PAGE_ROUTE.MY_SAVED_RECIPES,
+                path: PageRoute.MySavedRecipes,
                 element: <MySavedRecipes />,
                 needSignIn: true,
             },

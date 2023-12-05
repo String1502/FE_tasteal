@@ -1,6 +1,6 @@
 import { occasions as occasionsSampleData } from '@/lib/constants/sampleData';
 import simulateDelay from '@/utils/promises/stimulateDelay';
-import { API_PATH } from '../constants/common';
+import { ApiPath } from '../constants/common';
 import { OccasionEntity } from '../models/entities/OccasionEntity/OccasionEntity';
 
 /**
@@ -18,7 +18,7 @@ class OccasionService {
             method: 'GET',
         };
 
-        await fetch(`${API_PATH}/api/v2/Home/getoccasion`, requestOptions)
+        await fetch(`${ApiPath}/api/v2/Home/getoccasion`, requestOptions)
             .then((res) => res.json())
             .then((data) => {
                 result = data;
