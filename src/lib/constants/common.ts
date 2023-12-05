@@ -18,8 +18,10 @@ export const PageRoute = {
     ForgotPass: '/forgotpass',
     Recipe: {
         Create: '/recipe/create',
-        Detail: '/recipe/:id',
-        Edit: '/recipe/:id/edit',
+        Detail: (id?: RecipeEntity['id']) =>
+            id ? `/recipe/${id}` : '/recipe/:id',
+        Edit: (id?: RecipeEntity['id']) =>
+            id ? `/recipe/${id}/edit` : '/recipe/:id/edit',
     },
     Grocery: '/grocery',
     MealPlanner: '/mealplanner',

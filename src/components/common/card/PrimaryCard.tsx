@@ -1,4 +1,4 @@
-import { PAGE_ROUTE } from '@/lib/constants/common';
+import { PageRoute } from '@/lib/constants/common';
 import { CookBookEntity } from '@/lib/models/entities/CookBookEntity/CookBookEntity';
 import { RecipeEntity } from '@/lib/models/entities/RecipeEntity/RecipeEntity';
 import AccountService from '@/lib/services/accountService';
@@ -74,7 +74,7 @@ export function PrimaryCard({
     }, []);
 
     const handleCardClick = useCallback(() => {
-        navigate(PAGE_ROUTE.RECIPE.DETAIL(recipe.id));
+        navigate(PageRoute.Recipe.Detail(recipe.id));
     }, [navigate, recipe.id]);
 
     return (
