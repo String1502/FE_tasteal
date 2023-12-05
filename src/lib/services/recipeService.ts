@@ -1,11 +1,11 @@
 import { getApiUrl } from '@/lib/constants/api';
 import { recipes as recipesSampleData } from '@/lib/constants/sampleData';
 import { RecipeRes } from '@/lib/models/dtos/Response/RecipeRes/RecipeRes';
-import { ERROR_CODE } from '@/utils/constants/error';
+import { CommonErrorCode } from '@/utils/constants/error';
 import { createDebugStringFormatter } from '@/utils/debug/formatter';
 import { ErrorInfo } from '@/utils/promises/error';
 import simulateDelay from '@/utils/promises/stimulateDelay';
-import { API_PATH, DEFAULT_PAGE } from '../constants/common';
+import { ApiPath, DefaultPage } from '../constants/common';
 import { deleteImage } from '../firebase/image';
 import { RecipeReq } from '../models/dtos/Request/RecipeReq/RecipeReq';
 import { RecipeSearchReq } from '../models/dtos/Request/RecipeSearchReq/RecipeSearchReq';
@@ -72,12 +72,13 @@ class RecipeService {
             },
             body: JSON.stringify({
                 pageSize: limit,
-                page: DEFAULT_PAGE,
+                page: DefaultPage,
                 isDescend: true,
             }),
         };
 
-        await fetch(`${API_PATH}/api/v2/Home/recipebydatetime`, requestOptions)
+        // TODO: replace this with a api generate function
+        await fetch(`${ApiPath}/api/v2/Home/recipebydatetime`, requestOptions)
             .then((response) => response.json())
             .then((data) => {
                 recipes = data;
@@ -103,12 +104,13 @@ class RecipeService {
             },
             body: JSON.stringify({
                 pageSize: limit,
-                page: DEFAULT_PAGE,
+                page: DefaultPage,
                 isDescend: true,
             }),
         };
 
-        await fetch(`${API_PATH}/api/v2/Home/recipebyrating`, requestOptions)
+        // TODO: replace this with a api generate function
+        await fetch(`${ApiPath}/api/v2/Home/recipebyrating`, requestOptions)
             .then((response) => response.json())
             .then((data) => {
                 recipes = data;
@@ -168,7 +170,7 @@ class RecipeService {
 
                 const error: ErrorInfo = {
                     message: 'Fail to parse json response',
-                    code: ERROR_CODE.JSON.PARSE_FAIL,
+                    code: CommonErrorCode.Json.ParseFail,
                 };
 
                 return Promise.reject(error);
