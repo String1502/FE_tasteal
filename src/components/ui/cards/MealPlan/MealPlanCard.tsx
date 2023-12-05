@@ -1,204 +1,143 @@
 import {
-  Avatar,
-  Box,
-  Button,
-  Card,
-  CardActionArea,
-  CardContent,
-  CardMedia,
-  CardProps,
-  IconButton,
-  Rating,
-  Typography,
-} from "@mui/material";
-import { Clear, RotateLeftRounded, StarRounded } from "@mui/icons-material";
-import { curveShapePath } from "@/assets/exportImage";
-import useFirebaseImage from "@/lib/hooks/useFirebaseImage";
-import { Draggable } from "react-beautiful-dnd";
-import { Plan_ItemEntity } from "@/lib/models/entities/Plan_ItemEntity/Plan_ItemEntity";
-import { RecipeEntity } from "@/lib/models/entities/RecipeEntity/RecipeEntity";
-import { dateTimeToMinutes } from "@/utils/format";
-
-const imgHeight = "148px";
-const padding = 2;
+    Box,
+    Button,
+    CardActionArea,
+    CardContent,
+    CardProps,
+    IconButton,
+} from '@mui/material';
+import { Clear, RotateLeftRounded } from '@mui/icons-material';
+import { Draggable } from 'react-beautiful-dnd';
+import { Plan_ItemEntity } from '@/lib/models/entities/Plan_ItemEntity/Plan_ItemEntity';
+import { RecipeEntity } from '@/lib/models/entities/RecipeEntity/RecipeEntity';
+import { imgHeight, padding } from '@/components/common/card/PrimaryCard';
+import CustomCard from '@/components/common/card/CustomCard';
+import BoxImage from '@/components/common/image/BoxImage';
+import TotalTimeRecipe from '@/components/common/card/TotalTimeRecipe';
+import AvatarRecipe from '@/components/common/card/AvatarRecipe';
+import RatingRecipe from '@/components/common/card/RatingRecipe';
+import NameRecipe from '@/components/common/card/NameRecipe';
 
 export function MealPlanCard({
-  index,
-  planItem,
-  recipe,
-  handleRemovePlanItem,
-  ...props
+    index,
+    planItem,
+    recipe,
+    handleRemovePlanItem,
+    ...props
 }: {
-  index: number;
-  planItem: Plan_ItemEntity;
-  recipe: RecipeEntity;
-  handleRemovePlanItem: (id: number) => void;
-  props?: CardProps;
+    index: number;
+    planItem: Plan_ItemEntity;
+    recipe: RecipeEntity;
+    handleRemovePlanItem: (id: number) => void;
+    props?: CardProps;
 }) {
-  const curveShapeImg = useFirebaseImage(curveShapePath);
-  const authorAvatar = useFirebaseImage(recipe?.account?.avatar);
-  return (
-    <>
-      <Draggable
-        draggableId={planItem.id.toString()}
-        index={index}
-        key={planItem.id.toString()}
-      >
-        {(provided, snapshot) => (
-          <Box
-            ref={provided.innerRef}
-            {...provided.draggableProps}
-            {...provided.dragHandleProps}
-            sx={{
-              width: "100%",
-            }}
-          >
-            <Card
-              sx={{
-                borderRadius: "16px",
-                transition: "all 0.15s ease-in-out",
-                cursor: "pointer",
-                boxShadow: snapshot.isDragging ? 0 : 2,
-                position: "relative",
-                "&:hover": {
-                  transform: "translateY(-5px)",
-                  boxShadow: 12,
-                },
-                ...props.props?.sx,
-              }}
+    return (
+        <>
+            <Draggable
+                draggableId={planItem.id.toString()}
+                index={index}
+                key={planItem.id.toString()}
             >
-              <CardActionArea>
-                <CardMedia
-                  component="img"
-                  height={imgHeight}
-                  image="https://www.sidechef.com/recipe/d49b0c1d-e63e-4aac-afcc-b337b0cd1bff.jpg?d=1408x1120"
-                  alt={recipe.name}
-                />
-                <Button
-                  variant="contained"
-                  color="primary"
-                  size="small"
-                  startIcon={<RotateLeftRounded sx={{ color: "#fff" }} />}
-                  sx={{
-                    position: "absolute",
-                    top: padding * 8,
-                    left: padding * 8,
-                    zIndex: 1,
-                    backgroundColor: "rgba(0, 0, 0, 0.7)",
-                    color: "#fff",
-                    transition: "all 0.1s ease-in-out",
-                    "&:hover": {
-                      backgroundColor: "rgba(0, 0, 0, 0.9)",
-                      color: "#fff",
-                    },
-                    pr: 2,
-                    py: 0.4,
-                    fontWeight: "bold",
-                  }}
-                >
-                  ĐỔI
-                </Button>
-                <IconButton
-                  color="primary"
-                  size="small"
-                  sx={{
-                    borderRadius: "50%",
-                    position: "absolute",
-                    top: padding * 8,
-                    right: padding * 8,
-                    zIndex: 1,
-                    backgroundColor: "rgba(0, 0, 0, 0.7)",
-                    color: "#fff",
-                    transition: "all 0.1s ease-in-out",
-                    "&:hover": {
-                      backgroundColor: "rgba(0, 0, 0, 0.9)",
-                      color: "#fff",
-                    },
-                  }}
-                  onClick={() => handleRemovePlanItem(planItem.id)}
-                >
-                  <Clear fontSize="small" />
-                </IconButton>
-                <Box
-                  sx={{
-                    position: "absolute",
-                    left: 0,
-                    width: "100%",
-                    top: imgHeight,
-                    zIndex: 1,
-                    px: padding,
-                    pb: 1,
-                    pt: 2,
-                    transform: "translateY(-99%)",
-                    background:
-                      "linear-gradient(to top, rgba(0, 0, 0, 0.7),rgba(0, 0, 0, 0))",
-                  }}
-                >
-                  <Typography
-                    variant="body2"
-                    color="common.white"
-                    sx={{ fontWeight: "bold" }}
-                  >
-                    {dateTimeToMinutes(recipe.totalTime)} phút
-                  </Typography>
-                </Box>
-                <Box
-                  sx={{
-                    position: "absolute",
-                    right: padding * 8,
-                    top: imgHeight,
-                    width: "80px",
-                    height: "30px",
-                    zIndex: 2,
-                    transform: "translateY(-95%)",
-                    backgroundImage: `url(${curveShapeImg})`,
-                    backgroundRepeat: "no-repeat",
-                    backgroundSize: "contain",
-                    backgroundPosition: "center",
-                  }}
-                >
-                  <Avatar
-                    alt="Remy Sharp"
-                    src={authorAvatar}
-                    sx={{
-                      width: "40px",
-                      height: "40px",
-                      position: "absolute",
-                      top: "80%",
-                      left: "50%",
-                      transform: "translate(-50%, -50%)",
-                    }}
-                  />
-                </Box>
-              </CardActionArea>
+                {(provided, snapshot) => (
+                    <Box
+                        ref={provided.innerRef}
+                        {...provided.draggableProps}
+                        {...provided.dragHandleProps}
+                        sx={{
+                            width: '100%',
+                        }}
+                    >
+                        <CustomCard {...props}>
+                            <CardActionArea>
+                                <BoxImage
+                                    src={recipe?.image}
+                                    alt={recipe?.name}
+                                    sx={{
+                                        height: imgHeight,
+                                        width: '100%',
+                                    }}
+                                />
 
-              <CardContent
-                sx={{
-                  p: padding,
-                }}
-              >
-                <Rating
-                  value={recipe.rating}
-                  precision={0.5}
-                  readOnly
-                  icon={<StarRounded fontSize="inherit" />}
-                  emptyIcon={<StarRounded fontSize="inherit" />}
-                  size="small"
-                />
-                <Typography
-                  variant="body2"
-                  sx={{ fontWeight: "bold" }}
-                  whiteSpace={"nowrap"}
-                  textOverflow={"ellipsis"}
-                  overflow={"hidden"}
-                >
-                  {recipe.name}
-                </Typography>
-              </CardContent>
-            </Card>
-          </Box>
-        )}
-      </Draggable>
-    </>
-  );
+                                <Button
+                                    variant="contained"
+                                    color="primary"
+                                    size="small"
+                                    startIcon={
+                                        <RotateLeftRounded
+                                            sx={{ color: '#fff' }}
+                                        />
+                                    }
+                                    sx={{
+                                        position: 'absolute',
+                                        top: padding * 8,
+                                        left: padding * 8,
+                                        zIndex: 1,
+                                        backgroundColor: 'rgba(0, 0, 0, 0.7)',
+                                        color: '#fff',
+                                        transition: 'all 0.1s ease-in-out',
+                                        '&:hover': {
+                                            backgroundColor:
+                                                'rgba(0, 0, 0, 0.9)',
+                                            color: '#fff',
+                                        },
+                                        pr: 2,
+                                        py: 0.4,
+                                        fontWeight: 'bold',
+                                    }}
+                                >
+                                    ĐỔI
+                                </Button>
+
+                                <IconButton
+                                    color="primary"
+                                    size="small"
+                                    sx={{
+                                        borderRadius: '50%',
+                                        position: 'absolute',
+                                        top: padding * 8,
+                                        right: padding * 8,
+                                        zIndex: 1,
+                                        backgroundColor: 'rgba(0, 0, 0, 0.7)',
+                                        color: '#fff',
+                                        transition: 'all 0.1s ease-in-out',
+                                        '&:hover': {
+                                            backgroundColor:
+                                                'rgba(0, 0, 0, 0.9)',
+                                            color: '#fff',
+                                        },
+                                    }}
+                                    onClick={() =>
+                                        handleRemovePlanItem(planItem.id)
+                                    }
+                                >
+                                    <Clear fontSize="small" />
+                                </IconButton>
+
+                                <TotalTimeRecipe
+                                    imgHeight={imgHeight}
+                                    padding={padding}
+                                    totalTime={recipe.totalTime}
+                                />
+
+                                <AvatarRecipe
+                                    imgHeight={imgHeight}
+                                    padding={padding}
+                                    account={recipe.account}
+                                />
+                            </CardActionArea>
+
+                            <CardContent
+                                sx={{
+                                    p: padding,
+                                }}
+                            >
+                                <RatingRecipe rating={recipe.rating} />
+                                <NameRecipe name={recipe.name} />
+                            </CardContent>
+                        </CustomCard>
+                    </Box>
+                )}
+            </Draggable>
+        </>
+    );
 }
