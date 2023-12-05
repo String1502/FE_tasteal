@@ -12,7 +12,7 @@ class IngredientService {
      */
     public static async GetAll(): Promise<IngredientRes[]> {
         let result: IngredientRes[] = [];
-        await fetch(getApiUrl('GET_ALL_INGREDIENTS'))
+        await fetch(getApiUrl('GetAllIngredients'))
             .then((res) => res.json())
             .then((data) => {
                 result = data;

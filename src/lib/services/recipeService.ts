@@ -1,9 +1,7 @@
 import { getApiUrl } from '@/lib/constants/api';
 import { recipes as recipesSampleData } from '@/lib/constants/sampleData';
 import { RecipeRes } from '@/lib/models/dtos/Response/RecipeRes/RecipeRes';
-import { CommonErrorCode } from '@/utils/constants/error';
 import { createDebugStringFormatter } from '@/utils/debug/formatter';
-import { ErrorInfo } from '@/utils/promises/error';
 import simulateDelay from '@/utils/promises/stimulateDelay';
 import { ApiPath, DefaultPage } from '../constants/common';
 import { deleteImage } from '../firebase/image';
@@ -35,7 +33,7 @@ class RecipeService {
      * @returns - The recipe detail data.
      */
     public static GetById(id: number): Promise<RecipeRes> {
-        return fetch(`${getApiUrl('GET_RECIPE')}?id=${id}`, {
+        return fetch(`${getApiUrl('GetRecipe')}?id=${id}`, {
             method: 'POST',
         })
             .then((response) => response.json())
@@ -137,7 +135,7 @@ class RecipeService {
             }),
         };
 
-        await fetch(getApiUrl('SEARCH_RECIPE'), requestOptions)
+        await fetch(getApiUrl('SearchRecipe'), requestOptions)
             .then((response) => response.json())
             .then((data) => {
                 recipes = data;
@@ -155,7 +153,7 @@ class RecipeService {
      * Create a new recipe
      */
     public static async CreateRecipe(postData: RecipeReq) {
-        fetch(getApiUrl('CREATE_RECIPE'), {
+        fetch(getApiUrl('CreateRecipe'), {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -168,10 +166,7 @@ class RecipeService {
                     return response.json();
                 }
 
-                const error: ErrorInfo = {
-                    message: 'Fail to parse json response',
-                    code: CommonErrorCode.Json.ParseFail,
-                };
+                const error = new Error('Fail to parse json response');
 
                 return Promise.reject(error);
             })
@@ -190,7 +185,7 @@ class RecipeService {
                         // This is not tested
                         deleteImage(postData.image).catch();
                         Promise.all(
-                            postData.direction.map((direction) =>
+                            postData.directions.map((direction) =>
                                 deleteImage(direction.image)
                             )
                         ).catch();
