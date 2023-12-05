@@ -1,4 +1,5 @@
 import { signInImagePath } from '@/assets/exportImage';
+import { PageRoute } from '@/lib/constants/common';
 import { auth } from '@/lib/firebase/config';
 import useFirebaseImage from '@/lib/hooks/useFirebaseImage';
 import useSnackbarService from '@/lib/hooks/useSnackbar';
@@ -134,7 +135,7 @@ export default function ForgotPass() {
                                         ml: 2,
                                     }}
                                     onClick={() => {
-                                        navigate('/signup');
+                                        navigate(PageRoute.SignUp);
                                     }}
                                 >
                                     <Typography

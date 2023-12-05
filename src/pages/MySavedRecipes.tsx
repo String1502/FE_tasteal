@@ -24,6 +24,7 @@ import { useNavigate } from 'react-router-dom';
 import BoxImage from '@/components/common/image/BoxImage';
 import { CookBook } from './CookBook';
 import { CustomCard } from './CustomCard';
+import { PageRoute } from '@/lib/constants/common';
 
 export type CookbookChoosingType = {
     Cookbook: CookBookEntity;
@@ -120,7 +121,7 @@ function MySavedRecipes() {
                             color="primary"
                             sx={{ pr: 4, pl: 3, boxShadow: 'none' }}
                             onClick={() => {
-                                navigate('/recipe/create');
+                                navigate(PageRoute.Recipe.Create);
                             }}
                         >
                             <Typography
@@ -201,6 +202,7 @@ function MySavedRecipes() {
                             <BoxImage
                                 src="https://www.sidechef.com/static/images/3feb6c9a2065479a6792.png"
                                 alt="Empty"
+                                quality={30}
                                 sx={{
                                     objectFit: 'contain',
                                 }}
@@ -247,7 +249,7 @@ function MySavedRecipes() {
                                     width: '80%',
                                 }}
                                 onClick={() => {
-                                    navigate('/search');
+                                    navigate(PageRoute.Search);
                                 }}
                             >
                                 Tìm công thức

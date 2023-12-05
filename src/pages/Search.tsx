@@ -1,4 +1,11 @@
-import { Box, Container, Grid, Stack, Typography } from '@mui/material';
+import {
+    Box,
+    CircularProgress,
+    Container,
+    Grid,
+    Stack,
+    Typography,
+} from '@mui/material';
 import React, { useCallback, useContext, useEffect } from 'react';
 import { CheckBoxButton } from '../components/ui/search/CheckBoxButton.tsx';
 import { PrimaryCard } from '../components/common/card/PrimaryCard.tsx';
@@ -10,6 +17,7 @@ import { RecipeEntity } from '@/lib/models/entities/RecipeEntity/RecipeEntity.ts
 import RecipeService from '@/lib/services/recipeService.ts';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import AppContext from '@/lib/contexts/AppContext.ts';
+import { PrimaryCardSkeleton } from '@/components/ui/home/PrimaryCardSkeleton.tsx';
 
 export type TuKhoa = {
     label: string;
@@ -247,42 +255,94 @@ function Search() {
                                 ))}
                             </Stack>
 
-                            <Grid
-                                container
-                                direction="row"
-                                justifyContent="flex-start"
-                                alignItems="flex-start"
-                                spacing={2}
+                            <InfiniteScroll
+                                // 3*2*2
+                                dataLength={viewportItemAmount}
+                                next={loadNext}
+                                hasMore={resultIds.length != recipes.length}
+                                scrollableTarget="scrollableDiv"
+                                loader={
+                                    <>
+                                        <Box
+                                            sx={{
+                                                width: '100%',
+                                                display: 'flex',
+                                                justifyContent: 'center',
+                                                alignItems: 'center',
+                                                gap: 2,
+                                                p: 2,
+                                            }}
+                                        >
+                                            <CircularProgress
+                                                size={30}
+                                                color="primary"
+                                            />
+                                            <Typography
+                                                variant="body1"
+                                                fontWeight={'bold'}
+                                                color={'primary'}
+                                            >
+                                                Đang tải dữ liệu...
+                                            </Typography>
+                                        </Box>
+                                    </>
+                                }
+                                endMessage={
+                                    <>
+                                        <Typography
+                                            variant="body1"
+                                            align="center"
+                                            fontWeight={'bold'}
+                                            sx={{
+                                                width: '100%',
+                                                mt: 6,
+                                                color: 'grey.600',
+                                            }}
+                                        >
+                                            Không còn công thức phù hợp!
+                                        </Typography>
+                                    </>
+                                }
+                                style={{
+                                    display: 'flex',
+                                    flexDirection: 'row',
+                                    alignItems: 'flex-start',
+                                    justifyContent: 'center',
+                                    flexWrap: 'wrap',
+                                    width: '100%',
+                                    margin: -1,
+                                    overflow: 'visible',
+                                }}
                             >
-                                <InfiniteScroll
-                                    // 3*2*2
-                                    dataLength={viewportItemAmount}
-                                    next={loadNext}
-                                    hasMore={resultIds.length != recipes.length}
-                                    scrollableTarget="scrollableDiv"
-                                    loader={<h4>Loading...</h4>}
-                                >
-                                    {recipes.map((item, index) => (
-                                        <>
-                                            {item && (
-                                                <Grid
-                                                    item
-                                                    xs={12}
-                                                    sm={6}
-                                                    md={4}
-                                                    key={index}
-                                                >
-                                                    <PrimaryCard
-                                                        recipe={
-                                                            item as RecipeEntity
-                                                        }
-                                                    />
-                                                </Grid>
-                                            )}
-                                        </>
-                                    ))}
-                                </InfiniteScroll>
-                            </Grid>
+                                {recipes.map((item, index) => (
+                                    <>
+                                        {item && (
+                                            <Box
+                                                key={index.toString()}
+                                                sx={{
+                                                    flexBasis: {
+                                                        xs: '100%',
+                                                        sm: 'calc(99.2%/2)',
+                                                        md: 'calc(99.3%/3)',
+                                                    },
+                                                    p: 1,
+                                                    mr:
+                                                        index !=
+                                                        recipes.length - 1
+                                                            ? 0
+                                                            : 'auto',
+                                                }}
+                                            >
+                                                <PrimaryCard
+                                                    recipe={
+                                                        item as RecipeEntity
+                                                    }
+                                                />
+                                            </Box>
+                                        )}
+                                    </>
+                                ))}
+                            </InfiniteScroll>
                         </Grid>
                     </Grid>
                 </Container>

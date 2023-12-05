@@ -147,18 +147,17 @@ export function Header(props: Props) {
             { label: 'Trang chủ', href: PageRoute.Home },
             { label: 'Về Tasteal', href: '/' },
             { label: 'Tìm kiếm', href: PageRoute.Search },
+            { label: 'Giỏ đi chợ', href: PageRoute.Grocery },
+            { label: 'Lịch ăn', href: PageRoute.MealPlanner },
+            { label: 'Tủ lạnh', href: '/' },
+            {
+                label: 'Bộ sưu tập',
+                href: PageRoute.MySavedRecipes,
+            },
             //
             { label: 'Đăng ký', href: PageRoute.SignUp, isHiden: true },
             { label: 'Đăng nhập', href: PageRoute.SignIn, isHiden: true },
             //
-            { label: 'Lịch ăn', href: PageRoute.MealPlanner, isHiden: false },
-            { label: 'Tủ lạnh', href: '/', isHiden: false },
-            {
-                label: 'Bộ sưu tập',
-                href: PageRoute.MySavedRecipes,
-                isHiden: false,
-            },
-            { label: 'Giỏ đi chợ', href: PageRoute.Grocery, isHiden: false },
             {
                 label: 'Đăng xuất',
                 onClick: () => {
@@ -339,19 +338,15 @@ export function Header(props: Props) {
                                 <PopoverContent />
                             </ButtonHoverPopover>
 
-                            {login.isUserSignedIn == true && (
-                                <>
-                                    <CustomHeaderLink
-                                        href={PageRoute.MealPlanner}
-                                        label="Lịch ăn"
-                                    />
+                            <CustomHeaderLink
+                                href={PageRoute.MealPlanner}
+                                label="Lịch ăn"
+                            />
 
-                                    <CustomHeaderLink
-                                        href="#"
-                                        label="Tủ lạnh"
-                                    />
-                                </>
-                            )}
+                            <CustomHeaderLink
+                                href="#"
+                                label="Tủ lạnh"
+                            />
 
                             <CustomHeaderLink
                                 href="#"
@@ -383,38 +378,34 @@ export function Header(props: Props) {
                             </IconButton>
 
                             {/* Bộ sưu tập */}
-                            {login.isUserSignedIn == true && (
-                                <IconButton
-                                    color="primary"
-                                    size="small"
-                                    sx={{
-                                        border: 1,
-                                        mr: 2,
-                                    }}
-                                    onClick={() => {
-                                        navigate(PageRoute.MySavedRecipes);
-                                    }}
-                                >
-                                    <BookmarkBorderRounded fontSize="inherit" />
-                                </IconButton>
-                            )}
+                            <IconButton
+                                color="primary"
+                                size="small"
+                                sx={{
+                                    border: 1,
+                                    mr: 2,
+                                }}
+                                onClick={() => {
+                                    navigate(PageRoute.MySavedRecipes);
+                                }}
+                            >
+                                <BookmarkBorderRounded fontSize="inherit" />
+                            </IconButton>
 
                             {/* Giỏ đi chợ */}
-                            {login.isUserSignedIn == true && (
-                                <IconButton
-                                    color="primary"
-                                    size="small"
-                                    sx={{
-                                        border: 1,
-                                        mr: 2,
-                                    }}
-                                    onClick={() => {
-                                        navigate(PageRoute.Grocery);
-                                    }}
-                                >
-                                    <ShoppingBagRounded fontSize="inherit" />
-                                </IconButton>
-                            )}
+                            <IconButton
+                                color="primary"
+                                size="small"
+                                sx={{
+                                    border: 1,
+                                    mr: 2,
+                                }}
+                                onClick={() => {
+                                    navigate(PageRoute.Grocery);
+                                }}
+                            >
+                                <ShoppingBagRounded fontSize="inherit" />
+                            </IconButton>
 
                             {/* Avatar */}
                             {login.isUserSignedIn == true && (

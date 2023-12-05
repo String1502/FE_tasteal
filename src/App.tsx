@@ -124,22 +124,22 @@ function AllRoutes() {
             {
                 path: PageRoute.Recipe.Create,
                 element: <CreateRecipe />,
-                needSignIn: true,
+                needSignIn: PageRoute.Recipe.Create,
             },
             {
                 path: PageRoute.Grocery,
                 element: <Grocery />,
-                needSignIn: true,
+                needSignIn: PageRoute.Grocery,
             },
             {
                 path: PageRoute.MealPlanner,
                 element: <MealPlanner />,
-                needSignIn: true,
+                needSignIn: PageRoute.MealPlanner,
             },
             {
                 path: PageRoute.MySavedRecipes,
                 element: <MySavedRecipes />,
-                needSignIn: true,
+                needSignIn: PageRoute.MySavedRecipes,
             },
             {
                 path: '*',
