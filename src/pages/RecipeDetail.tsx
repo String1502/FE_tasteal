@@ -12,8 +12,8 @@ import NutrionPerServingInfo from '@/components/ui/displayers/NutrionPerServingI
 import SameAuthorRecipesCarousel from '@/components/ui/displayers/SameAuthorRecipesCarousel/SameAuthorRecipesCarousel';
 import NutrionPerServingModal from '@/components/ui/modals/NutrionPerServingModal';
 import Layout from '@/layout/Layout';
-import { N_A_VALUE } from '@/lib/constants/common';
-import { DEFAULT_NUTRITION_VALUE } from '@/lib/constants/defaultValue';
+import { N_AValue } from '@/lib/constants/common';
+import { DefaultNutritionValue } from '@/lib/constants/defaultValue';
 import AppContext from '@/lib/contexts/AppContext';
 import { auth } from '@/lib/firebase/config';
 import { RecipeRes } from '@/lib/models/dtos/Response/RecipeRes/RecipeRes';
@@ -83,8 +83,8 @@ const PAGE_ID = 'RecipeDetail';
  * Constants for recipe detail page
  */
 const RecipeDetailStringConstants = {
-    DEFAULT_NAME: N_A_VALUE,
-    DEFAULT_INSTRUCTION: N_A_VALUE,
+    DEFAULT_NAME: N_AValue,
+    DEFAULT_INSTRUCTION: N_AValue,
 } as const;
 
 /**
@@ -189,6 +189,8 @@ const RecipeDetail: FC = () => {
     }, [recipe]);
 
     //#endregion
+
+    console.log(recipe);
 
     return (
         <Layout>
@@ -329,7 +331,7 @@ const RecipeDetail: FC = () => {
                                     }
                                     nutritionInfo={
                                         recipe?.nutrition_info ??
-                                        DEFAULT_NUTRITION_VALUE
+                                        DefaultNutritionValue
                                     }
                                 />
 

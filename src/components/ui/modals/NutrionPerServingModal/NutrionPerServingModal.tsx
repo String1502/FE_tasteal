@@ -1,4 +1,4 @@
-import { DEFAULT_NUTRITION_VALUE } from '@/lib/constants/defaultValue';
+import { DefaultNutritionValue } from '@/lib/constants/defaultValue';
 import { Nutrition_InfoEntity } from '@/lib/models/entities/Nutrition_InfoEntity/Nutrition_InfoEntity';
 import {
     Box,
@@ -29,7 +29,7 @@ const NutrionPerServingModal: React.FunctionComponent<{
 }> = ({
     open,
     onClose,
-    nutritionInfo: nutritionInfo = DEFAULT_NUTRITION_VALUE,
+    nutritionInfo: nutritionInfo = DefaultNutritionValue,
 }) => {
     const handleClose = () => {
         onClose();

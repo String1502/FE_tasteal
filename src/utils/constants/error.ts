@@ -1,5 +1,11 @@
-export const ERROR_CODE = {
-    JSON: {
-        PARSE_FAIL: 'JSON_PARSE_FAIL',
+/**
+ * Common error code
+ */
+export const CommonErrorCode = {
+    Auth: {
+        AuthRequired: 'AUTH_REQUIRED',
+    },
+    Json: {
+        ParseFail: 'JSON_PARSE_FAIL',
     },
 } as const;
