@@ -2,7 +2,7 @@ import { resolveImagePathAsync } from '@/lib/firebase/image';
 import { Box, BoxProps, Skeleton } from '@mui/material';
 import { Suspense, useEffect, useState } from 'react';
 
-const staticPath =
+export const defaultPathImage =
     'https://www.sidechef.com/static/images/990a0a055accb65d4d4f.jpg';
 
 export type ImageQuality = 10 | 20 | 30 | 40 | 50 | 60 | 70 | 80 | 90 | 100;
@@ -16,7 +16,7 @@ function BoxImage({
 
     useEffect(() => {
         if (!props.src || props.src === '') {
-            setImage(staticPath);
+            setImage(defaultPathImage);
             setLoading(false);
             return;
         }
@@ -24,7 +24,7 @@ function BoxImage({
         resolveImagePathAsync(props.src)
             .then((url) => {
                 if (url === '') {
-                    setImage(staticPath);
+                    setImage(defaultPathImage);
                     setLoading(false);
                 } else {
                     // Đổi quality
@@ -76,7 +76,7 @@ function BoxImage({
                         loading="lazy"
                         component={'img'}
                         {...props}
-                        src={image ?? staticPath}
+                        src={image ?? defaultPathImage}
                         sx={{
                             width: '100%',
                             height: '100%',

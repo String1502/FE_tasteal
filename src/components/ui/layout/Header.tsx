@@ -267,6 +267,9 @@ export function Header(props: Props) {
                 component="nav"
                 sx={{
                     backgroundColor: theme.palette.common.white,
+                    boxShadow: 'none',
+                    borderBottom: 1.2,
+                    borderColor: 'secondary.main',
                 }}
             >
                 <Container>
