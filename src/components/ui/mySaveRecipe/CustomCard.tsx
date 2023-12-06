@@ -15,7 +15,7 @@ import { CookBookEntity } from '@/lib/models/entities/CookBookEntity/CookBookEnt
 import { CookBook_RecipeEntity } from '@/lib/models/entities/CookBook_RecipeEntity/CookBook_RecipeEntity';
 import { PrimaryCard } from '@/components/common/card/PrimaryCard';
 import { DeleteRounded, PlayArrowRounded } from '@mui/icons-material';
-import { DialogPaperProps } from './MySavedRecipes';
+import { DialogPaperProps } from '../../../pages/MySavedRecipes';
 
 export function CustomCard({
     cookbookRecipe,

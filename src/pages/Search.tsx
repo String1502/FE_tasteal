@@ -1,23 +1,12 @@
-import {
-    Box,
-    CircularProgress,
-    Container,
-    Grid,
-    Stack,
-    Typography,
-} from '@mui/material';
-import React, { useCallback, useContext, useEffect } from 'react';
+import { Box, Container, Grid, Stack, Typography } from '@mui/material';
 import { CheckBoxButton } from '../components/ui/search/CheckBoxButton.tsx';
 import { PrimaryCard } from '../components/common/card/PrimaryCard.tsx';
 import { SearchFilter } from '../components/ui/search/SearchFilter.tsx';
 import Layout from '../layout/Layout';
 import { SearchTextField } from '@/components/ui/search/SearchTextField.tsx';
-import { removeDiacritics } from '@/utils/format/index.ts';
 import { RecipeEntity } from '@/lib/models/entities/RecipeEntity/RecipeEntity.ts';
-import RecipeService from '@/lib/services/recipeService.ts';
-import InfiniteScroll from 'react-infinite-scroll-component';
-import AppContext from '@/lib/contexts/AppContext.ts';
-import { PrimaryCardSkeleton } from '@/components/ui/home/PrimaryCardSkeleton.tsx';
+import { useSearchRecipe } from '../components/ui/search/useSearchRecipe.tsx';
+import { SearchInfiniteScroll } from '../components/ui/search/SearchInfiniteScroll.tsx';
 
 export type TuKhoa = {
     label: string;
@@ -51,7 +40,7 @@ export const DefaultTuKhoas: TuKhoa[] = [
     },
 ];
 
-type Filter = {
+export type Filter = {
     ingredientID: number[];
     exceptIngredientID: number[];
     totalTime: number;
@@ -68,126 +57,16 @@ type Filter = {
 const viewportItemAmount = 12;
 
 function Search() {
-    const [recipes, setRecipes] = React.useState<RecipeEntity[]>([]);
-    const [resultIds, setResultIds] = React.useState<RecipeEntity['id'][]>([]);
-    const { handleSpinner } = useContext(AppContext);
-
-    useEffect(() => {
-        async function fetchData() {
-            handleSpinner(true);
-            const ids = (await RecipeService.GetAllRecipes()).map(
-                (recipe) => recipe.id
-            );
-            setResultIds(ids);
-
-            // const initData = await RecipeService.GetRecipes(
-            //     ids.slice(0, viewportItemAmount)
-            // );
-            // setRecipes(initData);
-
-            setRecipes(await RecipeService.GetAllRecipes());
-            handleSpinner(false);
-        }
-        fetchData();
-    }, []);
-
-    //#region Search
-
-    function searchButtonClick(value: string) {
-        handleChangeFilter('textSearch', value);
-    }
-
-    //#endregion
-
-    //#region Filter
-    const [filter, setFilter] = React.useState<Filter>({
-        ingredientID: [],
-        exceptIngredientID: [],
-        totalTime: 0,
-        activeTime: 0,
-        occasionID: [],
-        calories: {
-            min: 0,
-            max: Infinity,
-        },
-        textSearch: '',
-        keyWords: [],
-    });
-
-    function handleChangeFilter(
-        type:
-            | 'ingredientID'
-            | 'exceptIngredientID'
-            | 'totalTime'
-            | 'activeTime'
-            | 'occasionID'
-            | 'calories'
-            | 'textSearch'
-            | 'keyWords',
-        value: any
-    ) {
-        setFilter((prev) => {
-            return {
-                ...prev,
-                [type]: value,
-            };
-        });
-    }
-
-    useEffect(() => {
-        async function fetchData() {
-            handleSpinner(true);
-            // const ids = await RecipeService.GetRecipesByFilter(filter);
-            // setResultIds(ids);
-            // const initData = await RecipeService.GetRecipes(
-            //     ids.slice(0, viewportItemAmount)
-            // );
-            // setRecipes(initData);
-            handleSpinner(false);
-        }
-        fetchData();
-    }, [filter]);
-
-    //#endregion
-
-    //#region Từ khóa
-    const [tuKhoas, setTuKhoas] = React.useState<TuKhoa[]>(DefaultTuKhoas);
-
-    const handleChangeTuKhoa = (tukhoa: TuKhoa) => {
-        setTuKhoas((prev) => {
-            return prev.map((item) => {
-                if (item.label === tukhoa.label) {
-                    return {
-                        ...item,
-                        value: !item.value,
-                    };
-                } else {
-                    return item;
-                }
-            });
-        });
-    };
-
-    useEffect(() => {
-        let keyWords = tuKhoas
-            .map((item) => {
-                if (item.value && item.label) {
-                    return removeDiacritics(item.label);
-                }
-            })
-            .filter(Boolean);
-        handleChangeFilter('keyWords', keyWords);
-    }, [tuKhoas]);
-    //#endregion
-
-    //#region Infinite Scroll
-    const loadNext = useCallback(async () => {
-        // const nextData = await RecipeService.GetRecipes(
-        //     resultIds.slice(recipes.length, viewportItemAmount)
-        // );
-        // setRecipes((prev) => [...prev, ...nextData]);
-    }, [resultIds]);
-    //#endregion
+    const {
+        recipes,
+        resultIds,
+        searchButtonClick,
+        // filter,
+        handleChangeFilter,
+        tuKhoas,
+        handleChangeTuKhoa,
+        loadNext,
+    } = useSearchRecipe(viewportItemAmount);
     return (
         <Layout>
             <Box
@@ -255,70 +134,17 @@ function Search() {
                                 ))}
                             </Stack>
 
-                            <InfiniteScroll
-                                // 3*2*2
-                                dataLength={viewportItemAmount}
-                                next={loadNext}
-                                hasMore={resultIds.length != recipes.length}
-                                scrollableTarget="scrollableDiv"
-                                loader={
-                                    <>
-                                        <Box
-                                            sx={{
-                                                width: '100%',
-                                                display: 'flex',
-                                                justifyContent: 'center',
-                                                alignItems: 'center',
-                                                gap: 2,
-                                                p: 2,
-                                            }}
-                                        >
-                                            <CircularProgress
-                                                size={30}
-                                                color="primary"
-                                            />
-                                            <Typography
-                                                variant="body1"
-                                                fontWeight={'bold'}
-                                                color={'primary'}
-                                            >
-                                                Đang tải dữ liệu...
-                                            </Typography>
-                                        </Box>
-                                    </>
-                                }
-                                endMessage={
-                                    <>
-                                        <Typography
-                                            variant="body1"
-                                            align="center"
-                                            fontWeight={'bold'}
-                                            sx={{
-                                                width: '100%',
-                                                mt: 6,
-                                                color: 'grey.600',
-                                            }}
-                                        >
-                                            Không còn công thức phù hợp!
-                                        </Typography>
-                                    </>
-                                }
-                                style={{
-                                    display: 'flex',
-                                    flexDirection: 'row',
-                                    alignItems: 'flex-start',
-                                    justifyContent: 'center',
-                                    flexWrap: 'wrap',
-                                    width: '100%',
-                                    margin: -1,
-                                    overflow: 'visible',
-                                }}
+                            <SearchInfiniteScroll
+                                viewportItemAmount={viewportItemAmount}
+                                loadNext={loadNext}
+                                resultIds={resultIds}
+                                recipes={recipes}
                             >
                                 {recipes.map((item, index) => (
                                     <>
                                         {item && (
                                             <Box
-                                                key={index.toString()}
+                                                key={item.id}
                                                 sx={{
                                                     flexBasis: {
                                                         xs: '100%',
@@ -342,7 +168,7 @@ function Search() {
                                         )}
                                     </>
                                 ))}
-                            </InfiniteScroll>
+                            </SearchInfiniteScroll>
                         </Grid>
                     </Grid>
                 </Container>

@@ -1,7 +1,7 @@
 import { DateDisplay } from '@/pages/MealPlanner';
 import { dateToDDMMYYYY } from '@/utils/format';
 import { Box, Chip, Typography } from '@mui/material';
-import { MealPlanCard } from '../cards/MealPlan/MealPlanCard';
+
 import { AddRecipeButton } from './AddRecipeButton';
 import { HighlightAltRounded } from '@mui/icons-material';
 import { Droppable } from 'react-beautiful-dnd';
@@ -9,6 +9,7 @@ import { RecipeEntity } from '@/lib/models/entities/RecipeEntity/RecipeEntity';
 import { NoteTextField } from './NoteTextField';
 import { defaultPathImage } from '@/components/common/image/BoxImage';
 import { useMemo } from 'react';
+import { MealPlanCard } from './MealPlanCard';
 
 function WeekDateItem({
     isDragging,
