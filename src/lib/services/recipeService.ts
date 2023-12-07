@@ -8,6 +8,7 @@ import { deleteImage } from '../firebase/image';
 import { RecipeReq } from '../models/dtos/Request/RecipeReq/RecipeReq';
 import { RecipeSearchReq } from '../models/dtos/Request/RecipeSearchReq/RecipeSearchReq';
 import { RecipeEntity } from '../models/entities/RecipeEntity/RecipeEntity';
+import { PageFilter } from '../models/dtos/Request/PageFilter/PageFilter';
 
 const DEBUG_IDENTIFIER = '[RecipeService]';
 const createDebugString = createDebugStringFormatter(DEBUG_IDENTIFIER);
@@ -72,11 +73,10 @@ class RecipeService {
                 pageSize: limit,
                 page: DefaultPage,
                 isDescend: true,
-            }),
+            } as PageFilter),
         };
 
-        // TODO: replace this with a api generate function
-        await fetch(`${ApiPath}/api/v2/Home/recipebydatetime`, requestOptions)
+        await fetch(getApiUrl('GetRecipeByDateTime'), requestOptions)
             .then((response) => response.json())
             .then((data) => {
                 recipes = data;
@@ -104,11 +104,10 @@ class RecipeService {
                 pageSize: limit,
                 page: DefaultPage,
                 isDescend: true,
-            }),
+            } as PageFilter),
         };
 
-        // TODO: replace this with a api generate function
-        await fetch(`${ApiPath}/api/v2/Home/recipebyrating`, requestOptions)
+        await fetch(getApiUrl('GetRecipeByRating'), requestOptions)
             .then((response) => response.json())
             .then((data) => {
                 recipes = data;

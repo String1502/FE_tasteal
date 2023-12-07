@@ -20,7 +20,11 @@ import { ModalTimKiem } from './ModalTimKiem';
 import { useNavigate } from 'react-router-dom';
 import { PageRoute } from '@/lib/constants/common';
 
-export const AddRecipeButton = () => {
+export const AddRecipeButton = ({
+    showContent = false,
+}: {
+    showContent?: boolean;
+}) => {
     //#region Menu
     const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(
         null
@@ -59,108 +63,65 @@ export const AddRecipeButton = () => {
 
     return (
         <>
-            <IconButton
-                color="primary"
-                sx={{
-                    border: 1,
-                }}
-                onClick={handleClick}
-            >
-                <AddRounded fontSize="small" />
-            </IconButton>
+            {showContent == false && (
+                <>
+                    <IconButton
+                        color="primary"
+                        sx={{
+                            border: 1,
+                        }}
+                        onClick={handleClick}
+                    >
+                        <AddRounded fontSize="small" />
+                    </IconButton>
 
-            {/* Menu */}
-            <Popover
-                open={open}
-                anchorEl={anchorEl}
-                onClose={handleClose}
-                anchorOrigin={{
-                    vertical: 'bottom',
-                    horizontal: 'right',
-                }}
-                transformOrigin={{
-                    vertical: 'top',
-                    horizontal: 'right',
-                }}
-                slotProps={{
-                    paper: {
-                        sx: {
-                            borderRadius: 4,
-                            background: 'white',
-                            width: '240px',
-                        },
-                    },
-                }}
-            >
-                <List>
-                    <ListItem disablePadding>
-                        <ListItemButton onClick={handleOpenMySaved}>
-                            <ListItemIcon sx={{ minWidth: '40px' }}>
-                                <BookmarksRounded
-                                    sx={{
-                                        color: 'primary.main',
-                                        fontSize: 'large',
-                                    }}
-                                />
-                            </ListItemIcon>
-                            <ListItemText>
-                                <Typography
-                                    fontWeight={'bold'}
-                                    variant="body2"
-                                >
-                                    Thêm từ bộ sưu tập
-                                </Typography>
-                            </ListItemText>
-                        </ListItemButton>
-                    </ListItem>
+                    {/* Menu */}
+                    <Popover
+                        open={open}
+                        anchorEl={anchorEl}
+                        onClose={handleClose}
+                        anchorOrigin={{
+                            vertical: 'bottom',
+                            horizontal: 'right',
+                        }}
+                        transformOrigin={{
+                            vertical: 'top',
+                            horizontal: 'right',
+                        }}
+                        slotProps={{
+                            paper: {
+                                sx: {
+                                    borderRadius: 4,
+                                    background: 'white',
+                                    width: '240px',
+                                },
+                            },
+                        }}
+                    >
+                        <List>
+                            <AddRecipeWays
+                                handleOpenMySaved={handleOpenMySaved}
+                                handleOpenSearch={handleOpenSearch}
+                                handleCreateNewRecipe={() => {
+                                    navigate(PageRoute.Recipe.Create);
+                                }}
+                            />
+                        </List>
+                    </Popover>
+                </>
+            )}
 
-                    <ListItem disablePadding>
-                        <ListItemButton onClick={handleOpenSearch}>
-                            <ListItemIcon sx={{ minWidth: '40px' }}>
-                                <SearchRounded
-                                    sx={{
-                                        color: 'primary.main',
-                                        fontSize: 'large',
-                                    }}
-                                />
-                            </ListItemIcon>
-                            <ListItemText>
-                                <Typography
-                                    fontWeight={'bold'}
-                                    variant="body2"
-                                >
-                                    Tìm công thức
-                                </Typography>
-                            </ListItemText>
-                        </ListItemButton>
-                    </ListItem>
-
-                    <ListItem disablePadding>
-                        <ListItemButton
-                            onClick={() => {
-                                navigate(PageRoute.Recipe.Create);
-                            }}
-                        >
-                            <ListItemIcon sx={{ minWidth: '40px' }}>
-                                <BorderColorRounded
-                                    sx={{
-                                        color: 'primary.main',
-                                        fontSize: 'large',
-                                    }}
-                                />
-                            </ListItemIcon>
-                            <ListItemText>
-                                <Typography
-                                    fontWeight={'bold'}
-                                    variant="body2"
-                                >
-                                    Tạo công thức mới
-                                </Typography>
-                            </ListItemText>
-                        </ListItemButton>
-                    </ListItem>
-                </List>
-            </Popover>
+            {showContent == true && (
+                <>
+                    <AddRecipeWays
+                        handleOpenMySaved={handleOpenMySaved}
+                        handleOpenSearch={handleOpenSearch}
+                        handleCreateNewRecipe={() => {
+                            navigate(PageRoute.Recipe.Create);
+                        }}
+                    />
+                </>
+            )}
 
             {/* Bộ sưu tập */}
             <ModalThemTuBoSuuTap
@@ -178,3 +139,80 @@ export const AddRecipeButton = () => {
         </>
     );
 };
+
+function AddRecipeWays({
+    handleOpenMySaved,
+    handleOpenSearch,
+    handleCreateNewRecipe,
+}: {
+    handleOpenMySaved: () => void;
+    handleOpenSearch: () => void;
+    handleCreateNewRecipe: () => void;
+}) {
+    return (
+        <>
+            <ListItem disablePadding>
+                <ListItemButton onClick={handleOpenMySaved}>
+                    <ListItemIcon sx={{ minWidth: '40px' }}>
+                        <BookmarksRounded
+                            sx={{
+                                color: 'primary.main',
+                                fontSize: 'large',
+                            }}
+                        />
+                    </ListItemIcon>
+                    <ListItemText>
+                        <Typography
+                            fontWeight={'bold'}
+                            variant="body2"
+                        >
+                            Thêm từ bộ sưu tập
+                        </Typography>
+                    </ListItemText>
+                </ListItemButton>
+            </ListItem>
+
+            <ListItem disablePadding>
+                <ListItemButton onClick={handleOpenSearch}>
+                    <ListItemIcon sx={{ minWidth: '40px' }}>
+                        <SearchRounded
+                            sx={{
+                                color: 'primary.main',
+                                fontSize: 'large',
+                            }}
+                        />
+                    </ListItemIcon>
+                    <ListItemText>
+                        <Typography
+                            fontWeight={'bold'}
+                            variant="body2"
+                        >
+                            Tìm công thức
+                        </Typography>
+                    </ListItemText>
+                </ListItemButton>
+            </ListItem>
+
+            <ListItem disablePadding>
+                <ListItemButton onClick={handleCreateNewRecipe}>
+                    <ListItemIcon sx={{ minWidth: '40px' }}>
+                        <BorderColorRounded
+                            sx={{
+                                color: 'primary.main',
+                                fontSize: 'large',
+                            }}
+                        />
+                    </ListItemIcon>
+                    <ListItemText>
+                        <Typography
+                            fontWeight={'bold'}
+                            variant="body2"
+                        >
+                            Tạo công thức mới
+                        </Typography>
+                    </ListItemText>
+                </ListItemButton>
+            </ListItem>
+        </>
+    );
+}
