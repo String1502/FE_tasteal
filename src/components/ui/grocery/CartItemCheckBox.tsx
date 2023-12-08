@@ -1,5 +1,8 @@
 import BoxImage from '@/components/common/image/BoxImage';
+import useSnackbarService from '@/lib/hooks/useSnackbar';
 import { Cart_ItemEntity } from '@/lib/models/entities/Cart_ItemEntity/Cart_ItemEntity';
+import { PersonalCartItem } from '@/lib/models/entities/PersonalCartItem/PersonalCartItem';
+import CartItemService from '@/lib/services/CartItemService';
 import {
     CheckCircleRounded,
     RadioButtonUncheckedRounded,
@@ -11,16 +14,20 @@ import {
     Typography,
     TypographyProps,
 } from '@mui/material';
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 
 function CartItemCheckBox({
     item,
     total,
+    type = 'cart',
     handleChangeCartItemData,
+    handleChangePersonalCartItemData,
 }: {
     item: Cart_ItemEntity;
     total?: () => number;
-    handleChangeCartItemData: (cartId: number, ingredientId: number) => void;
+    type?: 'cart' | 'personal';
+    handleChangeCartItemData?: (cartId: number, ingredientId: number) => void;
+    handleChangePersonalCartItemData?: (id: PersonalCartItem['id']) => void;
 }) {
     const typoProps: TypographyProps = {
         variant: 'body2',
@@ -30,7 +37,28 @@ function CartItemCheckBox({
         },
     };
 
-    const [isBought, setIsBought] = useState(item.isBought);
+    const [isBought, setIsBought] = useState<Cart_ItemEntity['isBought']>(
+        item.isBought
+    );
+
+    const [snackbarAlert] = useSnackbarService();
+
+    const updateCartItem = useCallback(
+        async (CartItemId: number, isBought: Cart_ItemEntity['isBought']) => {
+            try {
+                const result = await CartItemService.UpdateCartItem(
+                    CartItemId,
+                    isBought
+                );
+                if (result) {
+                    snackbarAlert('Check đã mua thành công!', 'success');
+                } else snackbarAlert('Thao tác không thành công.', 'error');
+            } catch (error) {
+                console.log(error);
+            }
+        },
+        [item, isBought]
+    );
 
     return (
         <FormControlLabel
@@ -48,12 +76,23 @@ function CartItemCheckBox({
             control={
                 <Checkbox
                     checked={isBought}
-                    onChange={() => {
+                    onChange={async () => {
                         setIsBought(!isBought);
-                        handleChangeCartItemData(
-                            item.cartId,
-                            item.ingredientId
-                        );
+                        if (type === 'cart' && handleChangeCartItemData) {
+                            handleChangeCartItemData(
+                                item.cartId,
+                                item.ingredientId
+                            );
+                            // Cập nhật đã/chưa mua
+                            // await updateCartItem(item.id, !isBought);
+                            return;
+                        }
+                        if (
+                            type === 'personal' &&
+                            handleChangePersonalCartItemData
+                        ) {
+                            handleChangePersonalCartItemData(item.cartId);
+                        }
                     }}
                     icon={<RadioButtonUncheckedRounded />}
                     checkedIcon={<CheckCircleRounded />}

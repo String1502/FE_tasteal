@@ -1,5 +1,6 @@
 import TastealBreadCrumbs from '@/components/common/breadcrumbs/TastealBreadcrumbs';
 import TastealIconButton from '@/components/common/buttons/TastealIconButton';
+import BoxImage from '@/components/common/image/BoxImage';
 import WithFallback from '@/components/common/layouts/WithFallback';
 import TastealTextField from '@/components/common/textFields/TastealTextField';
 import BigSectionHeading from '@/components/common/typos/BigSectionHeading/BigSectionHeading';
@@ -226,18 +227,19 @@ const RecipeDetail: FC = () => {
                                     {/* TODO: Please make a placeholder for null image */}
                                     {/* TODO: Replace with real image */}
                                     {recipe?.image ? (
-                                        <Box
-                                            component={'img'}
-                                            src={
-                                                'https://www.sidechef.com/recipe/a1fbb0d7-7257-4b0a-bd35-8f5cc4b803d9.jpg?d=1408x1120'
-                                            }
-                                            sx={{
-                                                width: '100%',
-                                                height: 520,
-                                                objectFit: 'cover',
-                                                borderRadius: 4,
-                                            }}
-                                        ></Box>
+                                        <>
+                                            <BoxImage
+                                                src={recipe.image}
+                                                alt={'Không tìm thấy ảnh'}
+                                                quality={80}
+                                                sx={{
+                                                    width: '100%',
+                                                    height: 520,
+                                                    objectFit: 'cover',
+                                                    borderRadius: 4,
+                                                }}
+                                            />
+                                        </>
                                     ) : (
                                         <>
                                             <Typography>

@@ -5,16 +5,25 @@ import CartItemFrame from '@/components/ui/grocery/CartItemFrame';
 import { PopoverRecipes } from '@/components/ui/grocery/PopoverRecipes';
 import { RecipesServingSizeCarousel } from '@/components/ui/grocery/RecipesServingSizeCarousel';
 import Layout from '@/layout/Layout';
+import { personalCartItems } from '@/lib/constants/sampleData';
 import AppContext from '@/lib/contexts/AppContext';
 import { CartEntity } from '@/lib/models/entities/CartEntity/CartEntity';
 import { Cart_ItemEntity } from '@/lib/models/entities/Cart_ItemEntity/Cart_ItemEntity';
+import {
+    PersonalCartItem,
+    convertPersonalCartItemToCartItem,
+} from '@/lib/models/entities/PersonalCartItem/PersonalCartItem';
 import CartItemService from '@/lib/services/CartItemService';
 import CartService from '@/lib/services/cartService';
 import { Box, Container, Grid, Typography } from '@mui/material';
-import { useEffect, useState, useContext } from 'react';
+import { useEffect, useState, useContext, useCallback } from 'react';
 
 export default function Grocery() {
     const [cartData, setCartData] = useState<CartEntity[]>([]);
+
+    const [personalCartItemData, setPersonalCartItemData] = useState<
+        PersonalCartItem[]
+    >([]);
 
     const { login } = useContext(AppContext);
 
@@ -26,6 +35,8 @@ export default function Grocery() {
                 return;
             }
             try {
+                setPersonalCartItemData(personalCartItems);
+
                 const finalCartData = await CartService.GetCartByAccountId(
                     login.user.uid
                 );
@@ -102,6 +113,34 @@ export default function Grocery() {
         });
     }
 
+    function handleChangePersonalCartItemData(id: PersonalCartItem['id']) {
+        setPersonalCartItemData((prev) => {
+            return prev.map((item) => {
+                if (item.id === id) {
+                    return {
+                        ...item,
+                        is_bought: !item.is_bought,
+                    };
+                } else {
+                    return item;
+                }
+            });
+        });
+    }
+
+    const getTotalIngredient = useCallback(() => {
+        const cartItemDataAmount = cartItemData
+            .map((item) => {
+                return item.ingredient?.id;
+            })
+            .filter(function (item, pos, self) {
+                return self.indexOf(item) == pos;
+            }).length;
+
+        const personalCartItemDataAmount = personalCartItemData.length;
+        return cartItemDataAmount + personalCartItemDataAmount;
+    }, [cartItemData, personalCartItemData]);
+
     return (
         <>
             <Layout>
@@ -134,19 +173,10 @@ export default function Grocery() {
                                 fontWeight={'light'}
                             >
                                 {cartData.length} Công thức |{' '}
-                                {
-                                    cartItemData
-                                        .map((item) => {
-                                            return item.ingredient?.id;
-                                        })
-                                        .filter(function (item, pos, self) {
-                                            return self.indexOf(item) == pos;
-                                        }).length
-                                }{' '}
-                                Nguyên liệu
+                                {getTotalIngredient()} Nguyên liệu
                             </Typography>
 
-                            <PopoverRecipes />
+                            <PopoverRecipes accountId={login.user?.uid} />
                         </Box>
                     </Box>
                     <RecipesServingSizeCarousel
@@ -158,6 +188,7 @@ export default function Grocery() {
                 <Box
                     sx={{
                         backgroundColor: 'secondary.main',
+                        flexGrow: 1,
                     }}
                 >
                     <Container
@@ -193,6 +224,58 @@ export default function Grocery() {
                                 <AddYourOwnItem />
                             </Grid>
 
+                            <Grid
+                                item
+                                xs={12}
+                                lg={8}
+                            >
+                                <CartItemFrame label="Đồ cá nhân">
+                                    {personalCartItemData.map((item, index) => {
+                                        if (!item.is_bought) {
+                                            return (
+                                                <CartItemCheckBox
+                                                    key={index}
+                                                    item={convertPersonalCartItemToCartItem(
+                                                        item
+                                                    )}
+                                                    total={() => {
+                                                        let total = 0;
+                                                        cartItemData.forEach(
+                                                            (x) => {
+                                                                if (
+                                                                    x.ingredientId ==
+                                                                    item.ingredient_id
+                                                                ) {
+                                                                    total +=
+                                                                        x.amount;
+                                                                }
+                                                            }
+                                                        );
+                                                        personalCartItemData.forEach(
+                                                            (x) => {
+                                                                if (
+                                                                    item.ingredient_id &&
+                                                                    x.ingredient_id ==
+                                                                        item.ingredient_id
+                                                                ) {
+                                                                    total +=
+                                                                        x.amount;
+                                                                }
+                                                            }
+                                                        );
+                                                        return total;
+                                                    }}
+                                                    type="personal"
+                                                    handleChangePersonalCartItemData={
+                                                        handleChangePersonalCartItemData
+                                                    }
+                                                />
+                                            );
+                                        }
+                                    })}
+                                </CartItemFrame>
+                            </Grid>
+
                             <CartItemContent
                                 cartItemData={cartItemData}
                                 handleChangeCartItemData={
@@ -206,6 +289,50 @@ export default function Grocery() {
                                 lg={8}
                             >
                                 <CartItemFrame label="Đã mua">
+                                    {personalCartItemData.map((item, index) => {
+                                        if (item.is_bought) {
+                                            return (
+                                                <CartItemCheckBox
+                                                    key={index}
+                                                    item={convertPersonalCartItemToCartItem(
+                                                        item
+                                                    )}
+                                                    total={() => {
+                                                        let total = 0;
+                                                        cartItemData.forEach(
+                                                            (x) => {
+                                                                if (
+                                                                    x.ingredientId ==
+                                                                    item.ingredient_id
+                                                                ) {
+                                                                    total +=
+                                                                        x.amount;
+                                                                }
+                                                            }
+                                                        );
+                                                        personalCartItemData.forEach(
+                                                            (x) => {
+                                                                if (
+                                                                    item.ingredient_id &&
+                                                                    x.ingredient_id ==
+                                                                        item.ingredient_id
+                                                                ) {
+                                                                    total +=
+                                                                        x.amount;
+                                                                }
+                                                            }
+                                                        );
+                                                        return total;
+                                                    }}
+                                                    type="personal"
+                                                    handleChangePersonalCartItemData={
+                                                        handleChangePersonalCartItemData
+                                                    }
+                                                />
+                                            );
+                                        }
+                                    })}
+
                                     {cartItemData.map((item, index) => {
                                         if (item.isBought) {
                                             return (

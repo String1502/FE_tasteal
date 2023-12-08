@@ -22,6 +22,8 @@ function Layout({
             <Box
                 sx={{
                     minHeight: '90dvh',
+                    display: 'flex',
+                    flexDirection: 'column',
                 }}
             >
                 {children}
