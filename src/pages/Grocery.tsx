@@ -1,201 +1,372 @@
-import AddYourOwnItem from "@/components/ui/grocery/AddYourOwnItem";
-import CartItemCheckBox from "@/components/ui/grocery/CartItemCheckBox";
-import CartItemContent from "@/components/ui/grocery/CartItemContent";
-import CartItemFrame from "@/components/ui/grocery/CartItemFrame";
-import { PopoverRecipes } from "@/components/ui/grocery/PopoverRecipes";
-import { RecipesServingSizeCarousel } from "@/components/ui/grocery/RecipesServingSizeCarousel";
-import Layout from "@/layout/Layout";
-import { accounts } from "@/lib/constants/sampleData";
-import { AccountEntity } from "@/lib/models/entities/AccountEntity/AccountEntity";
-import { CartEntity } from "@/lib/models/entities/CartEntity/CartEntity";
-import { Cart_ItemEntity } from "@/lib/models/entities/Cart_ItemEntity/Cart_ItemEntity";
-import CartItemService from "@/lib/services/CartItemService";
-import CartService from "@/lib/services/cartService";
-import { Box, Container, Grid, Typography } from "@mui/material";
-import { useEffect, useState } from "react";
+import AddYourOwnItem from '@/components/ui/grocery/AddYourOwnItem';
+import CartItemCheckBox from '@/components/ui/grocery/CartItemCheckBox';
+import CartItemContent from '@/components/ui/grocery/CartItemContent';
+import CartItemFrame from '@/components/ui/grocery/CartItemFrame';
+import { PopoverRecipes } from '@/components/ui/grocery/PopoverRecipes';
+import { RecipesServingSizeCarousel } from '@/components/ui/grocery/RecipesServingSizeCarousel';
+import Layout from '@/layout/Layout';
+import { personalCartItems } from '@/lib/constants/sampleData';
+import AppContext from '@/lib/contexts/AppContext';
+import { CartEntity } from '@/lib/models/entities/CartEntity/CartEntity';
+import { Cart_ItemEntity } from '@/lib/models/entities/Cart_ItemEntity/Cart_ItemEntity';
+import {
+    PersonalCartItem,
+    convertPersonalCartItemToCartItem,
+} from '@/lib/models/entities/PersonalCartItem/PersonalCartItem';
+import CartItemService from '@/lib/services/CartItemService';
+import CartService from '@/lib/services/cartService';
+import { Box, Container, Grid, Typography } from '@mui/material';
+import { useEffect, useState, useContext, useCallback } from 'react';
 
 export default function Grocery() {
-  const [cartData, setCartData] = useState<CartEntity[]>([]);
+    const [cartData, setCartData] = useState<CartEntity[]>([]);
 
-  const [accountData, setAccountData] = useState<AccountEntity | undefined>(
-    accounts.find((account) => account.uid === "1")
-  );
+    const [personalCartItemData, setPersonalCartItemData] = useState<
+        PersonalCartItem[]
+    >([]);
 
-  const [cartItemData, setCartItemData] = useState<Cart_ItemEntity[]>([]);
+    const { login } = useContext(AppContext);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      const finalCartData = await CartService.GetCartByAccountId(
-        accountData?.uid
-      );
+    const [cartItemData, setCartItemData] = useState<Cart_ItemEntity[]>([]);
 
-      setCartData(finalCartData);
+    useEffect(() => {
+        const fetchData = async () => {
+            if (!login.user?.uid) {
+                return;
+            }
+            try {
+                setPersonalCartItemData(personalCartItems);
 
-      if (finalCartData.length > 0) {
-        const ids = finalCartData.map((cart) => cart.id).filter((id) => id > 0);
+                const finalCartData = await CartService.GetCartByAccountId(
+                    login.user.uid
+                );
 
-        setCartItemData(await CartItemService.GetCartItemsByCartIds(ids));
-      }
-    };
-    fetchData();
-  }, [accountData]);
+                setCartData(finalCartData);
 
-  function handleChangeCartItemData(cartId: number, ingredientId: number) {
-    setCartItemData((prev) => {
-      return prev.map((item) => {
-        if (item.cartId === cartId && item.ingredientId === ingredientId) {
-          return {
-            ...item,
-            isBought: !item.isBought,
-          };
-        } else {
-          return item;
-        }
-      });
-    });
-  }
+                if (finalCartData && finalCartData.length > 0) {
+                    const ids = finalCartData
+                        .map((cart) => cart.id)
+                        .filter((id) => id > 0);
 
-  function handleServingSizeChange(cartId: number, newValue: number) {
-    let oldValue = cartData.find((item) => item.id === cartId)?.serving_size;
-    if (!oldValue || oldValue === 0) {
-      oldValue = 1;
+                    setCartItemData(
+                        await CartItemService.GetCartItemsByCartIds(ids)
+                    );
+                }
+            } catch (error) {
+                console.log(error);
+            }
+        };
+        fetchData();
+    }, [login.user?.uid]);
+
+    function handleChangeCartItemData(cartId: number, ingredientId: number) {
+        setCartItemData((prev) => {
+            return prev.map((item) => {
+                if (
+                    item.cartId === cartId &&
+                    item.ingredientId === ingredientId
+                ) {
+                    return {
+                        ...item,
+                        isBought: !item.isBought,
+                    };
+                } else {
+                    return item;
+                }
+            });
+        });
     }
-    let rate = newValue / oldValue;
 
-    setCartData((prev) => {
-      return prev.map((item) => {
-        if (item.id === cartId) {
-          return {
-            ...item,
-            serving_size: newValue,
-          };
-        } else {
-          return item;
+    function handleServingSizeChange(cartId: number, newValue: number) {
+        let oldValue = cartData.find(
+            (item) => item.id === cartId
+        )?.serving_size;
+        if (!oldValue || oldValue === 0) {
+            oldValue = 1;
         }
-      });
-    });
+        let rate = newValue / oldValue;
 
-    setCartItemData((prev) => {
-      return prev.map((item) => {
-        if (item.cartId === cartId) {
-          return {
-            ...item,
-            amount: item.amount * rate,
-          };
-        } else {
-          return item;
-        }
-      });
-    });
-  }
+        setCartData((prev) => {
+            return prev.map((item) => {
+                if (item.id === cartId) {
+                    return {
+                        ...item,
+                        serving_size: newValue,
+                    };
+                } else {
+                    return item;
+                }
+            });
+        });
 
-  return (
-    <>
-      <Layout>
-        <Container>
-          <Box
-            sx={{
-              mt: 8,
-            }}
-          >
-            <Typography
-              variant="h5"
-              fontWeight={900}
-              sx={{
-                width: "100%",
-              }}
-            >
-              Giỏ đi chợ
-            </Typography>
+        setCartItemData((prev) => {
+            return prev.map((item) => {
+                if (item.cartId === cartId) {
+                    return {
+                        ...item,
+                        amount: item.amount * rate,
+                    };
+                } else {
+                    return item;
+                }
+            });
+        });
+    }
 
-            <Box
-              sx={{
-                width: "100%",
-                display: "flex",
-                justifyContent: "space-between",
-              }}
-            >
-              <Typography variant="subtitle2" fontWeight={"light"}>
-                {cartData.length} Công thức |{" "}
-                {
-                  cartItemData
-                    .map((item) => {
-                      return item.ingredient?.id;
-                    })
-                    .filter(function (item, pos, self) {
-                      return self.indexOf(item) == pos;
-                    }).length
-                }{" "}
-                Nguyên liệu
-              </Typography>
-              <PopoverRecipes />
-            </Box>
-          </Box>
-          <RecipesServingSizeCarousel
-            array={cartData}
-            handleServingSizeChange={handleServingSizeChange}
-          />
-        </Container>
+    function handleChangePersonalCartItemData(id: PersonalCartItem['id']) {
+        setPersonalCartItemData((prev) => {
+            return prev.map((item) => {
+                if (item.id === id) {
+                    return {
+                        ...item,
+                        is_bought: !item.is_bought,
+                    };
+                } else {
+                    return item;
+                }
+            });
+        });
+    }
 
-        <Box
-          sx={{
-            backgroundColor: "secondary.main",
-          }}
-        >
-          <Container
-            sx={{
-              py: 4,
-            }}
-          >
-            <Grid
-              container
-              justifyContent={"flex-start"}
-              alignItems={"flex-start"}
-              spacing={2}
-            >
-              <Grid item xs={12} lg={8}>
-                <Typography variant="h6" fontWeight={"bold"} color={"primary"}>
-                  Danh sách cần mua
-                </Typography>
-              </Grid>
+    const getTotalIngredient = useCallback(() => {
+        const cartItemDataAmount = cartItemData
+            .map((item) => {
+                return item.ingredient?.id;
+            })
+            .filter(function (item, pos, self) {
+                return self.indexOf(item) == pos;
+            }).length;
 
-              <Grid item xs={12} lg={8}>
-                <AddYourOwnItem />
-              </Grid>
+        const personalCartItemDataAmount = personalCartItemData.length;
+        return cartItemDataAmount + personalCartItemDataAmount;
+    }, [cartItemData, personalCartItemData]);
 
-              <CartItemContent
-                cartItemData={cartItemData}
-                handleChangeCartItemData={handleChangeCartItemData}
-              />
+    return (
+        <>
+            <Layout>
+                <Container>
+                    <Box
+                        sx={{
+                            mt: 4,
+                        }}
+                    >
+                        <Typography
+                            variant="h5"
+                            fontWeight={900}
+                            textTransform={'capitalize'}
+                            sx={{
+                                width: '100%',
+                            }}
+                        >
+                            Giỏ đi chợ
+                        </Typography>
 
-              <Grid item xs={12} lg={8}>
-                <CartItemFrame label="Đã mua">
-                  {cartItemData.map((item, index) => {
-                    if (item.isBought) {
-                      return (
-                        <CartItemCheckBox
-                          key={index}
-                          item={item}
-                          total={() => {
-                            let total = 0;
-                            cartItemData.forEach((x) => {
-                              if (x.ingredientId == item.ingredientId) {
-                                total += x.amount;
-                              }
-                            });
-                            return total;
-                          }}
-                          handleChangeCartItemData={handleChangeCartItemData}
-                        />
-                      );
-                    }
-                  })}
-                </CartItemFrame>
-              </Grid>
-            </Grid>
-          </Container>
-        </Box>
-      </Layout>
-    </>
-  );
+                        <Box
+                            sx={{
+                                width: '100%',
+                                display: 'flex',
+                                justifyContent: 'space-between',
+                            }}
+                        >
+                            <Typography
+                                variant="subtitle2"
+                                fontWeight={'light'}
+                            >
+                                {cartData.length} Công thức |{' '}
+                                {getTotalIngredient()} Nguyên liệu
+                            </Typography>
+
+                            <PopoverRecipes accountId={login.user?.uid} />
+                        </Box>
+                    </Box>
+                    <RecipesServingSizeCarousel
+                        array={cartData}
+                        handleServingSizeChange={handleServingSizeChange}
+                    />
+                </Container>
+
+                <Box
+                    sx={{
+                        backgroundColor: 'secondary.main',
+                        flexGrow: 1,
+                    }}
+                >
+                    <Container
+                        sx={{
+                            py: 4,
+                        }}
+                    >
+                        <Grid
+                            container
+                            justifyContent={'flex-start'}
+                            alignItems={'flex-start'}
+                            spacing={2}
+                        >
+                            <Grid
+                                item
+                                xs={12}
+                                lg={8}
+                            >
+                                <Typography
+                                    variant="h6"
+                                    fontWeight={'bold'}
+                                    color={'primary'}
+                                >
+                                    Danh sách cần mua
+                                </Typography>
+                            </Grid>
+
+                            <Grid
+                                item
+                                xs={12}
+                                lg={8}
+                            >
+                                <AddYourOwnItem />
+                            </Grid>
+
+                            <Grid
+                                item
+                                xs={12}
+                                lg={8}
+                            >
+                                <CartItemFrame label="Đồ cá nhân">
+                                    {personalCartItemData.map((item, index) => {
+                                        if (!item.is_bought) {
+                                            return (
+                                                <CartItemCheckBox
+                                                    key={index}
+                                                    item={convertPersonalCartItemToCartItem(
+                                                        item
+                                                    )}
+                                                    total={() => {
+                                                        let total = 0;
+                                                        cartItemData.forEach(
+                                                            (x) => {
+                                                                if (
+                                                                    x.ingredientId ==
+                                                                    item.ingredient_id
+                                                                ) {
+                                                                    total +=
+                                                                        x.amount;
+                                                                }
+                                                            }
+                                                        );
+                                                        personalCartItemData.forEach(
+                                                            (x) => {
+                                                                if (
+                                                                    item.ingredient_id &&
+                                                                    x.ingredient_id ==
+                                                                        item.ingredient_id
+                                                                ) {
+                                                                    total +=
+                                                                        x.amount;
+                                                                }
+                                                            }
+                                                        );
+                                                        return total;
+                                                    }}
+                                                    type="personal"
+                                                    handleChangePersonalCartItemData={
+                                                        handleChangePersonalCartItemData
+                                                    }
+                                                />
+                                            );
+                                        }
+                                    })}
+                                </CartItemFrame>
+                            </Grid>
+
+                            <CartItemContent
+                                cartItemData={cartItemData}
+                                handleChangeCartItemData={
+                                    handleChangeCartItemData
+                                }
+                            />
+
+                            <Grid
+                                item
+                                xs={12}
+                                lg={8}
+                            >
+                                <CartItemFrame label="Đã mua">
+                                    {personalCartItemData.map((item, index) => {
+                                        if (item.is_bought) {
+                                            return (
+                                                <CartItemCheckBox
+                                                    key={index}
+                                                    item={convertPersonalCartItemToCartItem(
+                                                        item
+                                                    )}
+                                                    total={() => {
+                                                        let total = 0;
+                                                        cartItemData.forEach(
+                                                            (x) => {
+                                                                if (
+                                                                    x.ingredientId ==
+                                                                    item.ingredient_id
+                                                                ) {
+                                                                    total +=
+                                                                        x.amount;
+                                                                }
+                                                            }
+                                                        );
+                                                        personalCartItemData.forEach(
+                                                            (x) => {
+                                                                if (
+                                                                    item.ingredient_id &&
+                                                                    x.ingredient_id ==
+                                                                        item.ingredient_id
+                                                                ) {
+                                                                    total +=
+                                                                        x.amount;
+                                                                }
+                                                            }
+                                                        );
+                                                        return total;
+                                                    }}
+                                                    type="personal"
+                                                    handleChangePersonalCartItemData={
+                                                        handleChangePersonalCartItemData
+                                                    }
+                                                />
+                                            );
+                                        }
+                                    })}
+
+                                    {cartItemData.map((item, index) => {
+                                        if (item.isBought) {
+                                            return (
+                                                <CartItemCheckBox
+                                                    key={index}
+                                                    item={item}
+                                                    total={() => {
+                                                        let total = 0;
+                                                        cartItemData.forEach(
+                                                            (x) => {
+                                                                if (
+                                                                    x.ingredientId ==
+                                                                    item.ingredientId
+                                                                ) {
+                                                                    total +=
+                                                                        x.amount;
+                                                                }
+                                                            }
+                                                        );
+                                                        return total;
+                                                    }}
+                                                    handleChangeCartItemData={
+                                                        handleChangeCartItemData
+                                                    }
+                                                />
+                                            );
+                                        }
+                                    })}
+                                </CartItemFrame>
+                            </Grid>
+                        </Grid>
+                    </Container>
+                </Box>
+            </Layout>
+        </>
+    );
 }

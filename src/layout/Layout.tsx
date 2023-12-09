@@ -21,7 +21,9 @@ function Layout({
             <Header />
             <Box
                 sx={{
-                    minHeight: '100dvh',
+                    minHeight: '90dvh',
+                    display: 'flex',
+                    flexDirection: 'column',
                 }}
             >
                 {children}

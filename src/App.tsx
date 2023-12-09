@@ -22,6 +22,7 @@ import Search from './pages/Search';
 import SignIn from './pages/SignIn';
 import SignUp from './pages/SignUp';
 import SignUpEmail from './pages/SignUpEmail';
+import ScrollToTop from './components/ui/app/ScrollToTop';
 
 //#region AppWrapper
 
@@ -123,22 +124,22 @@ function AllRoutes() {
             {
                 path: PageRoute.Recipe.Create,
                 element: <CreateRecipe />,
-                needSignIn: true,
+                needSignIn: PageRoute.Recipe.Create,
             },
             {
                 path: PageRoute.Grocery,
                 element: <Grocery />,
-                needSignIn: true,
+                needSignIn: PageRoute.Grocery,
             },
             {
                 path: PageRoute.MealPlanner,
                 element: <MealPlanner />,
-                needSignIn: true,
+                needSignIn: PageRoute.MealPlanner,
             },
             {
                 path: PageRoute.MySavedRecipes,
                 element: <MySavedRecipes />,
-                needSignIn: true,
+                needSignIn: PageRoute.MySavedRecipes,
             },
             {
                 path: '*',
@@ -150,6 +151,7 @@ function AllRoutes() {
     return (
         <>
             <Router>
+                <ScrollToTop />
                 <Routes>
                     {MapRoutes.map(
                         ({ path, element, checkAlready, needSignIn }) => (

@@ -1,6 +1,10 @@
 import { defaultAvtPath, signInImagePath } from '@/assets/exportImage';
+import BoxImage from '@/components/common/image/BoxImage';
+import { PageRoute } from '@/lib/constants/common';
+import AppContext from '@/lib/contexts/AppContext';
 import { auth, googleProvider } from '@/lib/firebase/config';
 import useFirebaseImage from '@/lib/hooks/useFirebaseImage';
+import useSnackbarService from '@/lib/hooks/useSnackbar';
 import {
     CheckCircleRounded,
     Facebook,
@@ -20,15 +24,16 @@ import {
     Typography,
 } from '@mui/material';
 import { signInWithPopup } from 'firebase/auth';
-import { useCallback } from 'react';
+import { useCallback, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 export default function SignUp() {
     //#region Hooks
 
     const navigate = useNavigate();
-    const authorImage = useFirebaseImage(defaultAvtPath);
     const signInImage = useFirebaseImage(signInImagePath);
+    const { login } = useContext(AppContext);
+    const [openSnackbar] = useSnackbarService();
 
     //#endregion
     //#region Handlers
@@ -40,14 +45,32 @@ export default function SignUp() {
                     '[AUTH] Sign in with Google successfully',
                     userCredential
                 );
-                navigate('/');
+                openSnackbar('Đăng nhập thành công!', 'success');
+
+                if (login.handleLogin) {
+                    login.handleLogin(true, userCredential.user);
+                    navigateSignIn();
+                }
             })
             .catch((error) => {
                 console.log('[AUTH] Sign in with Google failed', error);
+                openSnackbar('Đăng nhập thất bại!', 'warning');
+                if (login.handleLogin) {
+                    login.handleLogin();
+                    navigateSignIn();
+                }
             });
     }, [navigate]);
 
     //#endregion
+
+    const navigateSignIn = useCallback(() => {
+        const needSignIn = localStorage.getItem('needSignIn');
+        if (needSignIn) {
+            localStorage.removeItem('needSignIn');
+            navigate(needSignIn);
+        } else navigate(PageRoute.Home);
+    }, [navigate]);
 
     return (
         <>
@@ -144,7 +167,7 @@ export default function SignUp() {
                                         ml: 2,
                                     }}
                                     onClick={() => {
-                                        navigate('/signin');
+                                        navigate(PageRoute.SignIn);
                                     }}
                                 >
                                     <Typography
@@ -165,18 +188,17 @@ export default function SignUp() {
                                     mt: 6,
                                 }}
                             >
-                                <Box
+                                <BoxImage
+                                    src={defaultAvtPath}
+                                    alt="Tasteal"
+                                    quality={20}
                                     sx={{
-                                        backgroundImage: `url(${authorImage})`,
-                                        backgroundRepeat: 'no-repeat',
-                                        backgroundSize: 'cover',
-                                        backgroundPosition: 'center',
-                                        aspectRatio: '1/1',
                                         width: '32px',
+                                        height: '32px',
                                         borderRadius: '50%',
                                         mr: 1,
                                     }}
-                                ></Box>
+                                />
                                 <Typography
                                     variant="h6"
                                     color="primary"
@@ -278,7 +300,7 @@ export default function SignUp() {
                                     }}
                                     startIcon={<MailOutline fontSize="large" />}
                                     onClick={() => {
-                                        navigate('/signupemail');
+                                        navigate(PageRoute.SignUpEmail);
                                     }}
                                 >
                                     Tiếp tục với Email

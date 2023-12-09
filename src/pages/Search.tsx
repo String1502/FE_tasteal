@@ -1,15 +1,12 @@
 import { Box, Container, Grid, Stack, Typography } from '@mui/material';
-import React, { useCallback, useContext, useEffect, useState } from 'react';
 import { CheckBoxButton } from '../components/ui/search/CheckBoxButton.tsx';
 import { PrimaryCard } from '../components/common/card/PrimaryCard.tsx';
 import { SearchFilter } from '../components/ui/search/SearchFilter.tsx';
 import Layout from '../layout/Layout';
 import { SearchTextField } from '@/components/ui/search/SearchTextField.tsx';
-import { removeDiacritics } from '@/utils/format/index.ts';
 import { RecipeEntity } from '@/lib/models/entities/RecipeEntity/RecipeEntity.ts';
-import RecipeService from '@/lib/services/recipeService.ts';
-import InfiniteScroll from 'react-infinite-scroll-component';
-import AppContext from '@/lib/contexts/AppContext.ts';
+import { useSearchRecipe } from '../components/ui/search/useSearchRecipe.tsx';
+import { SearchInfiniteScroll } from '../components/ui/search/SearchInfiniteScroll.tsx';
 
 export type TuKhoa = {
     label: string;
@@ -43,7 +40,7 @@ export const DefaultTuKhoas: TuKhoa[] = [
     },
 ];
 
-type Filter = {
+export type Filter = {
     ingredientID: number[];
     exceptIngredientID: number[];
     totalTime: number;
@@ -60,126 +57,16 @@ type Filter = {
 const viewportItemAmount = 12;
 
 function Search() {
-    const [recipes, setRecipes] = React.useState<RecipeEntity[]>([]);
-    const [resultIds, setResultIds] = React.useState<RecipeEntity['id'][]>([]);
-    const { handleSpinner } = useContext(AppContext);
-
-    useEffect(() => {
-        async function fetchData() {
-            handleSpinner(true);
-            const ids = (await RecipeService.GetAllRecipes()).map(
-                (recipe) => recipe.id
-            );
-            setResultIds(ids);
-
-            // const initData = await RecipeService.GetRecipes(
-            //     ids.slice(0, viewportItemAmount)
-            // );
-            // setRecipes(initData);
-
-            setRecipes(await RecipeService.GetAllRecipes());
-            handleSpinner(false);
-        }
-        fetchData();
-    }, []);
-
-    //#region Search
-
-    function searchButtonClick(value: string) {
-        handleChangeFilter('textSearch', value);
-    }
-
-    //#endregion
-
-    //#region Filter
-    const [filter, setFilter] = React.useState<Filter>({
-        ingredientID: [],
-        exceptIngredientID: [],
-        totalTime: 0,
-        activeTime: 0,
-        occasionID: [],
-        calories: {
-            min: 0,
-            max: Infinity,
-        },
-        textSearch: '',
-        keyWords: [],
-    });
-
-    function handleChangeFilter(
-        type:
-            | 'ingredientID'
-            | 'exceptIngredientID'
-            | 'totalTime'
-            | 'activeTime'
-            | 'occasionID'
-            | 'calories'
-            | 'textSearch'
-            | 'keyWords',
-        value: any
-    ) {
-        setFilter((prev) => {
-            return {
-                ...prev,
-                [type]: value,
-            };
-        });
-    }
-
-    useEffect(() => {
-        async function fetchData() {
-            handleSpinner(true);
-            // const ids = await RecipeService.GetRecipesByFilter(filter);
-            // setResultIds(ids);
-            // const initData = await RecipeService.GetRecipes(
-            //     ids.slice(0, viewportItemAmount)
-            // );
-            // setRecipes(initData);
-            handleSpinner(false);
-        }
-        fetchData();
-    }, [filter]);
-
-    //#endregion
-
-    //#region Từ khóa
-    const [tuKhoas, setTuKhoas] = React.useState<TuKhoa[]>(DefaultTuKhoas);
-
-    const handleChangeTuKhoa = (tukhoa: TuKhoa) => {
-        setTuKhoas((prev) => {
-            return prev.map((item) => {
-                if (item.label === tukhoa.label) {
-                    return {
-                        ...item,
-                        value: !item.value,
-                    };
-                } else {
-                    return item;
-                }
-            });
-        });
-    };
-
-    useEffect(() => {
-        let keyWords = tuKhoas
-            .map((item) => {
-                if (item.value && item.label) {
-                    return removeDiacritics(item.label);
-                }
-            })
-            .filter(Boolean);
-        handleChangeFilter('keyWords', keyWords);
-    }, [tuKhoas]);
-    //#endregion
-
-    //#region Infinite Scroll
-    const loadNext = useCallback(async () => {
-        // const nextData = await RecipeService.GetRecipes(
-        //     resultIds.slice(recipes.length, viewportItemAmount)
-        // );
-        // setRecipes((prev) => [...prev, ...nextData]);
-    }, [resultIds]);
-    //#endregion
+    const {
+        recipes,
+        resultIds,
+        searchButtonClick,
+        // filter,
+        handleChangeFilter,
+        tuKhoas,
+        handleChangeTuKhoa,
+        loadNext,
+    } = useSearchRecipe(viewportItemAmount);
     return (
         <Layout>
             <Box
@@ -247,42 +134,41 @@ function Search() {
                                 ))}
                             </Stack>
 
-                            <Grid
-                                container
-                                direction="row"
-                                justifyContent="flex-start"
-                                alignItems="flex-start"
-                                spacing={2}
+                            <SearchInfiniteScroll
+                                viewportItemAmount={viewportItemAmount}
+                                loadNext={loadNext}
+                                resultIds={resultIds}
+                                recipes={recipes}
                             >
-                                <InfiniteScroll
-                                    // 3*2*2
-                                    dataLength={viewportItemAmount}
-                                    next={loadNext}
-                                    hasMore={resultIds.length != recipes.length}
-                                    scrollableTarget="scrollableDiv"
-                                    loader={<h4>Loading...</h4>}
-                                >
-                                    {recipes.map((item, index) => (
-                                        <>
-                                            {item && (
-                                                <Grid
-                                                    item
-                                                    xs={12}
-                                                    sm={6}
-                                                    md={4}
-                                                    key={index}
-                                                >
-                                                    <PrimaryCard
-                                                        recipe={
-                                                            item as RecipeEntity
-                                                        }
-                                                    />
-                                                </Grid>
-                                            )}
-                                        </>
-                                    ))}
-                                </InfiniteScroll>
-                            </Grid>
+                                {recipes.map((item, index) => (
+                                    <>
+                                        {item && (
+                                            <Box
+                                                key={item.id}
+                                                sx={{
+                                                    flexBasis: {
+                                                        xs: '100%',
+                                                        sm: 'calc(99.2%/2)',
+                                                        md: 'calc(99.3%/3)',
+                                                    },
+                                                    p: 1,
+                                                    mr:
+                                                        index !=
+                                                        recipes.length - 1
+                                                            ? 0
+                                                            : 'auto',
+                                                }}
+                                            >
+                                                <PrimaryCard
+                                                    recipe={
+                                                        item as RecipeEntity
+                                                    }
+                                                />
+                                            </Box>
+                                        )}
+                                    </>
+                                ))}
+                            </SearchInfiniteScroll>
                         </Grid>
                     </Grid>
                 </Container>

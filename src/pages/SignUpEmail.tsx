@@ -1,4 +1,6 @@
 import { defaultAvtPath, signInImagePath } from '@/assets/exportImage';
+import BoxImage from '@/components/common/image/BoxImage';
+import { PageRoute } from '@/lib/constants/common';
 import { createEmailUser } from '@/lib/firebase/auth';
 import useFirebaseImage from '@/lib/hooks/useFirebaseImage';
 import useSnackbarService from '@/lib/hooks/useSnackbar';
@@ -25,7 +27,6 @@ export default function SignUpEmail() {
     //#region Hooks
 
     const navigate = useNavigate();
-    const authorImage = useFirebaseImage(defaultAvtPath);
     const signInImage = useFirebaseImage(signInImagePath);
     const [openSnackbar] = useSnackbarService();
 
@@ -80,7 +81,7 @@ export default function SignUpEmail() {
                                 createDebugString('Sign up successfully')
                             );
                             openSnackbar('Đăng ký thành công!');
-                            navigate('/signin');
+                            navigate(PageRoute.SignIn);
                         } else {
                             console.log(createDebugString('Sign up failed'));
                             openSnackbar('Đăng ký thất bại!', 'warning');
@@ -193,7 +194,7 @@ export default function SignUpEmail() {
                                         ml: 2,
                                     }}
                                     onClick={() => {
-                                        navigate('/signin');
+                                        navigate(PageRoute.SignIn);
                                     }}
                                 >
                                     <Typography
@@ -214,18 +215,18 @@ export default function SignUpEmail() {
                                     mt: 6,
                                 }}
                             >
-                                <Box
+                                <BoxImage
+                                    src={defaultAvtPath}
+                                    alt="Tasteal"
+                                    quality={20}
                                     sx={{
-                                        backgroundImage: `url(${authorImage})`,
-                                        backgroundRepeat: 'no-repeat',
-                                        backgroundSize: 'cover',
-                                        backgroundPosition: 'center',
                                         aspectRatio: '1/1',
                                         width: '32px',
+                                        height: '32px',
                                         borderRadius: '50%',
                                         mr: 1,
                                     }}
-                                ></Box>
+                                />
                                 <Typography
                                     variant="h6"
                                     color="primary"

@@ -98,6 +98,7 @@ export function IngredientAutocomplete({
                         <BoxImage
                             src={`https://www.sidechef.com/ingredient/small/7cae3481-86d3-434d-a784-ceaf8ddfce62.jpg?d=96x96`}
                             alt={option.name}
+                            quality={30}
                             sx={{
                                 width: '28px',
                                 borderRadius: 2,

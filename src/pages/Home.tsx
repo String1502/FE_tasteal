@@ -17,6 +17,7 @@ import { WhyTasteal } from '../components/ui/home/WhyTasteal';
 import { Occasion_Component } from '../components/ui/home/Occasion_Component';
 import Trending_Component from '@/components/ui/home/Trending_Component';
 import MostContributedAuthors_Component from '@/components/ui/home/MostContributedAuthors_Component';
+import { PageRoute } from '@/lib/constants/common';
 
 const typoProps: TypographyProps = {
     variant: 'h6',
@@ -220,7 +221,7 @@ function Home() {
                                             px: 3,
                                         }}
                                         onClick={() => {
-                                            navigate('/search');
+                                            navigate(PageRoute.Search);
                                         }}
                                     >
                                         Xem ngay!

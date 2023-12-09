@@ -1,3 +1,4 @@
+import BoxImage from '@/components/common/image/BoxImage';
 import useFirebaseImage from '@/lib/hooks/useFirebaseImage';
 import { Direction } from '@/lib/models/dtos/common';
 import { Box, Divider, Stack, Typography } from '@mui/material';
@@ -9,8 +10,6 @@ type DirectionItemProps = {
 };
 
 const DirectionItem: FC<DirectionItemProps> = ({ value, last = false }) => {
-    const img = useFirebaseImage(value.image);
-
     return (
         <Stack gap={2}>
             <Typography
@@ -21,15 +20,15 @@ const DirectionItem: FC<DirectionItemProps> = ({ value, last = false }) => {
                 Bước {value.step}
             </Typography>
             <Typography>{value.direction}</Typography>
-            <Box
-                component="img"
-                src={img}
+
+            <BoxImage
+                src={value.image}
+                quality={100}
                 sx={{
                     borderRadius: 8,
                     objectFit: 'cover',
                 }}
-            ></Box>
-
+            />
             {!last && <Divider />}
         </Stack>
     );

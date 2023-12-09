@@ -24,8 +24,9 @@ export const ApiEndPoint = {
     GetAllCartByAccountId: 'Cart/getall',
     DeleteAllCartByAccountId: 'Cart/allcart',
     UpdateCart: 'Cart/servingsize',
-    GetCartItemBycartId: 'Cart/cartitem',
+    GetCartItemByCartId: 'Cart/cartitem',
     DeleteCartById: 'Cart/cart',
+    UpdateCartItem: 'Cart/cartitemstatus',
     // USER
     SignUpUser: 'User/signup',
     UpdateUser: '/User/updateuser',

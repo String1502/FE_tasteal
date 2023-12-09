@@ -4,8 +4,7 @@ import AppContext from '@/lib/contexts/AppContext';
 import useSnackbarService from '@/lib/hooks/useSnackbar';
 import { Box } from '@mui/material';
 import React, { useContext, useEffect } from 'react';
-import { Navigate, useNavigate } from 'react-router';
-import SignInFirst from './SignInFirst';
+import { useNavigate } from 'react-router';
 
 function CheckSignIn({
     children,
@@ -14,7 +13,7 @@ function CheckSignIn({
 }: {
     children: React.ReactNode;
     checkAlready?: boolean;
-    needSignIn?: boolean;
+    needSignIn?: string;
 }) {
     const { login } = useContext(AppContext);
     const [snackbarAlert] = useSnackbarService();
@@ -27,19 +26,31 @@ function CheckSignIn({
         }
     }, [login.isUserSignedIn, checkAlready]);
 
+    useEffect(() => {
+        if (login.isUserSignedIn == false && needSignIn) {
+            if (
+                localStorage.getItem('needSignIn') &&
+                localStorage.getItem('needSignIn') == needSignIn
+            ) {
+                localStorage.removeItem('needSignIn');
+                navigate(PageRoute.Home);
+            } else {
+                snackbarAlert(
+                    'Bạn cần đăng nhập để sử dụng chức năng!',
+                    'warning'
+                );
+                localStorage.setItem('needSignIn', needSignIn);
+                navigate(PageRoute.SignIn);
+            }
+        }
+    }, [login.isUserSignedIn, needSignIn]);
+
     return (
         <>
             {login.isUserSignedIn && <>{!checkAlready && <>{children}</>}</>}
 
             {login.isUserSignedIn == false && (
-                <>
-                    {needSignIn && (
-                        <>
-                            <SignInFirst />
-                        </>
-                    )}
-                    {!needSignIn && <>{children}</>}
-                </>
+                <>{!needSignIn && <>{children}</>}</>
             )}
             {login.isUserSignedIn == undefined && (
                 <Box
