@@ -12,7 +12,7 @@ import {
     Typography,
     styled,
 } from '@mui/material';
-import { FC, useMemo } from 'react';
+import { FC, useCallback, useMemo } from 'react';
 
 const YOUR_DAILY_VALUE = 2000;
 
@@ -31,9 +31,9 @@ const NutrionPerServingModal: React.FunctionComponent<{
     onClose,
     nutritionInfo: nutritionInfo = DefaultNutritionValue,
 }) => {
-    const handleClose = () => {
+    const handleClose = useCallback(() => {
         onClose();
-    };
+    }, [onClose]);
 
     const nutritionInfoPercentage: NutritionPercentage = useMemo(() => {
         if (!nutritionInfo)
@@ -108,6 +108,8 @@ const NutrionPerServingModal: React.FunctionComponent<{
                     px: 4,
                     py: 2,
                     borderRadius: '24px',
+                    maxHeight: '90%',
+                    overflowY: 'auto',
                 }}
             >
                 <Stack gap={1}>
