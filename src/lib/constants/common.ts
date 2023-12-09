@@ -25,5 +25,7 @@ export const PageRoute = {
     },
     Grocery: '/grocery',
     MealPlanner: '/mealplanner',
+    MyPantry:'/mypantry',
     MySavedRecipes: '/mysaverecipes',
+    Partner:'/partner',
 } as const;

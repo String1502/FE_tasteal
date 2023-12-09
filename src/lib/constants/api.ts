@@ -29,7 +29,7 @@ export const ApiEndPoint = {
     UpdateCartItem: 'Cart/cartitemstatus',
     // USER
     SignUpUser: 'User/signup',
-    UpdateUser: '/User/updateuser',
+    UpdateUser: 'User/updateuser',
 } as const;
 
 /**

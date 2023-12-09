@@ -149,7 +149,7 @@ export function Header(props: Props) {
             { label: 'Tìm kiếm', href: PageRoute.Search },
             { label: 'Giỏ đi chợ', href: PageRoute.Grocery },
             { label: 'Lịch ăn', href: PageRoute.MealPlanner },
-            { label: 'Tủ lạnh', href: '/' },
+            { label: 'Tủ lạnh', href: 'PageRoute.MyPantry' },
             {
                 label: 'Bộ sưu tập',
                 href: PageRoute.MySavedRecipes,
@@ -347,7 +347,7 @@ export function Header(props: Props) {
                             />
 
                             <CustomHeaderLink
-                                href="#"
+                                href={PageRoute.MyPantry}
                                 label="Tủ lạnh"
                             />
 

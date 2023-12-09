@@ -23,9 +23,31 @@ class RecipeService {
      * @return {Promise<RecipeEntity[]>}
      */
     public static GetAllRecipes(): Promise<RecipeEntity[]> {
-        return Promise.resolve(recipesSampleData);
-    }
+        return fetch(getApiUrl('GetRecipeByRating'), {
+            method: 'POST',  // Specify the GET method
+        })
+        .then((response) => {
+        
+            if (!response.ok) {
+                throw new Error(`Failed to fetch recipes: ${response.statusText}`);
+            }
 
+            // Check if the response body is empty
+            const contentType = response.headers.get('content-type');
+            if (contentType && contentType.includes('application/json')) {
+              
+                return response.json();
+            } else {
+                // If the response is not JSON, handle it accordingly (e.g., return an empty array)
+                console.warn('Received non-JSON response. Returning an empty array.');
+                return [];
+            }
+        })
+        .catch((error) => {
+            console.error('Error fetching recipes:', error);
+            throw error;
+        });
+    }
     /**
      * Get recipe detail data by id.
      * NOTE: This method is not implemented yet.

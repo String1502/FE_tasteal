@@ -17,6 +17,8 @@ import ForgotPass from './pages/ForgotPass';
 import Grocery from './pages/Grocery';
 import Home from './pages/Home';
 import MealPlanner from './pages/MealPlanner';
+import MyPantry from './pages/MyPantry';
+import Partner from './pages/Partner'
 import MySavedRecipes from './pages/MySavedRecipes';
 import Search from './pages/Search';
 import SignIn from './pages/SignIn';
@@ -137,9 +139,19 @@ function AllRoutes() {
                 needSignIn: PageRoute.MealPlanner,
             },
             {
+                path: PageRoute.MyPantry,
+                element: <MyPantry />,
+                needSignIn: PageRoute.MyPantry,
+            },
+            {
                 path: PageRoute.MySavedRecipes,
                 element: <MySavedRecipes />,
                 needSignIn: PageRoute.MySavedRecipes,
+            },
+            {
+                path: PageRoute.Partner,
+                element: <Partner />,
+                needSignIn: PageRoute.Partner,
             },
             {
                 path: '*',
