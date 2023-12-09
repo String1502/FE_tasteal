@@ -1,18 +1,23 @@
+import useFirebaseImage from '@/lib/hooks/useFirebaseImage';
 import { PhotoCameraOutlined } from '@mui/icons-material';
 import { Box, Stack, Typography } from '@mui/material';
 import { ChangeEventHandler, FC, useCallback, useMemo } from 'react';
 
 export type ImagePickerProps = {
     file: File | null;
+    imagePath: string;
     onChange: (file: File | null) => void;
     disabled?: boolean;
 };
 
 export const ImagePicker: FC<ImagePickerProps> = ({
     file,
+    imagePath: imagePath,
     onChange,
     disabled = false,
 }) => {
+    const imageUrl = useFirebaseImage(imagePath);
+
     const handleFileChange = useCallback<ChangeEventHandler<HTMLInputElement>>(
         (e) => {
             if (e.target.files?.item(0)) {
@@ -26,7 +31,11 @@ export const ImagePicker: FC<ImagePickerProps> = ({
         if (file) {
             return URL.createObjectURL(file);
         }
-    }, [file]);
+
+        return imageUrl ? imageUrl : '';
+    }, [file, imageUrl]);
+
+    const hasImage = useMemo(() => previewImage, [previewImage]);
 
     return (
         <label
@@ -61,7 +70,7 @@ export const ImagePicker: FC<ImagePickerProps> = ({
             >
                 <Stack
                     alignItems={'center'}
-                    visibility={file ? 'hidden' : 'visible'}
+                    visibility={hasImage ? 'hidden' : 'visible'}
                 >
                     <PhotoCameraOutlined htmlColor="#777d86" />
                     <Typography

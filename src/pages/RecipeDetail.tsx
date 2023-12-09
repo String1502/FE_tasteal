@@ -13,10 +13,11 @@ import NutrionPerServingInfo from '@/components/ui/displayers/NutrionPerServingI
 import SameAuthorRecipesCarousel from '@/components/ui/displayers/SameAuthorRecipesCarousel/SameAuthorRecipesCarousel';
 import NutrionPerServingModal from '@/components/ui/modals/NutrionPerServingModal';
 import Layout from '@/layout/Layout';
-import { N_AValue } from '@/lib/constants/common';
+import { N_AValue, PageRoute } from '@/lib/constants/common';
 import { DefaultNutritionValue } from '@/lib/constants/defaultValue';
 import AppContext from '@/lib/contexts/AppContext';
 import { auth } from '@/lib/firebase/config';
+import useSnackbarService from '@/lib/hooks/useSnackbar';
 import { RecipeRes } from '@/lib/models/dtos/Response/RecipeRes/RecipeRes';
 import RecipeService from '@/lib/services/recipeService';
 import createCacheAsyncFunction from '@/utils/cache/createCacheAsyncFunction';
@@ -47,7 +48,6 @@ import {
     Stack,
     Typography,
 } from '@mui/material';
-import { onAuthStateChanged } from 'firebase/auth';
 import {
     FC,
     useCallback,
@@ -56,7 +56,7 @@ import {
     useMemo,
     useState,
 } from 'react';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
 // Mock bread crumbs data (will be remove later)
 const breadCrumbsLinks = [
@@ -106,7 +106,9 @@ const RecipeDetail: FC = () => {
     //#endregion
     //#region Hooks
 
-    const { handleSpinner } = useContext(AppContext);
+    const { handleSpinner, login } = useContext(AppContext);
+    const navigate = useNavigate();
+    const [snackbarAlert] = useSnackbarService();
 
     //#endregion
     //#region Recipe
@@ -157,20 +159,29 @@ const RecipeDetail: FC = () => {
     const [canEditRecipe, setCanEditRecipe] = useState(true);
 
     useEffect(() => {
-        const unsubscribe = onAuthStateChanged(auth, (user) => {
-            if (!user) return;
+        if (login.user) {
+            if (!login.user) return;
 
             if (!recipe || !recipe.author) return;
 
-            if (user.uid === recipe.author.uid) {
+            if (login.user.uid === recipe.author.uid) {
                 setCanEditRecipe(true);
             } else {
                 setCanEditRecipe(false);
             }
-        });
+        }
+    }, [login.user, recipe]);
 
-        return () => unsubscribe();
-    }, [recipe]);
+    const handleOpenEditEditor = useCallback(() => {
+        if (!id) {
+            snackbarAlert('Lỗi khi truy vấn công thức', 'warning');
+            return;
+        }
+
+        const intId = parseInt(id);
+
+        navigate(PageRoute.Recipe.Edit(intId));
+    }, [id, navigate, snackbarAlert]);
 
     //#endregion
     //#region Others
@@ -296,6 +307,13 @@ const RecipeDetail: FC = () => {
                                                     ? 'block'
                                                     : 'none',
                                             }}
+                                        >
+                                            Chỉnh sửa
+                                        </Button>
+                                        <Button
+                                            startIcon={<Edit />}
+                                            variant="contained"
+                                            onClick={handleOpenEditEditor}
                                         >
                                             Chỉnh sửa
                                         </Button>

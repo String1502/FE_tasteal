@@ -25,7 +25,7 @@ import RecipeService from '@/lib/services/recipeService';
 import { CommonMessage } from '@/utils/constants/message';
 import { createDebugStringFormatter } from '@/utils/debug/formatter';
 import { getFileExtension } from '@/utils/file';
-import { minuteToTimeString } from '@/utils/format';
+import { dateTimeToMinutes, minuteToTimeString } from '@/utils/format';
 import {
     Autocomplete,
     Box,
@@ -39,7 +39,9 @@ import {
     RadioGroup,
     Stack,
 } from '@mui/material';
+import { nanoid } from 'nanoid';
 import { useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import { useParams } from 'react-router-dom';
 import { v4 as uuidv4 } from 'uuid';
 
 /**
@@ -144,9 +146,12 @@ const LocalMessageConstant = {
     } as const,
 } as const;
 
-const CreateRecipe: React.FunctionComponent = () => {
+const CreateRecipe: React.FunctionComponent<{ edit?: boolean }> = ({
+    edit = false,
+}) => {
     //#region Hooks
 
+    const { id } = useParams();
     const [snackbarAlert] = useSnackbarService();
     const {
         login: { user },
@@ -159,7 +164,7 @@ const CreateRecipe: React.FunctionComponent = () => {
         null
     );
     const [newRecipe, setNewRecipe] = useState<NewRecipe>(DEFAULT_NEW_RECIPE);
-    const [isCreatingRecipe, setIsCreatingRecipe] = useState(false);
+    const [isProcessing, setIsProcessing] = useState(false);
 
     const handleNewRecipeFieldChange = useCallback(
         <T extends keyof NewRecipe>(field: T, value: NewRecipe[T]) => {
@@ -276,7 +281,7 @@ const CreateRecipe: React.FunctionComponent = () => {
     }, []);
 
     const handleCreateRecipe = useCallback(async () => {
-        setIsCreatingRecipe(true);
+        setIsProcessing(true);
 
         try {
             const { isValid: isLocalValid, msg: localMsg } =
@@ -287,7 +292,7 @@ const CreateRecipe: React.FunctionComponent = () => {
             if (!isLocalValid) {
                 console.log(createDebugString(localMsg));
                 snackbarAlert(localMsg, 'warning');
-                setIsCreatingRecipe(false);
+                setIsProcessing(false);
                 return;
             }
 
@@ -299,6 +304,7 @@ const CreateRecipe: React.FunctionComponent = () => {
                 .then((response) => {
                     console.log(response);
                     snackbarAlert('Công thức tạo thành công!', 'success');
+                    clearForm();
                 })
                 .catch((e) => {
                     console.log(
@@ -310,9 +316,9 @@ const CreateRecipe: React.FunctionComponent = () => {
             console.log(createDebugString(e));
             snackbarAlert(e.message, 'warning');
         } finally {
-            setIsCreatingRecipe(false);
+            setIsProcessing(false);
         }
-    }, [createPostData, snackbarAlert, validateNewRecipe]);
+    }, [clearForm, createPostData, snackbarAlert, validateNewRecipe]);
     //#endregion
     //#region Ingredients
 
@@ -395,8 +401,55 @@ const CreateRecipe: React.FunctionComponent = () => {
     }, []);
 
     //#endregion
+    //#region Edit Mode
 
-    console.log('newRecipe', newRecipe);
+    // Load data if it is edit mode
+    useEffect(() => {
+        if (!edit) return;
+
+        const intId = parseInt(id);
+
+        RecipeService.GetById(intId).then((recipe) => {
+            if (!recipe) return;
+
+            setNewRecipe({
+                name: recipe.name,
+                // activeTime: recipe.activeTime, // not exist
+                // authorNote: recipe.authorNote, // not exist
+                activeTime: 0, // not exist
+                authorNote: 'placeholder for retrieved note', // not exist
+                directions: recipe.directions,
+                ingredients: recipe.ingredients.map((ingredient) => ({
+                    id: nanoid(6),
+                    ingredientId: ingredient.id,
+                    name: ingredient.name,
+                    amount: ingredient.amount,
+                })),
+                introduction: recipe.introduction,
+                image: recipe.image,
+                // isPrivate: recipe.isPrivate, // not exist
+                isPrivate: true,
+                servingSize: recipe.serving_size,
+                totalTime: dateTimeToMinutes(recipe.totalTime),
+            });
+        });
+    }, [edit, id]);
+
+    const handleSaveRecipe = useCallback(async () => {
+        setIsProcessing(true);
+
+        const message: string = await new Promise((resolve) => {
+            setTimeout(() => {
+                resolve('success (mock)');
+            }, 1000);
+        });
+
+        snackbarAlert(message, 'success');
+
+        setIsProcessing(false);
+    }, [snackbarAlert]);
+
+    //#endregion
 
     return (
         <Layout withFooter={false}>
@@ -424,7 +477,7 @@ const CreateRecipe: React.FunctionComponent = () => {
                                 <FormLabel>Tên công thức</FormLabel>
                                 <TastealTextField
                                     value={newRecipe.name}
-                                    disabled={isCreatingRecipe}
+                                    disabled={isProcessing}
                                     onChange={(e) =>
                                         handleNewRecipeFieldChange(
                                             'name',
@@ -440,7 +493,7 @@ const CreateRecipe: React.FunctionComponent = () => {
                                 </FormLabel>
                                 <TastealTextField
                                     value={newRecipe.introduction}
-                                    disabled={isCreatingRecipe}
+                                    disabled={isProcessing}
                                     onChange={(e) =>
                                         handleNewRecipeFieldChange(
                                             'introduction',
@@ -455,7 +508,7 @@ const CreateRecipe: React.FunctionComponent = () => {
                             <Stack gap={1}>
                                 <FormLabel>Dịp</FormLabel>
                                 <Autocomplete
-                                    disabled={isCreatingRecipe}
+                                    disabled={isProcessing}
                                     options={filteredOccasions}
                                     getOptionLabel={(o) => o.name}
                                     title="Chọn dịp"
@@ -485,14 +538,15 @@ const CreateRecipe: React.FunctionComponent = () => {
                                 </FormLabel>
                                 <ImagePicker
                                     file={recipeThumbnailFile}
+                                    imagePath={newRecipe.image}
                                     onChange={handleRecipeThumbnailChange}
-                                    disabled={isCreatingRecipe}
+                                    disabled={isProcessing}
                                 />
                             </Stack>
                             <Stack>
                                 <FormLabel>Khẩu phần ăn</FormLabel>
                                 <ServingSizeSelect
-                                    disabled={isCreatingRecipe}
+                                    disabled={isProcessing}
                                     servingSize={newRecipe.servingSize}
                                     sizes={ServingSizes}
                                     onServingSizeChange={(size) =>
@@ -506,7 +560,7 @@ const CreateRecipe: React.FunctionComponent = () => {
                             <Stack>
                                 <FormLabel>Nguyên liệu</FormLabel>
                                 <IngredientSelector
-                                    disabled={isCreatingRecipe}
+                                    disabled={isProcessing}
                                     ingredients={newRecipe.ingredients}
                                     onChange={handleIngredientsChange}
                                     onOpen={handleIngredientSelectModalOpen}
@@ -515,7 +569,7 @@ const CreateRecipe: React.FunctionComponent = () => {
                             <Stack>
                                 <FormLabel>Hướng dẫn</FormLabel>
                                 <DirectionEditor
-                                    disabled={isCreatingRecipe}
+                                    disabled={isProcessing}
                                     directions={newRecipe.directions}
                                     onChange={handleDirectionsChange}
                                 />
@@ -584,7 +638,7 @@ const CreateRecipe: React.FunctionComponent = () => {
                                 </FormLabel>
                                 <TastealTextField
                                     value={newRecipe.authorNote}
-                                    disabled={isCreatingRecipe}
+                                    disabled={isProcessing}
                                     onChange={(e) =>
                                         handleNewRecipeFieldChange(
                                             'authorNote',
@@ -612,27 +666,33 @@ const CreateRecipe: React.FunctionComponent = () => {
                                         value={true}
                                         control={<Radio />}
                                         label="Người khác không thể xem"
-                                        disabled={isCreatingRecipe}
+                                        disabled={isProcessing}
                                     />
                                     <FormControlLabel
                                         value={false}
                                         control={<Radio />}
                                         label="Chia sẻ công thức thông qua link"
-                                        disabled={isCreatingRecipe}
+                                        disabled={isProcessing}
                                     />
                                 </RadioGroup>
                             </Stack>
                             <Stack>
                                 <RoundedButton
                                     variant="contained"
-                                    disabled={isCreatingRecipe}
-                                    onClick={handleCreateRecipe}
+                                    disabled={isProcessing}
+                                    onClick={
+                                        edit
+                                            ? handleSaveRecipe
+                                            : handleCreateRecipe
+                                    }
                                     sx={{
                                         height: 40,
                                     }}
                                 >
-                                    {isCreatingRecipe ? (
+                                    {isProcessing ? (
                                         <CircularProgress size={20} />
+                                    ) : edit ? (
+                                        'Cập nhật'
                                     ) : (
                                         'Hoàn thành'
                                     )}
