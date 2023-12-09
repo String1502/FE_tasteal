@@ -73,7 +73,6 @@ export function useMySavedRecipes(uid: string) {
 
 function MySavedRecipes() {
     const { cookbookData, choosing, handleChoosing } = useMySavedRecipes('1');
-    const navigate = useNavigate();
 
     return (
         <Layout withFooter={false}>

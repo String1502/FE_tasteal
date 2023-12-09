@@ -16,6 +16,7 @@ import { CookBook_RecipeEntity } from '@/lib/models/entities/CookBook_RecipeEnti
 import { PrimaryCard } from '@/components/common/card/PrimaryCard';
 import { DeleteRounded, PlayArrowRounded } from '@mui/icons-material';
 import { DialogPaperProps } from '../../../pages/MySavedRecipes';
+import SlideInDialog from '@/components/common/dialog/SlideInDialog';
 
 export function CustomCard({
     cookbookRecipe,
@@ -135,115 +136,32 @@ export function CustomCard({
             </Menu>
 
             {/* Dialog di chuyển */}
-            <Dialog
+            <SlideInDialog
                 open={openMove}
-                onClose={handleCloseMove}
-                PaperProps={{
-                    ...DialogPaperProps,
-                }}
-            >
-                <DialogTitle>
-                    <Typography
-                        variant="body1"
-                        fontWeight={'bold'}
-                        textAlign={'center'}
-                    >
-                        Bạn muốn di chuyển công thức?
-                    </Typography>
-                </DialogTitle>
-                <DialogContent>
-                    <Typography variant="body1">
-                        Công thức sẽ di chuyển đến{' '}
-                        {
-                            cookbookData.find(
-                                (cookbook) =>
-                                    cookbook.id == moveToNewCookbook_Id
-                            )?.name
-                        }
-                    </Typography>
-                </DialogContent>
-                <DialogActions
-                    sx={{
-                        justifyContent: 'center',
-                    }}
-                >
-                    <Button
-                        sx={{
-                            width: '150px',
-                        }}
-                        size="small"
-                        variant="outlined"
-                        onClick={handleCloseMove}
-                    >
-                        Hủy
-                    </Button>
-                    <Button
-                        sx={{
-                            width: '150px',
-                        }}
-                        size="small"
-                        variant="contained"
-                        color="primary"
-                        onClick={handleCloseMove}
-                        autoFocus
-                    >
-                        Xác nhận
-                    </Button>
-                </DialogActions>
-            </Dialog>
+                handleClose={handleCloseMove}
+                title="Bạn muốn di chuyển công thức?"
+                content={`
+                Công thức sẽ di chuyển đến ${
+                    cookbookData.find(
+                        (cookbook) => cookbook.id == moveToNewCookbook_Id
+                    )?.name
+                }`}
+                cancelText="Hủy"
+                confirmText="Xác nhận"
+            />
 
             {/* Dialog xóa */}
-            <Dialog
+            <SlideInDialog
                 open={openDelete}
-                onClose={handleCloseDelete}
-                PaperProps={{
-                    ...DialogPaperProps,
+                handleClose={handleCloseDelete}
+                title="Bạn muốn xóa công thức?"
+                content={`Công thức sẽ bị xóa khỏi bộ sưu tập ${cookbookRecipe.cook_book.name}!`}
+                confirmButtonProps={{
+                    color: 'error',
                 }}
-            >
-                <DialogTitle>
-                    <Typography
-                        variant="body1"
-                        fontWeight={'bold'}
-                        textAlign={'center'}
-                    >
-                        Bạn muốn xóa công thức?
-                    </Typography>
-                </DialogTitle>
-                <DialogContent>
-                    <Typography variant="body1">
-                        Công thức sẽ bị xóa khỏi bộ sưu tập{' '}
-                        {cookbookRecipe.cook_book.name}!
-                    </Typography>
-                </DialogContent>
-                <DialogActions
-                    sx={{
-                        justifyContent: 'center',
-                    }}
-                >
-                    <Button
-                        sx={{
-                            width: '150px',
-                        }}
-                        size="small"
-                        variant="outlined"
-                        onClick={handleCloseDelete}
-                    >
-                        Hủy
-                    </Button>
-                    <Button
-                        sx={{
-                            width: '150px',
-                        }}
-                        size="small"
-                        variant="contained"
-                        color="error"
-                        onClick={handleCloseDelete}
-                        autoFocus
-                    >
-                        Xóa
-                    </Button>
-                </DialogActions>
-            </Dialog>
+                cancelText="Hủy"
+                confirmText="Xóa"
+            />
         </>
     );
 }

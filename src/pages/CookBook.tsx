@@ -19,6 +19,7 @@ import {
 } from '@mui/icons-material';
 import BoxImage from '@/components/common/image/BoxImage';
 import { CookbookChoosingType, DialogPaperProps } from './MySavedRecipes';
+import SlideInDialog from '@/components/common/dialog/SlideInDialog';
 
 export function CookBook({
     cookbook,
@@ -165,103 +166,46 @@ export function CookBook({
                 </MenuItem>
             </Menu>
 
-            <Dialog
+            {/* Dialog đổi tên */}
+            <SlideInDialog
                 open={openRenameDialog}
-                onClose={handleCloseRenameDialog}
-                PaperProps={{
-                    ...DialogPaperProps,
-                }}
-            >
-                <DialogTitle>Đổi tên</DialogTitle>
-                <DialogContent>
-                    <Box>
-                        <TextField
-                            sx={{ width: '100%' }}
-                            placeholder="Tên bộ sưu tập"
-                            variant="outlined"
-                            value={renameValue}
-                            onChange={(event) => {
-                                setRenameValue(event.target.value);
-                            }}
-                            InputProps={{
-                                sx: {
-                                    borderRadius: 4,
-                                },
-                            }}
-                        />
-                    </Box>
-                </DialogContent>
-                <DialogActions
-                    sx={{
-                        justifyContent: 'center',
-                    }}
-                >
-                    <Button
-                        sx={{
-                            width: '150px',
-                        }}
-                        size="small"
+                handleClose={handleCloseRenameDialog}
+                title="Đổi tên"
+                content={
+                    <TextField
+                        sx={{ width: '100%' }}
+                        placeholder="Tên bộ sưu tập"
                         variant="outlined"
-                        onClick={handleCloseRenameDialog}
-                    >
-                        Hủy
-                    </Button>
-                    <Button
-                        sx={{
-                            width: '150px',
+                        value={renameValue}
+                        onChange={(event) => {
+                            setRenameValue(event.target.value);
                         }}
-                        size="small"
-                        variant="contained"
-                        onClick={handleCloseRenameDialog}
-                        autoFocus
-                    >
-                        Cập nhật
-                    </Button>
-                </DialogActions>
-            </Dialog>
+                        InputProps={{
+                            sx: {
+                                borderRadius: 4,
+                            },
+                        }}
+                    />
+                }
+                cancelText="Hủy"
+                confirmText="Cập nhật"
+            />
 
-            <Dialog
+            {/* Dialog xóa */}
+            <SlideInDialog
                 open={openDelete}
-                onClose={handleCloseDelete}
-                PaperProps={{
-                    ...DialogPaperProps,
+                handleClose={handleCloseDelete}
+                title="Bạn chắc chắn muốn xóa?"
+                content=" Các công thức đã lưu trong bộ sưu tập sẽ bị xóa!"
+                cancelText="Hủy"
+                confirmText="Xóa"
+                confirmButtonProps={{
+                    color: 'error',
                 }}
-            >
-                <DialogTitle>Bạn chắc chắn muốn xóa?</DialogTitle>
-                <DialogContent>
-                    <Typography variant="body1">
-                        Các công thức đã lưu trong bộ sưu tập sẽ bị xóa!
-                    </Typography>
-                </DialogContent>
-                <DialogActions
-                    sx={{
-                        justifyContent: 'center',
-                    }}
-                >
-                    <Button
-                        sx={{
-                            width: '150px',
-                        }}
-                        size="small"
-                        variant="outlined"
-                        onClick={handleCloseDelete}
-                    >
-                        Hủy
-                    </Button>
-                    <Button
-                        sx={{
-                            width: '150px',
-                        }}
-                        size="small"
-                        variant="contained"
-                        color="error"
-                        onClick={handleCloseDelete}
-                        autoFocus
-                    >
-                        Xóa
-                    </Button>
-                </DialogActions>
-            </Dialog>
+                cancelButtonProps={{
+                    color: 'primary',
+                }}
+            />
         </Box>
     );
 }

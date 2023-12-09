@@ -6,6 +6,7 @@ import { Route, BrowserRouter as Router, Routes } from 'react-router-dom';
 import TastealHashLoader from './components/common/progress/TastealHashLoader';
 import CheckSignIn from './components/ui/app/CheckSignIn';
 import NotFound from './components/ui/app/NotFound';
+import ScrollToTop from './components/ui/app/ScrollToTop';
 import { PageRoute } from './lib/constants/common';
 import AppContext from './lib/contexts/AppContext';
 import ColorModeContext from './lib/contexts/ColorModeContext';
@@ -24,7 +25,6 @@ import Search from './pages/Search';
 import SignIn from './pages/SignIn';
 import SignUp from './pages/SignUp';
 import SignUpEmail from './pages/SignUpEmail';
-import ScrollToTop from './components/ui/app/ScrollToTop';
 
 //#region AppWrapper
 
@@ -85,7 +85,7 @@ function AllRoutes() {
             handleSpinner(false);
             return () => unsubscribe();
         }
-    }, []);
+    }, [handleSpinner, login]);
 
     const MapRoutes = useMemo(() => {
         return [
@@ -100,6 +100,10 @@ function AllRoutes() {
             {
                 path: PageRoute.Recipe.Detail(),
                 element: <RecipeDetail />,
+            },
+            {
+                path: PageRoute.Recipe.Edit(),
+                element: <CreateRecipe edit />,
             },
             // Chưa đăng nhập
             {

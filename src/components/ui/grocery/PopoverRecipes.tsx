@@ -9,10 +9,18 @@ import {
     Popover,
     Typography,
 } from '@mui/material';
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import { AddRecipeButton } from '../mealPlan/AddRecipeButton';
+import useSnackbarService from '@/lib/hooks/useSnackbar';
+import SlideInDialog from '@/components/common/dialog/SlideInDialog';
+import CartService from '@/lib/services/cartService';
+import { AccountEntity } from '@/lib/models/entities/AccountEntity/AccountEntity';
 
-export function PopoverRecipes() {
+export function PopoverRecipes({
+    accountId,
+}: {
+    accountId: AccountEntity['uid'];
+}) {
     const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
 
     const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -25,6 +33,23 @@ export function PopoverRecipes() {
 
     const open = Boolean(anchorEl);
     const id = open ? 'simple-popover' : undefined;
+
+    const [snackbarAlert] = useSnackbarService();
+
+    const [openClearAll, setOpenClearAll] = useState(false);
+    const handleOpenClearAll = () => setOpenClearAll(true);
+    const handleCloseClearAll = () => setOpenClearAll(false);
+
+    const DeleteAllCartByAccountId = useCallback(async () => {
+        try {
+            const result = await CartService.DeleteCartByAccountId(accountId);
+            if (result) {
+                snackbarAlert('Dọn giỏ đi chợ thành công.', 'success');
+            } else snackbarAlert('Thao tác không thành công.', 'error');
+        } catch (error) {
+            console.log(error);
+        }
+    }, [accountId]);
 
     return (
         <Box>
@@ -68,10 +93,15 @@ export function PopoverRecipes() {
                     <List>
                         <AddRecipeButton showContent={true} />
                         <ListItem disablePadding>
-                            <ListItemButton>
-                                <ListItemIcon>
+                            <ListItemButton
+                                onClick={() => {
+                                    handleOpenClearAll();
+                                    handleClose();
+                                }}
+                            >
+                                <ListItemIcon sx={{ minWidth: '40px' }}>
                                     <DeleteRounded
-                                        color="primary"
+                                        color="error"
                                         fontSize="small"
                                     />
                                 </ListItemIcon>
@@ -79,8 +109,9 @@ export function PopoverRecipes() {
                                     <Typography
                                         variant="body2"
                                         fontWeight={'bold'}
+                                        color={'error'}
                                     >
-                                        Xóa tất cả
+                                        Dọn giỏ đi chợ
                                     </Typography>
                                 </ListItemText>
                             </ListItemButton>
@@ -88,6 +119,26 @@ export function PopoverRecipes() {
                     </List>
                 </Box>
             </Popover>
+
+            {/* Dialog Clear All */}
+            <SlideInDialog
+                open={openClearAll}
+                handleClose={handleCloseClearAll}
+                withCloseButton={true}
+                title="Bạn chắc chứ ?"
+                content={
+                    'Tất cả công thức và nguyên liệu sẽ bị xóa khỏi giỏ đi chợ của bạn.'
+                }
+                cancelText="Hủy"
+                confirmText="Xóa"
+                confirmButtonProps={{
+                    color: 'error',
+                }}
+                onClickConfirm={async () => {
+                    await DeleteAllCartByAccountId();
+                    handleCloseClearAll();
+                }}
+            />
         </Box>
     );
 }

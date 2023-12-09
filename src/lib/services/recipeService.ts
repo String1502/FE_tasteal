@@ -3,15 +3,19 @@ import { recipes as recipesSampleData } from '@/lib/constants/sampleData';
 import { RecipeRes } from '@/lib/models/dtos/Response/RecipeRes/RecipeRes';
 import { createDebugStringFormatter } from '@/utils/debug/formatter';
 import simulateDelay from '@/utils/promises/stimulateDelay';
-import { ApiPath, DefaultPage } from '../constants/common';
+import { DefaultPage } from '../constants/common';
 import { deleteImage } from '../firebase/image';
+import { PageFilter } from '../models/dtos/Request/PageFilter/PageFilter';
 import { RecipeReq } from '../models/dtos/Request/RecipeReq/RecipeReq';
 import { RecipeSearchReq } from '../models/dtos/Request/RecipeSearchReq/RecipeSearchReq';
 import { RecipeEntity } from '../models/entities/RecipeEntity/RecipeEntity';
-import { PageFilter } from '../models/dtos/Request/PageFilter/PageFilter';
 
 const DEBUG_IDENTIFIER = '[RecipeService]';
 const createDebugString = createDebugStringFormatter(DEBUG_IDENTIFIER);
+
+// Cache system
+type RecipeCache = Map<number, RecipeRes>;
+const recipeCache: RecipeCache = new Map();
 
 /**
  * Represents a service for managing occasions.
@@ -56,11 +60,19 @@ class RecipeService {
      * @returns - The recipe detail data.
      */
     public static GetById(id: number): Promise<RecipeRes> {
+        if (recipeCache.has(id)) {
+            console.log('Use data in cache');
+            return Promise.resolve(recipeCache.get(id)!);
+        }
+
         return fetch(`${getApiUrl('GetRecipe')}?id=${id}`, {
             method: 'POST',
         })
             .then((response) => response.json())
-            .then((data) => data)
+            .then((data) => {
+                recipeCache.set(id, data);
+                return data;
+            })
             .catch((err) => {
                 throw err;
             });
@@ -181,16 +193,7 @@ class RecipeService {
             },
             body: JSON.stringify(postData),
         })
-            .then((response: Response) => {
-                if (response.ok) {
-                    console.log(response);
-                    return response.json();
-                }
-
-                const error = new Error('Fail to parse json response');
-
-                return Promise.reject(error);
-            })
+            .then((response: Response) => response.json())
             .then((data: RecipeReq) => {
                 console.log(
                     createDebugString('POST succeeded!', 'CreateRecipe'),
