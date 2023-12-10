@@ -3,8 +3,10 @@ import { IngredientsCarousel } from './IngredientsCarousel';
 import { CarouselPrimaryCardSkeleton } from './CarouselPrimaryCardSkeleton';
 import { IngredientEntity } from '@/lib/models/entities/IngredientEntity/IngredientEntity';
 import  IngredientService  from '@/lib/services/ingredientService';
-
-function Ingredient_Component() {
+interface IngredientComponentProps {
+    ingredients: IngredientEntity[];
+  }
+  const Ingredient_Component: React.FC<IngredientComponentProps> = ({ ingredients }) => {
     const [ingredient, setIngredient] = useState<IngredientEntity[] | undefined>(
         undefined
     );

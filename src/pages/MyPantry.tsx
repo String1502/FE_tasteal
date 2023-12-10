@@ -1,5 +1,8 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import Ingredient_Component from '@/components/ui/MyPantry/Ingredient_Component';
+import Autocomplete, { createFilterOptions } from '@mui/material/Autocomplete';
+import { IngredientEntity } from '../lib/models/entities/IngredientEntity/IngredientEntity';
+import IngredientService from '../lib/services/ingredientService';
 import {
     Container,
     Grid,
@@ -8,6 +11,7 @@ import {
     Tabs,
     Tab,
     styled,
+    TextField,
 } from '@mui/material';
 import Layout from '../layout/Layout';
 import AppContext from '@/lib/contexts/AppContext';
@@ -96,12 +100,65 @@ const CustomTabPanel: React.FC<TabPanelProps> = (props) => {
         </div>
     );
 };
+
+const filterOptions = createFilterOptions({
+    matchFrom: 'start',
+    stringify: (option: IngredientEntity) => option.name,
+});
+
+//Dữ liệu test
+interface FilmOptionType {
+    title: string;
+    year: number;
+}
+
 const MyPantry: React.FC = () => {
     const { login } = useContext(AppContext);
     const [value, setValue] = React.useState(0);
+    const [filteredIngredients, setFilteredIngredients] = useState<IngredientEntity[]>([]);
+
+    const [ingredient, setIngredient] = useState<IngredientEntity[] | undefined>(
+        undefined
+    );
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const fetchedIngredients = await IngredientService.GetAll();
+                setIngredient(fetchedIngredients);
+                setFilteredIngredients(fetchedIngredients); // Initialize with all ingredients
+            } catch (error) {
+                console.log(error);
+                setIngredient([]);
+                setFilteredIngredients([]);
+            }
+        };
+        fetchData();
+    }, []);
+
+    useEffect(() => {
+        // Your logic to reload Ingredient_Component goes here
+        console.log('Filtered ingredients changed, reload Ingredient_Component');
+      }, [filteredIngredients]);
 
     const handleChange = (event: React.SyntheticEvent, newValue: number) => {
         setValue(newValue);
+    };
+    const filterOptions = createFilterOptions({
+        matchFrom: 'start',
+        stringify: (option: IngredientEntity) => option.name,
+    });
+
+    const handleAutoCompleteChange = (event: React.SyntheticEvent, value: IngredientEntity | null) => {
+        // Update the filtered ingredients based on AutoComplete selection
+        if (value) {
+            // If a value is selected from AutoComplete, set filteredIngredients to that value
+            setFilteredIngredients([value]);
+          } else {
+            // If no value is selected, filter ingredients based on the current AutoComplete input value
+            const inputValue = (event.target as HTMLInputElement).value.toLowerCase();
+            const filtered = ingredient.filter(item => item.name.toLowerCase().includes(inputValue));
+            setFilteredIngredients(filtered);
+          }
     };
     return (
         <Layout>
@@ -152,23 +209,46 @@ const MyPantry: React.FC = () => {
                                         <StyledTab label="Nguyên liệu của tôi" />
                                         <StyledTab label="Ý tưởng công thức" />
                                     </StyledTabs>
+
                                     <CustomTabPanel
                                         value={value}
                                         index={0}
                                     >
-                                        <Box
+                                       
+                                       <Box
                                             sx={{
                                                 backgroundColor: 'white',
                                                 color: 'black',
-                                                padding: 3,
+                                                padding: 5,
                                                 borderRadius: 4,
                                                 border: 1,
                                                 borderColor: 'gray',
+                                                height: '640px',
+                                                overflow: 'auto',
+                                                scrollbarWidth: 'thin',
+                                                '&::-webkit-scrollbar': {
+                                                    display: 'none',
+                                                },
                                             }}
                                         >
-                                           <Ingredient_Component/>
+                                            <Autocomplete
+                                                id="filter-demo"
+                                                options={ingredient}
+                                                getOptionLabel={(option) => option.name}
+                                                filterOptions={filterOptions}
+                                                sx={{ width: '100%', mb: 5 }}
+                                                onChange={handleAutoCompleteChange}
+                                                renderInput={(params) => (
+                                                    <TextField
+                                                        {...params}
+                                                        label="Custom filter"
+                                                    />
+                                                )}
+                                            />
+                                            <Ingredient_Component ingredients={filteredIngredients} />
                                         </Box>
                                     </CustomTabPanel>
+
                                     <CustomTabPanel
                                         value={value}
                                         index={1}
@@ -187,7 +267,6 @@ const MyPantry: React.FC = () => {
                                                 Content for Nguyên liệu của tôi
                                                 goes here.
                                             </Typography>
-                                           
                                         </Box>
                                     </CustomTabPanel>
                                     <Box sx={{ p: 3 }} />

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Container, Grid, Typography, Button, Box } from "@mui/material";
 import { FormatQuoteRounded, LanguageRounded } from "@mui/icons-material";
 import Layout from "../layout/Layout";
@@ -9,11 +9,7 @@ import MostContributedAuthors_Component from '@/components/ui/home/MostContribut
 import RecipeService from "@/lib/services/recipeService.ts";
 
 
-const typoProps = {
-  variant: "h6",
-  fontWeight: "900",
-  textTransform: "uppercase",
-};
+
 
 const Partner = () => {
   const [newReleaseRecipes, setNewReleaseRecipes] = useState<RecipeEntity[]>([]);
@@ -31,12 +27,6 @@ const Partner = () => {
   const [slogan, setSlogan] = useState("Healer always heals");
 
   const [isEditing, setIsEditing] = useState(false);
-
-  const typoProps = {
-    variant: "h6",
-    fontWeight: "900",
-    textTransform: "uppercase",
-  };
 
   const handleShowMore = () => {
     setVisibleItems(visibleItems + itemsToAdd);
