@@ -4,6 +4,7 @@ import ColorModeContext from '@/lib/contexts/ColorModeContext';
 import { signOutUser } from '@/lib/firebase/auth';
 import useSnackbarService from '@/lib/hooks/useSnackbar';
 import {
+    AccountBoxRounded,
     BookmarkBorderRounded,
     Logout,
     SearchRounded,
@@ -448,18 +449,22 @@ export function Header(props: Props) {
                                         slotProps={{
                                             paper: {
                                                 sx: {
-                                                    minWidth: '180px',
+                                                    minWidth: '240px',
                                                 },
                                             },
                                         }}
                                     >
                                         <AvatarMenuItem
                                             icon={
-                                                <Logout
-                                                    color="warning"
-                                                    fontSize="small"
-                                                />
+                                                <AccountBoxRounded color="primary" />
                                             }
+                                            label="Thông tin tác giả"
+                                            onClick={() => {
+                                                navigate(PageRoute.Partner);
+                                            }}
+                                        />
+                                        <AvatarMenuItem
+                                            icon={<Logout color="warning" />}
                                             label="Đăng xuất"
                                             onClick={handleSignOut}
                                         />

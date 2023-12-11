@@ -119,7 +119,8 @@ function Home() {
                             </Typography>
 
                             <Typography
-                                variant="body1"
+                                variant="body2"
+                                fontWeight={'light'}
                                 sx={{
                                     textAlign: 'center',
                                     px: { lg: 8, md: 4, sm: 2, xs: 0 },

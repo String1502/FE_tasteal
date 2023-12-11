@@ -3,28 +3,39 @@ import { removeDiacritics } from '@/utils/format/index.ts';
 import { RecipeEntity } from '@/lib/models/entities/RecipeEntity/RecipeEntity.ts';
 import RecipeService from '@/lib/services/recipeService.ts';
 import AppContext from '@/lib/contexts/AppContext.ts';
-import { Filter, TuKhoa, DefaultTuKhoas } from '../../../pages/Search.tsx';
+import { TuKhoa, DefaultTuKhoas } from '../../../pages/Search.tsx';
+import {
+    RecipeSearchReq,
+    RecipeSearchReq_Key,
+    initRecipeSearchReq,
+    isValidRecipeSearchReq,
+} from '@/lib/models/dtos/Request/RecipeSearchReq/RecipeSearchReq.ts';
 
 export function useSearchRecipe(viewportItemAmount: number = 12) {
     const [recipes, setRecipes] = React.useState<RecipeEntity[]>([]);
-    const [resultIds, setResultIds] = React.useState<RecipeEntity['id'][]>([]);
+    // const [resultIds, setResultIds] = React.useState<RecipeEntity['id'][]>([]);
     const { handleSpinner } = useContext(AppContext);
+    const [page, setPage] = React.useState(1);
+    const [end, setEnd] = React.useState(false);
 
     useEffect(() => {
         async function fetchData() {
             try {
-                handleSpinner(true);
-                const ids = (await RecipeService.GetAllRecipes()).map(
-                    (recipe) => recipe.id
+                const data = await RecipeService.GetAllRecipes(
+                    viewportItemAmount,
+                    page
                 );
-                setResultIds(ids);
+                const tukhoa = (await RecipeService.GetKeyWords())
+                    .map((item) => {
+                        return {
+                            ...item,
+                            value: false,
+                        };
+                    })
+                    .slice(0, 12);
+                setTuKhoas(tukhoa);
 
-                // const initData = await RecipeService.GetRecipes(
-                //     ids.slice(0, viewportItemAmount)
-                // );
-                // setRecipes(initData);
-                setRecipes(await RecipeService.GetAllRecipes());
-                handleSpinner(false);
+                setRecipes(data.filter((item) => item && !item.is_private));
             } catch (error) {
                 console.log(error);
                 handleSpinner(false);
@@ -34,106 +45,132 @@ export function useSearchRecipe(viewportItemAmount: number = 12) {
     }, []);
 
     //#region Search
-    function searchButtonClick(value: string) {
-        handleChangeFilter('textSearch', value);
-    }
+    const [textSearch, setTextSearch] = React.useState('');
+
+    const handleChangeTextSearch = useCallback(
+        (event: React.ChangeEvent<HTMLInputElement>) => {
+            setTextSearch(event.target.value);
+        },
+        []
+    );
+    const handleTextSearch = useCallback(
+        (item?: RecipeEntity) => {
+            if (!item) return false;
+
+            const value = textSearch;
+            if (!value || value == '') {
+                return true;
+            }
+
+            const str = JSON.stringify([
+                item?.name,
+                item?.rating,
+                item?.totalTime,
+                item?.serving_size,
+                item?.introduction,
+                item?.author_note,
+                item?.account?.name,
+                item?.ingredients?.map((i) => i.name),
+            ]);
+
+            return removeDiacritics(str.toLocaleLowerCase()).includes(
+                removeDiacritics(value.toLocaleLowerCase())
+            );
+        },
+        [textSearch]
+    );
 
     //#endregion
     //#region Filter
-    const [filter, setFilter] = React.useState<Filter>({
-        ingredientID: [],
-        exceptIngredientID: [],
-        totalTime: 0,
-        activeTime: 0,
-        occasionID: [],
-        calories: {
-            min: 0,
-            max: Infinity,
-        },
-        textSearch: '',
-        keyWords: [],
-    });
+    const [filter, setFilter] =
+        React.useState<RecipeSearchReq>(initRecipeSearchReq);
 
-    function handleChangeFilter(
-        type:
-            | 'ingredientID'
-            | 'exceptIngredientID'
-            | 'totalTime'
-            | 'activeTime'
-            | 'occasionID'
-            | 'calories'
-            | 'textSearch'
-            | 'keyWords',
-        value: any
-    ) {
-        setFilter((prev) => {
-            return {
-                ...prev,
-                [type]: value,
-            };
-        });
-    }
+    function handleChangeFilter(type: RecipeSearchReq_Key, value: any) {
+        const newFilter = {
+            ...filter,
+            [type]: value,
+        };
+        console.log(newFilter);
 
-    useEffect(() => {
+        setFilter(newFilter);
+        if (type == 'TextSearch') return;
+
         async function fetchData() {
-            handleSpinner(true);
-            // const ids = await RecipeService.GetRecipesByFilter(filter);
-            // setResultIds(ids);
-            // const initData = await RecipeService.GetRecipes(
-            //     ids.slice(0, viewportItemAmount)
-            // );
-            // setRecipes(initData);
-            handleSpinner(false);
+            if (!isValidRecipeSearchReq(newFilter)) {
+                return;
+            }
+            // const newData = await RecipeService.SearchRecipes(newFilter,  viewportItemAmount, 1);
+            // setPage(1);
+            // setEnd(false);
+            // setRecipes(newData);
         }
         fetchData();
-    }, [filter]);
+    }
 
     //#endregion
+
     //#region Từ khóa
-    const [tuKhoas, setTuKhoas] = React.useState<TuKhoa[]>(DefaultTuKhoas);
+    const [tuKhoas, setTuKhoas] = React.useState<TuKhoa[]>([]);
 
     const handleChangeTuKhoa = (tukhoa: TuKhoa) => {
-        setTuKhoas((prev) => {
-            return prev.map((item) => {
-                if (item.label === tukhoa.label) {
-                    return {
-                        ...item,
-                        value: !item.value,
-                    };
-                } else {
-                    return item;
-                }
-            });
+        const newTuKhoas = [...tuKhoas].map((item) => {
+            if (item.keyword === tukhoa.keyword) {
+                return {
+                    ...item,
+                    value: !item.value,
+                };
+            } else {
+                return item;
+            }
         });
-    };
-
-    useEffect(() => {
-        let keyWords = tuKhoas
+        setTuKhoas(newTuKhoas);
+        let keyWords = newTuKhoas
             .map((item) => {
-                if (item.value && item.label) {
-                    return removeDiacritics(item.label);
+                if (item.value && item.keyword) {
+                    return removeDiacritics(item.keyword);
                 }
             })
             .filter(Boolean);
-        handleChangeFilter('keyWords', keyWords);
-    }, [tuKhoas]);
+        handleChangeFilter('KeyWords', keyWords.length == 0 ? null : keyWords);
+    };
+
     //#endregion
+
     //#region Infinite Scroll
     const loadNext = useCallback(async () => {
-        // const nextData = await RecipeService.GetRecipes(
-        //     resultIds.slice(recipes.length, viewportItemAmount)
-        // );
-        // setRecipes((prev) => [...prev, ...nextData]);
-    }, [resultIds]);
+        let nextData: RecipeEntity[] = [];
+        if (isValidRecipeSearchReq(filter)) {
+            // nextData = await RecipeService.SearchRecipes(
+            //     filter,
+            //     viewportItemAmount,
+            //     page + 1
+            // );
+        } else {
+            nextData = await RecipeService.GetAllRecipes(
+                viewportItemAmount,
+                page + 1
+            );
+        }
+
+        if (nextData.length == 0) {
+            setEnd(true);
+            return;
+        }
+
+        setPage((prev) => prev + 1);
+        setRecipes((prev) => [...prev, ...nextData]);
+    }, [recipes]);
     //#endregion
     return {
-        recipes,
-        resultIds,
-        searchButtonClick,
+        recipes: recipes.filter(handleTextSearch),
         filter,
         handleChangeFilter,
+        textSearch,
+        handleChangeTextSearch,
+        handleTextSearch,
         tuKhoas,
         handleChangeTuKhoa,
         loadNext,
+        end,
     };
 }

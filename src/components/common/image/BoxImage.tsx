@@ -20,6 +20,11 @@ function BoxImage({
             setLoading(false);
             return;
         }
+        if (props.src.includes('https')) {
+            setImage(props.src);
+            setLoading(false);
+            return;
+        }
 
         resolveImagePathAsync(props.src)
             .then((url) => {

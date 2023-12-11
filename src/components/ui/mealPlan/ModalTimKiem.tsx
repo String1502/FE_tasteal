@@ -19,13 +19,13 @@ export function ModalTimKiem({
 }) {
     const {
         recipes,
-        resultIds,
         searchButtonClick,
         // filter,
         // handleChangeFilter,
         // tuKhoas,
         // handleChangeTuKhoa,
         loadNext,
+        end,
     } = useSearchRecipe(viewportItemAmount);
     return (
         <CustomModal
@@ -45,34 +45,27 @@ export function ModalTimKiem({
             <SearchInfiniteScroll
                 viewportItemAmount={viewportItemAmount}
                 loadNext={loadNext}
-                resultIds={resultIds}
                 recipes={recipes}
+                end={end}
             >
-                {recipes.map((item, index) => (
-                    <>
-                        {item && (
-                            <Box
-                                key={item.id}
-                                sx={{
-                                    flexBasis: {
-                                        xs: '100%',
-                                        sm: 'calc(99.2%/2)',
-                                        md: 'calc(99.3%/3)',
-                                    },
-                                    p: 1,
-                                    mr:
-                                        index != recipes.length - 1
-                                            ? 0
-                                            : 'auto',
-                                }}
-                            >
-                                <CustomCardMealPlan
-                                    recipe={item as RecipeEntity}
-                                />
-                            </Box>
-                        )}
-                    </>
-                ))}
+                {recipes
+                    .filter((item) => item)
+                    .map((item, index) => (
+                        <Box
+                            key={item.id}
+                            sx={{
+                                flexBasis: {
+                                    xs: '100%',
+                                    sm: 'calc(99.2%/2)',
+                                    md: 'calc(99.3%/3)',
+                                },
+                                p: 1,
+                                mr: index != recipes.length - 1 ? 0 : 'auto',
+                            }}
+                        >
+                            <CustomCardMealPlan recipe={item as RecipeEntity} />
+                        </Box>
+                    ))}
             </SearchInfiniteScroll>
         </CustomModal>
     );

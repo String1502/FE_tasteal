@@ -73,9 +73,9 @@ export function PopoverContent() {
                             {tuKhoas.slice(0, limit).map((item) => {
                                 return (
                                     <CustomLink
-                                        key={item.label}
+                                        key={item.keyword}
                                         href={'#'}
-                                        label={item.label}
+                                        label={item.keyword}
                                     />
                                 );
                             })}
