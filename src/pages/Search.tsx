@@ -8,7 +8,6 @@ import { RecipeEntity } from '@/lib/models/entities/RecipeEntity/RecipeEntity.ts
 import { useSearchRecipe } from '../components/ui/search/useSearchRecipe.tsx';
 import { SearchInfiniteScroll } from '../components/ui/search/SearchInfiniteScroll.tsx';
 import { KeyWordRes } from '@/lib/models/dtos/Response/KeyWordRes/KeyWordRes.ts';
-import { useEffect, useState } from 'react';
 
 export type TuKhoa = KeyWordRes & {
     value: boolean;
@@ -129,12 +128,11 @@ function Search() {
                             </Stack>
 
                             <SearchInfiniteScroll
-                                viewportItemAmount={viewportItemAmount / 2}
                                 loadNext={loadNext}
-                                recipes={recipes}
+                                dataLenght={recipes.length}
                                 end={end}
                             >
-                                {recipes.map((item, index) => (
+                                {recipes.map((item) => (
                                     <Box
                                         key={item.id}
                                         sx={{

@@ -1,24 +1,21 @@
 import { Box, CircularProgress, Typography } from '@mui/material';
-import { RecipeEntity } from '@/lib/models/entities/RecipeEntity/RecipeEntity.ts';
 import InfiniteScroll from 'react-infinite-scroll-component';
 
 export function SearchInfiniteScroll({
-    viewportItemAmount,
     loadNext,
-    recipes,
+    dataLenght,
     end,
     children,
 }: {
-    viewportItemAmount: number;
-    loadNext: () => Promise<void>;
-    recipes: RecipeEntity[];
+    loadNext?: () => Promise<void>;
+    dataLenght: number;
     end: boolean;
     children: React.ReactNode;
 }) {
     return (
         <InfiniteScroll
             // 3*2*2
-            dataLength={recipes.length}
+            dataLength={dataLenght}
             next={loadNext}
             hasMore={!end}
             loader={
@@ -73,7 +70,6 @@ export function SearchInfiniteScroll({
                 alignItems: 'flex-start',
                 justifyContent: 'flex-start',
                 flexWrap: 'wrap',
-                width: '100%',
                 margin: -1,
                 overflow: 'visible',
             }}

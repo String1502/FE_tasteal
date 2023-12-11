@@ -5,6 +5,7 @@ import { getApiUrl } from '../constants/api';
 import AccountReq from '../models/dtos/Request/AccountReq/AccountReq';
 import { PageFilter } from '../models/dtos/Request/PageFilter/PageFilter';
 import { AccountEntity } from '../models/entities/AccountEntity/AccountEntity';
+import { PageReq } from '../models/dtos/Request/PageReq/PageReq';
 
 const createDebugString = createDebugStringFormatter('AccountService');
 
@@ -17,12 +18,30 @@ class AccountService {
      *
      * @return {Promise<AccountEntity[]>}
      */
-    public static GetAllAccounts(): Promise<AccountEntity[]> {
-        // Simulate delay of 1 second
-        simulateDelay(1);
+    public static async GetAllUser(
+        pageSize: number = 12,
+        page: number = 1
+    ): Promise<AccountEntity[]> {
+        const requestOptions = {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json; charset=UTF-8',
+            },
+            // body: JSON.stringify({
+            //     pageSize: pageSize,
+            //     page: page,
+            // } as PageReq),
+        };
 
-        // Return a promise that resolves with the occasions array
-        return Promise.resolve(accountsSampleData);
+        return await fetch(getApiUrl('GetAllUser'), requestOptions)
+            .then((response) => response.json())
+            .then((data) => {
+                console.log(data);
+                return data;
+            })
+            .catch((error) => {
+                console.error('Lỗi:', error);
+            });
     }
 
     /**

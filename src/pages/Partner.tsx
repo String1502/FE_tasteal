@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { Container, Grid, Typography, Button, Box, Link } from '@mui/material';
 import {
     EditRounded,
@@ -13,20 +13,19 @@ import MostContributedAuthors_Component from '@/components/ui/home/MostContribut
 import RecipeService from '@/lib/services/recipeService.ts';
 import { useNavigate } from 'react-router-dom';
 import { PageRoute } from '@/lib/constants/common.ts';
+import { localStorageAccountId } from '@/components/ui/home/AuthorCard.tsx';
+import AppContext from '@/lib/contexts/AppContext.ts';
 
-const typoProps = {
-    variant: 'h6',
-    fontWeight: '900',
-    textTransform: 'uppercase',
-};
-
+const itemsToAdd = 4;
 const Partner = () => {
     const navigate = useNavigate();
+    const {
+        login: { user },
+    } = useContext(AppContext);
     const [newReleaseRecipes, setNewReleaseRecipes] = useState<RecipeEntity[]>(
         []
     );
     const [visibleItems, setVisibleItems] = useState(8);
-    const itemsToAdd = 4;
     const [name, setName] = useState('Healer');
     const [image, setImage] = useState(
         'https://inkythuatso.com/uploads/thumbnails/800/2023/03/1-hinh-anh-ngay-moi-hanh-phuc-sieu-cute-inkythuatso-09-13-35-50.jpg'
@@ -65,7 +64,15 @@ const Partner = () => {
         // Load new release recipes when the component mounts
         loadNewReleaseRecipes();
 
-        // eslint-disable-next-line react-hooks/exhaustive-deps
+        let uid = localStorage.getItem(localStorageAccountId);
+
+        if (!uid && user) {
+            uid = user.uid;
+        }
+
+        // fetchAPI user infor
+
+        localStorage.removeItem(localStorageAccountId);
     }, []);
 
     const loadNewReleaseRecipes = async () => {
@@ -352,7 +359,7 @@ const Partner = () => {
                                 },
                             }}
                             onClick={() => {
-                                navigate(PageRoute.Home);
+                                navigate(PageRoute.AllPartner);
                             }}
                         >
                             Xem tất cả

@@ -4,7 +4,7 @@ import { FC } from 'react';
 export type BreadcrumbsProps = {
     links: {
         label: string;
-        href: string;
+        href?: string;
     }[];
 };
 
@@ -15,6 +15,11 @@ export const TastealBreadCrumbs: FC<BreadcrumbsProps> = ({ links }) => {
                 <Link
                     key={index}
                     href={link.href}
+                    sx={{
+                        textDecoration: link.href ? '' : 'none',
+                    }}
+                    variant="body2"
+                    fontWeight={'bold'}
                 >
                     {link.label}
                 </Link>

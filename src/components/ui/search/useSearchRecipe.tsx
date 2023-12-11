@@ -3,7 +3,7 @@ import { removeDiacritics } from '@/utils/format/index.ts';
 import { RecipeEntity } from '@/lib/models/entities/RecipeEntity/RecipeEntity.ts';
 import RecipeService from '@/lib/services/recipeService.ts';
 import AppContext from '@/lib/contexts/AppContext.ts';
-import { TuKhoa, DefaultTuKhoas } from '../../../pages/Search.tsx';
+import { TuKhoa } from '../../../pages/Search.tsx';
 import {
     RecipeSearchReq,
     RecipeSearchReq_Key,
