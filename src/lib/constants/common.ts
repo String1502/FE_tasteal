@@ -1,3 +1,4 @@
+import { AccountEntity } from '../models/entities/AccountEntity/AccountEntity';
 import { RecipeEntity } from '../models/entities/RecipeEntity/RecipeEntity';
 
 /**
@@ -25,7 +26,9 @@ export const PageRoute = {
     },
     Grocery: '/grocery',
     MealPlanner: '/mealplanner',
-    MyPantry:'/mypantry',
+    MyPantry: '/mypantry',
     MySavedRecipes: '/mysaverecipes',
-    Partner:'/partner',
+    Partner: (name?: AccountEntity['name']) =>
+        name ? `/partner/${name}` : '/partner/:name',
+    AllPartner: '/allpartner',
 } as const;

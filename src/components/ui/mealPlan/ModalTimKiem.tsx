@@ -19,11 +19,12 @@ export function ModalTimKiem({
 }) {
     const {
         recipes,
-        searchButtonClick,
         // filter,
         // handleChangeFilter,
         // tuKhoas,
         // handleChangeTuKhoa,
+        textSearch,
+        handleChangeTextSearch,
         loadNext,
         end,
     } = useSearchRecipe(viewportItemAmount);
@@ -35,7 +36,8 @@ export function ModalTimKiem({
         >
             <Box sx={{ width: '100%', py: 2 }}>
                 <SearchTextField
-                    searchButtonClick={searchButtonClick}
+                    textSearch={textSearch}
+                    handleChangeTextSearch={handleChangeTextSearch}
                     props={{
                         size: 'small',
                     }}
@@ -43,9 +45,8 @@ export function ModalTimKiem({
             </Box>
 
             <SearchInfiniteScroll
-                viewportItemAmount={viewportItemAmount}
                 loadNext={loadNext}
-                recipes={recipes}
+                dataLenght={recipes.length}
                 end={end}
             >
                 {recipes
