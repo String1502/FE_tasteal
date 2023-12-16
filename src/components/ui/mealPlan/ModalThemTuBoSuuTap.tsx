@@ -70,7 +70,7 @@ export function ModalThemTuBoSuuTap({
                                         key={i}
                                     >
                                         <CustomCardMealPlan
-                                            recipe={item.RecipeEntity}
+                                            recipe={item.recipe}
                                         />
                                     </Grid>
                                 ))}
