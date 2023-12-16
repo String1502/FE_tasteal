@@ -58,7 +58,7 @@ export function CustomCard({
     return (
         <>
             <PrimaryCard
-                recipe={cookbookRecipe.RecipeEntity}
+                recipe={cookbookRecipe.recipe}
                 saveCheckBoxProps={checkboxProps}
             />
 
