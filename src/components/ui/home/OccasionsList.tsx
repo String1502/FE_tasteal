@@ -1,6 +1,8 @@
 import BoxImage from '@/components/common/image/BoxImage';
+import { PageRoute } from '@/lib/constants/common';
 import { OccasionEntity } from '@/lib/models/entities/OccasionEntity/OccasionEntity';
 import { Box, Button, Link, Stack, Typography } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
 
 export function OccasionsList({ occasions }: { occasions: OccasionEntity[] }) {
     return (
@@ -26,7 +28,10 @@ export function OccasionsList({ occasions }: { occasions: OccasionEntity[] }) {
     );
 }
 
+export const localOcacions = 'localOccasionSearch';
+
 function OccasionCard({ item }: { item: OccasionEntity }) {
+    const navigate = useNavigate();
     return (
         <Box
             sx={{
@@ -47,12 +52,14 @@ function OccasionCard({ item }: { item: OccasionEntity }) {
                     '&:hover': {
                         boxShadow: 4,
                         transform: 'translateY(-3px)',
-                        backgroundColor: 'white',
                     },
                     p: 0,
                     display: 'flex',
                     flexDirection: 'column',
-                    backgroundColor: 'white',
+                }}
+                onClick={() => {
+                    localStorage.setItem(localOcacions, JSON.stringify(item));
+                    navigate(PageRoute.Search);
                 }}
             >
                 <BoxImage
@@ -60,30 +67,32 @@ function OccasionCard({ item }: { item: OccasionEntity }) {
                     quality={50}
                     sx={{
                         width: '100%',
-                        height: '68%',
+                        height: '100%',
                     }}
                 />
                 <Box
-                    component={Link}
-                    underline="none"
-                    href={`/occasions/${item.name}`}
                     sx={{
                         width: '100%',
-                        height: '32%',
                         display: 'flex',
                         justifyContent: 'center',
                         alignItems: 'center',
-                        py: 2,
+                        py: 1.5,
                         px: 4,
+                        position: 'absolute',
+                        bottom: 0,
+                        left: 0,
+                        right: 0,
+                        background: 'rgba(255,255,255,0.98)',
                     }}
                 >
                     <Typography
-                        variant="subtitle2"
-                        fontWeight={'bold'}
+                        variant="body2"
+                        fontWeight={900}
                         whiteSpace={'nowrap'}
                         textOverflow={'ellipsis'}
                         overflow={'hidden'}
                         width={'100%'}
+                        color={'primary'}
                     >
                         {item.name}
                     </Typography>

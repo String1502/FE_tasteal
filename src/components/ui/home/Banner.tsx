@@ -7,28 +7,18 @@ import {
     Typography,
     useTheme,
 } from '@mui/material';
-import React, { Suspense } from 'react';
+import React, { Suspense, useContext } from 'react';
 import { SearchTextField } from '../search/SearchTextField';
+import bannerImage from '@/assets/banner.jpg';
+import AppContext from '@/lib/contexts/AppContext';
 import useFirebaseImage from '@/lib/hooks/useFirebaseImage';
-import { OccasionEntity } from '@/lib/models/entities/OccasionEntity/OccasionEntity';
-
-const height = '480px';
+const height = '520px';
 
 export function Banner() {
     const theme = useTheme();
 
-    const [occasion, setOccasion] = React.useState<OccasionEntity | undefined>(
-        undefined
-    );
-
-    const image = useFirebaseImage(occasion?.image);
-
-    React.useEffect(() => {
-        const fetchData = async () => {
-            setOccasion(await OccasionService.GetCurrentOccassions());
-        };
-        fetchData();
-    }, []);
+    const { currentOccasion } = useContext(AppContext);
+    // const image = useFirebaseImage(currentOccasion?.image);
 
     const [textSearch, setTextSearch] = React.useState<string>('');
     const handleChangeTextSearch = (
@@ -50,7 +40,7 @@ export function Banner() {
                     sx={{
                         width: '100%',
                         height: height,
-                        backgroundImage: `url(${image})`,
+                        backgroundImage: `url(${bannerImage})`,
                         backgroundSize: 'cover',
                         backgroundPosition: 'center',
                         backgroundRepeat: 'no-repeat',
@@ -82,12 +72,12 @@ export function Banner() {
                                     color="white"
                                     sx={{
                                         fontFamily: 'Dancing Script',
-                                        textShadow: `0px 0px 15px ${theme.palette.primary.light}, 0 0 15px ${theme.palette.primary.light},0 0 15px ${theme.palette.common.black}`,
+                                        textShadow: `0px 0px 20px ${theme.palette.primary.light}, 0 0 20px ${theme.palette.primary.light},0 0 20px ${theme.palette.common.black}`,
                                         textTransform: 'uppercase',
-                                        fontWeight: '300',
+                                        fontWeight: '400',
                                     }}
                                 >
-                                    {occasion?.name ?? 'Tasteal'}
+                                    {currentOccasion?.name ?? 'Tasteal'}
                                 </Typography>
 
                                 <Button
@@ -95,7 +85,7 @@ export function Banner() {
                                     color="primary"
                                     sx={{
                                         mt: 2,
-                                        mb: 8,
+                                        mb: 6,
                                         backgroundColor: 'primary.light',
                                         px: 4,
                                         py: 1.5,

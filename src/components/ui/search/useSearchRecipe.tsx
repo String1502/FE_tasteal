@@ -6,9 +6,7 @@ import AppContext from '@/lib/contexts/AppContext.ts';
 import { TuKhoa } from '../../../pages/Search.tsx';
 import {
     RecipeSearchReq,
-    RecipeSearchReq_Key,
     initRecipeSearchReq,
-    isValidRecipeSearchReq,
 } from '@/lib/models/dtos/Request/RecipeSearchReq/RecipeSearchReq.ts';
 
 export function useSearchRecipe(viewportItemAmount: number = 12) {
@@ -71,6 +69,7 @@ export function useSearchRecipe(viewportItemAmount: number = 12) {
                 item?.author_note,
                 item?.account?.name,
                 item?.ingredients?.map((i) => i.name),
+                item?.direction?.map((i) => i.direction),
             ]);
 
             return removeDiacritics(str.toLocaleLowerCase()).includes(
@@ -81,11 +80,15 @@ export function useSearchRecipe(viewportItemAmount: number = 12) {
     );
 
     //#endregion
+
     //#region Filter
     const [filter, setFilter] =
         React.useState<RecipeSearchReq>(initRecipeSearchReq);
 
-    function handleChangeFilter(type: RecipeSearchReq_Key, value: any) {
+    function handleChangeFilter<T extends keyof RecipeSearchReq>(
+        type: T,
+        value: RecipeSearchReq[T]
+    ) {
         const newFilter = {
             ...filter,
             [type]: value,
@@ -93,19 +96,27 @@ export function useSearchRecipe(viewportItemAmount: number = 12) {
         console.log(newFilter);
 
         setFilter(newFilter);
-        if (type == 'TextSearch') return;
+    }
 
+    useEffect(() => {
         async function fetchData() {
-            if (!isValidRecipeSearchReq(newFilter)) {
-                return;
-            }
-            // const newData = await RecipeService.SearchRecipes(newFilter,  viewportItemAmount, 1);
-            // setPage(1);
-            // setEnd(false);
-            // setRecipes(newData);
+            handleSpinner(true);
+
+            const newData = await RecipeService.SearchRecipes({
+                ...filter,
+                page: 1,
+                pageSize: viewportItemAmount,
+            });
+
+            setPage(1);
+            setRecipes(newData);
+            if (newData.length < viewportItemAmount) setEnd(true);
+            else setEnd(false);
+
+            handleSpinner(false);
         }
         fetchData();
-    }
+    }, [filter]);
 
     //#endregion
 
@@ -124,7 +135,7 @@ export function useSearchRecipe(viewportItemAmount: number = 12) {
             }
         });
         setTuKhoas(newTuKhoas);
-        let keyWords = newTuKhoas
+        let keyWords: RecipeSearchReq['KeyWords'] = newTuKhoas
             .map((item) => {
                 if (item.value && item.keyword) {
                     return removeDiacritics(item.keyword);
@@ -139,26 +150,15 @@ export function useSearchRecipe(viewportItemAmount: number = 12) {
     //#region Infinite Scroll
     const loadNext = useCallback(async () => {
         let nextData: RecipeEntity[] = [];
-        if (isValidRecipeSearchReq(filter)) {
-            // nextData = await RecipeService.SearchRecipes(
-            //     filter,
-            //     viewportItemAmount,
-            //     page + 1
-            // );
-        } else {
-            nextData = await RecipeService.GetAllRecipes(
-                viewportItemAmount,
-                page + 1
-            );
-        }
-
-        if (nextData.length == 0) {
-            setEnd(true);
-            return;
-        }
+        nextData = await RecipeService.SearchRecipes({
+            ...filter,
+            page: page + 1,
+            pageSize: viewportItemAmount,
+        });
 
         setPage((prev) => prev + 1);
         setRecipes((prev) => [...prev, ...nextData]);
+        if (nextData.length < viewportItemAmount) setEnd(true);
     }, [recipes]);
     //#endregion
     return {

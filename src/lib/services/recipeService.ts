@@ -3,7 +3,6 @@ import { recipes as recipesSampleData } from '@/lib/constants/sampleData';
 import { RecipeRes } from '@/lib/models/dtos/Response/RecipeRes/RecipeRes';
 import { createDebugStringFormatter } from '@/utils/debug/formatter';
 import simulateDelay from '@/utils/promises/stimulateDelay';
-import { RepeatOneSharp } from '@mui/icons-material';
 import { DefaultPage } from '../constants/common';
 import { deleteImage } from '../firebase/image';
 import { PageFilter } from '../models/dtos/Request/PageFilter/PageFilter';
@@ -178,9 +177,11 @@ class RecipeService {
         await fetch(getApiUrl('SearchRecipe'), requestOptions)
             .then((response) => response.json())
             .then((data) => {
+                console.log(data);
                 recipes = data;
             })
             .catch((error) => {
+                console.log('Lỗi:', error);
                 console.error('Lỗi:', error);
             });
 
@@ -219,7 +220,7 @@ class RecipeService {
                         // This is not tested
                         deleteImage(postData.image).catch();
                         Promise.all(
-                            postData.directions.map((direction) =>
+                            postData.direction.map((direction) =>
                                 deleteImage(direction.image)
                             )
                         ).catch();
