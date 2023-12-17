@@ -7,6 +7,7 @@ import {
     AccountBoxRounded,
     BookmarkBorderRounded,
     Logout,
+    NotificationsActiveRounded,
     SearchRounded,
     ShoppingBagRounded,
 } from '@mui/icons-material';
@@ -14,6 +15,7 @@ import MenuIcon from '@mui/icons-material/Menu';
 import {
     AppBar,
     Avatar,
+    Badge,
     Box,
     Button,
     ButtonBase,
@@ -43,6 +45,7 @@ import { ButtonHoverPopover } from '../header/ButtonHoverPopover';
 import { CustomHeaderLink } from '../header/CustomLink';
 import { PopoverContent } from '../header/PopoverContent';
 import AvatarMenuItem from './AvatarMenuItem';
+import { localStorageAccountId } from '../home/AuthorCard';
 
 interface Props {
     window?: () => Window;
@@ -418,16 +421,23 @@ export function Header(props: Props) {
                                         ref={avatarButtonRef}
                                         onClick={handleAvatarClick}
                                     >
-                                        <Avatar
-                                            alt="user avatar"
-                                            src={userAvatar}
-                                            sx={{
-                                                width: '33.83px',
-                                                height: '33.83px',
-                                                border: 1,
-                                                borderColor: 'primary.main',
-                                            }}
-                                        />
+                                        <Badge
+                                            color="error"
+                                            overlap="circular"
+                                            badgeContent=" "
+                                            variant="dot"
+                                        >
+                                            <Avatar
+                                                alt="user avatar"
+                                                src={userAvatar}
+                                                sx={{
+                                                    width: '33.83px',
+                                                    height: '33.83px',
+                                                    border: 1,
+                                                    borderColor: 'primary.main',
+                                                }}
+                                            />
+                                        </Badge>
                                     </ButtonBase>
 
                                     <Menu
@@ -456,11 +466,46 @@ export function Header(props: Props) {
                                     >
                                         <AvatarMenuItem
                                             icon={
-                                                <AccountBoxRounded color="primary" />
+                                                <Badge
+                                                    overlap="circular"
+                                                    badgeContent={
+                                                        <Box
+                                                            sx={{
+                                                                backgroundColor:
+                                                                    'error.main',
+                                                                width: '14px',
+                                                                height: '14px',
+                                                                borderRadius:
+                                                                    '50%',
+                                                                p: 1.4,
+                                                                display: 'flex',
+                                                                alignItems:
+                                                                    'center',
+                                                                justifyContent:
+                                                                    'center',
+                                                            }}
+                                                        >
+                                                            <NotificationsActiveRounded
+                                                                fontSize="inherit"
+                                                                sx={{
+                                                                    width: 'inherit',
+                                                                    height: 'inherit',
+                                                                    color: 'white',
+                                                                }}
+                                                            />
+                                                        </Box>
+                                                    }
+                                                >
+                                                    <AccountBoxRounded color="primary" />
+                                                </Badge>
                                             }
                                             label="Thông tin tác giả"
                                             onClick={() => {
-                                                navigate(PageRoute.Partner);
+                                                localStorage.setItem(
+                                                    localStorageAccountId,
+                                                    login.user.uid
+                                                );
+                                                navigate(PageRoute.Partner());
                                             }}
                                         />
                                         <AvatarMenuItem

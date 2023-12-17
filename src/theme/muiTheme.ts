@@ -25,6 +25,7 @@ export const getMode = (mode: PaletteMode): ThemeOptions => ({
                   },
                   secondary: {
                       main: SubColor,
+                      dark: '#fe3d3c',
                       contrastText: TopicColor,
                   },
                   text: {

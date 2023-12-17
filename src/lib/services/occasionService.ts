@@ -33,7 +33,6 @@ class OccasionService {
 
     public static async GetCurrentOccassions(): Promise<OccasionEntity> {
         // Simulate delay of 1 second
-        simulateDelay(1);
         const occasions = await this.GetAll();
         let index = 0;
         const date = new Date();
