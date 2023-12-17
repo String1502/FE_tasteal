@@ -5,7 +5,7 @@ export type RecipeReq = {
     name: string;
     rating: number;
     image?: string;
-    totalTime?: string;
+    totalTime?: number;
     active_time?: string;
     serving_size: number;
     introduction?: string;

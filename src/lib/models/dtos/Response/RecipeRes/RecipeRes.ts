@@ -6,9 +6,10 @@ import { IngredientRes } from '../IngredientRes/IngredientRes';
 import { RelatedRecipeRes } from '../RelatedRecipeRes/RelatedRecipeRes';
 
 export type RecipeRes = {
+    id: number;
     name?: string;
     rating: number;
-    totalTime: string;
+    totalTime: number;
     serving_size: number;
     introduction?: string;
     author_note?: string;

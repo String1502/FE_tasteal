@@ -18,6 +18,20 @@ export const ImagePicker: FC<ImagePickerProps> = ({
 }) => {
     const imageUrl = useFirebaseImage(imagePath);
 
+    const previewUrl = useMemo(() => {
+        if (file) {
+            return URL.createObjectURL(file);
+        }
+
+        if (imagePath !== '') {
+            return imageUrl ? imageUrl : '';
+        }
+
+        return '';
+    }, [file, imagePath, imageUrl]);
+
+    const hasImage = useMemo(() => Boolean(previewUrl), [previewUrl]);
+
     const handleFileChange = useCallback<ChangeEventHandler<HTMLInputElement>>(
         (e) => {
             if (e.target.files?.item(0)) {
@@ -26,16 +40,6 @@ export const ImagePicker: FC<ImagePickerProps> = ({
         },
         [onChange]
     );
-
-    const previewImage = useMemo(() => {
-        if (file) {
-            return URL.createObjectURL(file);
-        }
-
-        return imageUrl ? imageUrl : '';
-    }, [file, imageUrl]);
-
-    const hasImage = useMemo(() => previewImage, [previewImage]);
 
     return (
         <label
@@ -48,7 +52,7 @@ export const ImagePicker: FC<ImagePickerProps> = ({
                 width="240px"
                 height="240px"
                 sx={{
-                    backgroundImage: `url(${previewImage})`,
+                    backgroundImage: `url(${previewUrl})`,
                     backgroundSize: 'cover',
                     backgroundColor: '#ffe6d4',
                     display: 'flex',
