@@ -224,9 +224,6 @@ const RecipeDetail: FC = () => {
 
   //#endregion
 
-  console.log(recipe);
-  console.log(user.uid);
-
   return (
     <Layout>
       <WithFallback criteria={isRecipeFound} fallback={<RecipeNotFound />}>
@@ -307,6 +304,7 @@ const RecipeDetail: FC = () => {
                         <Button
                           startIcon={<Edit />}
                           variant="contained"
+                          onClick={() => handleOpenEditEditor()}
                           sx={{
                             display: canEditRecipe ? 'flex' : 'none',
                           }}
