@@ -224,9 +224,6 @@ const RecipeDetail: FC = () => {
 
   //#endregion
 
-  console.log(recipe);
-  console.log(user.uid);
-
   return (
     <Layout>
       <WithFallback criteria={isRecipeFound} fallback={<RecipeNotFound />}>
@@ -307,6 +304,7 @@ const RecipeDetail: FC = () => {
                         <Button
                           startIcon={<Edit />}
                           variant="contained"
+                          onClick={() => handleOpenEditEditor()}
                           sx={{
                             display: canEditRecipe ? 'flex' : 'none',
                           }}
@@ -439,7 +437,10 @@ const RecipeDetail: FC = () => {
                         </Typography>
                       </Link>
                     </Stack>
-                    <Typography color="gray">{`Hello this is my {not implemented yet} introduction.`}</Typography>
+                    <Typography color="gray">
+                      {recipe?.author.introduction}
+                    </Typography>
+                    {/* TODO: Implementation this */}
                     <Link color="primary.main" fontWeight={'bold'}>
                       https://www.sidechef.com/(not implemented)
                     </Link>
