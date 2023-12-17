@@ -1,28 +1,29 @@
-import { Grid } from "@mui/material";
-import { FC } from "react";
-import SimpleContainer from "../../container/SimpleContainer";
-import RecipeTimeInfoItem from "./RecipeTimeInfoItem";
+import { Grid } from '@mui/material';
+import { FC } from 'react';
+import SimpleContainer from '../../container/SimpleContainer';
+import RecipeTimeInfoItem from './RecipeTimeInfoItem';
 
 export type RecipeTimeInfoProps = {
-  totalTime: string;
-  activeTime?: number;
+    totalTime: number;
 };
 
-const RecipeTimeInfo: FC<RecipeTimeInfoProps> = ({ totalTime, activeTime }) => {
-  return (
-    <SimpleContainer>
-      <Grid container>
-        <Grid item xs textAlign={"center"}>
-          <RecipeTimeInfoItem time={totalTime} type="total" />
-        </Grid>
-        {activeTime && (
-          <Grid item xs textAlign={"center"}>
-            <RecipeTimeInfoItem time={activeTime} type="active" />
-          </Grid>
-        )}
-      </Grid>
-    </SimpleContainer>
-  );
+const RecipeTimeInfo: FC<RecipeTimeInfoProps> = ({ totalTime }) => {
+    return (
+        <SimpleContainer>
+            <Grid container>
+                <Grid
+                    item
+                    xs
+                    textAlign={'center'}
+                >
+                    <RecipeTimeInfoItem
+                        time={totalTime}
+                        type="total"
+                    />
+                </Grid>
+            </Grid>
+        </SimpleContainer>
+    );
 };
 
 export default RecipeTimeInfo;
