@@ -5,7 +5,7 @@ function NameRecipe({ name }: { name: RecipeEntity['name'] }) {
     return (
         <Typography
             variant="body2"
-            sx={{ fontWeight: 'bold' }}
+            sx={{ fontWeight: 'bold', width: '100%' }}
             whiteSpace={'nowrap'}
             textOverflow={'ellipsis'}
             overflow={'hidden'}

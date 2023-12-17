@@ -7,72 +7,63 @@ import { SearchTextField } from '@/components/ui/search/SearchTextField.tsx';
 import { RecipeEntity } from '@/lib/models/entities/RecipeEntity/RecipeEntity.ts';
 import { useSearchRecipe } from '../components/ui/search/useSearchRecipe.tsx';
 import { SearchInfiniteScroll } from '../components/ui/search/SearchInfiniteScroll.tsx';
+import { KeyWordRes } from '@/lib/models/dtos/Response/KeyWordRes/KeyWordRes.ts';
 
-export type TuKhoa = {
-    label: string;
+export type TuKhoa = KeyWordRes & {
     value: boolean;
 };
 
 export const DefaultTuKhoas: TuKhoa[] = [
     {
-        label: 'Bánh mì',
+        keyword: 'Bánh mì',
         value: false,
+        frequency: 5,
     },
     {
-        label: 'Bánh bao',
+        keyword: 'Bánh bao',
         value: false,
+        frequency: 4,
     },
     {
-        label: 'Heo quay',
+        keyword: 'Heo quay',
         value: false,
+        frequency: 3,
     },
     {
-        label: 'Bún thịt nướng',
+        keyword: 'Bún thịt nướng',
         value: false,
+        frequency: 2,
     },
     {
-        label: 'Cơm sườn',
+        keyword: 'Cơm sườn',
         value: false,
+        frequency: 1,
     },
     {
-        label: 'Bún đậu',
+        keyword: 'Bún đậu',
         value: false,
+        frequency: 0,
     },
 ];
-
-export type Filter = {
-    ingredientID: number[];
-    exceptIngredientID: number[];
-    totalTime: number;
-    activeTime: number;
-    occasionID: number[];
-    calories: {
-        min: number;
-        max: number;
-    };
-    textSearch: string;
-    keyWords: string[];
-};
 
 const viewportItemAmount = 12;
 
 function Search() {
     const {
         recipes,
-        resultIds,
-        searchButtonClick,
         // filter,
         handleChangeFilter,
+        textSearch,
+        handleChangeTextSearch,
         tuKhoas,
         handleChangeTuKhoa,
         loadNext,
+        end,
     } = useSearchRecipe(viewportItemAmount);
+
     return (
-        <Layout>
-            <Box
-                component={'div'}
-                id="scrollableDiv"
-            >
+        <Layout withFooter={false}>
+            <Box>
                 <Container>
                     <Grid
                         container
@@ -80,8 +71,7 @@ function Search() {
                         sx={{
                             justifyContent: 'center',
                             alignItems: 'flex-start',
-                            width: '100%',
-                            my: 8,
+                            my: 4,
                         }}
                     >
                         <Grid
@@ -90,7 +80,10 @@ function Search() {
                         >
                             <Box>
                                 <SearchTextField
-                                    searchButtonClick={searchButtonClick}
+                                    textSearch={textSearch}
+                                    handleChangeTextSearch={
+                                        handleChangeTextSearch
+                                    }
                                 />
                             </Box>
                         </Grid>
@@ -126,8 +119,8 @@ function Search() {
                             >
                                 {tuKhoas.map((item) => (
                                     <CheckBoxButton
-                                        key={item.label}
-                                        label={item.label}
+                                        key={item.keyword}
+                                        label={item.keyword}
                                         value={item.value}
                                         handleChangeTuKhoa={handleChangeTuKhoa}
                                     />
@@ -135,38 +128,31 @@ function Search() {
                             </Stack>
 
                             <SearchInfiniteScroll
-                                viewportItemAmount={viewportItemAmount}
                                 loadNext={loadNext}
-                                resultIds={resultIds}
-                                recipes={recipes}
+                                dataLenght={recipes.length}
+                                end={end}
                             >
-                                {recipes.map((item, index) => (
-                                    <>
-                                        {item && (
-                                            <Box
-                                                key={item.id}
-                                                sx={{
-                                                    flexBasis: {
-                                                        xs: '100%',
-                                                        sm: 'calc(99.2%/2)',
-                                                        md: 'calc(99.3%/3)',
-                                                    },
-                                                    p: 1,
-                                                    mr:
-                                                        index !=
-                                                        recipes.length - 1
-                                                            ? 0
-                                                            : 'auto',
-                                                }}
-                                            >
-                                                <PrimaryCard
-                                                    recipe={
-                                                        item as RecipeEntity
-                                                    }
-                                                />
-                                            </Box>
-                                        )}
-                                    </>
+                                {recipes.map((item) => (
+                                    <Box
+                                        key={item.id}
+                                        sx={{
+                                            p: 1,
+                                            width: {
+                                                xs: '100%',
+                                                sm: 'calc(100%/2)',
+                                                md: 'calc(100%/3)',
+                                            },
+                                        }}
+                                    >
+                                        <PrimaryCard
+                                            recipe={item as RecipeEntity}
+                                            props={{
+                                                sx: {
+                                                    width: '100%',
+                                                },
+                                            }}
+                                        />
+                                    </Box>
                                 ))}
                             </SearchInfiniteScroll>
                         </Grid>

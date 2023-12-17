@@ -1,7 +1,6 @@
 import BoxImage from '@/components/common/image/BoxImage';
-import useFirebaseImage from '@/lib/hooks/useFirebaseImage';
 import { Direction } from '@/lib/models/dtos/common';
-import { Box, Divider, Stack, Typography } from '@mui/material';
+import { Divider, Stack, Typography } from '@mui/material';
 import { FC } from 'react';
 
 type DirectionItemProps = {

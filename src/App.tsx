@@ -19,12 +19,13 @@ import Grocery from './pages/Grocery';
 import Home from './pages/Home';
 import MealPlanner from './pages/MealPlanner';
 import MyPantry from './pages/MyPantry';
-import Partner from './pages/Partner'
+import Partner from './pages/Partner';
 import MySavedRecipes from './pages/MySavedRecipes';
 import Search from './pages/Search';
 import SignIn from './pages/SignIn';
 import SignUp from './pages/SignUp';
 import SignUpEmail from './pages/SignUpEmail';
+import { AllPartner } from './pages/AllPartner';
 
 //#region AppWrapper
 
@@ -102,9 +103,14 @@ function AllRoutes() {
                 element: <RecipeDetail />,
             },
             {
-                path: PageRoute.Recipe.Edit(),
-                element: <CreateRecipe edit />,
+                path: PageRoute.Partner(),
+                element: <Partner />,
             },
+            {
+                path: PageRoute.AllPartner,
+                element: <AllPartner />,
+            },
+
             // Chưa đăng nhập
             {
                 path: PageRoute.SignIn,
@@ -133,6 +139,11 @@ function AllRoutes() {
                 needSignIn: PageRoute.Recipe.Create,
             },
             {
+                path: PageRoute.Recipe.Edit(),
+                element: <CreateRecipe edit />,
+                needSignIn: PageRoute.Recipe.Edit(),
+            },
+            {
                 path: PageRoute.Grocery,
                 element: <Grocery />,
                 needSignIn: PageRoute.Grocery,
@@ -151,11 +162,6 @@ function AllRoutes() {
                 path: PageRoute.MySavedRecipes,
                 element: <MySavedRecipes />,
                 needSignIn: PageRoute.MySavedRecipes,
-            },
-            {
-                path: PageRoute.Partner,
-                element: <Partner />,
-                needSignIn: PageRoute.Partner,
             },
             {
                 path: '*',

@@ -3,11 +3,14 @@ import { recipes as recipesSampleData } from '@/lib/constants/sampleData';
 import { RecipeRes } from '@/lib/models/dtos/Response/RecipeRes/RecipeRes';
 import { createDebugStringFormatter } from '@/utils/debug/formatter';
 import simulateDelay from '@/utils/promises/stimulateDelay';
+import { RepeatOneSharp } from '@mui/icons-material';
 import { DefaultPage } from '../constants/common';
 import { deleteImage } from '../firebase/image';
 import { PageFilter } from '../models/dtos/Request/PageFilter/PageFilter';
+import { PageReq } from '../models/dtos/Request/PageReq/PageReq';
 import { RecipeReq } from '../models/dtos/Request/RecipeReq/RecipeReq';
 import { RecipeSearchReq } from '../models/dtos/Request/RecipeSearchReq/RecipeSearchReq';
+import { KeyWordRes } from '../models/dtos/Response/KeyWordRes/KeyWordRes';
 import { RecipeEntity } from '../models/entities/RecipeEntity/RecipeEntity';
 
 const DEBUG_IDENTIFIER = '[RecipeService]';
@@ -26,31 +29,30 @@ class RecipeService {
      *
      * @return {Promise<RecipeEntity[]>}
      */
-    public static GetAllRecipes(): Promise<RecipeEntity[]> {
-        return fetch(getApiUrl('GetRecipeByRating'), {
-            method: 'POST',  // Specify the GET method
-        })
-        .then((response) => {
-        
-            if (!response.ok) {
-                throw new Error(`Failed to fetch recipes: ${response.statusText}`);
-            }
+    public static async GetAllRecipes(
+        pageSize: number = 12,
+        page: number = 1
+    ): Promise<RecipeEntity[]> {
+        const requestOptions = {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json; charset=UTF-8',
+            },
+            body: JSON.stringify({
+                pageSize: pageSize,
+                page: page,
+            } as PageReq),
+        };
 
-            // Check if the response body is empty
-            const contentType = response.headers.get('content-type');
-            if (contentType && contentType.includes('application/json')) {
-              
-                return response.json();
-            } else {
-                // If the response is not JSON, handle it accordingly (e.g., return an empty array)
-                console.warn('Received non-JSON response. Returning an empty array.');
-                return [];
-            }
-        })
-        .catch((error) => {
-            console.error('Error fetching recipes:', error);
-            throw error;
-        });
+        return await fetch(getApiUrl('GetAllRecipe'), requestOptions)
+            .then((response) => response.json())
+            .then((data) => {
+                console.log(data);
+                return data;
+            })
+            .catch((error) => {
+                console.error('Lỗi:', error);
+            });
     }
     /**
      * Get recipe detail data by id.
@@ -68,12 +70,17 @@ class RecipeService {
         return fetch(`${getApiUrl('GetRecipe')}?id=${id}`, {
             method: 'POST',
         })
-            .then((response) => response.json())
+            .then((response) => {
+                console.log(response);
+                return response.json();
+            })
             .then((data) => {
                 recipeCache.set(id, data);
+                console.log(data);
                 return data;
             })
             .catch((err) => {
+                console.log('err', err);
                 throw err;
             });
     }
@@ -172,7 +179,6 @@ class RecipeService {
             .then((response) => response.json())
             .then((data) => {
                 recipes = data;
-                console.log(data);
             })
             .catch((error) => {
                 console.error('Lỗi:', error);
@@ -186,15 +192,19 @@ class RecipeService {
      * Create a new recipe
      */
     public static async CreateRecipe(postData: RecipeReq) {
-        fetch(getApiUrl('CreateRecipe'), {
+        return fetch(getApiUrl('CreateRecipe'), {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify(postData),
         })
-            .then((response: Response) => response.json())
-            .then((data: RecipeReq) => {
+            .then((response: Response) => {
+                if (response.ok) return response.json();
+
+                return Promise.reject(response);
+            })
+            .then((data: RecipeRes) => {
                 console.log(
                     createDebugString('POST succeeded!', 'CreateRecipe'),
                     data
@@ -223,6 +233,22 @@ class RecipeService {
     }
 
     //#endregion
+
+    public static async GetKeyWords(): Promise<KeyWordRes[]> {
+        const requestOptions = {
+            method: 'GET',
+        };
+
+        return await fetch(getApiUrl('GetKeyWords'), requestOptions)
+            .then((response) => response.json())
+            .then((data) => {
+                console.log(data);
+                return data;
+            })
+            .catch((error) => {
+                console.error('Lỗi:', error);
+            });
+    }
 }
 
 export default RecipeService;

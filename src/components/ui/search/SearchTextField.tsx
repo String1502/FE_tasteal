@@ -5,16 +5,18 @@ import {
     TextField,
     TextFieldProps,
 } from '@mui/material';
-import { useState } from 'react';
 
 export function SearchTextField({
     props,
-    searchButtonClick,
+    textSearch,
+    handleChangeTextSearch,
 }: {
     props?: TextFieldProps;
-    searchButtonClick?: (value: string) => void;
+    textSearch: string;
+    handleChangeTextSearch: (
+        event: React.ChangeEvent<HTMLInputElement>
+    ) => void;
 }) {
-    const [value, setValue] = useState('');
     return (
         <>
             <TextField
@@ -22,10 +24,8 @@ export function SearchTextField({
                 sx={{
                     '& fieldset': { border: 'none' },
                 }}
-                value={value}
-                onChange={(e) => {
-                    setValue(e.target.value);
-                }}
+                value={textSearch}
+                onChange={handleChangeTextSearch}
                 placeholder={props?.placeholder ?? 'Hôm nay nấu gì?'}
                 variant="outlined"
                 fullWidth
@@ -40,13 +40,9 @@ export function SearchTextField({
                             <Button
                                 variant="contained"
                                 size={props?.size ?? props?.size}
-                                onClick={() => {
-                                    if (searchButtonClick) {
-                                        searchButtonClick(value);
-                                    }
-                                }}
                                 sx={{
                                     borderRadius: '40px',
+                                    boxShadow: 'none',
                                 }}
                             >
                                 Tìm kiếm
@@ -58,7 +54,7 @@ export function SearchTextField({
                         pl: 3,
                         pr: 2,
                         py: 0.5,
-                        boxShadow: 2,
+                        boxShadow: 'rgba(0, 0, 0, 0.2) 0px 0px 20px 0px',
                         border: 0,
                         backgroundColor: 'white',
                     },

@@ -110,6 +110,7 @@ const NutrionPerServingModal: React.FunctionComponent<{
                     borderRadius: '24px',
                     maxHeight: '90%',
                     overflowY: 'auto',
+                    '::-webkit-scrollbar': { display: 'none' },
                 }}
             >
                 <Stack gap={1}>

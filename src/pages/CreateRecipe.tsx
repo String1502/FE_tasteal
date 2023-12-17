@@ -25,7 +25,7 @@ import RecipeService from '@/lib/services/recipeService';
 import { CommonMessage } from '@/utils/constants/message';
 import { createDebugStringFormatter } from '@/utils/debug/formatter';
 import { getFileExtension } from '@/utils/file';
-import { dateTimeToMinutes, minuteToTimeString } from '@/utils/format';
+import { dateTimeToMinutes } from '@/utils/format';
 import {
     Autocomplete,
     Box,
@@ -33,7 +33,6 @@ import {
     CardContent,
     CircularProgress,
     FormControlLabel,
-    Grid,
     InputAdornment,
     Radio,
     RadioGroup,
@@ -41,7 +40,7 @@ import {
 } from '@mui/material';
 import { nanoid } from 'nanoid';
 import { useCallback, useContext, useEffect, useMemo, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { v4 as uuidv4 } from 'uuid';
 
 /**
@@ -156,6 +155,7 @@ const CreateRecipe: React.FunctionComponent<{ edit?: boolean }> = ({
     const {
         login: { user },
     } = useContext(AppContext);
+    const navigate = useNavigate();
 
     //#endregion
     //#region General Recipe
@@ -223,7 +223,7 @@ const CreateRecipe: React.FunctionComponent<{ edit?: boolean }> = ({
      * Creates a new recipe request.
      * Data must have been validated before calling this method.
      */
-    const createPostData = useCallback(async (): Promise<RecipeReq> => {
+    const createPostRecipeData = useCallback(async (): Promise<RecipeReq> => {
         if (!user) {
             throw new ReferenceError(CommonMessage.Auth.NullUser);
         }
@@ -241,12 +241,11 @@ const CreateRecipe: React.FunctionComponent<{ edit?: boolean }> = ({
             imageId
         );
 
-        const postData: RecipeReq = {
+        const postRecipeData: RecipeReq = {
             name: newRecipe.name,
             introduction: newRecipe.introduction,
             image: path,
-            totalTime: minuteToTimeString(newRecipe.totalTime),
-            active_time: minuteToTimeString(newRecipe.activeTime),
+            totalTime: newRecipe.totalTime,
             serving_size: newRecipe.servingSize,
             ingredients: newRecipe.ingredients.map((ingredient) => ({
                 id: ingredient.ingredientId,
@@ -259,9 +258,8 @@ const CreateRecipe: React.FunctionComponent<{ edit?: boolean }> = ({
             rating: 0,
         };
 
-        return postData;
+        return postRecipeData;
     }, [
-        newRecipe.activeTime,
         newRecipe.authorNote,
         newRecipe.directions,
         newRecipe.ingredients,
@@ -296,7 +294,7 @@ const CreateRecipe: React.FunctionComponent<{ edit?: boolean }> = ({
                 return;
             }
 
-            const postData = await createPostData();
+            const postData = await createPostRecipeData();
 
             console.log(postData);
 
@@ -305,6 +303,7 @@ const CreateRecipe: React.FunctionComponent<{ edit?: boolean }> = ({
                     console.log(response);
                     snackbarAlert('Công thức tạo thành công!', 'success');
                     clearForm();
+                    // navigate(`/recipe/${response.id}`);
                 })
                 .catch((e) => {
                     console.log(
@@ -318,7 +317,13 @@ const CreateRecipe: React.FunctionComponent<{ edit?: boolean }> = ({
         } finally {
             setIsProcessing(false);
         }
-    }, [clearForm, createPostData, snackbarAlert, validateNewRecipe]);
+    }, [
+        clearForm,
+        createPostRecipeData,
+        navigate,
+        snackbarAlert,
+        validateNewRecipe,
+    ]);
     //#endregion
     //#region Ingredients
 
@@ -575,62 +580,26 @@ const CreateRecipe: React.FunctionComponent<{ edit?: boolean }> = ({
                                 />
                             </Stack>
                             <Stack>
-                                <FormLabel>Thời gian</FormLabel>
-                                <Grid
-                                    container
-                                    gap={1}
-                                >
-                                    <Grid
-                                        item
-                                        xs
-                                    >
-                                        <TastealTextField
-                                            value={newRecipe.totalTime}
-                                            onChange={(e) =>
-                                                handleNewRecipeFieldChange(
-                                                    'totalTime',
-                                                    parseInt(e.target.value)
-                                                )
-                                            }
-                                            placeholder="Tổng thời gian"
-                                            helperText="Tổng thời gian"
-                                            type="number"
-                                            fullWidth
-                                            InputProps={{
-                                                endAdornment: (
-                                                    <InputAdornment position="end">
-                                                        phút
-                                                    </InputAdornment>
-                                                ),
-                                            }}
-                                        />
-                                    </Grid>
-                                    <Grid
-                                        item
-                                        xs
-                                    >
-                                        <TastealTextField
-                                            value={newRecipe.activeTime}
-                                            onChange={(e) =>
-                                                handleNewRecipeFieldChange(
-                                                    'activeTime',
-                                                    parseInt(e.target.value)
-                                                )
-                                            }
-                                            placeholder="Thời gian thực"
-                                            helperText="Thời gian thực"
-                                            type="number"
-                                            fullWidth
-                                            InputProps={{
-                                                endAdornment: (
-                                                    <InputAdornment position="end">
-                                                        phút
-                                                    </InputAdornment>
-                                                ),
-                                            }}
-                                        />
-                                    </Grid>
-                                </Grid>
+                                <FormLabel>Tổng thời gian</FormLabel>
+                                <TastealTextField
+                                    value={newRecipe.totalTime}
+                                    onChange={(e) =>
+                                        handleNewRecipeFieldChange(
+                                            'totalTime',
+                                            parseInt(e.target.value)
+                                        )
+                                    }
+                                    placeholder="Tổng thời gian"
+                                    type="number"
+                                    fullWidth
+                                    InputProps={{
+                                        endAdornment: (
+                                            <InputAdornment position="end">
+                                                phút
+                                            </InputAdornment>
+                                        ),
+                                    }}
+                                />
                             </Stack>
                             <Stack>
                                 <FormLabel>

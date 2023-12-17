@@ -1,27 +1,23 @@
 import { Box, CircularProgress, Typography } from '@mui/material';
-import { RecipeEntity } from '@/lib/models/entities/RecipeEntity/RecipeEntity.ts';
 import InfiniteScroll from 'react-infinite-scroll-component';
 
 export function SearchInfiniteScroll({
-    viewportItemAmount,
     loadNext,
-    resultIds,
-    recipes,
+    dataLenght,
+    end,
     children,
 }: {
-    viewportItemAmount: number;
-    loadNext: () => Promise<void>;
-    resultIds: RecipeEntity['id'][];
-    recipes: RecipeEntity[];
+    loadNext?: () => Promise<void>;
+    dataLenght: number;
+    end: boolean;
     children: React.ReactNode;
 }) {
     return (
         <InfiniteScroll
             // 3*2*2
-            dataLength={viewportItemAmount}
+            dataLength={dataLenght}
             next={loadNext}
-            hasMore={resultIds.length != recipes.length}
-            scrollableTarget="scrollableDiv"
+            hasMore={!end}
             loader={
                 <>
                     <Box
@@ -32,18 +28,23 @@ export function SearchInfiniteScroll({
                             alignItems: 'center',
                             gap: 2,
                             p: 2,
+                            py: 4,
                         }}
                     >
                         <CircularProgress
-                            size={30}
-                            color="primary"
+                            size={24}
+                            sx={{
+                                color: 'grey.400',
+                            }}
                         />
                         <Typography
                             variant="body1"
                             fontWeight={'bold'}
-                            color={'primary'}
+                            sx={{
+                                color: 'grey.400',
+                            }}
                         >
-                            Đang tải dữ liệu...
+                            Chờ một chút...
                         </Typography>
                     </Box>
                 </>
@@ -53,14 +54,13 @@ export function SearchInfiniteScroll({
                     <Typography
                         variant="body1"
                         align="center"
-                        fontWeight={'bold'}
                         sx={{
                             width: '100%',
-                            mt: 6,
-                            color: 'grey.600',
+                            mt: 4,
+                            color: 'grey.400',
                         }}
                     >
-                        Không còn công thức phù hợp!
+                        Không còn công thức phù hợp! :(
                     </Typography>
                 </>
             }
@@ -68,9 +68,8 @@ export function SearchInfiniteScroll({
                 display: 'flex',
                 flexDirection: 'row',
                 alignItems: 'flex-start',
-                justifyContent: 'center',
+                justifyContent: 'flex-start',
                 flexWrap: 'wrap',
-                width: '100%',
                 margin: -1,
                 overflow: 'visible',
             }}

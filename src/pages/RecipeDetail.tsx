@@ -9,14 +9,11 @@ import RecipeTimeInfo from '@/components/ui/cards/RecipeTimeInfo';
 import DirectionItem from '@/components/ui/collections/DirectionItem';
 import IngredientDisplayer from '@/components/ui/collections/IngredientDisplayer';
 import SimpleContainer from '@/components/ui/container/SimpleContainer';
-import NutrionPerServingInfo from '@/components/ui/displayers/NutrionPerServingInfo';
 import SameAuthorRecipesCarousel from '@/components/ui/displayers/SameAuthorRecipesCarousel/SameAuthorRecipesCarousel';
 import NutrionPerServingModal from '@/components/ui/modals/NutrionPerServingModal';
 import Layout from '@/layout/Layout';
 import { N_AValue, PageRoute } from '@/lib/constants/common';
-import { DefaultNutritionValue } from '@/lib/constants/defaultValue';
 import AppContext from '@/lib/contexts/AppContext';
-import { auth } from '@/lib/firebase/config';
 import useSnackbarService from '@/lib/hooks/useSnackbar';
 import { RecipeRes } from '@/lib/models/dtos/Response/RecipeRes/RecipeRes';
 import RecipeService from '@/lib/services/recipeService';
@@ -45,6 +42,7 @@ import {
     Grid,
     Link,
     Rating,
+    Skeleton,
     Stack,
     Typography,
 } from '@mui/material';
@@ -99,6 +97,11 @@ const debugStringFormatter = createDebugStringFormatter(PAGE_ID);
 const getRecipeById = createCacheAsyncFunction(RecipeService.GetById);
 
 const RecipeDetail: FC = () => {
+    //#region Loading
+
+    const [loading, setLoading] = useState(false);
+
+    //#endregion
     //#region Destructuring
 
     const { id } = useParams();
@@ -117,10 +120,13 @@ const RecipeDetail: FC = () => {
     const [recipe, setRecipe] = useState<RecipeRes | null>(null);
 
     useEffect(() => {
+        setRecipe(null);
+        setLoading(true);
         handleSpinner(true);
 
         if (!id) {
             setRecipe(null);
+            setLoading(false);
             console.log(debugStringFormatter('Failed to get recipe id'));
             return;
         }
@@ -140,7 +146,10 @@ const RecipeDetail: FC = () => {
                 setIsRecipeFound(false);
                 console.log(debugStringFormatter('Failed to get recipe data!'));
             })
-            .finally(() => handleSpinner(false));
+            .finally(() => {
+                handleSpinner(false);
+                setLoading(false);
+            });
     }, [handleSpinner, id]);
 
     //#endregion
@@ -156,20 +165,16 @@ const RecipeDetail: FC = () => {
     //#endregion
     //#region Edit Recipe
 
-    const [canEditRecipe, setCanEditRecipe] = useState(true);
-
-    useEffect(() => {
+    const canEditRecipe = useMemo(() => {
         if (login.user) {
-            if (!login.user) return;
+            if (!login.user) return false;
 
-            if (!recipe || !recipe.author) return;
+            if (!recipe || !recipe.author) return false;
 
-            if (login.user.uid === recipe.author.uid) {
-                setCanEditRecipe(true);
-            } else {
-                setCanEditRecipe(false);
-            }
+            return login.user.uid === recipe.author.uid;
         }
+
+        return false;
     }, [login.user, recipe]);
 
     const handleOpenEditEditor = useCallback(() => {
@@ -235,29 +240,17 @@ const RecipeDetail: FC = () => {
                                     item
                                     xs={8}
                                 >
-                                    {/* TODO: Please make a placeholder for null image */}
-                                    {/* TODO: Replace with real image */}
-                                    {recipe?.image ? (
-                                        <>
-                                            <BoxImage
-                                                src={recipe.image}
-                                                alt={'Không tìm thấy ảnh'}
-                                                quality={80}
-                                                sx={{
-                                                    width: '100%',
-                                                    height: 520,
-                                                    objectFit: 'cover',
-                                                    borderRadius: 4,
-                                                }}
-                                            />
-                                        </>
-                                    ) : (
-                                        <>
-                                            <Typography>
-                                                Không tìm thấy hình ảnh
-                                            </Typography>
-                                        </>
-                                    )}
+                                    <BoxImage
+                                        src={recipe?.image ?? ''}
+                                        alt={'Không tìm thấy ảnh'}
+                                        quality={80}
+                                        sx={{
+                                            width: '100%',
+                                            height: 520,
+                                            objectFit: 'cover',
+                                            borderRadius: 4,
+                                        }}
+                                    />
                                 </Grid>
 
                                 <Grid
@@ -280,43 +273,58 @@ const RecipeDetail: FC = () => {
                                                 fontWeight: 'bold',
                                             }}
                                         />
-                                        <Typography
-                                            fontStyle={'italic'}
-                                            color={'primary.main'}
-                                            sx={{
-                                                bgColor: 'secondary.main',
-                                                borderRadius: 4,
-                                                mt: 1,
-                                            }}
-                                        >
-                                            {recipeBrief}
-                                        </Typography>
-                                        <Typography
-                                            typography={'h3'}
-                                            color={'primary.main'}
-                                            fontWeight={'bold'}
-                                        >
-                                            {recipe?.name ??
-                                                RecipeDetailStringConstants.DEFAULT_NAME}
-                                        </Typography>
-                                        <Button
-                                            startIcon={<Edit />}
-                                            variant="contained"
-                                            sx={{
-                                                display: canEditRecipe
-                                                    ? 'block'
-                                                    : 'none',
-                                            }}
-                                        >
-                                            Chỉnh sửa
-                                        </Button>
-                                        <Button
-                                            startIcon={<Edit />}
-                                            variant="contained"
-                                            onClick={handleOpenEditEditor}
-                                        >
-                                            Chỉnh sửa
-                                        </Button>
+                                        {loading ? (
+                                            <>
+                                                <Skeleton
+                                                    variant="rounded"
+                                                    animation="wave"
+                                                />
+                                                <Skeleton
+                                                    variant="rounded"
+                                                    animation="wave"
+                                                    height={80}
+                                                />
+                                                <Skeleton
+                                                    variant="rounded"
+                                                    animation="wave"
+                                                    height={40}
+                                                />
+                                            </>
+                                        ) : (
+                                            <>
+                                                <Typography
+                                                    fontStyle={'italic'}
+                                                    color={'primary.main'}
+                                                    sx={{
+                                                        bgColor:
+                                                            'secondary.main',
+                                                        borderRadius: 4,
+                                                        mt: 1,
+                                                    }}
+                                                >
+                                                    {recipeBrief}
+                                                </Typography>
+                                                <Typography
+                                                    typography={'h3'}
+                                                    color={'primary.main'}
+                                                    fontWeight={'bold'}
+                                                >
+                                                    {recipe?.name ??
+                                                        RecipeDetailStringConstants.DEFAULT_NAME}
+                                                </Typography>
+                                                <Button
+                                                    startIcon={<Edit />}
+                                                    variant="contained"
+                                                    sx={{
+                                                        display: canEditRecipe
+                                                            ? 'flex'
+                                                            : 'none',
+                                                    }}
+                                                >
+                                                    Chỉnh sửa
+                                                </Button>
+                                            </>
+                                        )}
                                     </Stack>
                                 </Grid>
                             </Grid>
@@ -327,45 +335,87 @@ const RecipeDetail: FC = () => {
                             xs={8}
                         >
                             <Stack gap={8}>
-                                <Typography
-                                    color="primary.main"
-                                    typography={'body1'}
-                                >
-                                    {recipe?.introduction ??
-                                        RecipeDetailStringConstants.DEFAULT_INSTRUCTION}
-                                </Typography>
+                                {loading ? (
+                                    <>
+                                        <Stack>
+                                            <SectionHeading>
+                                                Mô tả
+                                            </SectionHeading>
+                                            <Skeleton
+                                                variant="rounded"
+                                                animation="wave"
+                                                height={160}
+                                            />
+                                        </Stack>
 
-                                <RecipeTimeInfo
-                                    totalTime={
-                                        recipe?.totalTime.toString() ?? ''
-                                    }
-                                />
+                                        <SimpleContainer>
+                                            <Skeleton
+                                                variant="rounded"
+                                                animation="wave"
+                                                height={120}
+                                            />
+                                        </SimpleContainer>
+                                        <Stack>
+                                            <SectionHeading>
+                                                Nguyên liệu
+                                            </SectionHeading>
+                                            <Skeleton
+                                                variant="rounded"
+                                                animation="wave"
+                                                height={400}
+                                            />
+                                        </Stack>
+                                        <Stack>
+                                            <SectionHeading>
+                                                Ghi chú của tác giả
+                                            </SectionHeading>
+                                            <Skeleton
+                                                variant="rounded"
+                                                animation="wave"
+                                                height={120}
+                                            />
+                                        </Stack>
+                                    </>
+                                ) : (
+                                    <>
+                                        <Stack>
+                                            <SectionHeading>
+                                                Mô tả
+                                            </SectionHeading>
+                                            <Typography
+                                                color="primary.main"
+                                                typography={'body1'}
+                                            >
+                                                {recipe?.introduction ??
+                                                    RecipeDetailStringConstants.DEFAULT_INSTRUCTION}
+                                            </Typography>
+                                        </Stack>
 
-                                <IngredientDisplayer
-                                    ingredients={recipe?.ingredients ?? []}
-                                />
+                                        <RecipeTimeInfo
+                                            totalTime={
+                                                recipe?.totalTime.toString() ??
+                                                ''
+                                            }
+                                        />
 
-                                <NutrionPerServingInfo
-                                    onClick={() =>
-                                        setNutritionPerServingModalOpen(true)
-                                    }
-                                    nutritionInfo={
-                                        recipe?.nutrition_info ??
-                                        DefaultNutritionValue
-                                    }
-                                />
-
-                                <Stack>
-                                    <SectionHeading>
-                                        Ghi chú của tác giả
-                                    </SectionHeading>
-                                    <Typography
-                                        color="primary.main"
-                                        typography={'body1'}
-                                    >
-                                        {recipe?.author_note}
-                                    </Typography>
-                                </Stack>
+                                        <IngredientDisplayer
+                                            ingredients={
+                                                recipe?.ingredients ?? []
+                                            }
+                                        />
+                                        <Stack>
+                                            <SectionHeading>
+                                                Ghi chú của tác giả
+                                            </SectionHeading>
+                                            <Typography
+                                                color="primary.main"
+                                                typography={'body1'}
+                                            >
+                                                {recipe?.author_note ?? 'Không'}
+                                            </Typography>
+                                        </Stack>
+                                    </>
+                                )}
                             </Stack>
                         </Grid>
 
@@ -374,82 +424,100 @@ const RecipeDetail: FC = () => {
                             xs={4}
                         >
                             <SimpleContainer>
-                                <Box
-                                    display="flex"
-                                    flexDirection={'column'}
-                                    gap={1}
-                                >
+                                {loading ? (
+                                    <Skeleton
+                                        variant="rounded"
+                                        animation="wave"
+                                        height={60}
+                                    />
+                                ) : (
                                     <Box
                                         display="flex"
+                                        flexDirection={'column'}
                                         gap={1}
                                     >
-                                        <TastealIconButton>
-                                            <PrintOutlined color="primary" />
-                                        </TastealIconButton>
-                                        <TastealIconButton>
-                                            <Pinterest color="primary" />
-                                        </TastealIconButton>
-                                        <TastealIconButton>
-                                            <Facebook color="primary" />
-                                        </TastealIconButton>
-                                        <TastealIconButton>
-                                            <Twitter color="primary" />
-                                        </TastealIconButton>
-                                        <TastealIconButton>
-                                            <Mail color="primary" />
-                                        </TastealIconButton>
-                                    </Box>
-                                    <Button
-                                        variant="contained"
-                                        startIcon={<Bookmark />}
-                                    >
-                                        LƯU CÔNG THỨC
-                                    </Button>
-                                    <Button
-                                        variant="contained"
-                                        startIcon={<Add />}
-                                        sx={{
-                                            color: 'primary.main',
-                                            backgroundColor:
-                                                'background.default',
-                                            '&:hover': {
+                                        <Box
+                                            display="flex"
+                                            gap={1}
+                                        >
+                                            <TastealIconButton>
+                                                <PrintOutlined color="primary" />
+                                            </TastealIconButton>
+                                            <TastealIconButton>
+                                                <Pinterest color="primary" />
+                                            </TastealIconButton>
+                                            <TastealIconButton>
+                                                <Facebook color="primary" />
+                                            </TastealIconButton>
+                                            <TastealIconButton>
+                                                <Twitter color="primary" />
+                                            </TastealIconButton>
+                                            <TastealIconButton>
+                                                <Mail color="primary" />
+                                            </TastealIconButton>
+                                        </Box>
+                                        <Button
+                                            variant="contained"
+                                            startIcon={<Bookmark />}
+                                        >
+                                            LƯU CÔNG THỨC
+                                        </Button>
+                                        <Button
+                                            variant="contained"
+                                            startIcon={<Add />}
+                                            sx={{
+                                                color: 'primary.main',
                                                 backgroundColor:
                                                     'background.default',
-                                            },
-                                        }}
-                                    >
-                                        Thêm vào lịch ăn
-                                    </Button>
-                                </Box>
+                                                '&:hover': {
+                                                    backgroundColor:
+                                                        'background.default',
+                                                },
+                                            }}
+                                        >
+                                            Thêm vào lịch ăn
+                                        </Button>
+                                    </Box>
+                                )}
                             </SimpleContainer>
 
                             <SimpleContainer sx={{ mt: 2 }}>
-                                <Box
-                                    display={'flex'}
-                                    flexDirection={'column'}
-                                    gap={1}
-                                >
-                                    <Stack
-                                        direction="row"
-                                        alignItems={'center'}
-                                        gap={2}
+                                {loading ? (
+                                    <Skeleton
+                                        variant="rounded"
+                                        animation="wave"
+                                        height={60}
+                                    />
+                                ) : (
+                                    <Box
+                                        display={'flex'}
+                                        flexDirection={'column'}
+                                        gap={1}
                                     >
-                                        <Avatar src={recipe?.author.avatar} />
-                                        <Link>
-                                            <Typography fontWeight={'bold'}>
-                                                {recipe?.author.name}
-                                            </Typography>
+                                        <Stack
+                                            direction="row"
+                                            alignItems={'center'}
+                                            gap={2}
+                                        >
+                                            <Avatar
+                                                src={recipe?.author.avatar}
+                                            />
+                                            <Link>
+                                                <Typography fontWeight={'bold'}>
+                                                    {recipe?.author.name}
+                                                </Typography>
+                                            </Link>
+                                        </Stack>
+                                        <Typography color="gray">{`Hello this is my {not implemented yet} introduction.`}</Typography>
+                                        <Link
+                                            color="primary.main"
+                                            fontWeight={'bold'}
+                                        >
+                                            https://www.sidechef.com/(not
+                                            implemented)
                                         </Link>
-                                    </Stack>
-                                    <Typography color="gray">{`Hello this is my {not implemented yet} introduction.`}</Typography>
-                                    <Link
-                                        color="primary.main"
-                                        fontWeight={'bold'}
-                                    >
-                                        https://www.sidechef.com/(not
-                                        implemented)
-                                    </Link>
-                                </Box>
+                                    </Box>
+                                )}
                             </SimpleContainer>
                         </Grid>
                     </Grid>
@@ -471,20 +539,42 @@ const RecipeDetail: FC = () => {
                                 alignItems={'center'}
                             >
                                 <SectionHeading>Hướng dẫn nấu</SectionHeading>
-                                <Link href="#">Ẩn hình ảnh</Link>
+                                {loading ? (
+                                    <Skeleton
+                                        variant="rounded"
+                                        animation="wave"
+                                        height={20}
+                                    />
+                                ) : (
+                                    <Link href="#">Ẩn hình ảnh</Link>
+                                )}
                             </Stack>
 
                             <Stack gap={2}>
-                                {recipe?.directions.map((direction, index) => (
-                                    <DirectionItem
-                                        key={index}
-                                        value={direction}
-                                        last={
-                                            index ===
-                                            recipe.directions.length - 1
-                                        }
+                                {loading ? (
+                                    <Skeleton
+                                        variant="rounded"
+                                        animation="wave"
+                                        height={160}
                                     />
-                                ))}
+                                ) : (
+                                    <>
+                                        {recipe?.directions.map(
+                                            (direction, index) => (
+                                                <DirectionItem
+                                                    key={index}
+                                                    value={direction}
+                                                    last={
+                                                        index ===
+                                                        recipe.directions
+                                                            .length -
+                                                            1
+                                                    }
+                                                />
+                                            )
+                                        )}
+                                    </>
+                                )}
                             </Stack>
                         </Stack>
                     </Container>
@@ -508,32 +598,47 @@ const RecipeDetail: FC = () => {
                                 <BigSectionHeading>
                                     Đánh giá & Review
                                 </BigSectionHeading>
-                                <Stack
-                                    direction="row"
-                                    alignItems={'center'}
-                                >
-                                    <Typography
-                                        color="primary"
-                                        fontSize={20}
-                                        fontWeight={'bold'}
+                                {loading ? (
+                                    <Skeleton
+                                        variant="rounded"
+                                        animation="wave"
+                                    />
+                                ) : (
+                                    <Stack
+                                        direction="row"
+                                        alignItems={'center'}
                                     >
-                                        Chạm để đánh giá:
-                                    </Typography>
-                                    <Rating
-                                        size="large"
-                                        icon={<StarRateRounded />}
-                                        emptyIcon={<StarRateRounded />}
-                                    ></Rating>
-                                </Stack>
+                                        <Typography
+                                            color="primary"
+                                            fontSize={20}
+                                            fontWeight={'bold'}
+                                        >
+                                            Chạm để đánh giá:
+                                        </Typography>
+                                        <Rating
+                                            size="large"
+                                            icon={<StarRateRounded />}
+                                            emptyIcon={<StarRateRounded />}
+                                        ></Rating>
+                                    </Stack>
+                                )}
                             </Stack>
 
-                            <TastealTextField
-                                multiline
-                                rows={4}
-                                placeholder="Để lại bình luận"
-                                fullWidth
-                                sx={{ mt: 1 }}
-                            />
+                            {loading ? (
+                                <Skeleton
+                                    variant="rounded"
+                                    animation="wave"
+                                    height={160}
+                                />
+                            ) : (
+                                <TastealTextField
+                                    multiline
+                                    rows={4}
+                                    placeholder="Để lại bình luận"
+                                    fullWidth
+                                    sx={{ mt: 1 }}
+                                />
+                            )}
                         </Box>
 
                         {/* <Box width="60%">
@@ -622,9 +727,17 @@ const RecipeDetail: FC = () => {
                                 </Button>
                             </Box>
                             <Box>
-                                <SameAuthorRecipesCarousel
-                                    recipes={recipe?.relatedRecipes}
-                                />
+                                {loading ? (
+                                    <Skeleton
+                                        variant="rounded"
+                                        animation="wave"
+                                        height={320}
+                                    />
+                                ) : (
+                                    <SameAuthorRecipesCarousel
+                                        recipes={recipe?.relatedRecipes}
+                                    />
+                                )}
                             </Box>
                         </Box>
 
