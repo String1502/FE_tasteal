@@ -26,6 +26,7 @@ import SignIn from './pages/SignIn';
 import SignUp from './pages/SignUp';
 import SignUpEmail from './pages/SignUpEmail';
 import { AllPartner } from './pages/AllPartner';
+import { OccasionEntity } from './lib/models/entities/OccasionEntity/OccasionEntity';
 
 //#region AppWrapper
 
@@ -42,6 +43,7 @@ type AppWrapperProps = {
         user?: User;
         handleLogin: (isUserSignedIn?: boolean, user?: User) => void;
     };
+    currentOccasion?: OccasionEntity;
 };
 
 function AppWrapper({

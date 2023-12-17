@@ -1,19 +1,41 @@
 import { OccasionsList } from '@/components/ui/home/OccasionsList';
 import { OccasionEntity } from '@/lib/models/entities/OccasionEntity/OccasionEntity';
 import OccasionService from '@/lib/services/occasionService';
-import { Skeleton } from '@mui/material';
+import { Box, Skeleton, Stack } from '@mui/material';
 import { Suspense, useEffect, useState } from 'react';
 
-const SkeletonOccasion = () => {
+const SkeletonOccasion = ({ lenght = 8 }: { lenght?: number }) => {
     return (
-        <Skeleton
-            variant="rounded"
-            width={'100%'}
-            height={'100%'}
+        <Stack
+            direction={'row'}
+            useFlexGap
+            flexWrap="wrap"
+            justifyContent={'flex-start'}
+            alignItems={'flex-start'}
             sx={{
-                aspectRatio: '1/0.7',
+                mx: -1.5,
             }}
-        />
+        >
+            {new Array(lenght).fill(0).map((_, index) => (
+                <Box
+                    key={index}
+                    sx={{
+                        width: { xs: '100%', sm: '50%', md: '33%', lg: '25%' },
+                        p: 1.5,
+                    }}
+                >
+                    <Skeleton
+                        variant="rounded"
+                        width={'100%'}
+                        height={'100%'}
+                        sx={{
+                            aspectRatio: '1/0.7',
+                            borderRadius: 4,
+                        }}
+                    />
+                </Box>
+            ))}
+        </Stack>
     );
 };
 
