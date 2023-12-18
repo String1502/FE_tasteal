@@ -1,9 +1,9 @@
-import { PrimaryCard } from './PrimaryCard';
+import { Primary_Smaller_Card } from './Primary_Smaller_Card';
 import { IngredientEntity } from '@/lib/models/entities/IngredientEntity/IngredientEntity';
 import { Box, Grid, Typography } from '@mui/material';
 import { useEffect, useState } from 'react';
 
-export function IngredientsCarousel({ array }: { array: IngredientEntity[] }) {
+export function Ingredient_Smaller_Carousel({ array }: { array: IngredientEntity[] }) {
     const [ingredients, setIngredients] = useState<IngredientEntity[]>([]);
 
     useEffect(() => {
@@ -13,27 +13,12 @@ export function IngredientsCarousel({ array }: { array: IngredientEntity[] }) {
     return (
         <>
             {ingredients && ingredients.length > 0 ? (
-                <Grid
-                    container
-                    spacing={2}
-                >
-                    {ingredients.map((ingredient) => (
-                        <Grid
-                            key={ingredient.id}
-                            item
-                            xs={12}
-                            sm={6}
-                            md={3}
-                        >
-                            <PrimaryCard ingredient={ingredient} />
-                        </Grid>
-                    ))}
-                </Grid>
+                
             ) : (
                 <Box
                     sx={{
                         width: '100%',
-                        height: '200px',
+                        height: '100px',
                         display: 'flex',
                         justifyContent: 'center',
                         alignItems: 'center',

@@ -6,5 +6,6 @@ export const StoragePath = {
     RECIPE: 'Cong-Thuc',
     OCCASION: 'Dip-Le',
     DIRECTION: 'Huong-Dan',
+    USER:'Avatar',
     ASSET: 'assets',
 } as const;
