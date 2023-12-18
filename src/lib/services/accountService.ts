@@ -46,10 +46,21 @@ class AccountService {
    *
    * @param uid - The id of the account
    */
-  public static GetByUid(uid: string) {
-    return fetch(`${getApiUrl('GetUser')}?accountId=${uid}`).then((res) =>
-      res.json()
-    );
+  public static async GetByUid(uid: string): Promise<AccountEntity> {
+    return await fetch(`${getApiUrl('GetUserByUid')}?accountId=${uid}`, {
+      method: 'GET',
+    })
+      .then((response) => {
+        console.log(response);
+        return response.json();
+      })
+      .then((data) => {
+        return data;
+      })
+      .catch((err) => {
+        console.log('err', err);
+        throw err;
+      });
   }
 
   public static async GetMostContributedAccounts(

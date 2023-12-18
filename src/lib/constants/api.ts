@@ -49,7 +49,7 @@ export const ApiEndPoint = {
   SignUpUser: 'User/signup',
   UpdateUser: 'User/updateuser',
   GetAllUser: 'User/allusers',
-  GetUser: 'User',
+  GetUserByUid: 'User',
 } as const;
 
 /**
