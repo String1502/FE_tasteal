@@ -1,4 +1,5 @@
 import BoxImage from '@/components/common/image/BoxImage';
+import { RecipeSearchReq } from '@/lib/models/dtos/Request/RecipeSearchReq/RecipeSearchReq';
 import { IngredientEntity } from '@/lib/models/entities/IngredientEntity/IngredientEntity';
 import { CheckBox, CheckBoxOutlineBlank } from '@mui/icons-material';
 import {
@@ -22,9 +23,11 @@ function sleep(duration: number): Promise<void> {
 }
 export function IngredientAutocomplete({
     ingredients,
+    ingredientIds,
     handleChange,
 }: {
     ingredients: IngredientEntity[];
+    ingredientIds: RecipeSearchReq['IngredientID'];
     handleChange: (ingredients: IngredientEntity[]) => void;
 }) {
     const [open, setOpen] = React.useState(false);
@@ -38,13 +41,7 @@ export function IngredientAutocomplete({
             return undefined;
         }
 
-        (async () => {
-            await sleep(1e3); // For demo purposes.
-
-            if (active) {
-                setOptions([...ingredients]);
-            }
-        })();
+        setOptions([...ingredients]);
 
         return () => {
             active = false;
@@ -73,6 +70,13 @@ export function IngredientAutocomplete({
                 }}
                 loading={loading}
                 options={options}
+                value={
+                    ingredientIds
+                        ? options.filter((item) =>
+                              ingredientIds.includes(item.id)
+                          )
+                        : []
+                }
                 onChange={(_, value) => {
                     handleChange(value);
                 }}

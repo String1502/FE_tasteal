@@ -1,6 +1,7 @@
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 import unidecode from 'unidecode';
+import { LunarDate } from '@nghiavuive/lunar_date_vi';
 
 dayjs.extend(utc);
 
@@ -56,4 +57,15 @@ export function dateToDDMMYYYY(date: string | Date | undefined): string {
 
 export function formatNumberWithLeadingZero(number: number): string {
     return number < 10 ? `0${number}` : `${number}`;
+}
+
+export function convertLunarToSolarDate(lunarDate: Date) {
+    let lunarDate_Real = new LunarDate({
+        year: lunarDate.getFullYear(),
+        month: lunarDate.getMonth() + 1,
+        day: lunarDate.getDate(),
+    });
+    lunarDate_Real.init();
+
+    return new Date(lunarDate_Real.toSolarDate().toDate());
 }

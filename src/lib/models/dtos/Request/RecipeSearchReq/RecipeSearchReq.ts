@@ -23,3 +23,17 @@ export const initRecipeSearchReq: RecipeSearchReq = {
     TotalTime: null,
     Calories: null,
 };
+
+export function isRecipeSearchReqValid(filter: RecipeSearchReq) {
+    for (const key in filter) {
+        if (Object.prototype.hasOwnProperty.call(filter, key)) {
+            const value = filter[key];
+            if (value !== null && typeof value !== 'undefined') {
+                // If the value is not null or undefined, return true
+                return true;
+            }
+        }
+    }
+    // If no non-null values are found, return false
+    return false;
+}

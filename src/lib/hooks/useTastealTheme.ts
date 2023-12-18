@@ -61,7 +61,8 @@ function useTastealTheme(): {
 
     useEffect(() => {
         const fetchData = async () => {
-            setCurrentOccasion(await OccasionService.GetCurrentOccassions());
+            const data = await OccasionService.GetCurrentOccassions();
+            setCurrentOccasion(data);
         };
         fetchData();
     }, []);
