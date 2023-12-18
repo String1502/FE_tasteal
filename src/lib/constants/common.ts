@@ -27,8 +27,8 @@ export const PageRoute = {
   MealPlanner: '/mealplanner',
   MyPantry: '/mypantry',
   MySavedRecipes: '/mysaverecipes',
-  Partner: (name?: AccountEntity['name']) =>
-    name ? `/partner/${name}` : '/partner/:name',
+  Partner: (uid?: AccountEntity['uid']) =>
+    uid ? `/partner/${uid}` : '/partner/:uid',
   AllPartner: '/allpartner',
   Admin: '/admin',
 } as const;

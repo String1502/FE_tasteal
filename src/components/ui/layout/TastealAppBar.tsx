@@ -29,7 +29,11 @@ import { PopoverContent } from '../header/PopoverContent';
 import AvatarMenuItem from './AvatarMenuItem';
 import { localStorageAccountId } from '../home/AuthorCard';
 import AccountService from '@/lib/services/accountService';
-import { isAccountEntityFullInfor } from '@/lib/models/entities/AccountEntity/AccountEntity';
+import {
+  AccountEntity,
+  isAccountEntityFullInfor,
+} from '@/lib/models/entities/AccountEntity/AccountEntity';
+import useFirebaseImage from '@/lib/hooks/useFirebaseImage';
 
 export const localNeedFillInfor = 'localNeedFillInfor';
 
@@ -42,9 +46,15 @@ export function TastealAppBar({
 }) {
   const navigate = useNavigate();
   const { login } = useContext(AppContext);
-  const [userAvatar, setUserAvatar] = useState<string>(
-    login.user?.photoURL || ''
+
+  const [accountData, setAccountData] = useState<AccountEntity | undefined>(
+    undefined
   );
+  const userAvatar = useFirebaseImage(accountData?.avatar);
+
+  const [needFillInfor, setNeedFillInfor] = useState<boolean>(false);
+
+  console.log(login.user);
 
   //#region Avatar Menu
   const avatarButtonRef = useRef<HTMLButtonElement>(null);
@@ -64,14 +74,13 @@ export function TastealAppBar({
   //#endregion
 
   useEffect(() => {
-    setUserAvatar(login.user?.photoURL || '');
     async function getAccount(uid: string) {
       try {
         const data = await AccountService.GetByUid(uid);
         if (!data) return;
+        setAccountData(data);
         if (!isAccountEntityFullInfor(data)) {
-          localStorage.setItem(localNeedFillInfor, uid);
-          // TAS-111
+          setNeedFillInfor(true);
         }
       } catch (error) {
         console.log(error);
@@ -214,7 +223,7 @@ export function TastealAppBar({
                 <Badge
                   color="error"
                   overlap="circular"
-                  badgeContent=" "
+                  badgeContent={needFillInfor ? '?' : 0}
                   variant="dot"
                 >
                   <Avatar
@@ -259,27 +268,31 @@ export function TastealAppBar({
                     <Badge
                       overlap="circular"
                       badgeContent={
-                        <Box
-                          sx={{
-                            backgroundColor: 'error.main',
-                            width: '14px',
-                            height: '14px',
-                            borderRadius: '50%',
-                            p: 1.4,
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                          }}
-                        >
-                          <NotificationsActiveRounded
-                            fontSize="inherit"
+                        needFillInfor ? (
+                          <Box
                             sx={{
-                              width: 'inherit',
-                              height: 'inherit',
-                              color: 'white',
+                              backgroundColor: 'error.main',
+                              width: '14px',
+                              height: '14px',
+                              borderRadius: '50%',
+                              p: 1.2,
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
                             }}
-                          />
-                        </Box>
+                          >
+                            <NotificationsActiveRounded
+                              fontSize="inherit"
+                              sx={{
+                                width: 'inherit',
+                                height: 'inherit',
+                                color: 'white',
+                              }}
+                            />
+                          </Box>
+                        ) : (
+                          0
+                        )
                       }
                     >
                       <AccountBoxRounded color="primary" />
@@ -287,8 +300,7 @@ export function TastealAppBar({
                   }
                   label="Thông tin tác giả"
                   onClick={() => {
-                    localStorage.setItem(localStorageAccountId, login.user.uid);
-                    navigate(PageRoute.Partner());
+                    navigate(PageRoute.Partner(login.user.uid));
                   }}
                 />
                 <AvatarMenuItem
