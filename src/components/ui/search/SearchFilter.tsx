@@ -12,12 +12,14 @@ import {
     RadioGroup,
     Typography,
 } from '@mui/material';
-import { ingredients, occasions } from '../../../lib/constants/sampleData';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { IngredientAutocomplete } from './IngredientAutocomplete';
 import IngredientService from '@/lib/services/ingredientService';
 import { IngredientEntity } from '@/lib/models/entities/IngredientEntity/IngredientEntity';
-import { RecipeSearchReq_Key } from '@/lib/models/dtos/Request/RecipeSearchReq/RecipeSearchReq';
+import { RecipeSearchReq } from '@/lib/models/dtos/Request/RecipeSearchReq/RecipeSearchReq';
+import OccasionService from '@/lib/services/occasionService';
+import { OccasionEntity } from '@/lib/models/entities/OccasionEntity/OccasionEntity';
+import { localOcacions } from '../home/OccasionsList';
 
 const timeFilterItems = [
     {
@@ -94,7 +96,10 @@ const CustomAccordion = ({
 export function SearchFilter({
     handleChangeFilter,
 }: {
-    handleChangeFilter: (type: RecipeSearchReq_Key, value: any) => void;
+    handleChangeFilter<T extends keyof RecipeSearchReq>(
+        type: T,
+        value: RecipeSearchReq[T]
+    ): void;
 }) {
     //#region filter Nguyên liệu
     const [ingredientsData, setIngredientsData] = useState<IngredientEntity[]>(
@@ -103,10 +108,21 @@ export function SearchFilter({
 
     useEffect(() => {
         async function fetchData() {
-            // setIngredientsData(await IngredientService.GetAll());
-            setIngredientsData(ingredients);
+            setIngredientsData(await IngredientService.GetAll());
+            setOccasionData(await OccasionService.GetAll());
         }
         fetchData();
+        const localOcacions_Value = localStorage.getItem(localOcacions);
+        if (localOcacions_Value && localOcacions_Value.length > 0) {
+            const value = JSON.parse(localOcacions_Value) as OccasionEntity;
+            if (value) {
+                setSelectedDip([value.id.toString()]);
+                handleChangeFilter('OccasionID', [
+                    value.id,
+                ] as RecipeSearchReq['OccasionID']);
+            }
+            localStorage.removeItem(localOcacions);
+        }
     }, []);
 
     useEffect(() => {
@@ -128,7 +144,7 @@ export function SearchFilter({
 
         setExceptedIngredientsOptions(exceptedIngredientsOptions);
 
-        const ids = ingredients
+        const ids: RecipeSearchReq['IngredientID'] = ingredients
             .map((ingredient) => ingredient.id)
             .filter((id) => id !== undefined);
         handleChangeFilter('IngredientID', ids.length == 0 ? null : ids);
@@ -147,7 +163,7 @@ export function SearchFilter({
         );
         setSelectedIngredientsOptions(selectedIngredientsOptions);
 
-        const ids = ingredients
+        const ids: RecipeSearchReq['ExceptIngredientID'] = ingredients
             .map((ingredient) => ingredient.id)
             .filter((id) => id !== undefined);
         handleChangeFilter('ExceptIngredientID', ids.length == 0 ? null : ids);
@@ -167,7 +183,10 @@ export function SearchFilter({
             handleChangeFilter('TotalTime', null);
         } else {
             setSelectedTime(newValue);
-            handleChangeFilter('TotalTime', parseInt(newValue));
+            handleChangeFilter(
+                'TotalTime',
+                parseInt(newValue) as RecipeSearchReq['TotalTime']
+            );
         }
     };
 
@@ -185,7 +204,10 @@ export function SearchFilter({
             handleChangeFilter('Calories', null);
         } else {
             setSelectedCalorie(newValue);
-            handleChangeFilter('Calories', JSON.parse(newValue));
+            handleChangeFilter(
+                'Calories',
+                JSON.parse(newValue) as RecipeSearchReq['Calories']
+            );
         }
     };
 
@@ -193,6 +215,7 @@ export function SearchFilter({
 
     //#region filter Dịp
     const [selectedDip, setSelectedDip] = useState<string[]>([]);
+    const [occasionData, setOccasionData] = useState<OccasionEntity[]>([]);
 
     const handleChangeDip = (event: any) => {
         const newValue = event.target.value;
@@ -204,9 +227,13 @@ export function SearchFilter({
         }
         setSelectedDip(newSelectedDip);
 
+        const updateData: RecipeSearchReq['OccasionID'] = newSelectedDip.map(
+            (dip) => parseInt(dip)
+        );
+
         handleChangeFilter(
             'OccasionID',
-            newSelectedDip.length == 0 ? null : newSelectedDip
+            updateData.length == 0 ? null : updateData
         );
     };
 
@@ -220,6 +247,10 @@ export function SearchFilter({
                     justifyContent: 'center',
                     alignItems: 'flex-start',
                     width: '100%',
+                    height: 'inherit',
+                    maxHeight: 'inherit',
+                    overflow: 'auto',
+                    '::-webkit-scrollbar': { display: 'none' },
                 }}
             >
                 <Grid
@@ -266,7 +297,10 @@ export function SearchFilter({
                     item
                     xs={12}
                 >
-                    <CustomAccordion label="Thời gian chuẩn bị">
+                    <CustomAccordion
+                        label="Thời gian chuẩn bị"
+                        expanded
+                    >
                         <RadioGroup
                             value={selectedTime}
                             onChange={handleChangeTime}
@@ -292,20 +326,30 @@ export function SearchFilter({
                     item
                     xs={12}
                 >
-                    <CustomAccordion label="Dịp">
+                    <CustomAccordion
+                        label="Dịp"
+                        expanded
+                    >
                         <FormGroup>
-                            {occasions.map((item) => (
+                            {occasionData.map((item) => (
                                 <FormControlLabel
                                     key={item.id}
                                     value={item.id}
                                     onChange={handleChangeDip}
-                                    control={<Checkbox size="small" />}
+                                    control={
+                                        <Checkbox
+                                            size="small"
+                                            checked={selectedDip.includes(
+                                                item.id.toString()
+                                            )}
+                                        />
+                                    }
                                     label={
                                         <Typography variant="body2">
                                             {item.name}
                                         </Typography>
                                     }
-                                    onClick={handleChangeTime}
+                                    onClick={handleChangeDip}
                                 />
                             ))}
                         </FormGroup>
@@ -316,7 +360,10 @@ export function SearchFilter({
                     item
                     xs={12}
                 >
-                    <CustomAccordion label="Calorie/phần">
+                    <CustomAccordion
+                        label="Calorie/phần"
+                        expanded
+                    >
                         <RadioGroup
                             value={selectedCalorie}
                             onChange={handleChangeCalorie}

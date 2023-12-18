@@ -19,7 +19,7 @@ export default function useFirebaseImage(path: string | undefined) {
                 } else {
                     url = url.replace(
                         'https://firebasestorage.googleapis.com',
-                        'https://ik.imagekit.io/5pqzgqjalh/tr:q-1'
+                        'https://ik.imagekit.io/5pqzgqjalh/tr:q-100'
                     );
                     setImage(url);
                 }

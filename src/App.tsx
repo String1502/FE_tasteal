@@ -13,6 +13,7 @@ import ColorModeContext from './lib/contexts/ColorModeContext';
 import SnackbarProvider from './lib/contexts/snackbarContext';
 import { auth } from './lib/firebase/config';
 import useTastealTheme from './lib/hooks/useTastealTheme';
+import { OccasionEntity } from './lib/models/entities/OccasionEntity/OccasionEntity';
 import { AllPartner } from './pages/AllPartner';
 import CreateRecipe from './pages/CreateRecipe';
 import ForgotPass from './pages/ForgotPass';
@@ -43,6 +44,7 @@ type AppWrapperProps = {
     user?: User;
     handleLogin: (isUserSignedIn?: boolean, user?: User) => void;
   };
+  currentOccasion?: OccasionEntity;
 };
 
 function AppWrapper({

@@ -13,5 +13,5 @@ export type RecipeReq = {
     is_private?: boolean;
     author?: string;
     ingredients?: Recipe_IngredientReq[];
-    directions?: RecipeDirectionReq[];
+    direction?: RecipeDirectionReq[];
 };

@@ -1,5 +1,6 @@
 import { User } from 'firebase/auth';
 import React from 'react';
+import { OccasionEntity } from '../models/entities/OccasionEntity/OccasionEntity';
 
 export type AppContextState = {
     handleSpinner: (value: boolean) => void;
@@ -8,6 +9,7 @@ export type AppContextState = {
         user?: User;
         handleLogin: (isUserSignedIn?: boolean, user?: User) => void;
     };
+    currentOccasion?: OccasionEntity;
 };
 const AppContext = React.createContext<AppContextState>({
     handleSpinner: () => {},
@@ -16,6 +18,7 @@ const AppContext = React.createContext<AppContextState>({
         user: undefined,
         handleLogin: () => {},
     },
+    currentOccasion: undefined,
 });
 
 export default AppContext;

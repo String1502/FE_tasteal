@@ -1,5 +1,6 @@
-import { Box, CircularProgress, Typography } from '@mui/material';
+import { Typography } from '@mui/material';
 import InfiniteScroll from 'react-infinite-scroll-component';
+import LoaderInfiniteScroll from './LoaderInfiniteScroll';
 
 export function SearchInfiniteScroll({
     loadNext,
@@ -20,33 +21,7 @@ export function SearchInfiniteScroll({
             hasMore={!end}
             loader={
                 <>
-                    <Box
-                        sx={{
-                            width: '100%',
-                            display: 'flex',
-                            justifyContent: 'center',
-                            alignItems: 'center',
-                            gap: 2,
-                            p: 2,
-                            py: 4,
-                        }}
-                    >
-                        <CircularProgress
-                            size={24}
-                            sx={{
-                                color: 'grey.400',
-                            }}
-                        />
-                        <Typography
-                            variant="body1"
-                            fontWeight={'bold'}
-                            sx={{
-                                color: 'grey.400',
-                            }}
-                        >
-                            Chờ một chút...
-                        </Typography>
-                    </Box>
+                    <LoaderInfiniteScroll />
                 </>
             }
             endMessage={
@@ -54,13 +29,16 @@ export function SearchInfiniteScroll({
                     <Typography
                         variant="body1"
                         align="center"
+                        fontWeight={'bold'}
                         sx={{
                             width: '100%',
                             mt: 4,
-                            color: 'grey.400',
+                            color: 'grey.500',
                         }}
                     >
-                        Không còn công thức phù hợp! :(
+                        {dataLenght == 0
+                            ? 'Hệ thống chưa có công thức phù hợp!'
+                            : 'Đã hiển thị toàn bộ công thức phù hợp!'}
                     </Typography>
                 </>
             }

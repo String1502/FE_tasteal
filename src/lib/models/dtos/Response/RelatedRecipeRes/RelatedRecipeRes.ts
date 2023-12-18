@@ -1,5 +1,6 @@
 import { RecipeEntity } from '@/lib/models/entities/RecipeEntity/RecipeEntity';
 import { AuthorRes } from '../AuthorRes/AuthorRes';
+import { Recipe_IngredientEntity } from '@/lib/models/entities/Recipe_IngredientEntity/Recipe_IngredientEntity';
 
 export type RelatedRecipeRes = {
     id: RecipeEntity['id'];
@@ -7,7 +8,7 @@ export type RelatedRecipeRes = {
     image: RecipeEntity['image'];
     totalTime: RecipeEntity['totalTime'];
     rating: RecipeEntity['rating'];
-    ingredientAmount: number;
+    ingredientAmount: Recipe_IngredientEntity['amount_per_serving'];
     author: AuthorRes;
 };
 

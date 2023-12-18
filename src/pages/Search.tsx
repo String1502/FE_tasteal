@@ -1,4 +1,11 @@
-import { Box, Container, Grid, Stack, Typography } from '@mui/material';
+import {
+    Box,
+    Container,
+    Grid,
+    Stack,
+    Typography,
+    useTheme,
+} from '@mui/material';
 import { CheckBoxButton } from '../components/ui/search/CheckBoxButton.tsx';
 import { PrimaryCard } from '../components/common/card/PrimaryCard.tsx';
 import { SearchFilter } from '../components/ui/search/SearchFilter.tsx';
@@ -60,6 +67,7 @@ function Search() {
         loadNext,
         end,
     } = useSearchRecipe(viewportItemAmount);
+    const theme = useTheme();
 
     return (
         <Layout withFooter={false}>
@@ -70,7 +78,7 @@ function Search() {
                         spacing={4}
                         sx={{
                             justifyContent: 'center',
-                            alignItems: 'flex-start',
+                            alignItems: 'stretch',
                             my: 4,
                         }}
                     >
@@ -94,9 +102,21 @@ function Search() {
                             lg={3}
                             sx={{ mt: 2 }}
                         >
-                            <SearchFilter
-                                handleChangeFilter={handleChangeFilter}
-                            />
+                            <Box
+                                sx={{
+                                    position: {
+                                        xs: 'static',
+                                        lg: 'sticky',
+                                    },
+                                    top: theme.spacing(8),
+                                    maxHeight: { lg: '90vh' },
+                                    height: 'auto',
+                                }}
+                            >
+                                <SearchFilter
+                                    handleChangeFilter={handleChangeFilter}
+                                />
+                            </Box>
                         </Grid>
 
                         <Grid
