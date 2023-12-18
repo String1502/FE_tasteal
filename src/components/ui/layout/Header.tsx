@@ -19,14 +19,7 @@ import {
   useScrollTrigger,
   useTheme,
 } from '@mui/material';
-import React, {
-  useCallback,
-  useContext,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from 'react';
+import { useCallback, useContext, useMemo, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { CustomCountDown } from './CustomCountDown';
 import { TastealAppBar } from './TastealAppBar';
@@ -57,14 +50,14 @@ export function Header(props: Props) {
   const { window_ } = props;
 
   // Dùng cho đổi theme
-  const colorMode = React.useContext(ColorModeContext);
+  const colorMode = useContext(ColorModeContext);
   const theme = useTheme();
   const navigate = useNavigate();
   const [snackbarAlert] = useSnackbarService();
 
   const { login } = useContext(AppContext);
 
-  const [mobileOpen, setMobileOpen] = React.useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
 
   const handleDrawerToggle = useCallback(() => {
     setMobileOpen((prevState) => !prevState);

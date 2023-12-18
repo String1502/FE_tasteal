@@ -57,7 +57,7 @@ export function PrimaryCard({
   useEffect(() => {
     async function fetchData(uid: string) {
       try {
-        const cookbooks = await CookbookService.GetCookbooksByAccountId(uid);
+        const cookbooks = await CookbookService.GetAllCookBookByAccountId(uid);
         setCookbooks(cookbooks);
       } catch (error) {
         console.log(error);

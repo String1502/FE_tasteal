@@ -11,12 +11,15 @@ export const ApiPath = `${ApiBaseUrl}${ApiVersion}`;
 export const ApiEndPoint = {
   //
   // Cart
-  GetAllCartByAccountId: 'Cart/getall',
+  GetAllCartByAccountId: 'Cart/allcart',
   DeleteAllCartByAccountId: 'Cart/allcart',
   UpdateCart: 'Cart/servingsize',
   GetCartItemByCartId: 'Cart/cartitem',
   DeleteCartById: 'Cart/cart',
   UpdateCartItem: 'Cart/cartitemstatus',
+  GetPersonalCartsByUserId: 'Cart/personalcarts',
+  AddPersonalCart: 'Cart/personalcart',
+  UpdatePersonalCart: 'Cart/personalcart',
   //
   // CookBook
   GetAllCookBookByAccountId: 'CookBook/cookbook',
