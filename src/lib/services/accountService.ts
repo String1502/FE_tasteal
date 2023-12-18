@@ -3,7 +3,6 @@ import { getApiUrl } from '../constants/api';
 import AccountReq from '../models/dtos/Request/AccountReq/AccountReq';
 import { PageFilter } from '../models/dtos/Request/PageFilter/PageFilter';
 import { AccountEntity } from '../models/entities/AccountEntity/AccountEntity';
-import { PageReq } from '../models/dtos/Request/PageReq/PageReq';
 
 const createDebugString = createDebugStringFormatter('AccountService');
 
