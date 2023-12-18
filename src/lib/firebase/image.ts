@@ -1,10 +1,10 @@
 import createCacheAsyncFunction from '@/utils/cache/createCacheAsyncFunction';
 import { createDebugStringFormatter } from '@/utils/debug/formatter';
 import {
-    deleteObject,
-    getDownloadURL,
-    ref,
-    uploadBytes,
+  deleteObject,
+  getDownloadURL,
+  ref,
+  uploadBytes,
 } from 'firebase/storage';
 import { storage } from './config';
 
@@ -25,17 +25,17 @@ const debugStringFormatter = createDebugStringFormatter(FIREBASE_IMGAGE);
  * @returns {Promise<string>} A promise that resolves with the image url.
  */
 export const resolveImagePathAsync = createCacheAsyncFunction(
-    async (path: string): Promise<string> => {
-        const storageRef = ref(storage, path);
+  async (path: string): Promise<string> => {
+    const storageRef = ref(storage, path);
 
-        try {
-            const url = await getDownloadURL(storageRef);
-            return url;
-        } catch (error) {
-            console.log(debugStringFormatter('Failed to get image url'), error);
-            return '';
-        }
+    try {
+      const url = await getDownloadURL(storageRef);
+      return url;
+    } catch (error) {
+      console.log(debugStringFormatter('Failed to get image url'), error);
+      return '';
     }
+  }
 );
 
 /**
@@ -46,21 +46,19 @@ export const resolveImagePathAsync = createCacheAsyncFunction(
  * @return {Promise<string>} The full path of the uploaded image.
  */
 export async function uploadImage(
-    file: File,
-    ...path: string[]
+  file: File,
+  ...path: string[]
 ): Promise<string> {
-    try {
-        const storageRef = ref(storage, path.join('/'));
-        const snapshot = await uploadBytes(storageRef, file);
-        console.log(debugStringFormatter('Uploaded a blob or file!'), snapshot);
-        return snapshot.ref.fullPath;
-    } catch (e) {
-        console.log(
-            debugStringFormatter('Failed to upload a blob or file!'),
-            e
-        );
-        return '';
-    }
+  try {
+    const storageRef = ref(storage, path.join('/'));
+    deleteImage;
+    const snapshot = await uploadBytes(storageRef, file);
+    console.log(debugStringFormatter('Uploaded a blob or file!'), snapshot);
+    return snapshot.ref.fullPath;
+  } catch (e) {
+    console.log(debugStringFormatter('Failed to upload a blob or file!'), e);
+    return '';
+  }
 }
 
 /**
@@ -71,6 +69,6 @@ export async function uploadImage(
  * @return {Promise<void>} A promise that resolves when the image is deleted.
  */
 export async function deleteImage(...path: string[]): Promise<void> {
-    const storageRef = ref(storage, path.join('/'));
-    await deleteObject(storageRef);
+  const storageRef = ref(storage, path.join('/'));
+  await deleteObject(storageRef);
 }

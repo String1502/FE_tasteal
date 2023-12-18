@@ -9,46 +9,47 @@ export const ApiPath = `${ApiBaseUrl}${ApiVersion}`;
  * List of API endpoints.
  */
 export const ApiEndPoint = {
-    //
-    // Cart
-    GetAllCartByAccountId: 'Cart/getall',
-    DeleteAllCartByAccountId: 'Cart/allcart',
-    UpdateCart: 'Cart/servingsize',
-    GetCartItemByCartId: 'Cart/cartitem',
-    DeleteCartById: 'Cart/cart',
-    UpdateCartItem: 'Cart/cartitemstatus',
-    //
-    // CookBook
-    GetAllCookBookByAccountId: 'CookBook/cookbook',
-    DeleteCookBookById: 'CookBook/cookbook',
-    AddCookBook: 'CookBook/cookbook',
-    GetCookBookRecipeByCookBookId: 'CookBook/cookbook-recipe',
-    DeleteCookBookRecipe: 'CookBook/cookbook-recipe',
-    MoveRecipeToNewCookbook: 'CookBook/recipetonewcookbook',
-    UpdateCookBookName: 'CookBook/namecookbook',
-    AddRecipeToCookBook: 'CookBook/recipetocookbook',
-    //
-    // Home
-    GetOccasion: 'Home/getoccasion',
-    GetRecipeByDateTime: 'Home/recipebydatetime',
-    GetRecipeByRating: 'Home/recipebyrating',
-    GetMostContributedAccounts: 'Home/authors',
-    //
-    // Ingredient
-    GetAllIngredients: 'Ingredient/getall',
-    //
-    // Recipe
-    CreateRecipe: 'Recipe/Add',
-    SearchRecipe: 'Recipe/Search',
-    GetAllRecipe: 'Recipe/getall',
-    GetRecipe: 'Recipe/GetRecipe',
-    GetKeyWords: 'Recipe/keywords',
-    DeleteRecipe: 'Recipe/recipe',
-    //
-    // USER
-    SignUpUser: 'User/signup',
-    UpdateUser: 'User/updateuser',
-    GetAllUser: 'User/allusers',
+  //
+  // Cart
+  GetAllCartByAccountId: 'Cart/getall',
+  DeleteAllCartByAccountId: 'Cart/allcart',
+  UpdateCart: 'Cart/servingsize',
+  GetCartItemByCartId: 'Cart/cartitem',
+  DeleteCartById: 'Cart/cart',
+  UpdateCartItem: 'Cart/cartitemstatus',
+  //
+  // CookBook
+  GetAllCookBookByAccountId: 'CookBook/cookbook',
+  DeleteCookBookById: 'CookBook/cookbook',
+  AddCookBook: 'CookBook/cookbook',
+  GetCookBookRecipeByCookBookId: 'CookBook/cookbook-recipe',
+  DeleteCookBookRecipe: 'CookBook/cookbook-recipe',
+  MoveRecipeToNewCookbook: 'CookBook/recipetonewcookbook',
+  UpdateCookBookName: 'CookBook/namecookbook',
+  AddRecipeToCookBook: 'CookBook/recipetocookbook',
+  //
+  // Home
+  GetOccasion: 'Home/getoccasion',
+  GetRecipeByDateTime: 'Home/recipebydatetime',
+  GetRecipeByRating: 'Home/recipebyrating',
+  GetMostContributedAccounts: 'Home/authors',
+  //
+  // Ingredient
+  GetAllIngredients: 'Ingredient/getall',
+  //
+  // Recipe
+  CreateRecipe: 'Recipe/Add',
+  SearchRecipe: 'Recipe/Search',
+  GetAllRecipe: 'Recipe/getall',
+  GetRecipe: 'Recipe/GetRecipe',
+  GetKeyWords: 'Recipe/keywords',
+  DeleteRecipe: 'Recipe/recipe',
+  //
+  // USER
+  SignUpUser: 'User/signup',
+  UpdateUser: 'User/updateuser',
+  GetAllUser: 'User/allusers',
+  GetUserByUid: 'User',
     GetCurrentUser: 'User',
 } as const;
 
@@ -64,5 +65,5 @@ export type ApiEndPoint = keyof typeof ApiEndPoint;
  * @returns Full url path
  */
 export function getApiUrl(endpoint: ApiEndPoint) {
-    return ApiPath + ApiEndPoint[endpoint];
+  return ApiPath + ApiEndPoint[endpoint];
 }

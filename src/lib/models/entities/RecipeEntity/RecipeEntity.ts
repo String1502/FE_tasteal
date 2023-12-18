@@ -7,7 +7,7 @@ export type RecipeEntity = {
     id: number;
     name?: string;
     rating: number;
-    totalTime?: Date;
+    totalTime: number;
     active_time?: Date;
     serving_size: number;
     introduction?: string;

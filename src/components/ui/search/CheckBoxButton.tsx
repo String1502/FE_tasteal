@@ -4,6 +4,8 @@ import { TuKhoa } from '../../../pages/Search';
 const sx = {
     borderRadius: '40px',
     height: '35px',
+    border: 1,
+    borderColor: 'primary.main',
 };
 
 const CustomButton = ({
@@ -32,33 +34,31 @@ const CustomButton = ({
 };
 
 export function CheckBoxButton({
-    value,
-    label,
+    item,
     handleChangeTuKhoa,
 }: {
-    value: boolean;
-    label: string;
+    item: TuKhoa;
     handleChangeTuKhoa: (tukhoa: TuKhoa) => void;
 }) {
     return (
         <>
             <Checkbox
-                value={value}
+                checked={item.value}
                 onChange={(e) => {
                     handleChangeTuKhoa({
-                        keyword: label,
+                        ...item,
                         value: e.target.checked,
                     });
                 }}
                 icon={
                     <CustomButton
-                        label={label}
+                        label={item.keyword}
                         variant="outlined"
                     />
                 }
                 checkedIcon={
                     <CustomButton
-                        label={label}
+                        label={item.keyword}
                         variant="contained"
                         color="white"
                     />

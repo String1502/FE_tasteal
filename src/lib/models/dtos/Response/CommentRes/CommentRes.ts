@@ -1,5 +1,7 @@
+import { AccountEntity } from '@/lib/models/entities/AccountEntity/AccountEntity';
+
 export type CommentRes = {
-  uid: string;
-  name: string;
-  comment: string;
+    uid: AccountEntity['uid'];
+    name: AccountEntity['name'];
+    comment: string;
 };
