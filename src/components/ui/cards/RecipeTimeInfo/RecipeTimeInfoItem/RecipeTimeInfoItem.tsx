@@ -3,7 +3,7 @@ import { Typography } from '@mui/material';
 import { FC } from 'react';
 
 export type RecipeTimeInfoItemProps = {
-    time: string | number;
+    time: number;
     type: 'total' | 'active';
 };
 
@@ -14,7 +14,7 @@ const RecipeTimeInfoItem: FC<RecipeTimeInfoItemProps> = ({ time, type }) => {
                 typography={'h6'}
                 fontWeight={'bolder'}
             >
-                {dateTimeToMinutes(time)} min
+                {time} phút
             </Typography>
 
             {type === 'total' ? (
