@@ -1,23 +1,61 @@
+
+import { FormatQuoteRounded, LanguageRounded } from "@mui/icons-material";
+import Layout from "../layout/Layout";
+import { PrimaryCard } from "../components/common/card/PrimaryCard.tsx";
+import { RecipeEntity } from "@/lib/models/entities/RecipeEntity/RecipeEntity.ts";
+import UserEditForm from "./UserEditForm";
 import { useContext, useEffect, useState } from 'react';
 import { Container, Grid, Typography, Button, Box, Link } from '@mui/material';
+
 import {
     EditRounded,
-    FormatQuoteRounded,
-    LanguageRounded,
+  
 } from '@mui/icons-material';
-import Layout from '../layout/Layout';
-import { PrimaryCard } from '../components/common/card/PrimaryCard.tsx';
-import { RecipeEntity } from '@/lib/models/entities/RecipeEntity/RecipeEntity.ts';
-import UserEditForm from './UserEditForm';
+
 import MostContributedAuthors_Component from '@/components/ui/home/MostContributedAuthors_Component';
 import RecipeService from '@/lib/services/recipeService.ts';
 import { useNavigate } from 'react-router-dom';
 import { PageRoute } from '@/lib/constants/common.ts';
 import { localStorageAccountId } from '@/components/ui/home/AuthorCard.tsx';
 import AppContext from '@/lib/contexts/AppContext.ts';
+import UserService from '../lib/services/userService.ts';
+import { AccountEntity } from '../lib/models/entities/AccountEntity/AccountEntity.ts';
+import useFirebaseImage from '@/lib/hooks/useFirebaseImage';
+
+
 
 const itemsToAdd = 4;
 const Partner = () => {
+    const [currentUser, setCurrentUser] = useState<AccountEntity>(null);
+    const { login } = useContext(AppContext);
+    const [userId, setUserId] = useState('e7GV1dFBFnR9yYN3pcUI8jdfOpp2');
+    const [name, setName] = useState('');
+    const [image, setImage] = useState('');
+    const [description, setDescription] = useState('');
+    const [philosophy, setPhilosophy] = useState('');
+    const [website, setWebsite] = useState('');
+    const [slogan, setSlogan] = useState('');
+    // Update the image state when the firebaseImageUrl changes
+    useEffect(() => {
+        const fetchData = async () => {
+          try {
+            const fetchUser = await UserService.getCurrentUser(userId);
+            setCurrentUser(fetchUser);
+            setName(fetchUser.name);
+            setImage(fetchUser.avatar);
+            setDescription(fetchUser.introduction);
+            setPhilosophy(fetchUser.quote);
+            setWebsite(fetchUser.link);
+            setSlogan(fetchUser.slogan); 
+            console.log(fetchUser);
+          } catch (error) {
+            console.log(error);
+           
+          } 
+        };
+        fetchData();
+      }, []);
+ 
     const navigate = useNavigate();
     const {
         login: { user },
@@ -26,16 +64,7 @@ const Partner = () => {
         []
     );
     const [visibleItems, setVisibleItems] = useState(8);
-    const [name, setName] = useState('Healer');
-    const [image, setImage] = useState(
-        'https://inkythuatso.com/uploads/thumbnails/800/2023/03/1-hinh-anh-ngay-moi-hanh-phuc-sieu-cute-inkythuatso-09-13-35-50.jpg'
-    );
-    const [description, setDescription] = useState('Healer is so handsome.');
-    const [philosophy, setPhilosophy] = useState('Healer is healer');
-    const [website, setWebsite] = useState(
-        'https://www.facebook.com/nmhieu.healer'
-    );
-    const [slogan, setSlogan] = useState('Healer always heals');
+  
 
     const [isEditing, setIsEditing] = useState(false);
 
@@ -83,7 +112,6 @@ const Partner = () => {
             console.error('Error loading new release recipes:', error);
         }
     };
-
     return (
         <Layout>
             <Container>
@@ -111,7 +139,7 @@ const Partner = () => {
                                 lg={5}
                             >
                                 <img
-                                    src={image}
+                                    src={useFirebaseImage(image)}
                                     alt="Hình ảnh"
                                     style={{
                                         width: '100%',
@@ -136,7 +164,7 @@ const Partner = () => {
                                         website={website}
                                         slogan={slogan}
                                         onSave={handleSave}
-                                        uid="13b865f7-d6a6-4204-a349-7f379b232f0c"
+                                        uid={userId}
                                         onCancel={() => setIsEditing(false)}
                                     />
                                 ) : (

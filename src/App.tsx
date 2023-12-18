@@ -23,6 +23,7 @@ import MealPlanner from './pages/MealPlanner';
 import MyPantry from './pages/MyPantry';
 import MySavedRecipes from './pages/MySavedRecipes';
 import Partner from './pages/Partner';
+
 import Search from './pages/Search';
 import SignIn from './pages/SignIn';
 import SignUp from './pages/SignUp';

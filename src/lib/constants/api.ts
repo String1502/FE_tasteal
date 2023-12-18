@@ -50,6 +50,7 @@ export const ApiEndPoint = {
   UpdateUser: 'User/updateuser',
   GetAllUser: 'User/allusers',
   GetUserByUid: 'User',
+    GetCurrentUser: 'User',
 } as const;
 
 /**
