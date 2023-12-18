@@ -1,9 +1,11 @@
 import {
     Box,
+    Button,
     Container,
     Grid,
     Stack,
     Typography,
+    useScrollTrigger,
     useTheme,
 } from '@mui/material';
 import { CheckBoxButton } from '../components/ui/search/CheckBoxButton.tsx';
@@ -15,6 +17,10 @@ import { RecipeEntity } from '@/lib/models/entities/RecipeEntity/RecipeEntity.ts
 import { useSearchRecipe } from '../components/ui/search/useSearchRecipe.tsx';
 import { SearchInfiniteScroll } from '../components/ui/search/SearchInfiniteScroll.tsx';
 import { KeyWordRes } from '@/lib/models/dtos/Response/KeyWordRes/KeyWordRes.ts';
+import { useEffect, useState } from 'react';
+import { headerHeight } from '@/components/ui/layout/Header.tsx';
+import { CloseRounded } from '@mui/icons-material';
+import { isRecipeSearchReqValid } from '@/lib/models/dtos/Request/RecipeSearchReq/RecipeSearchReq.ts';
 
 export type TuKhoa = KeyWordRes & {
     value: boolean;
@@ -58,7 +64,8 @@ const viewportItemAmount = 12;
 function Search() {
     const {
         recipes,
-        // filter,
+        filter,
+        resetFilter,
         handleChangeFilter,
         textSearch,
         handleChangeTextSearch,
@@ -68,6 +75,20 @@ function Search() {
         end,
     } = useSearchRecipe(viewportItemAmount);
     const theme = useTheme();
+    const trigger = useScrollTrigger({
+        target: window ? window : undefined,
+    });
+
+    const [scrollPos, setScrollPos] = useState(0);
+    useEffect(() => {
+        const handleScroll = () => {
+            setScrollPos(window.scrollY);
+        };
+        window.addEventListener('scroll', handleScroll);
+        return () => {
+            window.removeEventListener('scroll', handleScroll);
+        };
+    }, []);
 
     return (
         <Layout withFooter={false}>
@@ -108,13 +129,22 @@ function Search() {
                                         xs: 'static',
                                         lg: 'sticky',
                                     },
-                                    top: theme.spacing(8),
-                                    maxHeight: { lg: '90vh' },
+                                    top: `${0}px`,
+                                    transform: {
+                                        lg: !trigger
+                                            ? scrollPos < headerHeight + 68
+                                                ? `translateY(${0}px)`
+                                                : `translateY(${headerHeight}px)`
+                                            : `translateY(${0}px)`,
+                                    },
+                                    transition: 'transform 0.2s ease-in-out',
+                                    maxHeight: { lg: '100dvh' },
                                     height: 'auto',
                                 }}
                             >
                                 <SearchFilter
                                     handleChangeFilter={handleChangeFilter}
+                                    filter={filter}
                                 />
                             </Box>
                         </Grid>
@@ -125,26 +155,59 @@ function Search() {
                             lg={9}
                             sx={{ mt: 2 }}
                         >
-                            <Typography
-                                variant="h5"
-                                sx={{ fontWeight: 'bold' }}
+                            <Box
+                                sx={{
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                }}
                             >
-                                Công thức phổ biến
-                            </Typography>
+                                <Typography
+                                    variant="h5"
+                                    sx={{ fontWeight: 'bold' }}
+                                >
+                                    Công thức phổ biến
+                                </Typography>
+
+                                {isRecipeSearchReqValid(filter) && (
+                                    <Button
+                                        sx={{ ml: 2 }}
+                                        variant="outlined"
+                                        onClick={resetFilter}
+                                        startIcon={
+                                            <CloseRounded fontSize="small" />
+                                        }
+                                    >
+                                        <Typography
+                                            variant="caption"
+                                            color={'primary'}
+                                            sx={{
+                                                fontWeight: 'bold',
+                                                textTransform: 'none',
+                                            }}
+                                        >
+                                            Đặt lại filter
+                                        </Typography>
+                                    </Button>
+                                )}
+                            </Box>
 
                             <Stack
                                 flexWrap={'wrap'}
                                 direction="row"
                                 sx={{ my: 2 }}
                             >
-                                {tuKhoas.map((item) => (
-                                    <CheckBoxButton
-                                        key={item.keyword}
-                                        label={item.keyword}
-                                        value={item.value}
-                                        handleChangeTuKhoa={handleChangeTuKhoa}
-                                    />
-                                ))}
+                                {tuKhoas.map(
+                                    (item) =>
+                                        item && (
+                                            <CheckBoxButton
+                                                key={item.keyword}
+                                                item={item}
+                                                handleChangeTuKhoa={
+                                                    handleChangeTuKhoa
+                                                }
+                                            />
+                                        )
+                                )}
                             </Stack>
 
                             <SearchInfiniteScroll

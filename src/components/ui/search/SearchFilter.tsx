@@ -94,8 +94,10 @@ const CustomAccordion = ({
 };
 
 export function SearchFilter({
+    filter,
     handleChangeFilter,
 }: {
+    filter: RecipeSearchReq;
     handleChangeFilter<T extends keyof RecipeSearchReq>(
         type: T,
         value: RecipeSearchReq[T]
@@ -172,7 +174,9 @@ export function SearchFilter({
     //#endregion
 
     //#region filter Thời gian
-    const [selectedTime, setSelectedTime] = useState<string | null>(null);
+    const [selectedTime, setSelectedTime] = useState<string | null>(
+        filter.TotalTime?.toString() ?? null
+    );
 
     const handleChangeTime = (event: any) => {
         const newValue = event.target.value;
@@ -194,7 +198,9 @@ export function SearchFilter({
 
     //#region filter Calorie
 
-    const [selectedCalorie, setSelectedCalorie] = useState<string | null>(null);
+    const [selectedCalorie, setSelectedCalorie] = useState<string | null>(
+        filter.Calories ? JSON.stringify(filter.Calories) : null
+    );
 
     const handleChangeCalorie = (event: any) => {
         const newValue = event.target.value;
@@ -214,7 +220,11 @@ export function SearchFilter({
     //#endregion
 
     //#region filter Dịp
-    const [selectedDip, setSelectedDip] = useState<string[]>([]);
+    const [selectedDip, setSelectedDip] = useState<string[]>(
+        filter.OccasionID
+            ? filter.OccasionID.map((item) => item.toString())
+            : []
+    );
     const [occasionData, setOccasionData] = useState<OccasionEntity[]>([]);
 
     const handleChangeDip = (event: any) => {
@@ -273,6 +283,7 @@ export function SearchFilter({
                         </Box>
                         <IngredientAutocomplete
                             ingredients={selectedIngredientsOptions}
+                            ingredientIds={filter.IngredientID}
                             handleChange={handleChangeSelectedIngredients}
                         />
 
@@ -288,6 +299,7 @@ export function SearchFilter({
                         </Box>
                         <IngredientAutocomplete
                             ingredients={exceptedIngredientsOptions}
+                            ingredientIds={filter.ExceptIngredientID}
                             handleChange={handleChangeExceptedIngredients}
                         />
                     </CustomAccordion>
@@ -309,7 +321,18 @@ export function SearchFilter({
                                 <FormControlLabel
                                     key={item.value}
                                     value={item.value}
-                                    control={<Radio size="small" />}
+                                    control={
+                                        <Radio
+                                            size="small"
+                                            checked={
+                                                selectedTime
+                                                    ? selectedTime.includes(
+                                                          item.value.toString()
+                                                      )
+                                                    : false
+                                            }
+                                        />
+                                    }
                                     label={
                                         <Typography variant="body2">
                                             {item.label}
@@ -372,7 +395,18 @@ export function SearchFilter({
                                 <FormControlLabel
                                     key={JSON.stringify(item)}
                                     value={JSON.stringify(item)}
-                                    control={<Radio size="small" />}
+                                    control={
+                                        <Radio
+                                            size="small"
+                                            checked={
+                                                selectedCalorie
+                                                    ? selectedCalorie.includes(
+                                                          JSON.stringify(item)
+                                                      )
+                                                    : false
+                                            }
+                                        />
+                                    }
                                     label={
                                         <Typography variant="body2">
                                             {item.min > 0

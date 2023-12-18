@@ -7,16 +7,13 @@ import {
     AppBar,
     AppBarProps,
     Box,
-    Container,
     Divider,
     Drawer,
-    Grid,
     List,
     ListItem,
     ListItemButton,
     ListItemText,
     Slide,
-    Stack,
     Toolbar,
     Typography,
     useScrollTrigger,
@@ -32,16 +29,14 @@ import React, {
 } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { TastealAppBar } from './TastealAppBar';
-import { FlareRounded } from '@mui/icons-material';
-import Countdown from 'react-countdown';
-import moment from 'moment';
-import * as momentLunar from 'moment-lunar';
+import { CustomCountDown } from './CustomCountDown';
 
 interface Props {
     window_?: () => Window;
 }
 
 const drawerWidth = 240;
+export const headerHeight = 64 + 50;
 
 /**
  * Define local message constants
@@ -211,19 +206,9 @@ export function Header(props: Props) {
         window_ !== undefined ? () => window_().document.body : undefined;
 
     const boxRef = useRef<HTMLDivElement>(null);
-    const [scrollY, setScrollY] = useState(0);
     const trigger = useScrollTrigger({
         target: window_ ? window_() : undefined,
     });
-    useEffect(() => {
-        const handleScroll = () => {
-            setScrollY(window.scrollY);
-        };
-        window.addEventListener('scroll', handleScroll);
-        return () => {
-            window.removeEventListener('scroll', handleScroll);
-        };
-    }, []);
 
     return (
         <Box
@@ -281,147 +266,4 @@ export function Header(props: Props) {
     /* <Button color="inherit" onClick={colorMode.toggleColorMode}>
   Login
 </Button>; */
-}
-
-export function CustomCountDown() {
-    const { currentOccasion } = useContext(AppContext);
-    const renderer = ({ hours, minutes, seconds, completed }) => {
-        if (completed) {
-            // Render a completed state
-            return <span>huy</span>;
-        } else {
-            // Render a countdown
-            const array = [hours, minutes, seconds];
-            return (
-                <Stack
-                    gap={0.4}
-                    direction={'row'}
-                    divider={<>:</>}
-                >
-                    {array.map((item, i) => (
-                        <Box
-                            key={i}
-                            sx={{
-                                display: 'flex',
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                                aspectRatio: '1/1',
-                                borderRadius: 2,
-                                backgroundColor: 'white',
-                                width: '36px',
-                            }}
-                        >
-                            <Typography
-                                variant="body2"
-                                color="primary"
-                                sx={{ fontWeight: 800 }}
-                            >
-                                {item}
-                            </Typography>
-                        </Box>
-                    ))}
-                </Stack>
-            );
-        }
-    };
-
-    const [dateCountDown, setDateCountDown] = useState<Date | undefined>(
-        undefined
-    );
-
-    useEffect(() => {
-        if (currentOccasion) {
-            // let date = moment()
-            //     .year(currentOccasion.start_at.getFullYear())
-            //     .month(currentOccasion.start_at.getMonth())
-            //     .date(currentOccasion.start_at.getDate());
-            // console.log(date);
-            // if (currentOccasion.is_lunar_date && date) {
-            //     date = date.solar();
-            // }
-            // setDateCountDown(date.toDate());
-        }
-    }, [currentOccasion]);
-    console.log(dateCountDown);
-
-    return (
-        <Box
-            sx={{
-                background:
-                    'linear-gradient(45deg, rgba(14,92,173,1) 0%, rgba(121,241,164,1) 100%)',
-                width: '100%',
-            }}
-        >
-            <Container>
-                <Grid
-                    container
-                    justifyContent={'space-between'}
-                    alignItems={'center'}
-                    sx={{
-                        py: 1.5,
-                    }}
-                    spacing={3}
-                    wrap="nowrap"
-                >
-                    <Grid
-                        item
-                        xs={7}
-                        sm={8}
-                        md={9}
-                        lg={10}
-                    >
-                        <Box
-                            sx={{
-                                display: 'flex',
-                                alignItems: 'center',
-                                gap: 1,
-                            }}
-                        >
-                            <FlareRounded
-                                sx={{ color: 'white' }}
-                                fontSize="small"
-                            />
-                            <Typography
-                                variant="body1"
-                                fontWeight={900}
-                                sx={{
-                                    color: 'white',
-                                    whiteSpace: 'nowrap',
-                                }}
-                            >
-                                {currentOccasion?.name ?? 'Tasteal'}
-                            </Typography>
-                            <Typography
-                                variant="body1"
-                                fontWeight={700}
-                                sx={{
-                                    color: 'white',
-                                    textOverflow: 'ellipsis',
-                                    whiteSpace: 'nowrap',
-                                    overflow: 'hidden',
-                                }}
-                            >
-                                {currentOccasion?.description ??
-                                    'Tìm kiếm mọi công thức nấu ăn...'}
-                            </Typography>
-                        </Box>
-                    </Grid>
-
-                    <Grid
-                        item
-                        xs={'auto'}
-                    >
-                        <Box sx={{}}>
-                            <Countdown
-                                key={dateCountDown?.toString()}
-                                date={dateCountDown}
-                                renderer={renderer}
-                                zeroPadTime={2}
-                            />
-                        </Box>
-                    </Grid>
-                </Grid>
-            </Container>
-        </Box>
-    );
 }

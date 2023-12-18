@@ -112,16 +112,32 @@ export function useSearchRecipe(viewportItemAmount: number = 12) {
             setRecipes(newData);
             if (newData.length < viewportItemAmount) setEnd(true);
             else setEnd(false);
-
+            window.scrollTo(0, 50 + 64 + 160);
             handleSpinner(false);
         }
         fetchData();
     }, [filter]);
 
+    function resetFilter() {
+        setFilter(initRecipeSearchReq);
+        setTextSearch('');
+        setTuKhoas((prev) =>
+            prev.map((item) => {
+                return {
+                    ...item,
+                    value: false,
+                };
+            })
+        );
+    }
+
+    console.log(filter);
+
     //#endregion
 
     //#region Từ khóa
     const [tuKhoas, setTuKhoas] = React.useState<TuKhoa[]>([]);
+    console.log(tuKhoas);
 
     const handleChangeTuKhoa = (tukhoa: TuKhoa) => {
         const newTuKhoas = [...tuKhoas].map((item) => {
@@ -162,8 +178,12 @@ export function useSearchRecipe(viewportItemAmount: number = 12) {
     }, [recipes]);
     //#endregion
     return {
-        recipes: recipes.filter(handleTextSearch),
+        recipes:
+            recipes && recipes.length > 0
+                ? recipes.filter(handleTextSearch)
+                : [],
         filter,
+        resetFilter,
         handleChangeFilter,
         textSearch,
         handleChangeTextSearch,
