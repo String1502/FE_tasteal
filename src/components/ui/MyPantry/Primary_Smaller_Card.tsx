@@ -1,5 +1,4 @@
 import { PageRoute } from '@/lib/constants/common';
-import AccountService from '@/lib/services/accountService';
 import { CardActionArea, CardContent, CardProps, Radio } from '@mui/material';
 import { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -9,10 +8,10 @@ import ImageIngredient from './ImageIngredient';
 import { IngredientEntity } from '@/lib/models/entities/IngredientEntity/IngredientEntity';
 import { DoneRounded } from '@mui/icons-material';
 
-export const imgHeight = '200px';
-export const padding = 2;
+export const imgHeight = '100px';
+export const padding = 1;
 
-export function PrimaryCard({
+export function Primary_Smaller_Card({
     ingredient: ingredient,
     saveCheckBoxProps,
     ...props
@@ -47,18 +46,16 @@ export function PrimaryCard({
             </CardActionArea>
 
             <Radio
-                size="12px"
+                size="6px"
                 icon={<span />} // Transparent circle initially
                 checkedIcon={
-                    <DoneRounded sx={{ color: 'black', fontSize: '12px' }} />
+                    <DoneRounded sx={{ color: 'black', fontSize: '6px' }} />
                 } // DoneRounded when checked
                 checked={checked}
                 onClick={handleClick}
                 {...saveCheckBoxProps}
                 sx={{
                     position: 'absolute',
-                    top: padding * 8,
-                    right: padding * 8,
                     zIndex: 1,
                     backgroundColor: checked
                         ? 'rgba(255, 255, 255, 0.8)'
