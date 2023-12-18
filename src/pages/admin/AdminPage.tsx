@@ -29,7 +29,9 @@ const AdminPage: FC = () => {
   );
 
   return (
-    <AdminPageContext.Provider value={{ navigateTo: handleCurrentTabChange }}>
+    <AdminPageContext.Provider
+      value={{ currentTab: currentTabCode, navigateTo: handleCurrentTabChange }}
+    >
       <AdminLayout>
         <CurrentTab />
       </AdminLayout>

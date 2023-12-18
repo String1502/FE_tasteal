@@ -20,10 +20,21 @@ const ingredientColumns: GridColDef[] = [
   {
     field: 'name',
     headerName: 'Tên',
+    flex: 1,
   },
   {
-    field: 'id',
-    headerName: 'ID',
+    field: 'action',
+    type: 'actions',
+    headerName: 'Hành động',
+    flex: 1,
+    renderCell: () => (
+      <Stack direction="row" spacing={1}>
+        <Button variant="contained">Sửa</Button>
+        <Button variant="contained" color="error">
+          Xóa
+        </Button>
+      </Stack>
+    ),
   },
 ];
 
