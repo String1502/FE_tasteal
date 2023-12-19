@@ -1,6 +1,6 @@
 import { useAppSelector } from '@/app/hook';
 import TabCode from '@/lib/enums/AdminTabCode';
-import { Flatware, Home, Settings } from '@mui/icons-material';
+import { Flatware, Home, Person, Settings } from '@mui/icons-material';
 import {
   Box,
   Grid,
@@ -48,16 +48,22 @@ const AdminLayout: FC<PropsWithChildren> = ({ children }) => {
         <Paper elevation={4} sx={{ mt: 1 }}>
           <Box>
             <AdminListButton
+              Icon={Person}
+              label="Người dùng"
+              tabCode={TabCode.UserIndex}
+              checkSelected={checkSelected}
+            />
+            <AdminListButton
               Icon={Flatware}
               label="Nguyên liệu"
               tabCode={TabCode.IngredientIndex}
-              selected={checkSelected(TabCode.IngredientIndex)}
+              checkSelected={checkSelected}
             />
             <AdminListButton
               Icon={Settings}
               label="Cài đặt"
               tabCode={TabCode.Settings}
-              selected={checkSelected(TabCode.Settings)}
+              checkSelected={checkSelected}
             />
           </Box>
         </Paper>

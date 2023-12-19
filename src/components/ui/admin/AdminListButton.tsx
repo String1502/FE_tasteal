@@ -3,21 +3,21 @@ import { navigateTo } from '@/features/admin/adminSlice';
 import TabCode from '@/lib/enums/AdminTabCode';
 import { SvgIconComponent } from '@mui/icons-material';
 import { ListItemButton, ListItemIcon, ListItemText } from '@mui/material';
-import { FC, useCallback } from 'react';
+import { FC, useCallback, useMemo } from 'react';
 
 export type AdminListButtonProps = {
   Icon: SvgIconComponent;
   label: string;
   tabCode: TabCode;
   onClick?: () => void;
-  selected?: boolean;
+  checkSelected?: (tabCode: TabCode) => boolean;
 };
 
 const AdminListButton: FC<AdminListButtonProps> = ({
   Icon,
   label,
   tabCode,
-  selected = false,
+  checkSelected,
 }) => {
   const dispatch = useAppDispatch();
 
@@ -26,6 +26,11 @@ const AdminListButton: FC<AdminListButtonProps> = ({
       dispatch(navigateTo({ tab: tabCode }));
     },
     [dispatch]
+  );
+
+  const selected = useMemo(
+    () => checkSelected(tabCode),
+    [checkSelected, tabCode]
   );
 
   return (
