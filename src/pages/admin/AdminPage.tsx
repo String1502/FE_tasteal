@@ -1,12 +1,12 @@
+import { useAppSelector } from '@/app/hook';
 import AdminLayout from '@/components/ui/layout/AdminLayout';
-import AdminPageContext from '@/lib/contexts/AdminPageContext';
 import TabCode from '@/lib/enums/AdminTabCode';
-import { FC, useCallback, useMemo, useState } from 'react';
+import { FC, useMemo } from 'react';
 import AdminIngredientCreate from './ingredients/AdminIngredientsCreate';
 import { AdminIngredientsIndex } from './ingredients/AdminIngredientsIndex';
 
 const AdminPage: FC = () => {
-  const [currentTabCode, setCurrentTabCode] = useState(TabCode.Dashboard);
+  const currentTabCode = useAppSelector((state) => state.admin.currentTab);
 
   const CurrentTab = useMemo(() => {
     switch (currentTabCode) {
@@ -20,22 +20,10 @@ const AdminPage: FC = () => {
     }
   }, [currentTabCode]);
 
-  const handleCurrentTabChange = useCallback(
-    (code: TabCode) => {
-      if (code === currentTabCode) return;
-      setCurrentTabCode(code);
-    },
-    [currentTabCode]
-  );
-
   return (
-    <AdminPageContext.Provider
-      value={{ currentTab: currentTabCode, navigateTo: handleCurrentTabChange }}
-    >
-      <AdminLayout>
-        <CurrentTab />
-      </AdminLayout>
-    </AdminPageContext.Provider>
+    <AdminLayout>
+      <CurrentTab />
+    </AdminLayout>
   );
 };
 

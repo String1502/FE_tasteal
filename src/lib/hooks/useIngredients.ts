@@ -1,6 +1,12 @@
+import createCacheAsyncFunction from '@/utils/cache/createCacheAsyncFunction';
 import { useEffect, useState } from 'react';
 import { IngredientRes } from '../models/dtos/Response/IngredientRes/IngredientRes';
 import IngredientService from '../services/ingredientService';
+
+/**
+ * Creates a cached async function to fetch all ingredients using the IngredientService.
+ */
+const cacheGet = createCacheAsyncFunction(IngredientService.GetAll);
 
 /**
  * Custom hook to fetch all ingredients from API.
@@ -12,7 +18,7 @@ const useIngredients = (): [IngredientRes[], boolean] => {
 
   useEffect(() => {
     setFetching(true);
-    IngredientService.GetAll()
+    cacheGet()
       .then((ingredients) => {
         setIngredients(ingredients);
       })

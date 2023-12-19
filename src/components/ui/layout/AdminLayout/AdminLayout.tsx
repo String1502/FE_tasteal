@@ -1,11 +1,6 @@
+import { useAppSelector } from '@/app/hook';
 import TabCode from '@/lib/enums/AdminTabCode';
-import useAdminPageContext from '@/lib/hooks/useAdminPageContext';
-import {
-  Flatware,
-  Home,
-  Settings,
-  SvgIconComponent,
-} from '@mui/icons-material';
+import { Flatware, Home, Settings } from '@mui/icons-material';
 import {
   Box,
   Grid,
@@ -16,70 +11,15 @@ import {
   SxProps,
 } from '@mui/material';
 import { FC, PropsWithChildren, useCallback } from 'react';
+import AdminListButton from '../../admin/AdminListButton';
 
 const commonStyle: SxProps = {
   height: '100vh',
 };
 
-type AdminListButtonProps = {
-  Icon: SvgIconComponent;
-  label: string;
-  tabCode: TabCode;
-  onClick?: () => void;
-  selected?: boolean;
-};
-
-const AdminListButton: FC<AdminListButtonProps> = ({
-  Icon,
-  label,
-  tabCode,
-  selected = false,
-}) => {
-  const { navigateTo } = useAdminPageContext();
-
-  const handleNavigate = useCallback(
-    (tabCode: TabCode) => {
-      navigateTo(tabCode);
-    },
-    [navigateTo]
-  );
-
-  return (
-    <ListItemButton
-      onClick={() => handleNavigate(tabCode)}
-      sx={
-        selected
-          ? {
-              backgroundColor: 'primary.light',
-              ':hover': {
-                backgroundColor: 'primary.main',
-              },
-              ':focus': {
-                backgroundColor: 'primary.main',
-              },
-            }
-          : {
-              backgroundColor: 'primary.contrastText',
-            }
-      }
-    >
-      <ListItemIcon>
-        <Icon
-          sx={{ color: selected ? 'primary.contrastText' : 'primary.main' }}
-        />
-      </ListItemIcon>
-      <ListItemText
-        primary={label}
-        primaryTypographyProps={{
-          color: selected ? 'primary.contrastText' : 'primary.main',
-        }}
-      />
-    </ListItemButton>
-  );
-};
-
 const AdminLayout: FC<PropsWithChildren> = ({ children }) => {
-  const { currentTab } = useAdminPageContext();
+  const currentTab = useAppSelector((state) => state.admin.currentTab);
+
   const checkSelected = useCallback(
     (code: TabCode) => currentTab === code,
     [currentTab]

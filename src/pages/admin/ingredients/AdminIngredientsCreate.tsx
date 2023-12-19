@@ -1,8 +1,10 @@
+import { useAppDispatch, useAppSelector } from '@/app/hook';
 import TastealTextField from '@/components/common/textFields/TastealTextField';
 import FormLabel from '@/components/common/typos/FormLabel';
 import FormTitle from '@/components/common/typos/FormTitle';
+import { navigateTo } from '@/features/admin/adminSlice';
 import TabCode from '@/lib/enums/AdminTabCode';
-import useAdminPageContext from '@/lib/hooks/useAdminPageContext';
+import { IngredientRes } from '@/lib/models/dtos/Response/IngredientRes/IngredientRes';
 import { ArrowBack } from '@mui/icons-material';
 import { Autocomplete, Button, IconButton } from '@mui/material';
 import { Stack } from '@mui/system';
@@ -29,11 +31,26 @@ type IngredientCreateFormData = {
 };
 
 const AdminIngredientCreate: FC = () => {
-  const { navigateTo } = useAdminPageContext();
-  const [formData, setFormData] = useState<IngredientCreateFormData>({
-    name: '',
-    type_id: null,
-  });
+  const params: IngredientRes = useAppSelector((state) => state.admin.params);
+  const dispatch = useAppDispatch();
+
+  const [mode, setMode] = useState<'view' | 'create' | 'edit'>(
+    params ? 'edit' : 'create'
+  );
+
+  const [formData, setFormData] = useState<IngredientCreateFormData>(
+    params
+      ? {
+          name: params.name,
+          type_id: 1,
+          // TODO: this somehow don't has type_id
+          // type_id: params.type_id,
+        }
+      : {
+          name: '',
+          type_id: null,
+        }
+  );
 
   const handleSubmit = useCallback(() => {
     console.log(formData);
@@ -47,8 +64,13 @@ const AdminIngredientCreate: FC = () => {
             borderRadius: 4,
             backgroundColor: 'primary.main',
             color: 'primary.contrastText',
+            ':hover': {
+              backgroundColor: 'primary.dark',
+            },
           }}
-          onClick={() => navigateTo(TabCode.IngredientIndex)}
+          onClick={() =>
+            dispatch(navigateTo({ tab: TabCode.IngredientIndex, params: null }))
+          }
         >
           <ArrowBack />
         </IconButton>
@@ -61,6 +83,7 @@ const AdminIngredientCreate: FC = () => {
           <TastealTextField
             label="Tên nguyên liệu"
             placeholder="Tên nguyên liệu"
+            value={formData.name}
             onChange={(e) =>
               setFormData((prev) => ({ ...prev, name: e.target.value }))
             }
@@ -79,6 +102,7 @@ const AdminIngredientCreate: FC = () => {
               <TastealTextField {...params} label="Chọn dịp" />
             )}
             isOptionEqualToValue={(option, value) => option.id === value.id}
+            value={options.find((o) => o.id === formData.type_id)}
             onChange={(_, value) =>
               setFormData((prev) => ({ ...prev, type_id: value?.id }))
             }
@@ -87,7 +111,7 @@ const AdminIngredientCreate: FC = () => {
       </Stack>
 
       <Button variant="contained" onClick={handleSubmit} sx={{ width: 240 }}>
-        Thêm
+        {mode === 'create' ? 'Thêm' : mode === 'edit' ? 'Sửa' : 'Lỗi'}
       </Button>
     </Stack>
   );

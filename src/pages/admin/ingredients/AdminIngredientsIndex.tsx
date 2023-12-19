@@ -1,6 +1,7 @@
+import { useAppDispatch } from '@/app/hook';
 import FormTitle from '@/components/common/typos/FormTitle';
+import { navigateTo } from '@/features/admin/adminSlice';
 import TabCode from '@/lib/enums/AdminTabCode';
-import useAdminPageContext from '@/lib/hooks/useAdminPageContext';
 import useIngredients from '@/lib/hooks/useIngredients';
 import { Add, Delete, Edit } from '@mui/icons-material';
 import { Box, Button, Divider, Stack } from '@mui/material';
@@ -15,49 +16,6 @@ import { FC, useMemo } from 'react';
 
 //#region Datagrid config
 
-const ingredientColumns: GridColDef[] = [
-  {
-    field: 'id',
-    headerName: 'ID',
-  },
-  {
-    field: 'name',
-    headerName: 'Tên',
-    flex: 1,
-  },
-  {
-    field: 'type_id',
-    headerName: 'Loại',
-    flex: 1,
-  },
-  {
-    field: 'action',
-    type: 'actions',
-    headerName: 'Hành động',
-    flex: 1,
-    getActions: (params) => [
-      <GridActionsCellItem
-        icon={<Edit />}
-        label="Sửa"
-        onClick={() => alert(`edit ${params.row.id}`)}
-      />,
-      <GridActionsCellItem
-        icon={<Delete />}
-        label="Xóa"
-        onClick={() => alert(`delete ${params.row.id}`)}
-      />,
-    ],
-    // renderCell: () => (
-    //   <Stack direction="row" spacing={1}>
-    //     <Button variant="contained">Sửa</Button>
-    //     <Button variant="contained" color="error" onClick={() => alert(`delete $`)}>
-    //       Xóa
-    //     </Button>
-    //   </Stack>
-    // ),
-  },
-];
-
 const CustomGridToolbar: FC = () => {
   return (
     <GridToolbarContainer>
@@ -69,13 +27,51 @@ const CustomGridToolbar: FC = () => {
 //#endregion
 
 export const AdminIngredientsIndex: FC = () => {
-  const { navigateTo } = useAdminPageContext();
-
+  const dispatch = useAppDispatch();
   const [ingredients, isIngredientsFetching] = useIngredients();
   const paginatedIngredients = useMemo(
     () => ingredients.slice(0, 10),
     [ingredients]
   );
+
+  const ingredientColumns: GridColDef[] = [
+    {
+      field: 'id',
+      headerName: 'ID',
+    },
+    {
+      field: 'name',
+      headerName: 'Tên',
+      flex: 1,
+    },
+    {
+      field: 'type_id',
+      headerName: 'Loại',
+      flex: 1,
+    },
+    {
+      field: 'action',
+      type: 'actions',
+      headerName: 'Hành động',
+      flex: 1,
+      getActions: (params) => [
+        <GridActionsCellItem
+          icon={<Edit />}
+          label="Sửa"
+          onClick={() =>
+            dispatch(
+              navigateTo({ tab: TabCode.IngredientCreate, params: params.row })
+            )
+          }
+        />,
+        <GridActionsCellItem
+          icon={<Delete />}
+          label="Xóa"
+          onClick={() => alert(`delete ${params.row.id}`)}
+        />,
+      ],
+    },
+  ];
 
   return (
     <Box p={4} display="flex" flexDirection={'column'} gap={1}>
@@ -84,8 +80,10 @@ export const AdminIngredientsIndex: FC = () => {
         <Button
           startIcon={<Add />}
           variant="contained"
-          onClick={() => navigateTo(TabCode.IngredientCreate)}
-          sx={{ width: 120 }}
+          onClick={() =>
+            dispatch(navigateTo({ tab: TabCode.IngredientCreate }))
+          }
+          sx={{ width: 100, borderRadius: 4 }}
         >
           Thêm
         </Button>
