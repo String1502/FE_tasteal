@@ -3,23 +3,26 @@ import { IngredientRes } from '../models/dtos/Response/IngredientRes/IngredientR
 import IngredientService from '../services/ingredientService';
 
 /**
- *
- * @returns List of ingredients
+ * Custom hook to fetch all ingredients from API.
+ * Returns array of IngredientRes and boolean fetching state.
  */
-const useIngredients = () => {
+const useIngredients = (): [IngredientRes[], boolean] => {
   const [ingredients, setIngredients] = useState<IngredientRes[]>([]);
+  const [fetching, setFetching] = useState(false);
 
   useEffect(() => {
+    setFetching(true);
     IngredientService.GetAll()
       .then((ingredients) => {
         setIngredients(ingredients);
       })
       .catch(() => {
         setIngredients([]);
-      });
+      })
+      .finally(() => setFetching(false));
   }, []);
 
-  return ingredients;
+  return [ingredients, fetching];
 };
 
 export default useIngredients;
