@@ -104,8 +104,6 @@ export function useSearchRecipe(viewportItemAmount: number = 12) {
 
   useEffect(() => {
     async function fetchData() {
-      handleSpinner(true);
-
       setTextSearch('');
       const newData = await RecipeService.SearchRecipes({
         ...filter,
@@ -117,9 +115,6 @@ export function useSearchRecipe(viewportItemAmount: number = 12) {
       setRecipes(newData);
       if (newData.length < viewportItemAmount) setEnd(true);
       else setEnd(false);
-      window.scrollTo(0, 50 + 64 + 160);
-
-      handleSpinner(false);
     }
     fetchData();
   }, [filter]);

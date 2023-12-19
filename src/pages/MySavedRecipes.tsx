@@ -1,15 +1,15 @@
 import Layout from '@/layout/Layout';
 import { Box, Container, Grid, PaperProps } from '@mui/material';
-import { useCallback, useEffect, useState } from 'react';
+import { useContext } from 'react';
 import { CookBookEntity } from '@/lib/models/entities/CookBookEntity/CookBookEntity';
 import { CookBook_RecipeEntity } from '@/lib/models/entities/CookBook_RecipeEntity/CookBook_RecipeEntity';
-import CookbookService from '@/lib/services/cookbookService';
-import CookbookRecipeService from '@/lib/services/cookbookRecipeService';
-import { CookBook } from './CookBook';
+import { CookBook } from '../components/ui/mySaveRecipe/CookBook';
 import { CustomCard } from '../components/ui/mySaveRecipe/CustomCard';
 import { MySavedRecipesContent } from '../components/ui/mySaveRecipe/MySavedRecipesContent';
 import { MySavedRecipesAction } from '../components/ui/mySaveRecipe/MySavedRecipesAction';
 import { AddYourFirstRecipe } from '../components/ui/mySaveRecipe/AddYourFirstRecipe';
+import AppContext from '@/lib/contexts/AppContext';
+import { useMySavedRecipes } from '../components/ui/mySaveRecipe/useMySavedRecipes';
 
 export type CookbookChoosingType = {
   Cookbook: CookBookEntity;
@@ -24,47 +24,13 @@ export const DialogPaperProps: PaperProps = {
   },
 };
 
-export function useMySavedRecipes(uid: string) {
-  const [cookbookData, setCookbookData] = useState<CookBookEntity[]>([]);
-
-  const [choosing, setChoosing] = useState<CookbookChoosingType | undefined>(
-    undefined
+function MySavedRecipes() {
+  const { login } = useContext(AppContext);
+  const { cookbookData, choosing, handleChoosing } = useMySavedRecipes(
+    login?.user?.uid
   );
 
-  const handleChoosing = useCallback(async (cookbook: CookBookEntity) => {
-    const recipes = await CookbookRecipeService.GetCookbookRecipesByCookbookId(
-      cookbook.id
-    );
-    setChoosing({
-      Cookbook: cookbook,
-      CookbookRecipes: recipes,
-    });
-  }, []);
-
-  useEffect(() => {
-    async function fetchData() {
-      try {
-        const cookbooks = await CookbookService.GetCookbooksByAccountId(uid);
-        setCookbookData(cookbooks);
-        if (cookbooks.length > 0) {
-          handleChoosing(cookbooks[0]);
-        }
-      } catch (error) {
-        console.log(error);
-      }
-    }
-    fetchData();
-  }, []);
-
-  return {
-    cookbookData,
-    choosing,
-    handleChoosing,
-  };
-}
-
-function MySavedRecipes() {
-  const { cookbookData, choosing, handleChoosing } = useMySavedRecipes('1');
+  console.log(login?.user?.uid);
 
   return (
     <Layout withFooter={false}>
