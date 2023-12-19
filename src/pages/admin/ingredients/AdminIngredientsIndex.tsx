@@ -1,31 +1,20 @@
+import { useAppDispatch } from '@/app/hook';
+import FormTitle from '@/components/common/typos/FormTitle';
+import { navigateTo } from '@/features/admin/adminSlice';
 import TabCode from '@/lib/enums/AdminTabCode';
-import useAdminPageContext from '@/lib/hooks/useAdminPageContext';
 import useIngredients from '@/lib/hooks/useIngredients';
+import { Add, Delete, Edit } from '@mui/icons-material';
 import { Box, Button, Divider, Stack } from '@mui/material';
 import {
   DataGrid,
+  GridActionsCellItem,
   GridColDef,
   GridToolbarContainer,
   GridToolbarQuickFilter,
 } from '@mui/x-data-grid';
-import { FC } from 'react';
+import { FC, useMemo } from 'react';
 
 //#region Datagrid config
-
-const ingredientColumns: GridColDef[] = [
-  {
-    field: 'id',
-    headerName: 'ID',
-  },
-  {
-    field: 'name',
-    headerName: 'Tên',
-  },
-  {
-    field: 'id',
-    headerName: 'ID',
-  },
-];
 
 const CustomGridToolbar: FC = () => {
   return (
@@ -38,17 +27,63 @@ const CustomGridToolbar: FC = () => {
 //#endregion
 
 export const AdminIngredientsIndex: FC = () => {
-  const { navigateTo } = useAdminPageContext();
+  const dispatch = useAppDispatch();
+  const [ingredients, isIngredientsFetching] = useIngredients();
+  const paginatedIngredients = useMemo(
+    () => ingredients.slice(0, 10),
+    [ingredients]
+  );
 
-  const ingredients = useIngredients();
-  const paginatedIngredients = ingredients.slice(0, 10);
+  const ingredientColumns: GridColDef[] = [
+    {
+      field: 'id',
+      headerName: 'ID',
+    },
+    {
+      field: 'name',
+      headerName: 'Tên',
+      flex: 1,
+    },
+    {
+      field: 'type_id',
+      headerName: 'Loại',
+      flex: 1,
+    },
+    {
+      field: 'action',
+      type: 'actions',
+      headerName: 'Hành động',
+      flex: 1,
+      getActions: (params) => [
+        <GridActionsCellItem
+          icon={<Edit />}
+          label="Sửa"
+          onClick={() =>
+            dispatch(
+              navigateTo({ tab: TabCode.IngredientCreate, params: params.row })
+            )
+          }
+        />,
+        <GridActionsCellItem
+          icon={<Delete />}
+          label="Xóa"
+          onClick={() => alert(`delete ${params.row.id}`)}
+        />,
+      ],
+    },
+  ];
 
   return (
     <Box p={4} display="flex" flexDirection={'column'} gap={1}>
-      <Stack direction="row" justifyContent="space-between" alignItems="center">
+      <Stack direction="row" justifyContent={'space-between'}>
+        <FormTitle>Nguyên liệu</FormTitle>
         <Button
+          startIcon={<Add />}
           variant="contained"
-          onClick={() => navigateTo(TabCode.IngredientCreate)}
+          onClick={() =>
+            dispatch(navigateTo({ tab: TabCode.IngredientCreate }))
+          }
+          sx={{ width: 100, borderRadius: 4 }}
         >
           Thêm
         </Button>
@@ -56,19 +91,23 @@ export const AdminIngredientsIndex: FC = () => {
 
       <Divider />
 
-      <DataGrid
-        rows={paginatedIngredients}
-        columns={ingredientColumns}
-        pageSizeOptions={[10, 25, 50]}
-        slots={{
-          toolbar: CustomGridToolbar,
-        }}
-        slotProps={{
-          toolbar: {
-            showQuickFilter: true,
-          },
-        }}
-      />
+      <Box height={720}>
+        <DataGrid
+          loading={isIngredientsFetching}
+          rows={paginatedIngredients}
+          columns={ingredientColumns}
+          pageSizeOptions={[10, 25, 50]}
+          slots={{
+            toolbar: CustomGridToolbar,
+          }}
+          slotProps={{
+            toolbar: {
+              showQuickFilter: true,
+            },
+          }}
+          sx={{ minHeight: '100%' }}
+        />
+      </Box>
     </Box>
   );
 };

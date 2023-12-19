@@ -24,6 +24,8 @@ import MyPantry from './pages/MyPantry';
 import MySavedRecipes from './pages/MySavedRecipes';
 import Partner from './pages/Partner';
 
+import store from '@/app/store';
+import { Provider } from 'react-redux';
 import Search from './pages/Search';
 import SignIn from './pages/SignIn';
 import SignUp from './pages/SignUp';
@@ -56,17 +58,19 @@ function AppWrapper({
   ...contextProps
 }: React.PropsWithChildren & AppWrapperProps) {
   return (
-    <AppContext.Provider value={{ ...contextProps }}>
-      <ColorModeContext.Provider value={colorMode}>
-        <CssBaseline />
-        <ThemeProvider theme={theme}>
-          <SnackbarProvider>
-            <TastealHashLoader spinner={spinner} />
-            {children}
-          </SnackbarProvider>
-        </ThemeProvider>
-      </ColorModeContext.Provider>
-    </AppContext.Provider>
+    <Provider store={store}>
+      <AppContext.Provider value={{ ...contextProps }}>
+        <ColorModeContext.Provider value={colorMode}>
+          <CssBaseline />
+          <ThemeProvider theme={theme}>
+            <SnackbarProvider>
+              <TastealHashLoader spinner={spinner} />
+              {children}
+            </SnackbarProvider>
+          </ThemeProvider>
+        </ColorModeContext.Provider>
+      </AppContext.Provider>
+    </Provider>
   );
 }
 

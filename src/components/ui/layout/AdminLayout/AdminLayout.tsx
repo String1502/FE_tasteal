@@ -1,6 +1,6 @@
+import { useAppSelector } from '@/app/hook';
 import TabCode from '@/lib/enums/AdminTabCode';
-import useAdminPageContext from '@/lib/hooks/useAdminPageContext';
-import { Flatware, Home } from '@mui/icons-material';
+import { Flatware, Home, Settings } from '@mui/icons-material';
 import {
   Box,
   Grid,
@@ -11,19 +11,18 @@ import {
   SxProps,
 } from '@mui/material';
 import { FC, PropsWithChildren, useCallback } from 'react';
+import AdminListButton from '../../admin/AdminListButton';
 
 const commonStyle: SxProps = {
   height: '100vh',
 };
 
 const AdminLayout: FC<PropsWithChildren> = ({ children }) => {
-  const { navigateTo } = useAdminPageContext();
+  const currentTab = useAppSelector((state) => state.admin.currentTab);
 
-  const handleNavigate = useCallback(
-    (tabCode: TabCode) => {
-      navigateTo(tabCode);
-    },
-    [navigateTo]
+  const checkSelected = useCallback(
+    (code: TabCode) => currentTab === code,
+    [currentTab]
   );
 
   return (
@@ -48,14 +47,18 @@ const AdminLayout: FC<PropsWithChildren> = ({ children }) => {
         </Paper>
         <Paper elevation={4} sx={{ mt: 1 }}>
           <Box>
-            <ListItemButton
-              onClick={() => handleNavigate(TabCode.IngredientIndex)}
-            >
-              <ListItemIcon>
-                <Flatware color="primary" />
-              </ListItemIcon>
-              <ListItemText primary="Nguyên liệu" />
-            </ListItemButton>
+            <AdminListButton
+              Icon={Flatware}
+              label="Nguyên liệu"
+              tabCode={TabCode.IngredientIndex}
+              selected={checkSelected(TabCode.IngredientIndex)}
+            />
+            <AdminListButton
+              Icon={Settings}
+              label="Cài đặt"
+              tabCode={TabCode.Settings}
+              selected={checkSelected(TabCode.Settings)}
+            />
           </Box>
         </Paper>
       </Grid>

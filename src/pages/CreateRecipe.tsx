@@ -316,13 +316,7 @@ const CreateRecipe: React.FunctionComponent<{ edit?: boolean }> = ({
     } finally {
       setIsProcessing(false);
     }
-  }, [
-    clearForm,
-    createPostRecipeData,
-    navigate,
-    snackbarAlert,
-    validateNewRecipe,
-  ]);
+  }, [clearForm, createPostRecipeData, snackbarAlert, validateNewRecipe]);
   //#endregion
   //#region Ingredients
 
