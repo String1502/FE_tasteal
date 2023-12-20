@@ -3,6 +3,8 @@ enum TabCode {
   UserIndex,
   IngredientIndex,
   IngredientCreate,
+  OccasionIndex,
+  OccasionCreate,
   Settings,
 }
 

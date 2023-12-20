@@ -1,6 +1,12 @@
 import { useAppSelector } from '@/app/hook';
 import TabCode from '@/lib/enums/AdminTabCode';
-import { Flatware, Home, Person, Settings } from '@mui/icons-material';
+import {
+  CalendarMonth,
+  Flatware,
+  Home,
+  Person,
+  Settings,
+} from '@mui/icons-material';
 import {
   Box,
   Grid,
@@ -57,6 +63,12 @@ const AdminLayout: FC<PropsWithChildren> = ({ children }) => {
               Icon={Flatware}
               label="Nguyên liệu"
               tabCode={TabCode.IngredientIndex}
+              checkSelected={checkSelected}
+            />
+            <AdminListButton
+              Icon={CalendarMonth}
+              label="Dịp lễ"
+              tabCode={TabCode.OccasionIndex}
               checkSelected={checkSelected}
             />
             <AdminListButton
