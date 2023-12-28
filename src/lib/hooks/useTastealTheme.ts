@@ -6,79 +6,79 @@ import { OccasionEntity } from '../models/entities/OccasionEntity/OccasionEntity
 import OccasionService from '../services/occasionService';
 
 function useTastealTheme(): {
-    colorMode: { toggleColorMode: () => void };
-    spinner: boolean;
-    theme: any;
-    //
-    handleSpinner: (value: boolean) => void;
-    login: {
-        isUserSignedIn?: boolean;
-        user?: User;
-        handleLogin: (isUserSignedIn?: boolean, user?: User) => void;
-    };
-    currentOccasion?: OccasionEntity;
+  colorMode: { toggleColorMode: () => void };
+  spinner: boolean;
+  theme: any;
+  //
+  handleSpinner: (value: boolean) => void;
+  login: {
+    isUserSignedIn?: boolean;
+    user?: User;
+    handleLogin: (isUserSignedIn?: boolean, user?: User) => void;
+  };
+  currentOccasion?: OccasionEntity;
 } {
-    //#region Theme
-    const [mode, setMode] = useState<PaletteMode>('light');
+  //#region Theme
+  const [mode, setMode] = useState<PaletteMode>('light');
 
-    const colorMode = useMemo(
-        () => ({
-            toggleColorMode: () => {
-                setMode((prevMode: PaletteMode) =>
-                    prevMode === 'light' ? 'dark' : 'light'
-                );
-            },
-        }),
-        []
-    );
+  const colorMode = useMemo(
+    () => ({
+      toggleColorMode: () => {
+        setMode((prevMode: PaletteMode) =>
+          prevMode === 'light' ? 'dark' : 'light'
+        );
+      },
+    }),
+    []
+  );
 
-    const theme = useMemo(() => createTheme(getMode(mode)), [mode]);
+  const theme = useMemo(() => createTheme(getMode(mode)), [mode]);
 
-    //#endregion
+  //#endregion
 
-    //#region Spinner
+  //#region Spinner
 
-    const [spinner, setSpinner] = useState<boolean>(false);
+  const [spinner, setSpinner] = useState<boolean>(false);
 
-    const handleSpinner = useCallback(function (value: boolean) {
-        setSpinner(value);
-    }, []);
+  const handleSpinner = useCallback(function (value: boolean) {
+    setSpinner(value);
+  }, []);
 
-    const [login, setLogin] = useState<{
-        isUserSignedIn?: boolean;
-        user?: User;
-    }>({});
+  const [login, setLogin] = useState<{
+    isUserSignedIn?: boolean;
+    user?: User;
+  }>({});
 
-    const handleLogin = useCallback((isUserSignedIn?: boolean, user?: User) => {
-        setLogin({ isUserSignedIn: isUserSignedIn, user: user });
-    }, []);
+  const handleLogin = useCallback((isUserSignedIn?: boolean, user?: User) => {
+    setLogin({ isUserSignedIn: isUserSignedIn, user: user });
+  }, []);
 
-    //#endregion
+  //#endregion
 
-    const [currentOccasion, setCurrentOccasion] = useState<
-        OccasionEntity | undefined
-    >(undefined);
+  const [currentOccasion, setCurrentOccasion] = useState<
+    OccasionEntity | undefined
+  >(undefined);
 
-    useEffect(() => {
-        const fetchData = async () => {
-            const data = await OccasionService.GetCurrentOccassions();
-            setCurrentOccasion(data);
-        };
-        fetchData();
-    }, []);
-    return {
-        colorMode,
-        spinner,
-        theme,
-        //
-        handleSpinner,
-        login: {
-            isUserSignedIn: login.isUserSignedIn,
-            user: login.user,
-            handleLogin: handleLogin,
-        },
-        currentOccasion,
+  useEffect(() => {
+    const fetchData = async () => {
+      const data = await OccasionService.GetCurrentOccassions();
+      setCurrentOccasion(data);
     };
+    fetchData();
+  }, []);
+  return {
+    colorMode,
+    spinner,
+    theme,
+    //
+    handleSpinner,
+    login: {
+      isUserSignedIn: login.isUserSignedIn,
+      user: login.user,
+      handleLogin: handleLogin,
+    },
+    currentOccasion,
+  };
 }
 
 export default useTastealTheme;

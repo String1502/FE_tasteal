@@ -7,105 +7,82 @@ import Layout from '../layout/Layout';
 import { PrimaryCard } from '../components/common/card/PrimaryCard.tsx';
 import { RecipeEntity } from '@/lib/models/entities/RecipeEntity/RecipeEntity.ts';
 import UserEditForm from './UserEditForm';
-import { useContext, useEffect, useState } from 'react';
-import { Container, Grid, Typography, Button, Box, Link } from '@mui/material';
+import { Suspense, useContext, useEffect, useState } from 'react';
+import {
+  Container,
+  Grid,
+  Typography,
+  Button,
+  Box,
+  Link,
+  Skeleton,
+  Stack,
+} from '@mui/material';
 
 import MostContributedAuthors_Component from '@/components/ui/home/MostContributedAuthors_Component';
 import RecipeService from '@/lib/services/recipeService.ts';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { PageRoute } from '@/lib/constants/common.ts';
-import { localStorageAccountId } from '@/components/ui/home/AuthorCard.tsx';
 import AppContext from '@/lib/contexts/AppContext.ts';
-import UserService from '../lib/services/userService.ts';
-import { AccountEntity } from '../lib/models/entities/AccountEntity/AccountEntity.ts';
-import useFirebaseImage from '@/lib/hooks/useFirebaseImage';
+import useSnackbarService from '@/lib/hooks/useSnackbar.ts';
+import BoxImage from '@/components/common/image/BoxImage.tsx';
+import { AccountEntity } from '@/lib/models/entities/AccountEntity/AccountEntity.ts';
+import AccountService from '@/lib/services/accountService.ts';
 
 const itemsToAdd = 4;
 const Partner = () => {
-  const [currentUser, setCurrentUser] = useState<AccountEntity>(null);
-  const { login } = useContext(AppContext);
-  const [userId, setUserId] = useState('e7GV1dFBFnR9yYN3pcUI8jdfOpp2');
-  const [name, setName] = useState('');
-  const [image, setImage] = useState('');
-  const [description, setDescription] = useState('');
-  const [philosophy, setPhilosophy] = useState('');
-  const [website, setWebsite] = useState('');
-  const [slogan, setSlogan] = useState('');
-  // Update the image state when the firebaseImageUrl changes
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const fetchUser = await UserService.getCurrentUser(userId);
-        setCurrentUser(fetchUser);
-        setName(fetchUser.name);
-        setImage(fetchUser.avatar);
-        setDescription(fetchUser.introduction);
-        setPhilosophy(fetchUser.quote);
-        setWebsite(fetchUser.link);
-        setSlogan(fetchUser.slogan);
-        console.log(fetchUser);
-      } catch (error) {
-        console.log(error);
-      }
-    };
-    fetchData();
-  }, []);
+  const [userData, setUserData] = useState<AccountEntity | undefined>(
+    undefined
+  );
+
+  const [isEditing, setIsEditing] = useState(false);
+  const [snackbarAlert] = useSnackbarService();
 
   const navigate = useNavigate();
   const {
     login: { user },
   } = useContext(AppContext);
-  const [newReleaseRecipes, setNewReleaseRecipes] = useState<RecipeEntity[]>(
-    []
-  );
-  const [visibleItems, setVisibleItems] = useState(8);
-
-  const [isEditing, setIsEditing] = useState(false);
-
-  const handleShowMore = () => {
-    setVisibleItems(visibleItems + itemsToAdd);
-  };
+  const { uid } = useParams();
 
   const handleStartEditing = () => {
     setIsEditing(true);
   };
 
-  const handleSave = (editedData) => {
-    // Cập nhật thông tin người dùng với các giá trị mới
-    setName(editedData.name);
-    setImage(editedData.image);
-    setDescription(editedData.description);
-    setPhilosophy(editedData.philosophy);
-    setWebsite(editedData.website);
-    setSlogan(editedData.slogan);
+  const handleChangeUserData = (data: AccountEntity) => {
+    setUserData(data);
 
     // Tắt chế độ chỉnh sửa
     setIsEditing(false);
   };
 
-  useEffect(() => {
-    // Load new release recipes when the component mounts
-    loadNewReleaseRecipes();
+  //#region Recipes
+  const [recipeData, setRecipeData] = useState<RecipeEntity[]>([]);
+  const [visibleItems, setVisibleItems] = useState(8);
 
-    let uid = localStorage.getItem(localStorageAccountId);
-
-    if (!uid && user) {
-      uid = user.uid;
-    }
-
-    // fetchAPI user infor
-
-    localStorage.removeItem(localStorageAccountId);
-  }, []);
-
-  const loadNewReleaseRecipes = async () => {
-    try {
-      const recipes = await RecipeService.GetRecipeByRating(100);
-      setNewReleaseRecipes(recipes);
-    } catch (error) {
-      console.error('Error loading new release recipes:', error);
-    }
+  const handleShowMore = () => {
+    setVisibleItems(visibleItems + itemsToAdd);
   };
+  //#endregion
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        if (uid == '') {
+          return;
+        }
+        const fetchUser = await AccountService.GetByUid(uid);
+        setUserData(fetchUser);
+        console.log(fetchUser);
+
+        const recipes = await RecipeService.GetRecipeByRating(100);
+        setRecipeData(recipes);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    fetchData();
+  }, [uid]);
+
   return (
     <Layout>
       <Container>
@@ -122,32 +99,42 @@ const Partner = () => {
           <Grid item xs={12}>
             <Grid container spacing={6}>
               <Grid item xs={12} lg={5}>
-                <img
-                  src={useFirebaseImage(image)}
-                  alt="Hình ảnh"
-                  style={{
-                    width: '100%',
-                    height: '500px',
-                    borderRadius: '5%',
-                    objectFit: 'cover',
-                    objectPosition: 'center',
-                  }}
-                />
+                <Suspense
+                  fallback={
+                    <Skeleton
+                      variant="rectangular"
+                      sx={{
+                        width: '100%',
+                        height: '500px',
+                        borderRadius: '5%',
+                      }}
+                    />
+                  }
+                >
+                  <BoxImage
+                    src={userData?.avatar}
+                    alt="Hình ảnh"
+                    style={{
+                      width: '100%',
+                      height: '500px',
+                      borderRadius: '5%',
+                      objectFit: 'cover',
+                      objectPosition: 'center',
+                    }}
+                  />
+                </Suspense>
               </Grid>
               <Grid item xs={12} lg={7}>
-                {isEditing ? (
+                {userData && (
                   <UserEditForm
-                    name={name}
-                    image={image}
-                    description={description}
-                    philosophy={philosophy}
-                    website={website}
-                    slogan={slogan}
-                    onSave={handleSave}
-                    uid={userId}
-                    onCancel={() => setIsEditing(false)}
+                    isEditing={isEditing}
+                    onClose={() => setIsEditing(false)}
+                    userData={userData}
+                    handleChangeUserData={handleChangeUserData}
                   />
-                ) : (
+                )}
+
+                {userData ? (
                   <>
                     <Typography
                       variant="h6"
@@ -158,8 +145,9 @@ const Partner = () => {
                         mb: 1,
                       }}
                     >
-                      {slogan}
+                      {userData.slogan}
                     </Typography>
+
                     <Typography
                       variant="h4"
                       sx={{
@@ -168,8 +156,9 @@ const Partner = () => {
                         mb: 1,
                       }}
                     >
-                      {name}
+                      {userData.name}
                     </Typography>
+
                     <Typography
                       variant="body2"
                       fontWeight={'light'}
@@ -178,8 +167,9 @@ const Partner = () => {
                         mb: 2,
                       }}
                     >
-                      {description}
+                      {userData.introduction}
                     </Typography>
+
                     <Typography
                       variant="body1"
                       color="primary"
@@ -195,7 +185,7 @@ const Partner = () => {
                           mr: 1,
                         }}
                       />
-                      {philosophy}
+                      {userData.quote}
                       <FormatQuoteRounded
                         sx={{
                           color: 'grey.600',
@@ -218,37 +208,76 @@ const Partner = () => {
                         }}
                       />
                       <Link
-                        href={website}
+                        href={userData.link}
                         variant="caption"
                         color={'primary'}
                         fontWeight={'bold'}
                       >
-                        {website}
+                        {userData.link}
                       </Link>
                     </Box>
-
-                    <Button
-                      onClick={handleStartEditing}
-                      variant="contained"
-                      color="primary"
-                      sx={{
-                        mt: 2,
-                        textTransform: 'none',
-                        px: 3,
-                      }}
-                      startIcon={<EditRounded />}
-                    >
-                      Chỉnh sửa
-                    </Button>
+                  </>
+                ) : (
+                  <>
+                    <Stack direction={'column'} spacing={3}>
+                      <Skeleton
+                        variant="rectangular"
+                        sx={{
+                          width: '100%',
+                          fontSize: 'h6.fontSize',
+                        }}
+                      />
+                      <Skeleton
+                        variant="rectangular"
+                        sx={{
+                          width: '100%',
+                          fontSize: 'h4.fontSize',
+                        }}
+                      />
+                      <Skeleton
+                        variant="rectangular"
+                        sx={{
+                          width: '100%',
+                          fontSize: 'body2.fontSize',
+                        }}
+                      />
+                      <Skeleton
+                        variant="rectangular"
+                        sx={{
+                          width: '100%',
+                          fontSize: 'body1.fontSize',
+                        }}
+                      />
+                      <Skeleton
+                        variant="rectangular"
+                        sx={{
+                          width: '100%',
+                          fontSize: 'caption.fontSize',
+                        }}
+                      />
+                    </Stack>
                   </>
                 )}
+                <Button
+                  onClick={handleStartEditing}
+                  variant="contained"
+                  color="primary"
+                  sx={{
+                    mt: 2,
+                    textTransform: 'none',
+                    px: 3,
+                  }}
+                  startIcon={<EditRounded />}
+                >
+                  Chỉnh sửa
+                </Button>
               </Grid>
             </Grid>
           </Grid>
 
           <Grid item xs={12}>
             <Typography variant="h5" fontWeight={'800'}>
-              Tất cả công thức của {name}
+              Tất cả công thức của {userData?.name ?? 'Trống'}
             </Typography>
 
             <Grid
@@ -261,13 +290,13 @@ const Partner = () => {
                 mt: 3,
               }}
             >
-              {newReleaseRecipes.slice(0, visibleItems).map((item, index) => (
+              {recipeData.slice(0, visibleItems).map((item, index) => (
                 <Grid item xs={12} sm={6} md={4} lg={3} key={index}>
                   <PrimaryCard recipe={item as RecipeEntity} />
                 </Grid>
               ))}
             </Grid>
-            {visibleItems < newReleaseRecipes.length && (
+            {visibleItems < recipeData.length && (
               <Box
                 sx={{
                   display: 'flex',
@@ -356,7 +385,7 @@ const Partner = () => {
               Xem tất cả
             </Typography>
           </Box>
-          <MostContributedAuthors_Component />
+          <MostContributedAuthors_Component exceptUid={[uid]} />
         </Container>
       </Box>
     </Layout>

@@ -123,6 +123,23 @@ class AccountService {
       return false;
     }
   }
+
+  public static async UpdateUser(userData: AccountReq): Promise<boolean> {
+    const requestOptions = {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(userData),
+    };
+
+    return await fetch(getApiUrl('UpdateUser'), requestOptions)
+      .then((res) => res.json())
+      .then((data) => data)
+      .catch((error) => {
+        console.error('Lỗi:', error);
+      });
+  }
 }
 
 export default AccountService;

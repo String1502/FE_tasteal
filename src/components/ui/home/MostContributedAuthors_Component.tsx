@@ -1,14 +1,18 @@
-import { AccountEntity } from "@/lib/models/entities/AccountEntity/AccountEntity";
-import AccountService from "@/lib/services/accountService";
-import { Suspense, useEffect, useState } from "react";
-import { AuthorsCarousel } from "./AuthorsCarousel";
-import { Skeleton } from "@mui/material";
+import { AccountEntity } from '@/lib/models/entities/AccountEntity/AccountEntity';
+import AccountService from '@/lib/services/accountService';
+import { Suspense, useEffect, useState } from 'react';
+import { AuthorsCarousel } from './AuthorsCarousel';
+import { Skeleton } from '@mui/material';
 
 const SkeletonAuthors = () => (
-  <Skeleton variant="rounded" height={575} width={"100%"} />
+  <Skeleton variant="rounded" height={575} width={'100%'} />
 );
 
-function MostContributedAuthors_Component() {
+function MostContributedAuthors_Component({
+  exceptUid,
+}: {
+  exceptUid?: string[];
+}) {
   const [mostContributedAuthors, setMostContributedAuthors] = useState<
     AccountEntity[] | undefined
   >(undefined);
@@ -16,9 +20,16 @@ function MostContributedAuthors_Component() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        setMostContributedAuthors(
-          await AccountService.GetMostContributedAccounts(10)
+        const data = await AccountService.GetMostContributedAccounts(10).then(
+          (data) => {
+            if (exceptUid && exceptUid.length > 0) {
+              return data.filter((account) => !exceptUid.includes(account.uid));
+            } else {
+              return data;
+            }
+          }
         );
+        setMostContributedAuthors(data);
       } catch (error) {
         console.log(error);
         setMostContributedAuthors([]);
