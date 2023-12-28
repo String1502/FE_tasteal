@@ -216,7 +216,7 @@ class RecipeService {
             // This is not tested
             deleteImage(postData.image).catch();
             Promise.all(
-              postData.direction.map((direction) =>
+              postData.directions.map((direction) =>
                 deleteImage(direction.image)
               )
             ).catch();
