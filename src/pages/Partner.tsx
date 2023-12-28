@@ -145,7 +145,9 @@ const Partner = () => {
                         mb: 1,
                       }}
                     >
-                      {userData.slogan}
+                      {!userData.slogan || userData.slogan == ''
+                        ? 'Chưa cập nhật'
+                        : userData.slogan}
                     </Typography>
 
                     <Typography
@@ -156,7 +158,9 @@ const Partner = () => {
                         mb: 1,
                       }}
                     >
-                      {userData.name}
+                      {!userData.name || userData.name == ''
+                        ? 'Chưa cập nhật'
+                        : userData.name}
                     </Typography>
 
                     <Typography
@@ -167,7 +171,9 @@ const Partner = () => {
                         mb: 2,
                       }}
                     >
-                      {userData.introduction}
+                      {!userData.introduction || userData.introduction == ''
+                        ? 'Chưa cập nhật'
+                        : userData.introduction}
                     </Typography>
 
                     <Typography
@@ -185,7 +191,9 @@ const Partner = () => {
                           mr: 1,
                         }}
                       />
-                      {userData.quote}
+                      {!userData.quote || userData.quote == ''
+                        ? 'Chưa cập nhật'
+                        : userData.quote}
                       <FormatQuoteRounded
                         sx={{
                           color: 'grey.600',
@@ -213,7 +221,9 @@ const Partner = () => {
                         color={'primary'}
                         fontWeight={'bold'}
                       >
-                        {userData.link}
+                        {!userData.link || userData.link == ''
+                          ? 'Chưa cập nhật'
+                          : userData.link}
                       </Link>
                     </Box>
                   </>
@@ -258,19 +268,21 @@ const Partner = () => {
                     </Stack>
                   </>
                 )}
-                <Button
-                  onClick={handleStartEditing}
-                  variant="contained"
-                  color="primary"
-                  sx={{
-                    mt: 2,
-                    textTransform: 'none',
-                    px: 3,
-                  }}
-                  startIcon={<EditRounded />}
-                >
-                  Chỉnh sửa
-                </Button>
+                {userData && user && userData.uid == user.uid && (
+                  <Button
+                    onClick={handleStartEditing}
+                    variant="contained"
+                    color="primary"
+                    sx={{
+                      mt: 2,
+                      textTransform: 'none',
+                      px: 3,
+                    }}
+                    startIcon={<EditRounded />}
+                  >
+                    Chỉnh sửa
+                  </Button>
+                )}
               </Grid>
             </Grid>
           </Grid>
