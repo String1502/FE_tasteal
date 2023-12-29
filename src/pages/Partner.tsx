@@ -28,13 +28,19 @@ import useSnackbarService from '@/lib/hooks/useSnackbar.ts';
 import BoxImage from '@/components/common/image/BoxImage.tsx';
 import { AccountEntity } from '@/lib/models/entities/AccountEntity/AccountEntity.ts';
 import AccountService from '@/lib/services/accountService.ts';
+import useFirebaseImage from '@/lib/hooks/useFirebaseImage.ts';
 
 const itemsToAdd = 4;
 const Partner = () => {
   const [userData, setUserData] = useState<AccountEntity | undefined>(
     undefined
   );
+  const [file, setFile] = useState<File | undefined>(undefined);
+  const image = useFirebaseImage(userData?.avatar);
 
+  function handleFile(file: File | undefined) {
+    setFile(file);
+  }
   const [isEditing, setIsEditing] = useState(false);
   const [snackbarAlert] = useSnackbarService();
 
@@ -50,8 +56,6 @@ const Partner = () => {
 
   const handleChangeUserData = (data: AccountEntity) => {
     setUserData(data);
-
-    // Tắt chế độ chỉnh sửa
     setIsEditing(false);
   };
 
@@ -111,8 +115,9 @@ const Partner = () => {
                     />
                   }
                 >
-                  <BoxImage
-                    src={userData?.avatar}
+                  <Box
+                    component={'img'}
+                    src={file ? URL.createObjectURL(file) : image}
                     alt="Hình ảnh"
                     style={{
                       width: '100%',
@@ -127,6 +132,8 @@ const Partner = () => {
               <Grid item xs={12} lg={7}>
                 {userData && (
                   <UserEditForm
+                    file={file}
+                    handleFile={handleFile}
                     isEditing={isEditing}
                     onClose={() => setIsEditing(false)}
                     userData={userData}
