@@ -1,12 +1,4 @@
-import {
-  Box,
-  Button,
-  Container,
-  Grid,
-  Stack,
-  Typography,
-  useScrollTrigger,
-} from '@mui/material';
+import { Box, Button, Container, Grid, Stack, Typography } from '@mui/material';
 import { CheckBoxButton } from '../components/ui/search/CheckBoxButton.tsx';
 import { PrimaryCard } from '../components/common/card/PrimaryCard.tsx';
 import { SearchFilter } from '../components/ui/search/SearchFilter.tsx';
@@ -16,11 +8,10 @@ import { RecipeEntity } from '@/lib/models/entities/RecipeEntity/RecipeEntity.ts
 import { useSearchRecipe } from '../components/ui/search/useSearchRecipe.tsx';
 import { SearchInfiniteScroll } from '../components/ui/search/SearchInfiniteScroll.tsx';
 import { KeyWordRes } from '@/lib/models/dtos/Response/KeyWordRes/KeyWordRes.ts';
-import { useEffect, useState } from 'react';
-import { headerHeight } from '@/components/ui/layout/Header.tsx';
 import { CloseRounded } from '@mui/icons-material';
 import { isRecipeSearchReqValid } from '@/lib/models/dtos/Request/RecipeSearchReq/RecipeSearchReq.ts';
 import SortSelect from '@/components/ui/search/SortSelect.tsx';
+import BoxStickyScroll from '@/components/common/scroll/BoxStickyScroll.tsx';
 
 export type TuKhoa = KeyWordRes & {
   value: boolean;
@@ -76,23 +67,9 @@ function Search() {
     sortType,
     handleSort,
   } = useSearchRecipe(viewportItemAmount);
-  const trigger = useScrollTrigger({
-    target: window ? window : undefined,
-  });
-
-  const [scrollPos, setScrollPos] = useState(0);
-  useEffect(() => {
-    const handleScroll = () => {
-      setScrollPos(window.scrollY);
-    };
-    window.addEventListener('scroll', handleScroll);
-    return () => {
-      window.removeEventListener('scroll', handleScroll);
-    };
-  }, []);
 
   return (
-    <Layout withFooter={false}>
+    <Layout withFooter={false} headerPosition="static">
       <Box>
         <Container>
           <Grid
@@ -114,30 +91,12 @@ function Search() {
             </Grid>
 
             <Grid item xs={12} lg={3} sx={{ mt: 2 }}>
-              <Box
-                sx={{
-                  position: {
-                    xs: 'static',
-                    lg: 'sticky',
-                  },
-                  top: `${0}px`,
-                  transform: {
-                    lg: !trigger
-                      ? scrollPos < headerHeight + 68
-                        ? `translateY(${0}px)`
-                        : `translateY(${headerHeight}px)`
-                      : `translateY(${0}px)`,
-                  },
-                  transition: 'transform 0.2s ease-in-out',
-                  maxHeight: { lg: '100dvh' },
-                  height: 'auto',
-                }}
-              >
+              <BoxStickyScroll>
                 <SearchFilter
                   handleChangeFilter={handleChangeFilter}
                   filter={filter}
                 />
-              </Box>
+              </BoxStickyScroll>
             </Grid>
 
             <Grid item xs={12} lg={9} sx={{ mt: 2 }}>

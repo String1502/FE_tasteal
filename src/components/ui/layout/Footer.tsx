@@ -7,16 +7,16 @@ import {
   Grid,
   Input,
   Typography,
-} from "@mui/material";
-import { CustomHeaderLink, CustomLink } from "../header/CustomLink";
-
+} from '@mui/material';
+import { CustomHeaderLink, CustomLink } from '../header/CustomLink';
+import logo2 from '@/assets/logo2.png';
 const gap = 4;
 
 export function Footer() {
   return (
     <Box
       sx={{
-        backgroundColor: "primary.main",
+        backgroundColor: 'primary.dark',
       }}
     >
       <Container
@@ -29,42 +29,41 @@ export function Footer() {
           container
           justifyContent="center"
           alignItems="flex-start"
-          alignSelf={"stretch"}
+          alignSelf={'stretch'}
           spacing={gap}
         >
           <Grid
             item
             lg={1}
             sx={{
-              display: { xs: "none", lg: "block" },
+              display: { xs: 'none', lg: 'block' },
             }}
           ></Grid>
 
           <Grid item xs={12} md={5} lg={4}>
             <Box
+              component={'img'}
+              src={logo2}
               sx={{
-                aspectRatio: "1/1",
-                width: "100%",
-                backgroundColor: "secondary.main",
+                aspectRatio: '1/1',
+                width: '100%',
                 borderRadius: 8,
-                justifyContent: "center",
-                alignItems: "center",
+                justifyContent: 'center',
+                alignItems: 'center',
                 mb: 2,
-                maxWidth: "70vw",
-                display: { xs: "none", md: "flex" },
+                maxWidth: '70vw',
+                display: { xs: 'none', md: 'flex' },
               }}
-            >
-              Logo nha bà!
-            </Box>
+            />
 
             <Typography
-              color={"white"}
+              color={'white'}
               variant="h4"
               sx={{
-                fontWeight: "bold",
-                textAlign: "center",
+                fontWeight: 'bold',
+                textAlign: 'center',
                 mb: 2,
-                display: { xs: "block", md: "none" },
+                display: { xs: 'block', md: 'none' },
               }}
             >
               Tasteal
@@ -73,28 +72,28 @@ export function Footer() {
             <form action="post">
               <Box
                 sx={{
-                  display: "flex",
-                  flexDirection: "row",
-                  alignItems: "flex-start",
-                  justifyContent: "center",
+                  display: 'flex',
+                  flexDirection: 'row',
+                  alignItems: 'flex-start',
+                  justifyContent: 'center',
                   gap: 1,
                 }}
               >
                 <FormControl>
                   <Input
                     sx={{
-                      borderRadius: "40px",
-                      backgroundColor: "white",
+                      borderRadius: '40px',
+                      backgroundColor: 'white',
                       px: 3,
                       py: 1,
-                      fontSize: "caption.fontSize",
+                      fontSize: 'caption.fontSize',
                     }}
                     type="email"
                     placeholder="Email của bạn"
                     disableUnderline
                     aria-describedby="my-helper-text"
                   />
-                  <FormHelperText sx={{ color: "white" }}>
+                  <FormHelperText sx={{ color: 'white' }}>
                     Chúng tôi sẽ không chia sẻ Email của bạn.
                   </FormHelperText>
                 </FormControl>
@@ -102,19 +101,19 @@ export function Footer() {
                   variant="contained"
                   type="submit"
                   sx={{
-                    borderRadius: "40px",
-                    backgroundColor: "white",
+                    borderRadius: '40px',
+                    backgroundColor: 'white',
                     px: 3,
                     py: 1.3,
-                    fontSize: "caption.fontSize",
-                    color: "primary.main",
-                    width: "140px",
-                    boxShadow: "none",
+                    fontSize: 'caption.fontSize',
+                    color: 'primary.main',
+                    width: '140px',
+                    boxShadow: 'none',
                     opacity: 1,
-                    "&:hover": {
-                      boxShadow: "none",
-                      backgroundColor: "white",
-                      color: "primary.main",
+                    '&:hover': {
+                      boxShadow: 'none',
+                      backgroundColor: 'white',
+                      color: 'primary.main',
                       opacity: 0.8,
                     },
                   }}
@@ -129,14 +128,14 @@ export function Footer() {
             item
             lg={1}
             sx={{
-              display: { xs: "none", lg: "block" },
+              display: { xs: 'none', lg: 'block' },
             }}
           ></Grid>
 
           <Grid item xs={12} md={3} lg={2}>
             <Box
               sx={{
-                textAlign: { xs: "center", md: "left" },
+                textAlign: { xs: 'center', md: 'left' },
               }}
             >
               <CustomHeaderLink href="#" label="Giới thiệu" color="white" />
@@ -150,14 +149,14 @@ export function Footer() {
             item
             lg={1}
             sx={{
-              display: { xs: "none", lg: "block" },
+              display: { xs: 'none', lg: 'block' },
             }}
           ></Grid>
 
           <Grid item xs={12} md={4} lg={2}>
             <Box
               sx={{
-                textAlign: { xs: "center", md: "left" },
+                textAlign: { xs: 'center', md: 'left' },
               }}
             >
               <CustomHeaderLink href="#" label="Doanh nghiệp" color="white" />
@@ -172,7 +171,7 @@ export function Footer() {
             item
             lg={1}
             sx={{
-              display: { xs: "none", lg: "block" },
+              display: { xs: 'none', lg: 'block' },
             }}
           ></Grid>
 
@@ -180,17 +179,17 @@ export function Footer() {
             <Box
               sx={{
                 borderTop: 1,
-                borderColor: "grey.600",
-                width: "100%",
+                borderColor: 'grey.600',
+                width: '100%',
               }}
             ></Box>
           </Grid>
 
           <Grid item xs={12} lg={10}>
             <Typography
-              color={"white"}
+              color={'white'}
               variant="body2"
-              textAlign={{ xs: "center", md: "right" }}
+              textAlign={{ xs: 'center', md: 'right' }}
             >
               © Tasteal Inc. All rights reserved.
             </Typography>

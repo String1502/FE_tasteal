@@ -1,4 +1,4 @@
-import { Link } from "@mui/material";
+import { Link } from '@mui/material';
 
 export function CustomHeaderLink({
   href,
@@ -12,14 +12,14 @@ export function CustomHeaderLink({
   return (
     <>
       <Link
-        color={color ?? "primary"}
+        color={color ?? 'primary'}
         variant="subtitle2"
         href={href}
         underline="none"
-        textTransform={"uppercase"}
+        textTransform={'uppercase'}
         sx={{
           opacity: 0.9,
-          "&:hover": {
+          '&:hover': {
             opacity: 1,
           },
           fontWeight: 900,
@@ -37,21 +37,24 @@ export function CustomLink({
   label,
   color,
   my,
+  fontStyle,
 }: {
   href: string;
   label: string;
   color?: string;
   my?: number;
+  fontStyle?: string;
 }) {
   return (
     <>
       <Link
         href={href}
-        color={color ?? "primary"}
+        color={color ?? 'primary'}
         underline="hover"
         sx={{
-          display: "block",
+          display: 'block',
           my: my ?? 1,
+          fontStyle: fontStyle ?? 'normal',
         }}
         variant="body2"
       >

@@ -24,20 +24,28 @@ class OccasionService {
         result = data
           .map((item: any) => {
             let start_at = new Date(item.start_at);
-            start_at.setFullYear(new Date().getFullYear());
             let end_at = new Date(item.end_at);
-            end_at.setFullYear(new Date().getFullYear());
-            if (item.is_lunar_date) {
-              start_at = convertLunarToSolarDate(start_at);
-              end_at = convertLunarToSolarDate(end_at);
-            }
             return {
               ...item,
               start_at,
               end_at,
             };
           })
-          .sort((a, b) => a.start_at.getTime() - b.start_at.getTime());
+          .sort((a, b) => {
+            let startA = a.start_at;
+            startA.setFullYear(new Date().getFullYear());
+            let startB = b.start_at;
+            startB.setFullYear(new Date().getFullYear());
+
+            startA = a.is_lunar_date
+              ? convertLunarToSolarDate(a.start_at)
+              : a.start_at;
+            startB = b.is_lunar_date
+              ? convertLunarToSolarDate(b.start_at)
+              : b.start_at;
+
+            return startA.getTime() - startB.getTime();
+          });
       })
       .catch((error) => {
         console.log(error);
@@ -47,8 +55,30 @@ class OccasionService {
     return result;
   }
 
+  public static async getAllOccasionInSolar(): Promise<OccasionEntity[]> {
+    return await this.GetAll().then((data) =>
+      data
+        .map((item: any) => {
+          let start_at = new Date(item.start_at);
+          start_at.setFullYear(new Date().getFullYear());
+          let end_at = new Date(item.end_at);
+          end_at.setFullYear(new Date().getFullYear());
+          if (item.is_lunar_date) {
+            start_at = convertLunarToSolarDate(start_at);
+            end_at = convertLunarToSolarDate(end_at);
+          }
+          return {
+            ...item,
+            start_at,
+            end_at,
+          };
+        })
+        .sort((a, b) => a.start_at.getTime() - b.start_at.getTime())
+    );
+  }
+
   public static async GetCurrentOccassions(): Promise<OccasionEntity> {
-    let occasions = await this.GetAll();
+    let occasions = await this.getAllOccasionInSolar();
     const firstOccasion = structuredClone(occasions[0]);
     firstOccasion.start_at.setFullYear(new Date().getFullYear() + 1);
     firstOccasion.end_at.setFullYear(new Date().getFullYear() + 1);

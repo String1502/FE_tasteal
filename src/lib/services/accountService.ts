@@ -3,6 +3,7 @@ import { getApiUrl } from '../constants/api';
 import AccountReq from '../models/dtos/Request/AccountReq/AccountReq';
 import { PageFilter } from '../models/dtos/Request/PageFilter/PageFilter';
 import { AccountEntity } from '../models/entities/AccountEntity/AccountEntity';
+import { PageReq } from '../models/dtos/Request/PageReq/PageReq';
 
 const createDebugString = createDebugStringFormatter('AccountService');
 
@@ -20,14 +21,14 @@ class AccountService {
     page: number = 1
   ): Promise<AccountEntity[]> {
     const requestOptions = {
-      method: 'GET',
+      method: 'POST',
       headers: {
         'Content-Type': 'application/json; charset=UTF-8',
       },
-      // body: JSON.stringify({
-      //     pageSize: pageSize,
-      //     page: page,
-      // } as PageReq),
+      body: JSON.stringify({
+        pageSize: pageSize,
+        page: page,
+      } as PageReq),
     };
 
     return await fetch(getApiUrl('GetAllUser'), requestOptions)

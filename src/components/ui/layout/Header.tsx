@@ -26,6 +26,8 @@ import { TastealAppBar } from './TastealAppBar';
 
 interface Props {
   window_?: () => Window;
+  isDynamicHeader?: boolean;
+  headerPosition?: 'fixed' | 'static';
 }
 
 const drawerWidth = 240;
@@ -47,7 +49,7 @@ const TastealAppBarProps: AppBarProps['sx'] = {
 };
 
 export function Header(props: Props) {
-  const { window_ } = props;
+  const { window_, isDynamicHeader, headerPosition } = props;
 
   // Dùng cho đổi theme
   const colorMode = useContext(ColorModeContext);
@@ -193,8 +195,24 @@ export function Header(props: Props) {
 
   return (
     <Box component={'div'} id="headerApp">
-      <Slide appear={false} direction="down" in={!trigger}>
-        <AppBar ref={boxRef} sx={TastealAppBarProps}>
+      <Slide
+        appear={false}
+        direction="down"
+        in={
+          headerPosition == 'static'
+            ? true
+            : isDynamicHeader == undefined
+            ? !trigger
+            : isDynamicHeader == true
+            ? !trigger
+            : true
+        }
+      >
+        <AppBar
+          position={headerPosition == undefined ? 'fixed' : headerPosition}
+          ref={boxRef}
+          sx={TastealAppBarProps}
+        >
           <CustomCountDown />
           <TastealAppBar
             handleDrawerToggle={handleDrawerToggle}
@@ -206,6 +224,7 @@ export function Header(props: Props) {
       <Toolbar
         sx={{
           height: boxRef.current?.offsetHeight,
+          display: headerPosition == 'static' ? 'none' : 'block',
         }}
       />
       <nav>

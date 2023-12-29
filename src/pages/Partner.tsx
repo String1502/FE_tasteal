@@ -24,8 +24,6 @@ import RecipeService from '@/lib/services/recipeService.ts';
 import { useNavigate, useParams } from 'react-router-dom';
 import { PageRoute } from '@/lib/constants/common.ts';
 import AppContext from '@/lib/contexts/AppContext.ts';
-import useSnackbarService from '@/lib/hooks/useSnackbar.ts';
-import BoxImage from '@/components/common/image/BoxImage.tsx';
 import { AccountEntity } from '@/lib/models/entities/AccountEntity/AccountEntity.ts';
 import AccountService from '@/lib/services/accountService.ts';
 import useFirebaseImage from '@/lib/hooks/useFirebaseImage.ts';
@@ -42,7 +40,6 @@ const Partner = () => {
     setFile(file);
   }
   const [isEditing, setIsEditing] = useState(false);
-  const [snackbarAlert] = useSnackbarService();
 
   const navigate = useNavigate();
   const {
