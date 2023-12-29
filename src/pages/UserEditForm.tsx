@@ -20,18 +20,22 @@ import AccountService from '@/lib/services/accountService';
 import useSnackbarService from '@/lib/hooks/useSnackbar';
 
 const UserEditForm = ({
+  file,
+  handleFile,
   isEditing,
   onClose,
   userData,
   handleChangeUserData,
 }: {
+  file: File | undefined;
+  handleFile: (file: File | undefined) => void;
   isEditing: boolean;
   onClose: () => void;
   userData: AccountEntity;
   handleChangeUserData: (data: AccountEntity) => void;
 }) => {
   const [editData, setEditData] = useState<AccountEntity>(userData);
-  const [file, setFile] = useState(null);
+
   const image = useFirebaseImage(userData?.avatar);
   const [snackbarAlert] = useSnackbarService();
 
@@ -70,7 +74,7 @@ const UserEditForm = ({
     const selectedFile = e.target.files[0];
 
     if (selectedFile) {
-      setFile(selectedFile);
+      handleFile(selectedFile);
     }
   };
 
