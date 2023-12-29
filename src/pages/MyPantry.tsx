@@ -20,6 +20,7 @@ import Layout from '../layout/Layout';
 import AppContext from '@/lib/contexts/AppContext';
 import { FiberManualRecord } from '@mui/icons-material';
 import { Primary_Smaller_Card } from '@/components/ui/MyPantry/Primary_Smaller_Card';
+import { removeDiacritics } from '@/utils/format';
 
 interface StyledTabsProps {
   children?: React.ReactNode;
@@ -164,28 +165,35 @@ const MyPantry: React.FC = () => {
     }
   };
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const inputValue = event.target.value.toLowerCase();
-    const filtered = ingredient.filter((item) =>
-      item.name.toLowerCase().includes(inputValue)
+    const inputValue: string = event.target.value;
+    const filtered = ingredient.filter(
+      (item) => {
+        if (inputValue == '') return true;
+        return removeDiacritics(
+          item.name.toLowerCase().replace(/\s+/g, '')
+        ).includes(
+          removeDiacritics(inputValue.toLowerCase().replace(/\s+/g, ''))
+        );
+      }
+      // item.name.toLowerCase().includes(inputValue.toLowerCase()
+      // )
     );
 
     setFilteredIngredients(filtered);
   };
   const [expanded, setExpanded] = React.useState<string | false>(false);
 
-
-
   // Create a mapping from ingredient_type to ingredients
-  const typeMap = new Map<string, IngredientEntity[]>();
-  if (filteredIngredients) {
-    filteredIngredients.forEach((ingredient) => {
-      const type = ingredient.ingredient_type?.name || 'Uncategorized'; // Use "Uncategorized" if no ingredient_type is specified
-      if (!typeMap.has(type)) {
-        typeMap.set(type, []);
-      }
-      typeMap.get(type)?.push(ingredient);
-    });
-  }
+  // const typeMap = new Map<string, IngredientEntity[]>();
+  // if (filteredIngredients) {
+  //   filteredIngredients.forEach((ingredient) => {
+  //     const type = ingredient.ingredient_type?.name || 'Uncategorized'; // Use "Uncategorized" if no ingredient_type is specified
+  //     if (!typeMap.has(type)) {
+  //       typeMap.set(type, []);
+  //     }
+  //     typeMap.get(type)?.push(ingredient);
+  //   });
+  // }
   return (
     <Layout>
       {login.isUserSignedIn && (
@@ -218,15 +226,15 @@ const MyPantry: React.FC = () => {
                   Thêm nguyên liệu đang có sẵn ở nhà để tìm công thức có thể nấu
                   ngay bây giờ
                 </Typography>
-                {Array.from(typeMap.entries()).map(
+                {/* {Array.from(typeMap.entries()).map(
                   ([type, typeIngredients], index) => (
                     <Accordion
                       key={index}
                       sx={{
                         backgroundColor: 'transparent',
                       }}
-                    >
-                      <AccordionSummary sx={{ p: 0 }}>
+                    > */}
+                {/* <AccordionSummary sx={{ p: 0 }}>
                         <Typography
                           sx={{
                             width: '60%',
@@ -250,8 +258,8 @@ const MyPantry: React.FC = () => {
                           ></FiberManualRecord>{' '}
                           {typeIngredients.length}
                         </Typography>
-                      </AccordionSummary>
-                      <AccordionDetails
+                      </AccordionSummary> */}
+                {/* <AccordionDetails
                         sx={{
                           p: 0,
                           overflow: 'visible',
@@ -265,9 +273,9 @@ const MyPantry: React.FC = () => {
                           ))}
                         </Grid>
                       </AccordionDetails>
-                    </Accordion>
-                  )
-                )}
+                    </Accordion> */}
+                {/* )
+                )} */}
               </Box>
             </Grid>
             <Grid
@@ -296,8 +304,7 @@ const MyPantry: React.FC = () => {
                         color: 'black',
                         padding: 5,
                         borderRadius: 10,
-                        border: 1,
-                        borderColor: 'gray',
+                        border: '1px solid gray',
                         height: '680px',
                         overflow: 'auto',
                         scrollbarWidth: 'thin',
@@ -311,7 +318,7 @@ const MyPantry: React.FC = () => {
                         options={ingredient}
                         getOptionLabel={(option) => option.name}
                         filterOptions={filterOptions}
-                        sx={{ width: '100%', mb: 5 }}
+                        sx={{ width: '100%', marginBottom: 5 }}
                         onChange={handleAutoCompleteChange}
                         onInputChange={handleInputChange}
                         value={selectedIngredient}
@@ -321,6 +328,7 @@ const MyPantry: React.FC = () => {
                             label="Rồi kiếm cái gì thì nói, nhanh!"
                           />
                         )}
+                        clearOnBlur={false} // Giữ lại giá trị khi click ra ngoài
                       />
                       <Ingredient_Component ingredients={filteredIngredients} />
                     </Box>

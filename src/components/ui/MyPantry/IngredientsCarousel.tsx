@@ -45,7 +45,7 @@ export function IngredientsCarousel({ array }: { array: IngredientEntity[] }) {
                         fontWeight={'bold'}
                         fontFamily={'Dancing Script'}
                     >
-                        Chưa có công thức nào :(
+                        Chưa có nguyên liệu nào :(
                     </Typography>
                 </Box>
             )}
