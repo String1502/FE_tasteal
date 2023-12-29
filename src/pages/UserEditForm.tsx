@@ -49,7 +49,7 @@ const UserEditForm = ({
         } else {
           const storageRef = ref(storage, `${editData.uid}`);
           await uploadBytes(storageRef, file).then((snapshot) => {
-            updateData.avatar = snapshot.ref.fullPath;
+            updateData.avatar = snapshot.metadata.fullPath;
           });
         }
       }
