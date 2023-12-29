@@ -37,14 +37,24 @@ const UserEditForm = ({
 
   const handleSave = async () => {
     try {
+      const updateData = {
+        ...editData,
+      };
       if (file) {
-        deleteObject(ref(storage, editData.avatar)).then(async () => {
-          const storageRef = ref(storage, `${editData.avatar}`);
-          await uploadBytes(storageRef, file);
-        });
+        if (editData.avatar) {
+          deleteObject(ref(storage, editData.avatar)).then(async () => {
+            const storageRef = ref(storage, `${editData.avatar}`);
+            await uploadBytes(storageRef, file);
+          });
+        } else {
+          const storageRef = ref(storage, `${editData.uid}`);
+          await uploadBytes(storageRef, file).then((snapshot) => {
+            updateData.avatar = snapshot.ref.fullPath;
+          });
+        }
       }
 
-      const result = await AccountService.UpdateUser(editData);
+      const result = await AccountService.UpdateUser(updateData);
       if (result) {
         handleChangeUserData(editData);
         snackbarAlert('Cập nhật thành công', 'success');

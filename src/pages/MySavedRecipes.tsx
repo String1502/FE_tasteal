@@ -45,15 +45,17 @@ function MySavedRecipes() {
               alignItems={'center'}
               justifyContent={'flex-start'}
             >
-              {cookbookData.map((item, i) => (
-                <Grid item xs={3.6} md={2.4} lg={1.2} key={i}>
-                  <CookBook
-                    cookbook={item}
-                    choosing={choosing}
-                    handleChoosing={handleChoosing}
-                  />
-                </Grid>
-              ))}
+              {cookbookData &&
+                cookbookData.map((item, i) => (
+                  <Grid item xs={3.6} md={2.4} lg={1.2} key={i}>
+                    <CookBook
+                      cookbook={item}
+                      choosing={choosing}
+                      handleChoosing={handleChoosing}
+                      index={i}
+                    />
+                  </Grid>
+                ))}
             </Grid>
           </Box>
 

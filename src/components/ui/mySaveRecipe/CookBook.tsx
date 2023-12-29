@@ -15,15 +15,20 @@ import {
 import BoxImage from '@/components/common/image/BoxImage';
 import { CookbookChoosingType } from '../../../pages/MySavedRecipes';
 import SlideInDialog from '@/components/common/dialog/SlideInDialog';
+import useSnackbarService from '@/lib/hooks/useSnackbar';
+import CookbookService from '@/lib/services/cookbookService';
+import { NewCookBookNameReq } from '@/lib/models/dtos/Request/NewCookBookNameReq/NewCookBookNameReq';
 
 export function CookBook({
   cookbook,
   choosing,
   handleChoosing,
+  index,
 }: {
   cookbook: CookBookEntity;
   choosing: CookbookChoosingType | undefined;
   handleChoosing: (cookbook: CookBookEntity) => void;
+  index: number;
 }) {
   const color = useMemo(() => {
     if (cookbook.id == choosing?.Cookbook.id) {
@@ -51,6 +56,9 @@ export function CookBook({
   const [openDelete, setOpenDelete] = React.useState(false);
   const handleOpenDelete = () => setOpenDelete(true);
   const handleCloseDelete = () => setOpenDelete(false);
+
+  const [snackbarAlert] = useSnackbarService();
+
   return (
     <Box
       component={'div'}
@@ -132,19 +140,21 @@ export function CookBook({
             Đổi tên
           </Typography>
         </MenuItem>
-        <MenuItem
-          onClick={() => {
-            handleOpenDelete();
-            handleCloseRightClick();
-          }}
-        >
-          <ListItemIcon>
-            <DeleteRounded color="error" fontSize="small" />
-          </ListItemIcon>
-          <Typography variant="body2" color="error" fontWeight={'bold'}>
-            Xóa
-          </Typography>
-        </MenuItem>
+        {index != 0 && (
+          <MenuItem
+            onClick={() => {
+              handleOpenDelete();
+              handleCloseRightClick();
+            }}
+          >
+            <ListItemIcon>
+              <DeleteRounded color="error" fontSize="small" />
+            </ListItemIcon>
+            <Typography variant="body2" color="error" fontWeight={'bold'}>
+              Xóa
+            </Typography>
+          </MenuItem>
+        )}
       </Menu>
 
       {/* Dialog đổi tên */}
@@ -170,23 +180,47 @@ export function CookBook({
         }
         cancelText="Hủy"
         confirmText="Cập nhật"
+        onClickConfirm={async () => {
+          const data: NewCookBookNameReq = {
+            id: cookbook.id,
+            name: renameValue,
+          };
+          const result = await CookbookService.UpdateCookBookName(data);
+          if (result) {
+            snackbarAlert('Cập nhật thành công', 'success');
+          } else {
+            snackbarAlert('Cập nhật thất bại', 'error');
+          }
+        }}
       />
 
       {/* Dialog xóa */}
-      <SlideInDialog
-        open={openDelete}
-        handleClose={handleCloseDelete}
-        title="Bạn chắc chắn muốn xóa?"
-        content=" Các công thức đã lưu trong bộ sưu tập sẽ bị xóa!"
-        cancelText="Hủy"
-        confirmText="Xóa"
-        confirmButtonProps={{
-          color: 'error',
-        }}
-        cancelButtonProps={{
-          color: 'primary',
-        }}
-      />
+      {index !== 0 && (
+        <SlideInDialog
+          open={openDelete}
+          handleClose={handleCloseDelete}
+          title="Bạn chắc chắn muốn xóa?"
+          content=" Các công thức đã lưu trong bộ sưu tập sẽ bị xóa!"
+          cancelText="Hủy"
+          confirmText="Xóa"
+          confirmButtonProps={{
+            color: 'error',
+          }}
+          cancelButtonProps={{
+            color: 'primary',
+          }}
+          onClickConfirm={async () => {
+            const result = await CookbookService.DeleteCookBookById(
+              cookbook.id
+            );
+            if (result) {
+              snackbarAlert('Xóa thành công', 'success');
+            } else {
+              snackbarAlert('Xóa thất bại', 'error');
+            }
+          }}
+        />
+      )}
     </Box>
   );
 }

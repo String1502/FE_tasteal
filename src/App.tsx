@@ -78,24 +78,6 @@ function AppWrapper({
 
 //#region AllRoutes
 function AllRoutes() {
-  const { login, handleSpinner } = useContext(AppContext);
-
-  // Check if login ?
-  useEffect(() => {
-    if (login.isUserSignedIn == undefined) {
-      handleSpinner(true);
-      const unsubscribe = onAuthStateChanged(auth, (user) => {
-        if (user && login.handleLogin) {
-          login.handleLogin(true, user);
-        } else {
-          login.handleLogin(false);
-        }
-      });
-      handleSpinner(false);
-      return () => unsubscribe();
-    }
-  }, [handleSpinner, login]);
-
   const MapRoutes = useMemo(() => {
     return [
       {
