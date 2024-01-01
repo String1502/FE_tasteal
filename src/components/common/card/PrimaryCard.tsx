@@ -26,7 +26,7 @@ import RatingRecipe from './RatingRecipe';
 import NameRecipe from './NameRecipe';
 import ImageRecipe from './ImageRecipe';
 import AppContext from '@/lib/contexts/AppContext';
-import { RecipeToCookBookReq } from '@/lib/models/dtos/Request/RecipeToCookBookReq/RecipeToCookBook';
+import { RecipeToCookBookReq } from '@/lib/models/dtos/Request/RecipeToCookBook/RecipeToCookBook';
 import RecipeService from '@/lib/services/recipeService';
 import useSnackbarService from '@/lib/hooks/useSnackbar';
 

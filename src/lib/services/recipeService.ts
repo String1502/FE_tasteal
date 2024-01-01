@@ -12,7 +12,7 @@ import { RecipeSearchReq } from '../models/dtos/Request/RecipeSearchReq/RecipeSe
 import { KeyWordRes } from '../models/dtos/Response/KeyWordRes/KeyWordRes';
 import { RecipeEntity } from '../models/entities/RecipeEntity/RecipeEntity';
 import { NewRecipeCookBookReq } from '../models/dtos/Request/NewRecipeCookBookReq/NewRecipeCookBookReq';
-import { RecipeToCookBookReq } from '../models/dtos/Request/RecipeToCookBookReq/RecipeToCookBook';
+import { RecipeToCookBookReq } from '../models/dtos/Request/RecipeToCookBook/RecipeToCookBook';
 
 const DEBUG_IDENTIFIER = '[RecipeService]';
 const createDebugString = createDebugStringFormatter(DEBUG_IDENTIFIER);

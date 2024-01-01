@@ -6,8 +6,8 @@ import { Nutrition_InfoEntity } from '../../../entities/Nutrition_InfoEntity/Nut
 export type RecipeSearchRes = {
   id: number;
   name?: string;
-  rating: number;
-  totalTime: number;
+  rating?: number;
+  totalTime?: number;
   active_time?: Date;
   serving_size: number;
   introduction?: string;

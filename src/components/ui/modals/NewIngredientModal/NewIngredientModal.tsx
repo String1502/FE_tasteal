@@ -52,7 +52,7 @@ const NewIngredientModal: React.FunctionComponent<{
 
       // Find the ingredient with the matching ID.
       const ingredient = ingredientOptions.find(
-        (ingredient) => ingredient.id === id
+        (ingredient) => ingredient.Id === id
       );
 
       // If the ingredient is found, return its name. Otherwise, return an empty string.
@@ -85,7 +85,7 @@ const NewIngredientModal: React.FunctionComponent<{
   const handleIngredientChange = useCallback(
     (ingredientId: number | null) => {
       const ingredient = ingredientOptions.find(
-        (ingredient) => ingredient.id === ingredientId
+        (ingredient) => ingredient.Id === ingredientId
       );
 
       if (!ingredient) {
@@ -96,7 +96,7 @@ const NewIngredientModal: React.FunctionComponent<{
       const item: IngredientItemData = {
         ...DefaultIngredientItemData,
         id: nanoid(6),
-        ingredientId: ingredient.id,
+        ingredientId: ingredient.Id,
         name: ingredient.name,
       };
 
@@ -149,7 +149,7 @@ const NewIngredientModal: React.FunctionComponent<{
                 handleIngredientChange(newValue);
               }}
               disablePortal
-              options={[0, ...ingredientOptions.map((i) => i.id)]}
+              options={[0, ...ingredientOptions.map((i) => i.Id)]}
               renderInput={(params) => (
                 <TastealTextField {...params} placeholder="Nhập nguyên liệu" />
               )}
