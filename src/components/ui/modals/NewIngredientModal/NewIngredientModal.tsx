@@ -23,7 +23,6 @@ const NewIngredientModal: React.FunctionComponent<{
 
   const [newIngredientItem, setNewIngredientItem] =
     useState<IngredientItemData>(DefaultIngredientItemData);
-
   const [ingredientOptions] = useIngredients();
 
   //#endregion

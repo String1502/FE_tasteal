@@ -1,3 +1,4 @@
+import { gridPageSizeSelector } from '@mui/x-data-grid';
 import { getApiUrl } from '../constants/api';
 import { PageReq } from '../models/dtos/Request/PageReq/PageReq';
 import { IngredientRes } from '../models/dtos/Response/IngredientRes/IngredientRes';
@@ -39,6 +40,26 @@ class IngredientService {
       });
   }
 
+  public static GetAll2(): Promise<IngredientsGetRes> {
+    const body = {
+      page: 1,
+      pageSize: 2147483647,
+    };
+
+    return fetch(getApiUrl('GetAllIngredients'), {
+      method: 'POST',
+      body: JSON.stringify(body),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    }).then((res) => {
+      if (res.ok) {
+        return res.json();
+      }
+      throw new Error(res.statusText);
+    });
+  }
+
   public static async GetAllIngredientTypes(): Promise<
     Ingredient_TypeEntity[]
   > {
@@ -55,5 +76,10 @@ class IngredientService {
       ) as Ingredient_TypeEntity[];
   }
 }
+
+export type IngredientsGetRes = {
+  maxPage: number;
+  ingredients: IngredientRes[];
+};
 
 export default IngredientService;
