@@ -44,7 +44,7 @@ export const ApiEndPoint = {
   CreateRecipe: 'Recipe/Add',
   SearchRecipe: 'Recipe/Search',
   GetAllRecipe: 'Recipe/getall',
-  GetRecipe: 'Recipe/GetRecipe',
+  GetRecipeById: 'Recipe/GetRecipeById',
   GetKeyWords: 'Recipe/keywords',
   DeleteRecipe: 'Recipe/recipe',
   //
@@ -53,7 +53,7 @@ export const ApiEndPoint = {
   UpdateUser: 'User/updateuser',
   GetAllUser: 'User/allusers',
   GetUserByUid: 'User',
-    GetCurrentUser: 'User',
+  GetCurrentUser: 'User',
 } as const;
 
 /**

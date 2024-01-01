@@ -17,7 +17,6 @@ import AppContext from '@/lib/contexts/AppContext';
 import useSnackbarService from '@/lib/hooks/useSnackbar';
 import { RecipeRes } from '@/lib/models/dtos/Response/RecipeRes/RecipeRes';
 import RecipeService from '@/lib/services/recipeService';
-import createCacheAsyncFunction from '@/utils/cache/createCacheAsyncFunction';
 import { createDebugStringFormatter } from '@/utils/debug/formatter';
 import {
   Add,
@@ -93,11 +92,6 @@ const RecipeDetailStringConstants = {
  */
 const debugStringFormatter = createDebugStringFormatter(PAGE_ID);
 
-/**
- * Cached version of RecipeService.GetById
- */
-const getRecipeById = createCacheAsyncFunction(RecipeService.GetById);
-
 const RecipeDetail: FC = () => {
   //#region Loading
 
@@ -138,16 +132,18 @@ const RecipeDetail: FC = () => {
 
     const parsedId = parseInt(id);
 
-    getRecipeById(parsedId)
+    RecipeService.GetById(parsedId)
       .then((recipe) => {
         setRecipe(recipe);
         setIsRecipeFound(true);
         console.log(debugStringFormatter('Get recipe data sucessfully!'));
+        console.log(recipe);
       })
-      .catch(() => {
+      .catch((err) => {
         setRecipe(null);
         setIsRecipeFound(false);
         console.log(debugStringFormatter('Failed to get recipe data!'));
+        console.log('error', err);
       })
       .finally(() => {
         handleSpinner(false);
