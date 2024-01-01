@@ -72,8 +72,10 @@ class RecipeService {
       method: 'POST',
     }).then((res) => {
       if (res.ok) {
-        const data = res.json();
-        return data;
+        return res.json().then((data) => {
+          recipeCache.set(id, data);
+          return data;
+        });
       }
       throw new Error(res.statusText);
     });

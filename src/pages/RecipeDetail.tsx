@@ -15,7 +15,12 @@ import Layout from '@/layout/Layout';
 import { N_AValue, PageRoute } from '@/lib/constants/common';
 import AppContext from '@/lib/contexts/AppContext';
 import useSnackbarService from '@/lib/hooks/useSnackbar';
+import { CommentRes } from '@/lib/models/dtos/Response/CommentRes/CommentRes';
 import { RecipeRes } from '@/lib/models/dtos/Response/RecipeRes/RecipeRes';
+import { AccountEntity } from '@/lib/models/entities/AccountEntity/AccountEntity';
+import { CommentEntity } from '@/lib/models/entities/CommentEntity/CommentEntity';
+import AccountService from '@/lib/services/accountService';
+import CommentService from '@/lib/services/commentService';
 import RecipeService from '@/lib/services/recipeService';
 import { createDebugStringFormatter } from '@/utils/debug/formatter';
 import {
@@ -23,6 +28,7 @@ import {
   Bookmark,
   BookmarkOutlined,
   Close,
+  CommentsDisabledRounded,
   Edit,
   Facebook,
   Mail,
@@ -41,6 +47,8 @@ import {
   Grid,
   IconButton,
   Link,
+  List,
+  ListItem,
   Modal,
   Rating,
   Skeleton,
@@ -136,8 +144,6 @@ const RecipeDetail: FC = () => {
       .then((recipe) => {
         setRecipe(recipe);
         setIsRecipeFound(true);
-        console.log(debugStringFormatter('Get recipe data sucessfully!'));
-        console.log(recipe);
       })
       .catch((err) => {
         setRecipe(null);
@@ -204,6 +210,49 @@ const RecipeDetail: FC = () => {
   }, []);
 
   //#endregion
+  //#region Feedback
+
+  const [comment, setComment] = useState('');
+
+  function handleComment() {
+    const [valid, message] = validateComment();
+    if (!valid) {
+      snackbarAlert(message, 'warning');
+      return;
+    }
+
+    console.log(recipe!.id, user.uid, comment);
+
+    CommentService.Create(recipe!.id, user.uid, comment)
+      .then((comment) => console.log('Đã comment', comment))
+      .catch((error) => console.log('error', error));
+  }
+  function validateComment(): [boolean, string] {
+    if (!comment) {
+      return [false, 'Vui lòng nhập comment'];
+    }
+    if (!user) {
+      return [false, 'Vui lòng đăng nhập!'];
+    }
+    if (!recipe) {
+      return [false, 'Không lấy được thông tin công thức!'];
+    }
+
+    return [true, ''];
+  }
+
+  const [comments, setComments] = useState<CommentEntity[]>([]);
+  useEffect(() => {
+    if (!recipe) {
+      return;
+    }
+    CommentService.Get(recipe!.id)
+      .then((res) => setComments(res.comments))
+      .catch(() => setComments([]));
+  }, [recipe]);
+  console.log(comments);
+
+  //#endregion
   //#region Others
 
   const recipeBrief = useMemo(() => {
@@ -219,6 +268,8 @@ const RecipeDetail: FC = () => {
   }, [recipe]);
 
   //#endregion
+
+  console.log('render');
 
   return (
     <Layout>
@@ -495,10 +546,10 @@ const RecipeDetail: FC = () => {
               py: 4,
               display: 'flex',
               flexDirection: 'column',
-              gap: 4,
+              gap: 2,
             }}
           >
-            <Box width="60%">
+            <Stack width="60%" gap={1}>
               <Stack
                 direction="row"
                 alignItems={'end'}
@@ -528,15 +579,59 @@ const RecipeDetail: FC = () => {
               {loading ? (
                 <Skeleton variant="rounded" animation="wave" height={160} />
               ) : (
-                <TastealTextField
-                  multiline
-                  rows={4}
-                  placeholder="Để lại bình luận"
-                  fullWidth
-                  sx={{ mt: 1 }}
-                />
+                <>
+                  <Box position="relative">
+                    <TastealTextField
+                      value={comment}
+                      onChange={(e) => setComment(e.target.value)}
+                      multiline
+                      rows={4}
+                      placeholder="Để lại bình luận"
+                      fullWidth
+                      sx={{ mt: 1 }}
+                    />
+                    <Button
+                      variant="contained"
+                      color="primary"
+                      onClick={handleComment}
+                      sx={{
+                        position: 'absolute',
+                        right: 10,
+                        bottom: 10,
+                        opacity: comment ? 1 : 0,
+                        transition: 'all 0.3s',
+                      }}
+                    >
+                      Bình luận
+                    </Button>
+                  </Box>
+                  <List>
+                    {/* {recipe?.comments?.length > 0 &&
+                        recipe?.comments.map((comment) => (
+                          <CommentItem comment={comment} />
+                        ))} */}
+                    {comments.length > 0 &&
+                      comments.map((comment, index) => (
+                        <>
+                          <CommentItem comment={comment} />
+                          {index < comments.length - 1 && (
+                            <Divider sx={{ my: 2, opacity: 0.4 }} />
+                          )}
+                        </>
+                      ))}
+                  </List>
+
+                  <Button
+                    variant="contained"
+                    size="large"
+                    sx={{ alignSelf: 'center' }}
+                    onClick={() => alert('Load more comments')}
+                  >
+                    Hiện thêm
+                  </Button>
+                </>
               )}
-            </Box>
+            </Stack>
 
             {/* <Box width="60%">
             <BigSectionHeading>Tags</BigSectionHeading>
@@ -693,6 +788,58 @@ function RecipeNotFound() {
         Xin lỗi, công thức không tồn tại!
       </Typography>
     </Box>
+  );
+}
+
+function CommentItem({ comment }: { comment: CommentEntity }) {
+  const [account, setAccount] = useState<AccountEntity | null>(null);
+  useEffect(() => {
+    AccountService.GetByUid(comment.account_id)
+      .then((account) => setAccount(account))
+      .catch(() => setAccount(null));
+  }, [comment.account_id]);
+
+  return (
+    <ListItem
+      disablePadding
+      sx={{
+        pb: 2,
+      }}
+    >
+      <Stack direction="row" width="100%">
+        <Box pr={3}>
+          <BoxImage
+            src={account?.avatar ?? ''}
+            alt={
+              account
+                ? 'Comment avatar of ' + account.name
+                : 'null comment avatar'
+            }
+            quality={10}
+            sx={{
+              width: 72,
+              height: 72,
+              borderRadius: '50%',
+            }}
+          />
+        </Box>
+        <Stack
+          gap={2}
+          sx={{
+            flexGrow: 1,
+          }}
+        >
+          <Stack gap={1}>
+            <Typography typography="h6">
+              {account?.name ?? 'Không tìm thấy'}
+            </Typography>
+            <Typography typography="body1">5 tháng, 4 tuần trước</Typography>
+          </Stack>
+          <Rating readOnly />
+          <Typography fontSize={20}>{comment.comment}</Typography>
+        </Stack>
+      </Stack>
+    </ListItem>
   );
 }
 

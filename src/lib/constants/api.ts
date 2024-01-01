@@ -54,6 +54,11 @@ export const ApiEndPoint = {
   GetAllUser: 'User/allusers',
   GetUserByUid: 'User',
   GetCurrentUser: 'User',
+  //
+  // COMMENT
+  // TODO: consider merging all these.
+  CreateComment: (recipeId: string) => `Recipe/${recipeId}/Comments`,
+  GetComments: (recipeId: string) => `Recipe/${recipeId}/Comments`,
 } as const;
 
 /**
@@ -67,6 +72,13 @@ export type ApiEndPoint = keyof typeof ApiEndPoint;
  * @param endpoint - Api endpoint
  * @returns Full url path
  */
-export function getApiUrl(endpoint: ApiEndPoint) {
-  return ApiPath + ApiEndPoint[endpoint];
+export function getApiUrl(endpoint: ApiEndPoint, id?: string) {
+  const apiEndPoint = ApiEndPoint[endpoint];
+  if (typeof apiEndPoint === 'string') {
+    return ApiPath + apiEndPoint;
+  }
+  if (typeof apiEndPoint === 'function') {
+    return ApiPath + apiEndPoint(id);
+  }
+  throw new Error("Can't get api url");
 }
