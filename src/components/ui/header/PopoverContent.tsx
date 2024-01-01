@@ -28,6 +28,8 @@ export type PopoverContentProps = {
 
 export function PopoverContent() {
   const { popOverHeader } = useContext(AppContext);
+  console.log(popOverHeader);
+
   return (
     <>
       <Container

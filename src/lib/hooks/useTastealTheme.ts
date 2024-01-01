@@ -92,8 +92,6 @@ function useTastealTheme(): {
   const [scrollPos, setScrollPos] = useState(0);
   //#endregion
 
-  console.log(isHeaderHide);
-
   useEffect(() => {
     const fetchData = async () => {
       const occassion = await OccasionService.GetCurrentOccassions();
@@ -108,8 +106,9 @@ function useTastealTheme(): {
         setPopOverHeader({
           tuKhoas: tuKhoas.map((item) => {
             return {
-              ...item,
+              keyword: item,
               value: false,
+              frequency: 0,
             };
           }),
           ingredients,
