@@ -1,4 +1,5 @@
 import { getApiUrl } from '../constants/api';
+import { PageReq } from '../models/dtos/Request/PageReq/PageReq';
 import { IngredientRes } from '../models/dtos/Response/IngredientRes/IngredientRes';
 import { IngredientEntity } from '../models/entities/IngredientEntity/IngredientEntity';
 import { Ingredient_TypeEntity } from '../models/entities/Ingredient_TypeEntity/Ingredient_TypeEntity';
@@ -12,10 +13,27 @@ class IngredientService {
    *
    * @return {Promise<IngredientEntity[]>} A promise that resolves with an array of IngredientEntity objects.
    */
-  public static async GetAll(): Promise<(IngredientEntity & IngredientRes)[]> {
-    return await fetch(getApiUrl('GetAllIngredients'))
+  public static async GetAll(
+    pageSize: number = 1000000,
+    page: number = 1
+  ): Promise<(IngredientEntity & IngredientRes)[]> {
+    const requestOptions = {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: JSON.stringify({
+        pageSize: pageSize,
+        page: page,
+      } as PageReq),
+    };
+    return await fetch(getApiUrl('GetAllIngredients'), requestOptions)
       .then((res) => res.json())
-      .then((data) => data)
+      .then((data) => {
+        console.log(data);
+
+        return data.ingredients;
+      })
       .catch((error) => {
         console.log(error);
       });
