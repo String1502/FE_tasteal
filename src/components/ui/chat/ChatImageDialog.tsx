@@ -32,7 +32,7 @@ export function ChatImageDialog({
         sx: {
           width: '100%',
           background: 'transparent',
-          borderRadius: '24px 24px 0 0',
+          borderRadius: '16px 16px 0 0',
         },
       }}
     >
@@ -40,7 +40,7 @@ export function ChatImageDialog({
         sx={{
           p: 0.5,
           px: 2,
-          backgroundColor: 'secondary.main',
+          backgroundColor: 'primary.main',
         }}
       >
         <Stack
