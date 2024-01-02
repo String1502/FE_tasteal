@@ -270,6 +270,7 @@ const RecipeDetail: FC = () => {
   //#endregion
 
   console.log('render');
+  console.log(recipe?.occasions);
 
   return (
     <Layout>

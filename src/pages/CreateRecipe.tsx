@@ -185,6 +185,43 @@ const CreateRecipe: React.FunctionComponent<{ edit?: boolean }> = ({
   }, []);
 
   //#endregion
+  //#region Occasions
+
+  const [occasions, setOccasions] = useState([]);
+  const [selectedOccasions, setSelectedOccasions] = useState<ChipValue[]>([]);
+
+  const filterOccasions = useCallback(
+    (occasions: ChipValue[]) => {
+      return occasions.filter((occasion) => {
+        return !selectedOccasions.some(
+          (selectedOccasion) => selectedOccasion.id === occasion.id
+        );
+      });
+    },
+    [selectedOccasions]
+  );
+
+  const filteredOccasions = useMemo(() => {
+    return filterOccasions(occasions);
+  }, [filterOccasions, occasions]);
+
+  const handleSelectedOccasionsChange = useCallback((value: ChipValue[]) => {
+    setSelectedOccasions(value);
+  }, []);
+
+  const handleSelectOccasion = useCallback((value: ChipValue | null) => {
+    if (value) {
+      setSelectedOccasions((prev) => [...prev, value]);
+    }
+  }, []);
+
+  useEffect(() => {
+    OccasionService.GetAll()
+      .then((occasions) => setOccasions(occasions))
+      .catch(() => setOccasions([]));
+  }, []);
+
+  //#endregion
   //#region Data Actions
 
   const validateNewRecipe = useCallback((): {
@@ -203,10 +240,6 @@ const CreateRecipe: React.FunctionComponent<{ edit?: boolean }> = ({
       setInvalid(LocalMessageConstant.Validation.InvalidData);
     } else if (!newRecipe.name) {
       setInvalid(LocalMessageConstant.Validation.NameRequired);
-    } else if (!newRecipe.introduction) {
-      setInvalid(LocalMessageConstant.Validation.IntroductionRequired);
-    } else if (!recipeThumbnailFile) {
-      setInvalid(LocalMessageConstant.Validation.ImageRequired);
     } else if (!newRecipe.ingredients || newRecipe.ingredients.length === 0) {
       setInvalid(LocalMessageConstant.Validation.IngredientRequired);
     } else if (!newRecipe.directions || newRecipe.directions.length === 0) {
@@ -221,7 +254,7 @@ const CreateRecipe: React.FunctionComponent<{ edit?: boolean }> = ({
     }
 
     return { isValid, msg };
-  }, [newRecipe, recipeThumbnailFile]);
+  }, [newRecipe]);
 
   /**
    * Creates a new recipe request.
@@ -234,11 +267,14 @@ const CreateRecipe: React.FunctionComponent<{ edit?: boolean }> = ({
 
     const imageId = uuidv4();
 
-    let path = `${StoragePath.RECIPE}/${imageId}.${getFileExtension(
-      recipeThumbnailFile.name
-    )}`;
+    let path = '';
+    if (recipeThumbnailFile) {
+      path = `${StoragePath.RECIPE}/${imageId}.${getFileExtension(
+        recipeThumbnailFile.name
+      )}`;
 
-    path = await uploadImage(recipeThumbnailFile, path);
+      path = await uploadImage(recipeThumbnailFile, path);
+    }
 
     const directionsWithImage = await resolveDirectionsImage(
       newRecipe.directions,
@@ -248,9 +284,10 @@ const CreateRecipe: React.FunctionComponent<{ edit?: boolean }> = ({
     const postRecipeData: RecipeReq = {
       name: newRecipe.name,
       introduction: newRecipe.introduction,
-      image: path,
+      image: path || undefined,
       totalTime: newRecipe.totalTime,
       serving_size: newRecipe.servingSize,
+      occasions: selectedOccasions.map((o) => o.id),
       ingredients: newRecipe.ingredients.map((ingredient) => ({
         id: ingredient.ingredientId,
         amount: ingredient.amount,
@@ -273,6 +310,7 @@ const CreateRecipe: React.FunctionComponent<{ edit?: boolean }> = ({
     newRecipe.servingSize,
     newRecipe.totalTime,
     recipeThumbnailFile,
+    selectedOccasions,
     user,
   ]);
 
@@ -363,43 +401,6 @@ const CreateRecipe: React.FunctionComponent<{ edit?: boolean }> = ({
     },
     []
   );
-
-  //#endregion
-  //#region Occasions
-
-  const [occasions, setOccasions] = useState([]);
-  const [selectedOccasions, setSelectedOccasions] = useState<ChipValue[]>([]);
-
-  const filterOccasions = useCallback(
-    (occasions: ChipValue[]) => {
-      return occasions.filter((occasion) => {
-        return !selectedOccasions.some(
-          (selectedOccasion) => selectedOccasion.id === occasion.id
-        );
-      });
-    },
-    [selectedOccasions]
-  );
-
-  const filteredOccasions = useMemo(() => {
-    return filterOccasions(occasions);
-  }, [filterOccasions, occasions]);
-
-  const handleSelectedOccasionsChange = useCallback((value: ChipValue[]) => {
-    setSelectedOccasions(value);
-  }, []);
-
-  const handleSelectOccasion = useCallback((value: ChipValue | null) => {
-    if (value) {
-      setSelectedOccasions((prev) => [...prev, value]);
-    }
-  }, []);
-
-  useEffect(() => {
-    OccasionService.GetAll()
-      .then((occasions) => setOccasions(occasions))
-      .catch(() => setOccasions([]));
-  }, []);
 
   //#endregion
   //#region Edit Mode
