@@ -5,14 +5,13 @@ import { createDebugStringFormatter } from '@/utils/debug/formatter';
 import simulateDelay from '@/utils/promises/stimulateDelay';
 import { DefaultPage } from '../constants/common';
 import { deleteImage } from '../firebase/image';
-import { NewRecipeCookBookReq } from '../models/dtos/Request/NewRecipeCookBookReq/NewRecipeCookBookReq';
 import { PageFilter } from '../models/dtos/Request/PageFilter/PageFilter';
 import { PageReq } from '../models/dtos/Request/PageReq/PageReq';
 import { RecipeReq } from '../models/dtos/Request/RecipeReq/RecipeReq';
 import { RecipeSearchReq } from '../models/dtos/Request/RecipeSearchReq/RecipeSearchReq';
-import { RecipeToCookBookReq } from '../models/dtos/Request/RecipeToCookBookReq/RecipeToCookBook';
-import { KeyWordRes } from '../models/dtos/Response/KeyWordRes/KeyWordRes';
 import { RecipeEntity } from '../models/entities/RecipeEntity/RecipeEntity';
+import { NewRecipeCookBookReq } from '../models/dtos/Request/NewRecipeCookBookReq/NewRecipeCookBookReq';
+import { RecipeToCookBookReq } from '../models/dtos/Request/RecipeToCookBook/RecipeToCookBook';
 
 const DEBUG_IDENTIFIER = '[RecipeService]';
 const createDebugString = createDebugStringFormatter(DEBUG_IDENTIFIER);
@@ -229,7 +228,7 @@ class RecipeService {
 
   //#endregion
 
-  public static async GetKeyWords(): Promise<KeyWordRes[]> {
+  public static async GetKeyWords(): Promise<string[]> {
     const requestOptions = {
       method: 'GET',
     };

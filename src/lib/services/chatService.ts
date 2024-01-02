@@ -30,7 +30,7 @@ class ChatService {
     );
   }
 
-  private static getUserChatRefByUid(uid: string): DocumentReference<UserChat> {
+  public static getUserChatRefByUid(uid: string): DocumentReference<UserChat> {
     return doc(this.getUserChatsRef(), uid).withConverter(userChatConverter);
   }
 
@@ -86,7 +86,7 @@ class ChatService {
     );
   }
 
-  private static getChatRefById(id: string): DocumentReference<Chat> {
+  public static getChatRefById(id: string): DocumentReference<Chat> {
     return doc(this.getChatsRef(), id).withConverter(chatConverter);
   }
 

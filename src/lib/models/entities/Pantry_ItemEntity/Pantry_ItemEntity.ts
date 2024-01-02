@@ -1,11 +1,11 @@
-import { IngredientEntity } from "../IngredientEntity/IngredientEntity";
-import { AccountEntity } from "../AccountEntity/AccountEntity";
+import { IngredientEntity } from '../IngredientEntity/IngredientEntity';
+import { PantryEntity } from '../PantryEntity/PantryEntity';
 
 export type Pantry_ItemEntity = {
   id: number;
-  account_id?: string;
+  pantry_id?: number;
   ingredient_id?: number;
-  amount?: number;
-  account?: AccountEntity;
-  IngredientEntity?: IngredientEntity;
+  amount: number;
+  Pantry?: PantryEntity;
+  Ingredient?: IngredientEntity;
 };

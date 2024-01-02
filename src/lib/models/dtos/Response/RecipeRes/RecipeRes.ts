@@ -10,12 +10,12 @@ import { RelatedRecipeRes } from '../RelatedRecipeRes/RelatedRecipeRes';
 export type RecipeRes = {
   id: RecipeEntity['id'];
   name?: RecipeEntity['name'];
-  rating: RecipeEntity['rating'];
-  totalTime: RecipeEntity['totalTime'];
+  is_private: RecipeEntity['is_private'];
+  rating?: RecipeEntity['rating'];
+  totalTime?: RecipeEntity['totalTime'];
   serving_size: RecipeEntity['serving_size'];
   introduction?: RecipeEntity['introduction'];
   author_note?: RecipeEntity['author_note'];
-  is_private: RecipeEntity['is_private'];
   image?: RecipeEntity['image'];
   author: AuthorRes;
   ingredients?: IngredientRes[];

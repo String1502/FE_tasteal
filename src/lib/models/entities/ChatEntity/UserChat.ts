@@ -4,14 +4,12 @@ import {
   QueryDocumentSnapshot,
   SnapshotOptions,
 } from 'firebase/firestore';
+import { AccountEntity } from '../AccountEntity/AccountEntity';
 
 type ChatWithType = {
   id: string;
   date: Date;
-  userInfor: {
-    name: string;
-    uid: string;
-  };
+  userInfor: AccountEntity;
   lastMessage: string;
   isRead: boolean;
 };

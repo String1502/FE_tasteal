@@ -20,3 +20,15 @@ export function isAccountEntityFullInfor(item: AccountEntity) {
   }
   return true;
 }
+
+export function InitAccountEntity() {
+  return {
+    uid: '',
+    name: '',
+    avatar: '',
+    introduction: '',
+    link: '',
+    slogan: '',
+    quote: '',
+  } as AccountEntity;
+}

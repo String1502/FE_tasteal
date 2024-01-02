@@ -122,6 +122,7 @@ class OccasionService {
         if (i - 1 >= 0 && getTime > occasions[i - 1].end_at.getTime()) {
           index = i;
         }
+        break;
       }
     }
     console.log(index);
