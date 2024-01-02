@@ -1,13 +1,15 @@
-import { LocalPhoneRounded, RemoveRounded } from '@mui/icons-material';
-import { Box, IconButton, Typography } from '@mui/material';
+import { RemoveRounded } from '@mui/icons-material';
+import { Box, IconButton, Link, Tooltip } from '@mui/material';
 import { Stack } from '@mui/system';
 import { useContext } from 'react';
 import { iconButtonProp, iconProp } from './LiveChat';
 import { ChatContext } from '@/lib/contexts/ChatContext';
+import { useNavigate } from 'react-router-dom';
+import { PageRoute } from '@/lib/constants/common';
 
 export function ChatHeader() {
   const { state, dispatch } = useContext(ChatContext);
-
+  const navigate = useNavigate();
   return (
     <Box
       component={'div'}
@@ -24,28 +26,28 @@ export function ChatHeader() {
       }}
     >
       <Box component={'div'}>
-        <Typography
-          variant="caption"
-          fontWeight={'bold'}
-          sx={{
-            textOverflow: 'ellipsis',
-            whiteSpace: 'nowrap',
-            overflow: 'hidden',
-          }}
-        >
-          {state.receiver?.name}
-        </Typography>
+        <Tooltip title="Đi đến trang của tác giả">
+          <Link
+            variant="caption"
+            fontWeight={'bold'}
+            sx={{
+              textOverflow: 'ellipsis',
+              whiteSpace: 'nowrap',
+              overflow: 'hidden',
+              cursor: 'pointer',
+            }}
+            onClick={() => {
+              if (state.receiver) {
+                navigate(PageRoute.Partner(state.receiver.uid));
+              }
+            }}
+          >
+            {state.receiver?.name}
+          </Link>
+        </Tooltip>
       </Box>
 
       <Stack direction="row">
-        {/* <IconButton
-          {...iconButtonProp}
-          onClick={() => {
-            window.open('tel: 0343214971', '_blank');
-          }}
-        >
-          <LocalPhoneRounded {...iconProp} />
-        </IconButton> */}
         <IconButton
           {...iconButtonProp}
           onClick={() =>

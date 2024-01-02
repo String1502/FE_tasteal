@@ -1,5 +1,7 @@
 import { ChatContext, compareTwoUid } from '@/lib/contexts/ChatContext';
-import UserChat from '@/lib/models/entities/ChatEntity/UserChat';
+import UserChat, {
+  ChatWithType,
+} from '@/lib/models/entities/ChatEntity/UserChat';
 import ChatService from '@/lib/services/chatService';
 import {
   ChatRounded,
@@ -55,7 +57,7 @@ function LiveChat() {
   const [userChatData, setUserChatData] = useState<UserChat | undefined>(
     undefined
   );
-  const [isNew, setIsNew] = useState(false);
+  const [news, setNew] = useState<number>(0);
 
   useEffect(() => {
     if (!state.sender || state.sender.uid == '') {
@@ -66,17 +68,15 @@ function LiveChat() {
       ChatService.getUserChatRefByUid(state.sender.uid),
       (doc) => {
         let data = doc.data();
+        console.log(data);
+
         if (!data) {
-          setIsNew(false);
+          setNew(0);
         } else {
-          const isRead = data.chatWith.find(
-            (item) => item.id == state.combileId
-          )?.isRead;
-          if (isRead == false) {
-            setIsNew(true);
-          } else {
-            setIsNew(false);
-          }
+          const countNew = data.chatWith.filter(
+            (chat: ChatWithType) => chat.isRead == false
+          ).length;
+          setNew(countNew);
         }
       }
     );
@@ -151,8 +151,6 @@ function LiveChat() {
   //     console.log(error);
   //   }
   // }
-
-  console.log(state);
 
   const handleChatIdChange = async (
     event: React.SyntheticEvent,
@@ -261,8 +259,6 @@ function LiveChat() {
       ChatService.getUserChatRefByUid(state.sender.uid),
       (doc) => {
         let data = doc.data();
-        console.log(data);
-
         setUserChatData(data);
       }
     );
@@ -286,19 +282,19 @@ function LiveChat() {
 
   return (
     <>
-      <Badge badgeContent={isNew ? 1 : 0} color="secondary">
-        <IconButton
-          color="primary"
-          size="small"
-          sx={{
-            border: 1,
-            mr: 2,
-          }}
-          onClick={handleClick}
-        >
-          <ChatRounded fontSize="inherit" />
-        </IconButton>
-      </Badge>
+      <IconButton
+        color="primary"
+        size="small"
+        sx={{
+          border: 1,
+          mr: 2,
+        }}
+        onClick={handleClick}
+      >
+        <Badge badgeContent={news} color="error">
+          <ChatRounded fontSize="small" />
+        </Badge>
+      </IconButton>
 
       <Popover
         id={id}
@@ -319,7 +315,7 @@ function LiveChat() {
               borderRadius: 2,
               boxShadow: 6,
               mt: 1,
-              width: '360px',
+              width: '348px',
               overflow: 'hidden',
             },
           },

@@ -3,6 +3,8 @@ import InfiniteScroll from 'react-infinite-scroll-component';
 import LoaderInfiniteScroll from '../search/LoaderInfiniteScroll';
 import { AccountEntity } from '@/lib/models/entities/AccountEntity/AccountEntity';
 import UserChatDisplay from './UserChatDisplay';
+import { useContext } from 'react';
+import { ChatContext } from '@/lib/contexts/ChatContext';
 
 function ChatCommunity({
   userData,
@@ -18,6 +20,8 @@ function ChatCommunity({
     newValue: string
   ) => void;
 }) {
+  const { state } = useContext(ChatContext);
+
   return (
     <InfiniteScroll
       dataLength={userData.length}
@@ -58,22 +62,29 @@ function ChatCommunity({
         maxHeight: '60dvh',
       }}
     >
-      {userData.map((item, index) => (
-        <Button
-          key={index}
-          onClick={(event) => handleUidReceiverChange(event, item.uid)}
-          sx={{
-            width: '100%',
-            p: 1,
-            borderRadius: '0px',
-            '&:hover': {
-              bgcolor: 'grey.200',
-            },
-          }}
-        >
-          <UserChatDisplay item={item} />
-        </Button>
-      ))}
+      {userData
+        .filter((item) => {
+          if (state.sender) {
+            return item.uid != state.sender.uid;
+          }
+          return true;
+        })
+        .map((item, index) => (
+          <Button
+            key={index}
+            onClick={(event) => handleUidReceiverChange(event, item.uid)}
+            sx={{
+              width: '100%',
+              p: 1,
+              borderRadius: '0px',
+              '&:hover': {
+                bgcolor: 'grey.200',
+              },
+            }}
+          >
+            <UserChatDisplay item={item} />
+          </Button>
+        ))}
     </InfiniteScroll>
   );
 }

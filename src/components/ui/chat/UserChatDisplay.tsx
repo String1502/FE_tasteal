@@ -2,6 +2,7 @@ import BoxImage from '@/components/common/image/BoxImage';
 import { AccountEntity } from '@/lib/models/entities/AccountEntity/AccountEntity';
 import { Avatar, Box, Stack, Typography } from '@mui/material';
 
+const squareUnitAva = '16%';
 function UserChatDisplay({
   item,
   isRead,
@@ -23,9 +24,9 @@ function UserChatDisplay({
     >
       <Box
         sx={{
-          width: '20%',
-          minWidth: '20%',
-          maxWidth: '20%',
+          width: squareUnitAva,
+          minWidth: squareUnitAva,
+          maxWidth: squareUnitAva,
           aspectRatio: '1 / 1',
           borderRadius: '50%',
           backgroundColor: 'secondary.main',
@@ -57,9 +58,9 @@ function UserChatDisplay({
         alignItems={'flex-start'}
         sx={{
           pl: 2,
-          width: '80%',
-          maxWidth: '80%',
-          minWidth: '80%',
+          width: `calc(100% - ${squareUnitAva})`,
+          maxWidth: `calc(100% - ${squareUnitAva})`,
+          minWidth: `calc(100% - ${squareUnitAva})`,
           py: 0.5,
         }}
       >
@@ -76,16 +77,15 @@ function UserChatDisplay({
         >
           {item.name}
         </Typography>
-        {lastMessage != undefined && (
+        {lastMessage != undefined ? (
           <Stack
             direction="row"
             justifyContent={'space-between'}
             sx={{ width: '100%' }}
           >
             <Box
-              component={'div'}
               sx={{
-                width: '75%',
+                width: '70%',
               }}
             >
               <Typography
@@ -96,6 +96,7 @@ function UserChatDisplay({
                   textOverflow: 'ellipsis',
                   overflow: 'hidden',
                   whiteSpace: 'nowrap',
+                  textTransform: 'none',
                 }}
               >
                 {lastMessage}
@@ -108,12 +109,25 @@ function UserChatDisplay({
                 textAlign: 'right',
               }}
             >
-              {date?.toLocaleTimeString('vi-VN', {
-                hour: '2-digit',
-                minute: '2-digit',
-              })}
+              {getDisplayTime(date)}
             </Typography>
           </Stack>
+        ) : (
+          <>
+            <Typography
+              variant="body2"
+              fontWeight={'regular'}
+              sx={{
+                textAlign: 'left',
+                textOverflow: 'ellipsis',
+                overflow: 'hidden',
+                whiteSpace: 'nowrap',
+                textTransform: 'none',
+              }}
+            >
+              {item.slogan}
+            </Typography>
+          </>
         )}
       </Stack>
     </Stack>
@@ -121,3 +135,24 @@ function UserChatDisplay({
 }
 
 export default UserChatDisplay;
+
+const getDisplayTime = (date?: Date) => {
+  const now = new Date();
+  if (!date) {
+    return now.toLocaleTimeString('vi-VN', {
+      hour: '2-digit',
+      minute: '2-digit',
+    });
+  }
+  if (date.toDateString() == now.toDateString()) {
+    return date.toLocaleTimeString('vi-VN', {
+      hour: '2-digit',
+      minute: '2-digit',
+    });
+  }
+  return date.toLocaleDateString('vi-VN', {
+    year: 'numeric',
+    month: 'numeric',
+    day: 'numeric',
+  });
+};
