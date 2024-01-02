@@ -14,8 +14,8 @@ import NutrionPerServingModal from '@/components/ui/modals/NutrionPerServingModa
 import Layout from '@/layout/Layout';
 import { N_AValue, PageRoute } from '@/lib/constants/common';
 import AppContext from '@/lib/contexts/AppContext';
+import useFirebaseImage from '@/lib/hooks/useFirebaseImage';
 import useSnackbarService from '@/lib/hooks/useSnackbar';
-import { CommentRes } from '@/lib/models/dtos/Response/CommentRes/CommentRes';
 import { RecipeRes } from '@/lib/models/dtos/Response/RecipeRes/RecipeRes';
 import { AccountEntity } from '@/lib/models/entities/AccountEntity/AccountEntity';
 import { CommentEntity } from '@/lib/models/entities/CommentEntity/CommentEntity';
@@ -28,7 +28,6 @@ import {
   Bookmark,
   BookmarkOutlined,
   Close,
-  CommentsDisabledRounded,
   Edit,
   Facebook,
   Mail,
@@ -63,7 +62,7 @@ import {
   useMemo,
   useState,
 } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { Link as RouterLink, useNavigate, useParams } from 'react-router-dom';
 
 // Mock bread crumbs data (will be remove later)
 const breadCrumbsLinks = [
@@ -267,10 +266,16 @@ const RecipeDetail: FC = () => {
     return `${ingredientCount} NGUYÊN LIỆU • ${directionCount} BƯỚC • ${totalTime} PHÚT`;
   }, [recipe]);
 
-  //#endregion
+  const authorLink = useMemo(() => {
+    if (!recipe) {
+      return '';
+    }
+    const route = `/partner/${recipe.author.uid}`;
+    const url = `${window.location.origin}${route}`;
+    return url;
+  }, [recipe]);
 
-  console.log('render');
-  console.log(recipe?.occasions);
+  //#endregion
 
   return (
     <Layout>
@@ -478,8 +483,11 @@ const RecipeDetail: FC = () => {
                 ) : (
                   <Box display={'flex'} flexDirection={'column'} gap={1}>
                     <Stack direction="row" alignItems={'center'} gap={2}>
-                      <Avatar src={recipe?.author.avatar} />
-                      <Link>
+                      <CustomAvatar path={recipe?.author.avatar} />
+                      <Link
+                        component={RouterLink}
+                        to={`/partner/${recipe?.author.uid}`}
+                      >
                         <Typography fontWeight={'bold'}>
                           {recipe?.author.name}
                         </Typography>
@@ -489,8 +497,13 @@ const RecipeDetail: FC = () => {
                       {recipe?.author.introduction}
                     </Typography>
                     {/* TODO: Implementation this */}
-                    <Link color="primary.main" fontWeight={'bold'}>
-                      https://www.sidechef.com/(not implemented)
+                    <Link
+                      color="primary.main"
+                      fontWeight={'bold'}
+                      component={RouterLink}
+                      to={`/partner/${recipe?.author.uid}`}
+                    >
+                      {authorLink}
                     </Link>
                   </Box>
                 )}
@@ -776,6 +789,12 @@ const RecipeDetail: FC = () => {
     </Layout>
   );
 };
+
+function CustomAvatar({ path }: { path: string }) {
+  const avatar = useFirebaseImage(path);
+
+  return <Avatar src={avatar} />;
+}
 
 function RecipeNotFound() {
   return (

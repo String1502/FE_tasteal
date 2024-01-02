@@ -344,7 +344,7 @@ const CreateRecipe: React.FunctionComponent<{ edit?: boolean }> = ({
           console.log(response);
           snackbarAlert('Công thức tạo thành công!', 'success');
           clearForm();
-          // navigate(`/recipe/${response.id}`);
+          navigate(`/recipe/${response.id}`);
         })
         .catch((e) => {
           console.log(createDebugString(e.message ?? 'Unknown error'));
@@ -423,7 +423,15 @@ const CreateRecipe: React.FunctionComponent<{ edit?: boolean }> = ({
           // authorNote: recipe.authorNote, // not exist
           activeTime: 0, // not exist
           authorNote: 'placeholder for retrieved note', // not exist
-          directions: recipe.directions,
+          directions: recipe.directions.map(
+            (direction) =>
+              ({
+                direction: direction.direction,
+                step: direction.step,
+                imageFile: null,
+                imagePath: direction.image,
+              } as DirectionEditorItemValue)
+          ),
           ingredients: recipe.ingredients.map((ingredient) => ({
             id: nanoid(6),
             ingredientId: ingredient.id,
@@ -460,7 +468,16 @@ const CreateRecipe: React.FunctionComponent<{ edit?: boolean }> = ({
         console.log('Uploading recipe thumbnail...');
         let path = '';
         try {
-          path = await uploadImage(recipeThumbnailFile, updatedRecipe.image);
+          if (updatedRecipe.image) {
+            path = await uploadImage(recipeThumbnailFile, updatedRecipe.image);
+          } else {
+            const id = uuidv4();
+            const extension = getFileExtension(recipeThumbnailFile.name);
+            path = await uploadImage(
+              recipeThumbnailFile,
+              `${StoragePath.RECIPE}/${id}.${extension}`
+            );
+          }
         } catch (err) {
           console.log(err);
         }
@@ -518,6 +535,7 @@ const CreateRecipe: React.FunctionComponent<{ edit?: boolean }> = ({
 
   const handleSaveRecipe = useCallback(async () => {
     setIsProcessing(true);
+    console.log(newRecipe);
 
     const recipeId = parseInt(id);
     let putBody = createPutBody(editRecipe, newRecipe);
@@ -526,6 +544,7 @@ const CreateRecipe: React.FunctionComponent<{ edit?: boolean }> = ({
 
     console.log('id', putBody);
     console.log('body', putBody);
+
     RecipeService.Update(recipeId, putBody)
       .then(() => {
         navigate(`/recipe/${recipeId}`);
@@ -662,6 +681,7 @@ const CreateRecipe: React.FunctionComponent<{ edit?: boolean }> = ({
                       <InputAdornment position="end">phút</InputAdornment>
                     ),
                   }}
+                  disabled={isProcessing}
                 />
               </Stack>
               <Stack>

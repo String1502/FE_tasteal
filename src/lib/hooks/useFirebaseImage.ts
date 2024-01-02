@@ -6,19 +6,20 @@ const staticPath =
 
 export default function useFirebaseImage(
   path: string | undefined,
-  quality: number = 100
+  quality: number = 100,
+  fallback: boolean = true
 ) {
   const [image, setImage] = useState<string | undefined>();
   useEffect(() => {
     if (!path || path === '') {
-      setImage(staticPath);
+      setImage(fallback ? staticPath : '');
       return;
     }
 
     resolveImagePathAsync(path)
       .then((url) => {
         if (url === '') {
-          setImage(staticPath);
+          setImage(fallback ? staticPath : '');
         } else {
           url = url.replace(
             'https://firebasestorage.googleapis.com',
