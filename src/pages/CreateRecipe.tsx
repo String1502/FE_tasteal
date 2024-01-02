@@ -16,9 +16,11 @@ import Layout from '@/layout/Layout';
 import { ServingSizes } from '@/lib/constants/options';
 import { StoragePath } from '@/lib/constants/storage';
 import AppContext from '@/lib/contexts/AppContext';
-import { uploadImage } from '@/lib/firebase/image';
+import { deleteImage, uploadImage } from '@/lib/firebase/image';
 import useSnackbarService from '@/lib/hooks/useSnackbar';
 import { RecipeReq } from '@/lib/models/dtos/Request/RecipeReq/RecipeReq';
+import { Recipe_IngredientReq } from '@/lib/models/dtos/Request/Recipe_IngredientReq/Recipe_IngredientReq';
+import { RecipeRes } from '@/lib/models/dtos/Response/RecipeRes/RecipeRes';
 import { Direction } from '@/lib/models/dtos/common';
 import OccasionService from '@/lib/services/occasionService';
 import RecipeService from '@/lib/services/recipeService';
@@ -361,6 +363,7 @@ const CreateRecipe: React.FunctionComponent<{ edit?: boolean }> = ({
     },
     []
   );
+
   //#endregion
   //#region Occasions
 
@@ -401,6 +404,7 @@ const CreateRecipe: React.FunctionComponent<{ edit?: boolean }> = ({
   //#endregion
   //#region Edit Mode
 
+  const [editRecipe, setEditRecipe] = useState<RecipeRes | null>(null);
   // Load data if it is edit mode
   useEffect(() => {
     if (!edit) return;
@@ -432,23 +436,105 @@ const CreateRecipe: React.FunctionComponent<{ edit?: boolean }> = ({
           servingSize: recipe.serving_size,
           totalTime: dateTimeToMinutes(recipe.totalTime),
         });
+        setEditRecipe(recipe);
+      })
+      .catch((err) => {
+        console.log(err);
+        setEditRecipe(null);
       })
       .finally(() => handleSpinner(false));
   }, [edit, handleSpinner, id]);
 
+  const updateComplexStuffs = useCallback(
+    async (recipe: RecipeReq): Promise<RecipeReq> => {
+      console.log('Function updateComplexStuffs invoked with recipe:', recipe);
+
+      if (!recipe) return null;
+
+      const updatedRecipe = { ...recipe };
+
+      console.log('Updated recipe initialized:', updatedRecipe);
+
+      if (recipeThumbnailFile) {
+        console.log('Uploading recipe thumbnail...');
+        let path = '';
+        try {
+          path = await uploadImage(recipeThumbnailFile, updatedRecipe.image);
+        } catch (err) {
+          console.log(err);
+        }
+        console.log('Thumbnail uploaded, path:', path);
+        updatedRecipe.image = path;
+      }
+
+      // Directions-related logic
+      let directionsChange = false;
+
+      // Check for changes in directions
+      if (updatedRecipe.directions.length !== newRecipe.directions.length) {
+        directionsChange = true;
+        console.log('Directions lengths differ, triggering change');
+      } else {
+        for (let i = 0; i < updatedRecipe.directions.length; i++) {
+          if (
+            newRecipe.directions[i].imageFile ||
+            newRecipe.directions[i].direction !==
+              updatedRecipe.directions[i].direction
+          ) {
+            directionsChange = true;
+            console.log('Direction change detected at index', i);
+            break;
+          }
+        }
+      }
+
+      if (directionsChange) {
+        console.log('Updating directions...');
+        // Delete old images
+        for (const direction of updatedRecipe.directions) {
+          if (direction.image) {
+            console.log('Deleting image:', direction.image);
+            try {
+              await deleteImage(direction.image);
+            } catch (err) {
+              console.log(err);
+            }
+          }
+        }
+
+        const imageId = updatedRecipe.image.split('/')[1].split('.')[0];
+        updatedRecipe.directions = await resolveDirectionsImage(
+          newRecipe.directions,
+          imageId
+        );
+        console.log('Directions updated:', updatedRecipe.directions);
+      }
+
+      return updatedRecipe;
+    },
+    [newRecipe.directions, recipeThumbnailFile]
+  );
+
   const handleSaveRecipe = useCallback(async () => {
     setIsProcessing(true);
 
-    const message: string = await new Promise((resolve) => {
-      setTimeout(() => {
-        resolve('success (mock)');
-      }, 1000);
-    });
+    const recipeId = parseInt(id);
+    let putBody = createPutBody(editRecipe, newRecipe);
+    console.log('body', putBody);
+    putBody = await updateComplexStuffs(putBody);
 
-    snackbarAlert(message, 'success');
-
-    setIsProcessing(false);
-  }, [snackbarAlert]);
+    console.log('id', putBody);
+    console.log('body', putBody);
+    RecipeService.Update(recipeId, putBody)
+      .then(() => {
+        navigate(`/recipe/${recipeId}`);
+      })
+      .catch((err) => {
+        console.log(err);
+        snackbarAlert('Cập nhật công thức thất bại!', 'error');
+      })
+      .finally(() => setIsProcessing(false));
+  }, [editRecipe, id, navigate, newRecipe, snackbarAlert, updateComplexStuffs]);
 
   //#endregion
 
@@ -647,5 +733,30 @@ const CreateRecipe: React.FunctionComponent<{ edit?: boolean }> = ({
     </Layout>
   );
 };
+
+function createPutBody(recipe: RecipeRes, newRecipe: NewRecipe) {
+  const putBody: RecipeReq = {
+    name: newRecipe.name,
+    introduction: newRecipe.introduction,
+    image: recipe.image,
+    rating: recipe.rating,
+    directions: recipe.directions,
+    ingredients: newRecipe.ingredients.map(
+      (ingredient) =>
+        ({
+          id: ingredient.ingredientId,
+          amount: ingredient.amount,
+        } as Recipe_IngredientReq)
+    ),
+    author_note: newRecipe.authorNote,
+    is_private: newRecipe.isPrivate,
+    serving_size: newRecipe.servingSize,
+    totalTime: newRecipe.totalTime,
+    author: recipe.author.uid,
+    // occasions: newRecipe.occasions.map((occasion) => occasion.id),
+  };
+
+  return putBody;
+}
 
 export default CreateRecipe;

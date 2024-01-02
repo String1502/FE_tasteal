@@ -7,7 +7,7 @@ export type RecipeReq = {
   rating: number;
   image?: string;
   totalTime?: number;
-  active_time?: string;
+  active_time?: number;
   serving_size: number;
   introduction?: string;
   author_note?: string;

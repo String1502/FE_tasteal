@@ -288,6 +288,21 @@ class RecipeService {
         throw error;
       });
   }
+
+  public static Update(recipeId: number, updateData: RecipeReq) {
+    return fetch(getApiUrl('UpdateRecipe', recipeId.toString()), {
+      method: 'PUT',
+      body: JSON.stringify(updateData),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    }).then((res) => {
+      if (res.ok) {
+        return res.json();
+      }
+      throw new Error(res.statusText);
+    });
+  }
 }
 
 export default RecipeService;
