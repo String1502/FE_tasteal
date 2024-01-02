@@ -2,10 +2,12 @@ import { createDebugStringFormatter } from '@/utils/debug/formatter';
 import { getApiUrl } from '../constants/api';
 import AccountReq from '../models/dtos/Request/AccountReq/AccountReq';
 import { PageFilter } from '../models/dtos/Request/PageFilter/PageFilter';
-import { AccountEntity } from '../models/entities/AccountEntity/AccountEntity';
 import { PageReq } from '../models/dtos/Request/PageReq/PageReq';
+import { AccountEntity } from '../models/entities/AccountEntity/AccountEntity';
 
 const createDebugString = createDebugStringFormatter('AccountService');
+
+const getByUidCache = new Map<string, { data: AccountEntity; time: number }>();
 
 /**
  * Represents a service for managing accounts.
@@ -48,6 +50,15 @@ class AccountService {
    * @param uid - The id of the account
    */
   public static async GetByUid(uid: string): Promise<AccountEntity> {
+    if (getByUidCache.has(uid)) {
+      const { data, time } = getByUidCache.get(uid)!;
+      if (Date.now() - time < 1000 * 60 * 5) {
+        return data;
+      } else {
+        getByUidCache.delete(uid);
+      }
+    }
+
     return await fetch(`${getApiUrl('GetUserByUid')}?accountId=${uid}`, {
       method: 'GET',
     })
@@ -56,6 +67,7 @@ class AccountService {
         return response.json();
       })
       .then((data) => {
+        getByUidCache.set(uid, { data: data, time: Date.now() });
         return data;
       })
       .catch((err) => {

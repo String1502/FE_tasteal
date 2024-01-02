@@ -5,14 +5,14 @@ import { createDebugStringFormatter } from '@/utils/debug/formatter';
 import simulateDelay from '@/utils/promises/stimulateDelay';
 import { DefaultPage } from '../constants/common';
 import { deleteImage } from '../firebase/image';
+import { NewRecipeCookBookReq } from '../models/dtos/Request/NewRecipeCookBookReq/NewRecipeCookBookReq';
 import { PageFilter } from '../models/dtos/Request/PageFilter/PageFilter';
 import { PageReq } from '../models/dtos/Request/PageReq/PageReq';
 import { RecipeReq } from '../models/dtos/Request/RecipeReq/RecipeReq';
 import { RecipeSearchReq } from '../models/dtos/Request/RecipeSearchReq/RecipeSearchReq';
+import { RecipeToCookBookReq } from '../models/dtos/Request/RecipeToCookBookReq/RecipeToCookBook';
 import { KeyWordRes } from '../models/dtos/Response/KeyWordRes/KeyWordRes';
 import { RecipeEntity } from '../models/entities/RecipeEntity/RecipeEntity';
-import { NewRecipeCookBookReq } from '../models/dtos/Request/NewRecipeCookBookReq/NewRecipeCookBookReq';
-import { RecipeToCookBookReq } from '../models/dtos/Request/RecipeToCookBookReq/RecipeToCookBook';
 
 const DEBUG_IDENTIFIER = '[RecipeService]';
 const createDebugString = createDebugStringFormatter(DEBUG_IDENTIFIER);
@@ -62,25 +62,23 @@ class RecipeService {
    * @param id - The id of the recipe.
    * @returns - The recipe detail data.
    */
-  public static async GetById(id: number): Promise<RecipeRes> {
+  public static GetById(id: number): Promise<RecipeRes> {
     if (recipeCache.has(id)) {
       console.log('Use data in cache');
-      return Promise.resolve(recipeCache.get(id)!);
+      return Promise.resolve(recipeCache.get(id));
     }
 
-    try {
-      const response = await fetch(`${getApiUrl('GetRecipe')}?id=${id}`, {
-        method: 'POST',
-      });
-      console.log(response);
-      const data = await response.json();
-      recipeCache.set(id, data);
-      console.log(data);
-      return data;
-    } catch (err) {
-      console.log('err', err);
-      throw err;
-    }
+    return fetch(`${getApiUrl('GetRecipeById')}?id=${id}`, {
+      method: 'POST',
+    }).then((res) => {
+      if (res.ok) {
+        return res.json().then((data) => {
+          recipeCache.set(id, data);
+          return data;
+        });
+      }
+      throw new Error(res.statusText);
+    });
   }
 
   /**
