@@ -47,6 +47,7 @@ export const ApiEndPoint = {
   GetRecipeById: 'Recipe/GetRecipeById',
   GetKeyWords: 'Recipe/keywords',
   DeleteRecipe: 'Recipe/recipe',
+  UpdateRecipe: (recipeId: string) => `Recipe/${recipeId}`,
   //
   // USER
   SignUpUser: 'User/signup',
