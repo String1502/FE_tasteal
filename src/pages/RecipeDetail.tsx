@@ -502,6 +502,10 @@ const RecipeDetail: FC = () => {
                       fontWeight={'bold'}
                       component={RouterLink}
                       to={`/partner/${recipe?.author.uid}`}
+                      sx={{
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis',
+                      }}
                     >
                       {authorLink}
                     </Link>
@@ -724,17 +728,6 @@ const RecipeDetail: FC = () => {
                   <SameAuthorRecipesCarousel recipes={recipe?.relatedRecipes} />
                 )}
               </Box>
-            </Box>
-
-            <Box>
-              <Box
-                display="flex"
-                justifyContent={'space-between'}
-                alignItems={'center'}
-              >
-                <BigSectionHeading>Công thức gợi ý</BigSectionHeading>
-              </Box>
-              <Box>{'Not yet implemented'}</Box>
             </Box>
           </Container>
         </Box>
