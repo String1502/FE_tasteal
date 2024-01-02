@@ -1,3 +1,4 @@
+import { OccasionEntity } from '@/lib/models/entities/OccasionEntity/OccasionEntity';
 import { RecipeEntity } from '@/lib/models/entities/RecipeEntity/RecipeEntity';
 import { Nutrition_InfoEntity } from '../../../entities/Nutrition_InfoEntity/Nutrition_InfoEntity';
 import { AuthorRes } from '../AuthorRes/AuthorRes';
@@ -9,6 +10,7 @@ import { RelatedRecipeRes } from '../RelatedRecipeRes/RelatedRecipeRes';
 export type RecipeRes = {
   id: RecipeEntity['id'];
   name?: RecipeEntity['name'];
+  is_private: RecipeEntity['is_private'];
   rating?: RecipeEntity['rating'];
   totalTime?: RecipeEntity['totalTime'];
   serving_size: RecipeEntity['serving_size'];
@@ -19,6 +21,7 @@ export type RecipeRes = {
   ingredients?: IngredientRes[];
   nutrition_info?: Nutrition_InfoEntity;
   directions: DirectionRes[];
+  occasions?: OccasionEntity[];
   comments?: CommentRes[];
   createAt?: Date;
   relatedRecipes?: RelatedRecipeRes[];
