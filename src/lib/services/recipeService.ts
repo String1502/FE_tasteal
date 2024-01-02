@@ -9,7 +9,6 @@ import { PageFilter } from '../models/dtos/Request/PageFilter/PageFilter';
 import { PageReq } from '../models/dtos/Request/PageReq/PageReq';
 import { RecipeReq } from '../models/dtos/Request/RecipeReq/RecipeReq';
 import { RecipeSearchReq } from '../models/dtos/Request/RecipeSearchReq/RecipeSearchReq';
-import { KeyWordRes } from '../models/dtos/Response/KeyWordRes/KeyWordRes';
 import { RecipeEntity } from '../models/entities/RecipeEntity/RecipeEntity';
 import { NewRecipeCookBookReq } from '../models/dtos/Request/NewRecipeCookBookReq/NewRecipeCookBookReq';
 import { RecipeToCookBookReq } from '../models/dtos/Request/RecipeToCookBook/RecipeToCookBook';
@@ -231,7 +230,7 @@ class RecipeService {
 
   //#endregion
 
-  public static async GetKeyWords(): Promise<KeyWordRes[]> {
+  public static async GetKeyWords(): Promise<string[]> {
     const requestOptions = {
       method: 'GET',
     };

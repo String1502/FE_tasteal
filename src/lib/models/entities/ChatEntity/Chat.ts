@@ -4,14 +4,12 @@ import {
   QueryDocumentSnapshot,
   SnapshotOptions,
 } from 'firebase/firestore';
+import { AccountEntity } from '../AccountEntity/AccountEntity';
 
 type Message = {
   id: string;
   date: Date;
-  sender: {
-    name: string;
-    uid: string;
-  };
+  sender: AccountEntity;
   text: string[];
 };
 

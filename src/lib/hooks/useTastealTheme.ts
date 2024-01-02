@@ -108,7 +108,6 @@ function useTastealTheme(): {
             return {
               keyword: item,
               value: false,
-              frequency: 0,
             };
           }),
           ingredients,

@@ -32,6 +32,7 @@ import SignUpEmail from './pages/SignUpEmail';
 import AdminPage from './pages/admin/AdminPage';
 import { PopoverContentProps } from './components/ui/header/PopoverContent';
 import Reference from './pages/Reference';
+import { ChatContext, initChatContext } from './lib/contexts/ChatContext';
 
 //#region AppWrapper
 
@@ -63,15 +64,17 @@ function AppWrapper({
   return (
     <Provider store={store}>
       <AppContext.Provider value={{ ...contextProps }}>
-        <ColorModeContext.Provider value={colorMode}>
-          <CssBaseline />
-          <ThemeProvider theme={theme}>
-            <SnackbarProvider>
-              <TastealHashLoader spinner={spinner} />
-              {children}
-            </SnackbarProvider>
-          </ThemeProvider>
-        </ColorModeContext.Provider>
+        <ChatContext.Provider value={initChatContext()}>
+          <ColorModeContext.Provider value={colorMode}>
+            <CssBaseline />
+            <ThemeProvider theme={theme}>
+              <SnackbarProvider>
+                <TastealHashLoader spinner={spinner} />
+                {children}
+              </SnackbarProvider>
+            </ThemeProvider>
+          </ColorModeContext.Provider>
+        </ChatContext.Provider>
       </AppContext.Provider>
     </Provider>
   );

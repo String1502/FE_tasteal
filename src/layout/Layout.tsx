@@ -2,6 +2,8 @@ import { Box } from '@mui/material';
 import React from 'react';
 import { Footer } from '../components/ui/layout/Footer';
 import { Header } from '../components/ui/layout/Header';
+import LiveChat from '@/components/ui/chat/LiveChat';
+import { ChatFrame } from '@/components/ui/chat/ChatFrame';
 
 function Layout({
   withFooter = true,
@@ -36,6 +38,7 @@ function Layout({
         {children}
       </Box>
       {withFooter && <Footer />}
+      <ChatFrame />
     </Box>
   );
 }

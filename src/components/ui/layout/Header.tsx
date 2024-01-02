@@ -1,6 +1,6 @@
 import { PageRoute } from '@/lib/constants/common';
 import AppContext from '@/lib/contexts/AppContext';
-import ColorModeContext from '@/lib/contexts/ColorModeContext';
+// import ColorModeContext from '@/lib/contexts/ColorModeContext';
 import { signOutUser } from '@/lib/firebase/auth';
 import useSnackbarService from '@/lib/hooks/useSnackbar';
 import {
@@ -17,7 +17,7 @@ import {
   Toolbar,
   Typography,
   useScrollTrigger,
-  useTheme,
+  // useTheme,
 } from '@mui/material';
 import { useCallback, useContext, useMemo, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -52,8 +52,8 @@ export function Header(props: Props) {
   const { window_, isDynamicHeader, headerPosition } = props;
 
   // Dùng cho đổi theme
-  const colorMode = useContext(ColorModeContext);
-  const theme = useTheme();
+  // const colorMode = useContext(ColorModeContext);
+  // const theme = useTheme();
   const navigate = useNavigate();
   const [snackbarAlert] = useSnackbarService();
 

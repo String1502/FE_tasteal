@@ -7,13 +7,13 @@ import { SearchTextField } from '@/components/ui/search/SearchTextField.tsx';
 import { RecipeEntity } from '@/lib/models/entities/RecipeEntity/RecipeEntity.ts';
 import { useSearchRecipe } from '../components/ui/search/useSearchRecipe.tsx';
 import { SearchInfiniteScroll } from '../components/ui/search/SearchInfiniteScroll.tsx';
-import { KeyWordRes } from '@/lib/models/dtos/Response/KeyWordRes/KeyWordRes.ts';
 import { CloseRounded } from '@mui/icons-material';
 import { isRecipeSearchReqValid } from '@/lib/models/dtos/Request/RecipeSearchReq/RecipeSearchReq.ts';
 import SortSelect from '@/components/ui/search/SortSelect.tsx';
 import BoxStickyScroll from '@/components/common/scroll/BoxStickyScroll.tsx';
 
-export type TuKhoa = KeyWordRes & {
+export type TuKhoa = {
+  keyword: string;
   value: boolean;
 };
 
@@ -21,32 +21,26 @@ export const DefaultTuKhoas: TuKhoa[] = [
   {
     keyword: 'Bánh mì',
     value: false,
-    frequency: 5,
   },
   {
     keyword: 'Bánh bao',
     value: false,
-    frequency: 4,
   },
   {
     keyword: 'Heo quay',
     value: false,
-    frequency: 3,
   },
   {
     keyword: 'Bún thịt nướng',
     value: false,
-    frequency: 2,
   },
   {
     keyword: 'Cơm sườn',
     value: false,
-    frequency: 1,
   },
   {
     keyword: 'Bún đậu',
     value: false,
-    frequency: 0,
   },
 ];
 

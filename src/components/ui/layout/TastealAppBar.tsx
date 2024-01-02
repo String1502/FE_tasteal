@@ -3,6 +3,7 @@ import AppContext from '@/lib/contexts/AppContext';
 import {
   AccountBoxRounded,
   BookmarkBorderRounded,
+  ChatRounded,
   Logout,
   NotificationsActiveRounded,
   SearchRounded,
@@ -34,6 +35,7 @@ import {
 } from '@/lib/models/entities/AccountEntity/AccountEntity';
 import useFirebaseImage from '@/lib/hooks/useFirebaseImage';
 import logo1 from '@/assets/logo1.png';
+import LiveChat from '../chat/LiveChat';
 
 export const localNeedFillInfor = 'localNeedFillInfor';
 
@@ -217,6 +219,9 @@ export function TastealAppBar({
           >
             <ShoppingBagRounded fontSize="inherit" />
           </IconButton>
+
+          {/* Chat */}
+          <LiveChat />
 
           {/* Avatar */}
           {login.isUserSignedIn == true && (
