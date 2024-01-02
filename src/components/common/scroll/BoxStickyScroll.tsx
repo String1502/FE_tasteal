@@ -1,7 +1,5 @@
-import { headerHeight } from '@/components/ui/layout/Header';
-import AppContext from '@/lib/contexts/AppContext';
 import { Box } from '@mui/material';
-import React, { useContext } from 'react';
+import React from 'react';
 
 function BoxStickyScroll({
   top,
@@ -10,8 +8,6 @@ function BoxStickyScroll({
   top?: number;
   children?: React.ReactNode;
 }) {
-  const { scroll } = useContext(AppContext);
-
   return (
     <Box
       sx={{

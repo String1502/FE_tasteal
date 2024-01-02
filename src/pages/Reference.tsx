@@ -13,13 +13,12 @@ import {
   Box,
   Container,
   Grid,
-  Skeleton,
   Slide,
   Tab,
   Tabs,
   Typography,
 } from '@mui/material';
-import { Suspense, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
 const breadCrumbsLinks = [
@@ -34,7 +33,7 @@ const breadCrumbsLinks = [
 function Reference() {
   // Tab value
   const [tabValue, setTabValue] = useState('ingredients');
-  const handleChangeTab = (event: React.SyntheticEvent, newValue: string) => {
+  const handleChangeTab = (_event: React.SyntheticEvent, newValue: string) => {
     setTabValue(newValue);
   };
 

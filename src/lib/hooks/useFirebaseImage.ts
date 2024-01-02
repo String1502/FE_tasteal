@@ -28,7 +28,7 @@ export default function useFirebaseImage(
           setImage(url);
         }
       })
-      .catch((error) => {
+      .catch((_error) => {
         setImage(path);
       });
   }, [path]);

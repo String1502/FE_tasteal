@@ -1,4 +1,3 @@
-import { gridPageSizeSelector } from '@mui/x-data-grid';
 import { getApiUrl } from '../constants/api';
 import { PageReq } from '../models/dtos/Request/PageReq/PageReq';
 import { IngredientRes } from '../models/dtos/Response/IngredientRes/IngredientRes';

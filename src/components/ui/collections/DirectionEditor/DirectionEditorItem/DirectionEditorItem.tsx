@@ -1,5 +1,4 @@
 import TastealTextField from '@/components/common/textFields/TastealTextField';
-import FormTitle from '@/components/common/typos/FormTitle';
 import useFirebaseImage from '@/lib/hooks/useFirebaseImage';
 import { Close, ExpandMore, Photo } from '@mui/icons-material';
 import {

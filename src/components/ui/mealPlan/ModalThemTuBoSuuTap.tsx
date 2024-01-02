@@ -36,6 +36,7 @@ export function ModalThemTuBoSuuTap({
               {cookbookData.map((item, i) => (
                 <Grid item xs={3.6} md={2} key={i}>
                   <CookBook
+                    index={i}
                     cookbook={item}
                     choosing={choosing}
                     handleChoosing={handleChoosing}

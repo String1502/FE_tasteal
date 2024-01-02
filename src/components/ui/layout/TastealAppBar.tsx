@@ -3,7 +3,6 @@ import AppContext from '@/lib/contexts/AppContext';
 import {
   AccountBoxRounded,
   BookmarkBorderRounded,
-  ChatRounded,
   Logout,
   NotificationsActiveRounded,
   SearchRounded,
@@ -221,7 +220,7 @@ export function TastealAppBar({
           </IconButton>
 
           {/* Chat */}
-          <LiveChat />
+          {login.user && <LiveChat />}
 
           {/* Avatar */}
           {login.isUserSignedIn == true && (

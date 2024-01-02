@@ -21,7 +21,6 @@ import {
   Tabs,
   TextField,
   Typography,
-  useTheme,
 } from '@mui/material';
 import { onSnapshot } from 'firebase/firestore';
 import { useContext, useEffect, useState } from 'react';
@@ -29,7 +28,6 @@ import { removeDiacritics } from '@/utils/format';
 import AccountService from '@/lib/services/accountService';
 import ChatCommunity from './ChatCommunity';
 import { AccountEntity } from '@/lib/models/entities/AccountEntity/AccountEntity';
-import UserChatDisplay from './UserChatDisplay';
 import DoanChat from './DoanChat';
 
 export const iconButtonProp: IconButtonProps = {
@@ -51,7 +49,6 @@ export const iconProp: SvgIconProps = {
 const amountLoad = 15;
 
 function LiveChat() {
-  const theme = useTheme();
   const { state, dispatch } = useContext(ChatContext);
   const [searchText, setSearchText] = useState<string>('');
   const [userChatData, setUserChatData] = useState<UserChat | undefined>(
@@ -105,7 +102,7 @@ function LiveChat() {
   const [tabValue, setTabValue] = useState('one');
 
   const handleChangeTabValue = (
-    event: React.SyntheticEvent,
+    _event: React.SyntheticEvent,
     newValue: string
   ) => {
     setTabValue(newValue);
@@ -153,7 +150,7 @@ function LiveChat() {
   // }
 
   const handleChatIdChange = async (
-    event: React.SyntheticEvent,
+    _event: React.SyntheticEvent,
     newValue: string
   ) => {
     let userChat: UserChat | undefined = userChatData;
