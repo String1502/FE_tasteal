@@ -194,11 +194,11 @@ function AddYourOwnItem() {
             <Autocomplete
               freeSolo
               value={autoCompleteValue}
-              onChange={(event: any, newValue: IngredientEntity | null) => {
+              onChange={(_event: any, newValue: IngredientEntity | null) => {
                 setAutoCompleteValue(newValue);
               }}
               inputValue={inputValue}
-              onInputChange={(event, newInputValue) => {
+              onInputChange={(_event, newInputValue) => {
                 setInputValue(newInputValue);
               }}
               options={ingredientData}

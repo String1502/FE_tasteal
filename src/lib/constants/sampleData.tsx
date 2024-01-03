@@ -13,7 +13,7 @@ import { Recipe_IngredientEntity } from '@/lib/models/entities/Recipe_Ingredient
 import { RecipeEntity } from '@/lib/models/entities/RecipeEntity/RecipeEntity';
 import { CookBookEntity } from '../models/entities/CookBookEntity/CookBookEntity';
 import { CookBook_RecipeEntity } from '../models/entities/CookBook_RecipeEntity/CookBook_RecipeEntity';
-import { PersonalCartItemEntity } from '../models/entities/PersonalCartItem/PersonalCartItem';
+import { PersonalCartItemEntity } from '../models/entities/PersonalCartItemEntity/PersonalCartItemEntity';
 
 export const accounts: AccountEntity[] = [
   {

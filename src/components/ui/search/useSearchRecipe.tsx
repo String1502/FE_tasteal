@@ -23,10 +23,10 @@ export function useSearchRecipe(viewportItemAmount: number = 12) {
           viewportItemAmount,
           page
         );
-        const tukhoa = (await RecipeService.GetKeyWords())
+        const tukhoa: TuKhoa[] = (await RecipeService.GetKeyWords())
           .map((item) => {
             return {
-              ...item,
+              keyword: item,
               value: false,
             };
           })

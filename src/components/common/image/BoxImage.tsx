@@ -61,6 +61,7 @@ function BoxImage({
         }
       })
       .catch((error) => {
+        console.log(error);
         setImage(props.src);
         setLoading(false);
       });

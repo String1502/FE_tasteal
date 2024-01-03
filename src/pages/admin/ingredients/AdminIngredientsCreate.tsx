@@ -36,7 +36,7 @@ const AdminIngredientCreate: FC = () => {
   const params: IngredientRes = useAppSelector((state) => state.admin.params);
   const dispatch = useAppDispatch();
 
-  const [mode, setMode] = useState<'view' | 'create' | 'edit'>(
+  const [mode, _setMode] = useState<'view' | 'create' | 'edit'>(
     params ? 'edit' : 'create'
   );
 

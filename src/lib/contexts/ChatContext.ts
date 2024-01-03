@@ -118,6 +118,16 @@ export function initChatContext() {
             canChat: true,
           },
         });
+      } else {
+        dispatch({
+          type: 'setSender',
+          payload: {
+            ...state,
+            sender: undefined,
+            receiver: undefined,
+            canChat: false,
+          },
+        });
       }
     });
 

@@ -19,6 +19,7 @@ export function ChatBody() {
 
   const [chatData, setChatData] = useState<Chat | undefined>(undefined);
   const [isReadByReceiver, setIsReadByReceiver] = useState(false);
+  console.log(chatData);
 
   useEffect(() => {
     if (state.combileId == '') return;
@@ -90,9 +91,10 @@ export function ChatBody() {
     handleOpen();
   };
 
+  console.log(state);
+
   return (
     <Box
-      component={'div'}
       sx={{
         flexGrow: 1,
         overflowY: 'auto',
@@ -174,7 +176,7 @@ export function ChatBody() {
                         backgroundColor:
                           item.sender.uid === state.sender.uid
                             ? 'primary.main'
-                            : 'grey.400',
+                            : 'grey.600',
                         color: 'white',
                         borderRadius:
                           item.text.length == 1

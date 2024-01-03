@@ -1,4 +1,3 @@
-import OccasionService from '@/lib/services/occasionService';
 import {
   Box,
   Button,
@@ -11,7 +10,6 @@ import React, { Suspense, useContext } from 'react';
 import { SearchTextField } from '../search/SearchTextField';
 import bannerImage from '@/assets/banner.jpg';
 import AppContext from '@/lib/contexts/AppContext';
-import useFirebaseImage from '@/lib/hooks/useFirebaseImage';
 const height = '520px';
 
 export function Banner() {

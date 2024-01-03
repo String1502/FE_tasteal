@@ -1,5 +1,7 @@
 import { ChatContext, compareTwoUid } from '@/lib/contexts/ChatContext';
-import UserChat from '@/lib/models/entities/ChatEntity/UserChat';
+import UserChat, {
+  ChatWithType,
+} from '@/lib/models/entities/ChatEntity/UserChat';
 import ChatService from '@/lib/services/chatService';
 import {
   ChatRounded,
@@ -19,7 +21,6 @@ import {
   Tabs,
   TextField,
   Typography,
-  useTheme,
 } from '@mui/material';
 import { onSnapshot } from 'firebase/firestore';
 import { useContext, useEffect, useState } from 'react';
@@ -27,7 +28,6 @@ import { removeDiacritics } from '@/utils/format';
 import AccountService from '@/lib/services/accountService';
 import ChatCommunity from './ChatCommunity';
 import { AccountEntity } from '@/lib/models/entities/AccountEntity/AccountEntity';
-import UserChatDisplay from './UserChatDisplay';
 import DoanChat from './DoanChat';
 
 export const iconButtonProp: IconButtonProps = {
@@ -49,13 +49,12 @@ export const iconProp: SvgIconProps = {
 const amountLoad = 15;
 
 function LiveChat() {
-  const theme = useTheme();
   const { state, dispatch } = useContext(ChatContext);
   const [searchText, setSearchText] = useState<string>('');
   const [userChatData, setUserChatData] = useState<UserChat | undefined>(
     undefined
   );
-  const [isNew, setIsNew] = useState(false);
+  const [news, setNew] = useState<number>(0);
 
   useEffect(() => {
     if (!state.sender || state.sender.uid == '') {
@@ -66,17 +65,15 @@ function LiveChat() {
       ChatService.getUserChatRefByUid(state.sender.uid),
       (doc) => {
         let data = doc.data();
+        console.log(data);
+
         if (!data) {
-          setIsNew(false);
+          setNew(0);
         } else {
-          const isRead = data.chatWith.find(
-            (item) => item.id == state.combileId
-          )?.isRead;
-          if (isRead == false) {
-            setIsNew(true);
-          } else {
-            setIsNew(false);
-          }
+          const countNew = data.chatWith.filter(
+            (chat: ChatWithType) => chat.isRead == false
+          ).length;
+          setNew(countNew);
         }
       }
     );
@@ -105,7 +102,7 @@ function LiveChat() {
   const [tabValue, setTabValue] = useState('one');
 
   const handleChangeTabValue = (
-    event: React.SyntheticEvent,
+    _event: React.SyntheticEvent,
     newValue: string
   ) => {
     setTabValue(newValue);
@@ -152,10 +149,8 @@ function LiveChat() {
   //   }
   // }
 
-  console.log(state);
-
   const handleChatIdChange = async (
-    event: React.SyntheticEvent,
+    _event: React.SyntheticEvent,
     newValue: string
   ) => {
     let userChat: UserChat | undefined = userChatData;
@@ -261,8 +256,6 @@ function LiveChat() {
       ChatService.getUserChatRefByUid(state.sender.uid),
       (doc) => {
         let data = doc.data();
-        console.log(data);
-
         setUserChatData(data);
       }
     );
@@ -286,19 +279,19 @@ function LiveChat() {
 
   return (
     <>
-      <Badge badgeContent={isNew ? 1 : 0} color="secondary">
-        <IconButton
-          color="primary"
-          size="small"
-          sx={{
-            border: 1,
-            mr: 2,
-          }}
-          onClick={handleClick}
-        >
-          <ChatRounded fontSize="inherit" />
-        </IconButton>
-      </Badge>
+      <IconButton
+        color="primary"
+        size="small"
+        sx={{
+          border: 1,
+          mr: 2,
+        }}
+        onClick={handleClick}
+      >
+        <Badge badgeContent={news} color="error">
+          <ChatRounded fontSize="small" />
+        </Badge>
+      </IconButton>
 
       <Popover
         id={id}
@@ -319,7 +312,7 @@ function LiveChat() {
               borderRadius: 2,
               boxShadow: 6,
               mt: 1,
-              width: '360px',
+              width: '348px',
               overflow: 'hidden',
             },
           },

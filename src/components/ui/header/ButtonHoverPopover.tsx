@@ -1,5 +1,5 @@
 import { ExpandMoreRounded } from '@mui/icons-material';
-import { Box, Popover, useTheme } from '@mui/material';
+import { Box, Popover } from '@mui/material';
 import React from 'react';
 import { headerHeight } from '../layout/Header';
 
@@ -10,7 +10,6 @@ export function ButtonHoverPopover({
   children: React.ReactNode;
   customLink: React.ReactNode;
 }) {
-  const theme = useTheme();
   const [anchorElement, setAnchorEl] = React.useState<HTMLElement | null>(null);
 
   const handlePopoverOpen = (event: React.MouseEvent<HTMLElement>) => {

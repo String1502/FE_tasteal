@@ -16,10 +16,7 @@ import UserChat, {
   ChatWithType,
 } from '@/lib/models/entities/ChatEntity/UserChat';
 import { ChatContext } from '@/lib/contexts/ChatContext';
-import {
-  AccountEntity,
-  InitAccountEntity,
-} from '@/lib/models/entities/AccountEntity/AccountEntity';
+import { AccountEntity } from '@/lib/models/entities/AccountEntity/AccountEntity';
 
 async function handleSendMessage(
   sender: AccountEntity,
@@ -36,7 +33,7 @@ async function handleSendMessage(
     console.log('Rỗng');
     return;
   }
-  const data = new Date();
+  const date = new Date();
 
   // Upload hình
   let imagesUrl: string[] = [];
@@ -68,8 +65,8 @@ async function handleSendMessage(
     text == '' ? [...imagesUrl] : [text, ...imagesUrl];
   let message: Message = {
     id: '',
-    date: data,
-    sender: InitAccountEntity(),
+    date: date,
+    sender: sender,
     text: textContent,
   };
   let chat: Chat | undefined = await ChatService.getChat(combileId);
@@ -105,7 +102,7 @@ async function handleSendMessage(
     message.text.length > 0 ? message.text[message.text.length - 1] : '';
   const chatWith: ChatWithType = {
     id: combileId,
-    date: data,
+    date: date,
     userInfor: receiver,
     lastMessage: lastMessage,
     isRead: true,

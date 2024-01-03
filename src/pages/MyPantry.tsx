@@ -136,7 +136,7 @@ const MyPantry: React.FC = () => {
     console.log('Filtered ingredients changed, reload Ingredient_Component');
   }, [filteredIngredients]);
 
-  const handleChange = (event: React.SyntheticEvent, newValue: number) => {
+  const handleChange = (_event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue);
   };
   const filterOptions = createFilterOptions({
@@ -171,9 +171,7 @@ const MyPantry: React.FC = () => {
 
     setFilteredIngredients(filtered);
   };
-  const [expanded, setExpanded] = React.useState<string | false>(false);
-
-
+  // const [expanded, setExpanded] = React.useState<string | false>(false);
 
   // Create a mapping from ingredient_type to ingredients
   const typeMap = new Map<string, IngredientEntity[]>();
