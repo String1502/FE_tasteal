@@ -27,13 +27,14 @@ import { ButtonHoverPopover } from '../header/ButtonHoverPopover';
 import { CustomHeaderLink } from '../header/CustomLink';
 import { PopoverContent } from '../header/PopoverContent';
 import AvatarMenuItem from './AvatarMenuItem';
-import { localStorageAccountId } from '../home/AuthorCard';
 import AccountService from '@/lib/services/accountService';
 import {
   AccountEntity,
   isAccountEntityFullInfor,
 } from '@/lib/models/entities/AccountEntity/AccountEntity';
 import useFirebaseImage from '@/lib/hooks/useFirebaseImage';
+import logo1 from '@/assets/logo1.png';
+import LiveChat from '../chat/LiveChat';
 
 export const localNeedFillInfor = 'localNeedFillInfor';
 
@@ -126,16 +127,18 @@ export function TastealAppBar({
             }}
           >
             <Box
+              component={'img'}
+              src={logo1}
               sx={{
                 aspectRatio: '1/1',
-                height: '32px',
+                height: '42px',
                 borderRadius: '50%',
-                overflow: 'hidden',
-                backgroundColor: 'red',
+                overflow: 'visible',
+                objectFit: 'contain',
                 mr: 1,
                 pointerEvents: 'none',
               }}
-            ></Box>
+            />
             <Typography
               variant="subtitle1"
               fontWeight={'bold'}
@@ -215,6 +218,9 @@ export function TastealAppBar({
           >
             <ShoppingBagRounded fontSize="inherit" />
           </IconButton>
+
+          {/* Chat */}
+          {login.user && <LiveChat />}
 
           {/* Avatar */}
           {login.isUserSignedIn == true && (

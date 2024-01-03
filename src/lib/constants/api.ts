@@ -44,16 +44,28 @@ export const ApiEndPoint = {
   CreateRecipe: 'Recipe/Add',
   SearchRecipe: 'Recipe/Search',
   GetAllRecipe: 'Recipe/getall',
-  GetRecipe: 'Recipe/GetRecipe',
+  GetRecipeById: 'Recipe/GetRecipeById',
   GetKeyWords: 'Recipe/keywords',
   DeleteRecipe: 'Recipe/recipe',
+  UpdateRecipe: (recipeId: string) => `Recipe/${recipeId}`,
   //
   // USER
   SignUpUser: 'User/signup',
   UpdateUser: 'User/updateuser',
   GetAllUser: 'User/allusers',
   GetUserByUid: 'User',
-    GetCurrentUser: 'User',
+  GetCurrentUser: 'User',
+  //
+  // COMMENT
+  // TODO: consider merging all these.
+  CreateComment: (recipeId: string) => `Recipe/${recipeId}/Comments`,
+  GetComments: (recipeId: string) => `Recipe/${recipeId}/Comments`,
+  //
+  // RATING
+  CreateRating: (recipeId: string) => `Recipe/${recipeId}/Rating`,
+  GetRatings: (recipeId: string) => `Recipe/${recipeId}/Rating`,
+  UpdateRating: (recipeId: string, ratingId: string) =>
+    `Recipe/${recipeId}/Rating/${ratingId}`,
 } as const;
 
 /**
@@ -67,6 +79,13 @@ export type ApiEndPoint = keyof typeof ApiEndPoint;
  * @param endpoint - Api endpoint
  * @returns Full url path
  */
-export function getApiUrl(endpoint: ApiEndPoint) {
-  return ApiPath + ApiEndPoint[endpoint];
+export function getApiUrl(endpoint: ApiEndPoint, id?: string, id2?: string) {
+  const apiEndPoint = ApiEndPoint[endpoint];
+  if (typeof apiEndPoint === 'string') {
+    return ApiPath + apiEndPoint;
+  }
+  if (typeof apiEndPoint === 'function') {
+    return ApiPath + apiEndPoint(id, id2);
+  }
+  throw new Error("Can't get api url");
 }

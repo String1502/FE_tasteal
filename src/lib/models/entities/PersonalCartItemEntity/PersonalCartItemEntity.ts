@@ -4,7 +4,7 @@ import { IngredientEntity } from '../IngredientEntity/IngredientEntity';
 
 export type PersonalCartItemEntity = {
   id: number;
-  ingredient_id: number;
+  ingredient_id?: number;
   account_id: string;
   name?: string;
   amount: number;

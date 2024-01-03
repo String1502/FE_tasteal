@@ -73,10 +73,9 @@ export default function SignIn() {
         }
       })
       .catch(() => {
-        openSnackbar('Đăng nhập thất bại!', 'warning');
+        openSnackbar('Đăng nhập thất bại! Tài khoản không hợp lệ.', 'warning');
         if (login.handleLogin) {
-          login.handleLogin();
-          navigateSignIn();
+          login.handleLogin(false, undefined);
         }
       });
   }, [
@@ -134,10 +133,9 @@ export default function SignIn() {
       })
       .catch((error) => {
         console.log('[AUTH] Sign in with Google failed', error);
-        openSnackbar('Đăng nhập thất bại!', 'warning');
+        openSnackbar('Đăng nhập thất bại! Hệ thống xảy ra lỗi.', 'warning');
         if (login.handleLogin) {
-          login.handleLogin();
-          navigateSignIn();
+          login.handleLogin(false, undefined);
         }
       });
   }, [login, navigate, navigateSignIn, openSnackbar]);
@@ -370,6 +368,11 @@ export default function SignIn() {
                 }}
                 value={signInInfo.password}
                 onChange={(e) => handlePasswordChange(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    handleSignInWithEmailAndPassword();
+                  }
+                }}
               />
 
               {/*Text quên mật khẩu*/}

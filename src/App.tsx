@@ -1,7 +1,7 @@
 import RecipeDetail from '@/pages/RecipeDetail';
 import { CssBaseline, Theme, ThemeProvider } from '@mui/material';
-import { User, onAuthStateChanged } from 'firebase/auth';
-import React, { useContext, useEffect, useMemo } from 'react';
+import { User } from 'firebase/auth';
+import React, { useMemo } from 'react';
 import { Route, BrowserRouter as Router, Routes } from 'react-router-dom';
 import TastealHashLoader from './components/common/progress/TastealHashLoader';
 import CheckSignIn from './components/ui/app/CheckSignIn';
@@ -11,8 +11,7 @@ import { PageRoute } from './lib/constants/common';
 import AppContext from './lib/contexts/AppContext';
 import ColorModeContext from './lib/contexts/ColorModeContext';
 import SnackbarProvider from './lib/contexts/snackbarContext';
-import { auth } from './lib/firebase/config';
-import useTastealTheme from './lib/hooks/useTastealTheme';
+import useTastealTheme, { ScrollApp } from './lib/hooks/useTastealTheme';
 import { OccasionEntity } from './lib/models/entities/OccasionEntity/OccasionEntity';
 import { AllPartner } from './pages/AllPartner';
 import CreateRecipe from './pages/CreateRecipe';
@@ -31,6 +30,9 @@ import SignIn from './pages/SignIn';
 import SignUp from './pages/SignUp';
 import SignUpEmail from './pages/SignUpEmail';
 import AdminPage from './pages/admin/AdminPage';
+import { PopoverContentProps } from './components/ui/header/PopoverContent';
+import Reference from './pages/Reference';
+import { ChatContext, initChatContext } from './lib/contexts/ChatContext';
 
 //#region AppWrapper
 
@@ -48,6 +50,8 @@ type AppWrapperProps = {
     handleLogin: (isUserSignedIn?: boolean, user?: User) => void;
   };
   currentOccasion?: OccasionEntity;
+  popOverHeader?: PopoverContentProps;
+  scroll?: ScrollApp;
 };
 
 function AppWrapper({
@@ -60,15 +64,17 @@ function AppWrapper({
   return (
     <Provider store={store}>
       <AppContext.Provider value={{ ...contextProps }}>
-        <ColorModeContext.Provider value={colorMode}>
-          <CssBaseline />
-          <ThemeProvider theme={theme}>
-            <SnackbarProvider>
-              <TastealHashLoader spinner={spinner} />
-              {children}
-            </SnackbarProvider>
-          </ThemeProvider>
-        </ColorModeContext.Provider>
+        <ChatContext.Provider value={initChatContext()}>
+          <ColorModeContext.Provider value={colorMode}>
+            <CssBaseline />
+            <ThemeProvider theme={theme}>
+              <SnackbarProvider>
+                <TastealHashLoader spinner={spinner} />
+                {children}
+              </SnackbarProvider>
+            </ThemeProvider>
+          </ColorModeContext.Provider>
+        </ChatContext.Provider>
       </AppContext.Provider>
     </Provider>
   );
@@ -78,24 +84,6 @@ function AppWrapper({
 
 //#region AllRoutes
 function AllRoutes() {
-  const { login, handleSpinner } = useContext(AppContext);
-
-  // Check if login ?
-  useEffect(() => {
-    if (login.isUserSignedIn == undefined) {
-      handleSpinner(true);
-      const unsubscribe = onAuthStateChanged(auth, (user) => {
-        if (user && login.handleLogin) {
-          login.handleLogin(true, user);
-        } else {
-          login.handleLogin(false);
-        }
-      });
-      handleSpinner(false);
-      return () => unsubscribe();
-    }
-  }, [handleSpinner, login]);
-
   const MapRoutes = useMemo(() => {
     return [
       {
@@ -117,6 +105,14 @@ function AllRoutes() {
       {
         path: PageRoute.AllPartner,
         element: <AllPartner />,
+      },
+      {
+        path: PageRoute.Reference(),
+        element: <Reference />,
+      },
+      {
+        path: PageRoute.ReferenceIngredient(),
+        element: <Reference />,
       },
 
       // Chưa đăng nhập

@@ -12,11 +12,15 @@ export function useMySavedRecipes(uid: AccountEntity['uid']) {
   const [choosing, setChoosing] = useState<CookbookChoosingType | undefined>(
     undefined
   );
+  console.log(cookbookData);
 
   const handleChoosing = useCallback(async (cookbook: CookBookEntity) => {
     const recipes = await CookbookRecipeService.GetCookBookRecipeByCookBookId(
       cookbook.id
     );
+
+    console.log(recipes);
+
     setChoosing({
       Cookbook: cookbook,
       CookbookRecipes: recipes,

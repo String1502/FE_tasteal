@@ -1,7 +1,5 @@
 import { PageRoute } from '@/lib/constants/common';
-import { CookBookEntity } from '@/lib/models/entities/CookBookEntity/CookBookEntity';
 import { RecipeEntity } from '@/lib/models/entities/RecipeEntity/RecipeEntity';
-import CookbookService from '@/lib/services/cookbookService';
 import {
   BookmarkBorderRounded,
   BookmarkRounded,
@@ -19,7 +17,7 @@ import {
   MenuItem,
   Typography,
 } from '@mui/material';
-import { useCallback, useContext, useEffect, useState } from 'react';
+import { useCallback, useContext, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import CustomCard from './CustomCard';
 import TotalTimeRecipe from './TotalTimeRecipe';
@@ -28,6 +26,9 @@ import RatingRecipe from './RatingRecipe';
 import NameRecipe from './NameRecipe';
 import ImageRecipe from './ImageRecipe';
 import AppContext from '@/lib/contexts/AppContext';
+import { RecipeToCookBookReq } from '@/lib/models/dtos/Request/RecipeToCookBook/RecipeToCookBook';
+import RecipeService from '@/lib/services/recipeService';
+import useSnackbarService from '@/lib/hooks/useSnackbar';
 
 export const imgHeight = '224px';
 export const padding = 2;
@@ -52,25 +53,12 @@ export function PrimaryCard({
     setAnchorEl(null);
   };
 
-  const [Cookbooks, setCookbooks] = useState<CookBookEntity[]>([]);
-  const { login } = useContext(AppContext);
-  useEffect(() => {
-    async function fetchData(uid: string) {
-      try {
-        const cookbooks = await CookbookService.GetAllCookBookByAccountId(uid);
-        setCookbooks(cookbooks);
-      } catch (error) {
-        console.log(error);
-      }
-    }
-    if (login.isUserSignedIn && login.user != undefined) {
-      fetchData(login.user.uid);
-    }
-  }, []);
+  const { login, cookbooks } = useContext(AppContext);
 
   const handleCardClick = useCallback(() => {
     navigate(PageRoute.Recipe.Detail(recipe.id));
   }, [navigate, recipe.id]);
+  const [snackbarAlert] = useSnackbarService();
 
   return (
     <>
@@ -159,25 +147,62 @@ export function PrimaryCard({
           },
         }}
       >
-        {Cookbooks.map((cookbook) => {
-          return (
-            <MenuItem key={cookbook.id} onClick={handleClose}>
-              <ListItemIcon>
-                <PlayArrowRounded color="primary" fontSize="small" />
-              </ListItemIcon>
-              <Typography
-                variant="body2"
-                color="primary"
-                fontWeight={'bold'}
-                whiteSpace={'nowrap'}
-                textOverflow={'ellipsis'}
-                overflow={'hidden'}
+        {cookbooks &&
+          cookbooks.map((cookbook) => {
+            return (
+              <MenuItem
+                key={cookbook.id}
+                onClick={async () => {
+                  const data: RecipeToCookBookReq = {
+                    cook_book_id: cookbook.id,
+                    recipe_id: recipe.id,
+                  };
+                  const result = await RecipeService.AddRecipeToCookBook(data);
+                  if (result) {
+                    snackbarAlert('Thêm vào bộ sưu tập thành công', 'success');
+                  } else {
+                    snackbarAlert('Đã có lỗi xảy ra', 'error');
+                  }
+                  handleClose();
+                }}
               >
-                {cookbook.name}
-              </Typography>
-            </MenuItem>
-          );
-        })}
+                <ListItemIcon>
+                  <PlayArrowRounded color="primary" fontSize="small" />
+                </ListItemIcon>
+                <Typography
+                  variant="body2"
+                  color="primary"
+                  fontWeight={'bold'}
+                  whiteSpace={'nowrap'}
+                  textOverflow={'ellipsis'}
+                  overflow={'hidden'}
+                >
+                  {cookbook.name}
+                </Typography>
+              </MenuItem>
+            );
+          })}
+
+        {!login.isUserSignedIn && (
+          <MenuItem
+            onClick={() => {
+              navigate(PageRoute.SignIn);
+            }}
+          >
+            <Typography
+              variant="body2"
+              color="primary"
+              fontWeight={'bold'}
+              whiteSpace={'nowrap'}
+              textOverflow={'ellipsis'}
+              overflow={'hidden'}
+              textAlign={'center'}
+              width={'100%'}
+            >
+              Đăng nhập
+            </Typography>
+          </MenuItem>
+        )}
       </Menu>
     </>
   );

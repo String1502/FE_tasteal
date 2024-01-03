@@ -12,7 +12,6 @@ import { SortType } from './SortSelect.tsx';
 
 export function useSearchRecipe(viewportItemAmount: number = 12) {
   const [recipes, setRecipes] = React.useState<RecipeEntity[]>([]);
-  // const [resultIds, setResultIds] = React.useState<RecipeEntity['id'][]>([]);
   const { handleSpinner } = useContext(AppContext);
   const [page, setPage] = React.useState(1);
   const [end, setEnd] = React.useState(false);
@@ -24,10 +23,10 @@ export function useSearchRecipe(viewportItemAmount: number = 12) {
           viewportItemAmount,
           page
         );
-        const tukhoa = (await RecipeService.GetKeyWords())
+        const tukhoa: TuKhoa[] = (await RecipeService.GetKeyWords())
           .map((item) => {
             return {
-              ...item,
+              keyword: item,
               value: false,
             };
           })
