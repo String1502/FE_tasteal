@@ -21,6 +21,10 @@ import { AccountEntity } from '@/lib/models/entities/AccountEntity/AccountEntity
 import { CommentEntity } from '@/lib/models/entities/CommentEntity/CommentEntity';
 import AccountService from '@/lib/services/accountService';
 import CommentService from '@/lib/services/commentService';
+import RatingService, {
+  Rating as RatingModel,
+  RatingRes,
+} from '@/lib/services/ratingService';
 import RecipeService from '@/lib/services/recipeService';
 import { createDebugStringFormatter } from '@/utils/debug/formatter';
 import {
@@ -63,6 +67,7 @@ import {
   useState,
 } from 'react';
 import { Link as RouterLink, useNavigate, useParams } from 'react-router-dom';
+import { serialize } from 'v8';
 
 // Mock bread crumbs data (will be remove later)
 const breadCrumbsLinks = [
@@ -209,7 +214,7 @@ const RecipeDetail: FC = () => {
   }, []);
 
   //#endregion
-  //#region Feedback
+  //#region Comment
 
   const [comment, setComment] = useState('');
 
@@ -223,7 +228,10 @@ const RecipeDetail: FC = () => {
     console.log(recipe!.id, user.uid, comment);
 
     CommentService.Create(recipe!.id, user.uid, comment)
-      .then((comment) => console.log('Đã comment', comment))
+      .then((comment) => {
+        GetComments(recipe!.id);
+        setComment('');
+      })
       .catch((error) => console.log('error', error));
   }
   function validateComment(): [boolean, string] {
@@ -245,13 +253,54 @@ const RecipeDetail: FC = () => {
     if (!recipe) {
       return;
     }
-    CommentService.Get(recipe!.id)
+    GetComments(recipe!.id);
+  }, [recipe]);
+  async function GetComments(id: number) {
+    CommentService.Get(id)
       .then((res) => setComments(res.comments))
       .catch(() => setComments([]));
-  }, [recipe]);
-  console.log(comments);
+  }
 
   //#endregion
+  //#region Rating
+
+  const [rating, setRating] = useState(0);
+  const [ratingData, setRatingData] = useState<RatingRes | null>(null);
+  useEffect(() => {
+    if (!recipe) return;
+    RatingService.Get(recipe.id).then((res) => {
+      setRatingData(res);
+      const userRating = res?.comments.find((r) => r.account_id === user?.uid);
+      if (userRating) {
+        setRating(userRating.rating);
+      }
+      if (res) {
+        setRatingData(res);
+      }
+    });
+  }, [recipe, user?.uid]);
+  async function handleRatingClicked(rating: number) {
+    // Check if user rated before
+    setRating(rating);
+
+    let oldRating: RatingModel;
+
+    try {
+      const ratingRes = await RatingService.Get(recipe.id);
+      if (ratingRes) {
+        oldRating = ratingRes.comments.find((r) => r.account_id === user.uid);
+      }
+    } catch (err) {
+      console.log(err);
+    }
+
+    if (oldRating) {
+      await RatingService.Update(recipe.id, oldRating.id, rating);
+    } else {
+      await RatingService.Create(recipe.id, user.uid, rating);
+    }
+  }
+
   //#region Others
 
   const recipeBrief = useMemo(() => {
@@ -589,9 +638,24 @@ const RecipeDetail: FC = () => {
                       size="large"
                       icon={<StarRateRounded />}
                       emptyIcon={<StarRateRounded />}
-                    ></Rating>
+                      value={rating}
+                      onChange={(_, value) => handleRatingClicked(value)}
+                    />
                   </Stack>
                 )}
+              </Stack>
+              <Stack direction="row" gap={1}>
+                <Typography>{ratingData?.rating ?? 0}</Typography>
+                <Rating
+                  size="large"
+                  value={ratingData?.rating ?? 0}
+                  icon={<StarRateRounded />}
+                  emptyIcon={<StarRateRounded />}
+                  readOnly
+                />
+                <Typography>
+                  {ratingData?.comments.length ?? 0} đánh giá
+                </Typography>
               </Stack>
 
               {loading ? (
