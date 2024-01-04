@@ -1,7 +1,7 @@
 import { occasions as occasionsSampleData } from '@/lib/constants/sampleData';
+import { convertLunarToSolarDate } from '@/utils/format';
 import { ApiPath } from '../constants/common';
 import { OccasionEntity } from '../models/entities/OccasionEntity/OccasionEntity';
-import { convertLunarToSolarDate } from '@/utils/format';
 
 /**
  * Represents a service for managing occasions.
@@ -23,8 +23,8 @@ class OccasionService {
       .then((data) => {
         result = data
           .map((item: any) => {
-            let start_at = new Date(item.start_at);
-            let end_at = new Date(item.end_at);
+            const start_at = new Date(item.start_at);
+            const end_at = new Date(item.end_at);
             return {
               ...item,
               start_at,

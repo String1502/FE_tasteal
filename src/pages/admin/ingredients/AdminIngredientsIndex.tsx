@@ -1,10 +1,14 @@
+import { useAppDispatch } from '@/app/hook';
 import CommonIndexPage from '@/components/ui/admin/CommonAdminIndexPage';
+import AdminLayout from '@/components/ui/layout/AdminLayout';
+import { setEditIngredient } from '@/features/admin/adminSlice';
 import { IngredientPagination } from '@/lib/models/dtos/Response/IngredientRes/IngredientRes';
 import { IngredientEntity } from '@/lib/models/entities/IngredientEntity/IngredientEntity';
 import IngredientService from '@/lib/services/ingredientService';
 import IngredientTypeService from '@/lib/services/ingredientTypeService';
 import { GridColDef } from '@mui/x-data-grid';
-import { FC, useEffect, useState } from 'react';
+import { FC, useCallback, useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 type CacheValue<T> = {
   time: number;
@@ -20,6 +24,29 @@ function isCacheExpire(time: number) {
 }
 
 export const AdminIngredientsIndex: FC = () => {
+  //#region Hooks
+
+  const navigate = useNavigate();
+
+  //#endregion
+  //#region Redux
+
+  const dispatch = useAppDispatch();
+
+  const handleCreateIngredient = useCallback(() => {
+    dispatch(setEditIngredient(null));
+    navigate('/admin/ingredients/create');
+  }, [dispatch, navigate]);
+  const handleEditIngredient = useCallback(
+    (ingredient: IngredientEntity) => {
+      console.log(ingredient);
+      dispatch(setEditIngredient(ingredient));
+      navigate(`/admin/ingredients/${ingredient.id}`);
+    },
+    [dispatch, navigate]
+  );
+
+  //#endregion
   //#region Datagrid columns
 
   const ingredientColumns: GridColDef[] = [
@@ -132,18 +159,22 @@ export const AdminIngredientsIndex: FC = () => {
   //#endregion
 
   return (
-    <CommonIndexPage
-      title={'Nguyên liệu'}
-      rows={rows}
-      paginationModel={paginationModel}
-      rowCount={rowCount}
-      columns={ingredientColumns}
-      loading={loading}
-      dialogProps={{
-        title: 'Xóa nguyên liệu',
-        content: 'Bạn có chắc muốn xóa nguyên liệu này?',
-      }}
-      onPaginationModelChange={setPaginationModel}
-    />
+    <AdminLayout>
+      <CommonIndexPage
+        title={'Nguyên liệu'}
+        rows={rows}
+        paginationModel={paginationModel}
+        rowCount={rowCount}
+        columns={ingredientColumns}
+        loading={loading}
+        dialogProps={{
+          title: 'Xóa nguyên liệu',
+          content: 'Bạn có chắc muốn xóa nguyên liệu này?',
+        }}
+        onPaginationModelChange={setPaginationModel}
+        onCreateClick={handleCreateIngredient}
+        onEditclick={handleEditIngredient}
+      />
+    </AdminLayout>
   );
 };

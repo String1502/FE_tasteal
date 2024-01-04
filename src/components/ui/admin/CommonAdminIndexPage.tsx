@@ -1,12 +1,21 @@
-import { useAppDispatch } from '@/app/hook';
 import CustomGridToolbar from '@/components/common/datagrid/CustomGridToolbar';
-import { CustomDialog } from '@/components/common/dialog/CustomDialog';
 import FormTitle from '@/components/common/typos/FormTitle';
-import { navigateTo } from '@/features/admin/adminSlice';
-import TabCode from '@/lib/enums/AdminTabCode';
 import useSnackbarService from '@/lib/hooks/useSnackbar';
-import { Add, Delete, Edit } from '@mui/icons-material';
-import { Box, Button, Divider, Stack, Typography } from '@mui/material';
+import { Add, Close, Delete, Edit } from '@mui/icons-material';
+import {
+  Box,
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  Divider,
+  IconButton,
+  Slide,
+  Stack,
+  Typography,
+} from '@mui/material';
 import { DataGrid, GridActionsCellItem, GridColDef } from '@mui/x-data-grid';
 import { useCallback, useMemo, useState } from 'react';
 
@@ -22,6 +31,8 @@ export type CommonIndexPageProps<RowType> = {
     content: string;
   };
   onPaginationModelChange?: (model: { page: number; pageSize: number }) => void;
+  onCreateClick?: () => void;
+  onEditclick?: (row: unknown) => void;
 };
 
 export default function CommonIndexPage<RowType>({
@@ -33,10 +44,14 @@ export default function CommonIndexPage<RowType>({
   columns: paramColumn,
   dialogProps,
   onPaginationModelChange,
+  onCreateClick,
+  onEditclick,
 }: CommonIndexPageProps<RowType>) {
-  const dispatch = useAppDispatch();
+  //#region Hooks
+
   const [snackbarAlert] = useSnackbarService();
 
+  //#endregion
   //#region Delete Operation
 
   // Dialog
@@ -59,6 +74,15 @@ export default function CommonIndexPage<RowType>({
   //#endregion
   //#region Datagrid Columns
 
+  const handleCreate = useCallback(() => {
+    onCreateClick && onCreateClick();
+  }, [onCreateClick]);
+  const handleEdit = useCallback(
+    (row: unknown) => {
+      onEditclick && onEditclick(row);
+    },
+    [onEditclick]
+  );
   const columns: GridColDef[] = useMemo(
     () => [
       ...paramColumn,
@@ -71,14 +95,7 @@ export default function CommonIndexPage<RowType>({
           <GridActionsCellItem
             icon={<Edit />}
             label="Sửa"
-            onClick={() =>
-              dispatch(
-                navigateTo({
-                  tab: TabCode.IngredientCreate,
-                  params: params.row,
-                })
-              )
-            }
+            onClick={() => handleEdit(params.row)}
           />,
           <GridActionsCellItem
             icon={<Delete />}
@@ -91,7 +108,7 @@ export default function CommonIndexPage<RowType>({
         ],
       },
     ],
-    [dispatch, paramColumn]
+    [handleEdit, paramColumn]
   );
 
   //#endregion
@@ -103,9 +120,7 @@ export default function CommonIndexPage<RowType>({
         <Button
           startIcon={<Add />}
           variant="contained"
-          onClick={() =>
-            dispatch(navigateTo({ tab: TabCode.IngredientCreate }))
-          }
+          onClick={handleCreate}
           sx={{ width: 100, borderRadius: 4 }}
         >
           Thêm
@@ -135,55 +150,51 @@ export default function CommonIndexPage<RowType>({
           sx={{ minHeight: '100%' }}
         />
       </Box>
-
-      <CustomDialog
+      <Dialog
         open={deleteDialogOpen}
-        handleClose={handleDeleteClose}
-        title={dialogProps.title}
-        childrenContainerSx={{
-          height: 160,
+        onClose={handleDeleteClose}
+        TransitionComponent={Slide}
+        PaperProps={{
+          sx: {
+            borderRadius: 4,
+            width: '50%',
+          },
         }}
       >
-        <Stack justifyContent={'space-between'} height={'100%'}>
-          <Box
-            height={'100%'}
-            display={'flex'}
-            alignItems={'center'}
-            justifyContent={'center'}
-          >
-            <Typography typography={'body1'} fontSize={20}>
-              {dialogProps.content}
-            </Typography>
-          </Box>
-
+        <DialogTitle>
           <Stack
-            direction={'row'}
-            justifyContent={'end'}
-            gap={1}
-            sx={{
-              borderTop: 1.4,
-              borderColor: 'secondary.main',
-              pt: 1,
-            }}
+            direction="row"
+            justifyContent={'space-between'}
+            alignItems={'center'}
           >
-            <Button
-              variant="contained"
-              color="error"
-              sx={{ width: 100, borderRadius: 4 }}
-              onClick={handleDeleteRow}
-            >
-              Xóa
-            </Button>
-            <Button
-              variant="contained"
-              sx={{ width: 100, borderRadius: 4 }}
-              onClick={handleDeleteClose}
-            >
-              Đóng
-            </Button>
+            <Typography typography={'h6'}>{dialogProps.title}</Typography>
+            <IconButton onClick={handleDeleteClose}>
+              <Close />
+            </IconButton>
           </Stack>
-        </Stack>
-      </CustomDialog>
+        </DialogTitle>
+        <Divider
+          sx={{
+            opacity: 0.5,
+          }}
+        />
+        <DialogContent>
+          <DialogContentText>{dialogProps.content}</DialogContentText>
+        </DialogContent>
+        <Divider
+          sx={{
+            opacity: 0.5,
+          }}
+        />
+        <DialogActions>
+          <Button variant="contained" color="error" onClick={handleDeleteRow}>
+            Xóa
+          </Button>
+          <Button variant="contained" onClick={handleDeleteClose}>
+            Hủy
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Box>
   );
 }

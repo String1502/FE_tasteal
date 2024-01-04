@@ -1,27 +1,30 @@
-import TabCode from '@/lib/enums/AdminTabCode';
-import { createSlice, PayloadAction } from '@reduxjs/toolkit/react';
+import { IngredientEntity } from '@/lib/models/entities/IngredientEntity/IngredientEntity';
+import { PayloadAction, createSlice } from '@reduxjs/toolkit/react';
 
-export type AdminPageSlice = {
-  currentTab: TabCode;
-  params?: unknown | null;
+export type IngredientState = {
+  editValue: IngredientEntity | null;
+};
+
+export type AdminState = {
+  ingredient: IngredientState;
 };
 
 export const adminSlice = createSlice({
   name: 'admin',
   initialState: {
-    currentTab: TabCode.Dashboard,
-    params: null,
-  },
+    ingredient: {
+      editValue: null,
+    },
+  } as AdminState,
   reducers: {
-    navigateTo: (
+    setEditIngredient: (
       state,
-      action: PayloadAction<{ tab: TabCode; params?: unknown }>
+      action: PayloadAction<IngredientEntity | null>
     ) => {
-      state.currentTab = action.payload.tab;
-      state.params = action.payload.params;
+      state.ingredient.editValue = action.payload;
     },
   },
 });
 
-export const { navigateTo } = adminSlice.actions;
+export const { setEditIngredient } = adminSlice.actions;
 export default adminSlice.reducer;

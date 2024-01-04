@@ -25,14 +25,15 @@ import Partner from './pages/Partner';
 
 import store from '@/app/store';
 import { Provider } from 'react-redux';
+import { PopoverContentProps } from './components/ui/header/PopoverContent';
+import { ChatContext, initChatContext } from './lib/contexts/ChatContext';
+import Reference from './pages/Reference';
 import Search from './pages/Search';
 import SignIn from './pages/SignIn';
 import SignUp from './pages/SignUp';
 import SignUpEmail from './pages/SignUpEmail';
-import AdminPage from './pages/admin/AdminPage';
-import { PopoverContentProps } from './components/ui/header/PopoverContent';
-import Reference from './pages/Reference';
-import { ChatContext, initChatContext } from './lib/contexts/ChatContext';
+import AdminIngredientCreate from './pages/admin/ingredients/AdminIngredientsCreate';
+import { AdminIngredientsIndex } from './pages/admin/ingredients/AdminIngredientsIndex';
 
 //#region AppWrapper
 
@@ -167,10 +168,25 @@ function AllRoutes() {
         element: <MySavedRecipes />,
         needSignIn: PageRoute.MySavedRecipes,
       },
+      // {
+      //   path: PageRoute.Admin.Index,
+      //   element: <AdminPage />,
+      //   needSignIn: PageRoute.Admin.Index,
+      // },
       {
-        path: PageRoute.Admin,
-        element: <AdminPage />,
-        needSignIn: PageRoute.Admin,
+        path: PageRoute.Admin.Ingredients.Index,
+        element: <AdminIngredientsIndex />,
+        needSignIn: PageRoute.Admin.Ingredients.Index,
+      },
+      {
+        path: PageRoute.Admin.Ingredients.Create,
+        element: <AdminIngredientCreate />,
+        needSignIn: PageRoute.Admin.Ingredients.Create,
+      },
+      {
+        path: PageRoute.Admin.Ingredients.View,
+        element: <AdminIngredientCreate />,
+        needSignIn: PageRoute.Admin.Ingredients.View,
       },
       {
         path: '*',

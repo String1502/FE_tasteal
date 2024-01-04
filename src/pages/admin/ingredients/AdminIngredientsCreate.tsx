@@ -1,123 +1,122 @@
-import { useAppDispatch, useAppSelector } from '@/app/hook';
+import { useAppSelector } from '@/app/hook';
 import TastealTextField from '@/components/common/textFields/TastealTextField';
 import FormLabel from '@/components/common/typos/FormLabel';
 import FormTitle from '@/components/common/typos/FormTitle';
-import { navigateTo } from '@/features/admin/adminSlice';
-import TabCode from '@/lib/enums/AdminTabCode';
+import AdminLayout from '@/components/ui/layout/AdminLayout';
 import useSnackbarService from '@/lib/hooks/useSnackbar';
-import { IngredientRes } from '@/lib/models/dtos/Response/IngredientRes/IngredientRes';
+import { IngredientEntity } from '@/lib/models/entities/IngredientEntity/IngredientEntity';
 import { ArrowBack } from '@mui/icons-material';
 import { Autocomplete, Button, IconButton } from '@mui/material';
 import { Stack } from '@mui/system';
-import { FC, useCallback, useState } from 'react';
+import { FC, useCallback, useMemo, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
-const options: { id: number; name: string }[] = [
-  {
-    id: 1,
-    name: 'test 01',
-  },
-  {
-    id: 2,
-    name: 'test 02',
-  },
-  {
-    id: 3,
-    name: 'test 03',
-  },
-];
-
-type IngredientCreateFormData = {
-  name: string;
-  type_id: number | null;
-};
+// const DEFAULT_INGREDIENT: Omit<IngredientEntity, 'id'> = {
+//   name: '',
+//   isLiquid: false,
+//   image: '',
+//   ingredient_type: { id: 0, name: '' },
+//   ingredient
+// }
 
 const AdminIngredientCreate: FC = () => {
-  const [snackbarAlert] = useSnackbarService();
-  const params: IngredientRes = useAppSelector((state) => state.admin.params);
-  const dispatch = useAppDispatch();
+  //#region Hooks
 
-  const [mode, _setMode] = useState<'view' | 'create' | 'edit'>(
-    params ? 'edit' : 'create'
+  const [snackbarAlert] = useSnackbarService();
+  const navigate = useNavigate();
+
+  //#endregion
+  //#region Redux
+
+  const editIngredient = useAppSelector(
+    (state) => state.admin.ingredient.editValue
   );
 
-  const [formData, setFormData] = useState<IngredientCreateFormData>(
-    params
-      ? {
-          name: params.name,
-          type_id: 1,
-          // TODO: this somehow don't has type_id
-          // type_id: params.type_id,
-        }
-      : {
-          name: '',
-          type_id: null,
-        }
+  //#endregion
+  //#region Mode
+
+  const mode = useMemo(() => {
+    return editIngredient ? 'edit' : 'create';
+  }, [editIngredient]);
+
+  //#endregion
+  //#region Form
+
+  const [formData, setFormData] = useState<IngredientEntity>(
+    editIngredient ? editIngredient : ({} as IngredientEntity)
   );
 
   const handleSubmit = useCallback(() => {
     console.log(formData);
     snackbarAlert('Đã thêm nguyên liệu thành công');
-    dispatch(navigateTo({ tab: TabCode.IngredientIndex, params: null }));
-  }, [dispatch, formData, snackbarAlert]);
+  }, [formData, snackbarAlert]);
+
+  //#endregion
+
+  function handleNavigateBack() {
+    navigate('/admin/ingredients');
+  }
+
+  console.log(formData);
 
   return (
-    <Stack alignItems={'start'} p={4} gap={4}>
-      <Stack direction="row" gap={1}>
-        <IconButton
-          sx={{
-            borderRadius: 4,
-            backgroundColor: 'primary.main',
-            color: 'primary.contrastText',
-            ':hover': {
-              backgroundColor: 'primary.dark',
-            },
-          }}
-          onClick={() =>
-            dispatch(navigateTo({ tab: TabCode.IngredientIndex, params: null }))
-          }
-        >
-          <ArrowBack />
-        </IconButton>
-        <FormTitle>Thêm nguyên liệu</FormTitle>
-      </Stack>
-
-      <Stack gap={1}>
-        <Stack>
-          <FormLabel>Tên nguyên liệu</FormLabel>
-          <TastealTextField
-            label="Tên nguyên liệu"
-            placeholder="Tên nguyên liệu"
-            value={formData.name}
-            onChange={(e) =>
-              setFormData((prev) => ({ ...prev, name: e.target.value }))
-            }
-          />
+    <AdminLayout>
+      <Stack alignItems={'start'} p={4} gap={4}>
+        <Stack direction="row" gap={1}>
+          <IconButton
+            sx={{
+              borderRadius: 4,
+              backgroundColor: 'primary.main',
+              color: 'primary.contrastText',
+              ':hover': {
+                backgroundColor: 'primary.dark',
+              },
+            }}
+            onClick={handleNavigateBack}
+          >
+            <ArrowBack />
+          </IconButton>
+          <FormTitle>Thêm nguyên liệu</FormTitle>
         </Stack>
 
-        <Stack>
-          <FormLabel>Loại nguyên liệu</FormLabel>
-          <Autocomplete
-            options={options}
-            getOptionLabel={(o) => o.name}
-            title="Chọn loại nguyên liệu"
-            placeholder="Chọn loại cho nguyên liệu"
-            noOptionsText="Không tìm thấy loại nguyên liệu nào"
-            renderInput={(params) => (
-              <TastealTextField {...params} label="Chọn dịp" />
-            )}
-            isOptionEqualToValue={(option, value) => option.id === value.id}
-            value={options.find((o) => o.id === formData.type_id)}
-            onChange={(_, value) =>
-              setFormData((prev) => ({ ...prev, type_id: value?.id }))
-            }
-          />
-        </Stack>
-      </Stack>
+        <Stack gap={1}>
+          <Stack>
+            <FormLabel>Tên nguyên liệu</FormLabel>
+            <TastealTextField
+              label="Tên nguyên liệu"
+              placeholder="Tên nguyên liệu"
+              value={formData.name}
+              onChange={(e) =>
+                setFormData((prev) => ({ ...prev, name: e.target.value }))
+              }
+            />
+          </Stack>
 
-      <Button variant="contained" onClick={handleSubmit} sx={{ width: 240 }}>
-        {mode === 'create' ? 'Thêm' : mode === 'edit' ? 'Sửa' : 'Lỗi'}
-      </Button>
-    </Stack>
+          <Stack>
+            <FormLabel>Loại nguyên liệu</FormLabel>
+            <Autocomplete
+              options={[]}
+              getOptionLabel={(o) => o.name}
+              title="Chọn loại nguyên liệu"
+              placeholder="Chọn loại cho nguyên liệu"
+              noOptionsText="Không tìm thấy loại nguyên liệu nào"
+              renderInput={(params) => (
+                <TastealTextField {...params} label="Chọn dịp" />
+              )}
+              isOptionEqualToValue={(option, value) => option.id === value.id}
+              value={[].find((o) => o.id === formData.type_id)}
+              onChange={(_, value) =>
+                setFormData((prev) => ({ ...prev, type_id: value?.id }))
+              }
+            />
+          </Stack>
+        </Stack>
+
+        <Button variant="contained" onClick={handleSubmit} sx={{ width: 240 }}>
+          {mode === 'create' ? 'Thêm' : mode === 'edit' ? 'Sửa' : 'Lỗi'}
+        </Button>
+      </Stack>
+    </AdminLayout>
   );
 };
 
