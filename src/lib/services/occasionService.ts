@@ -1,7 +1,7 @@
 import { occasions as occasionsSampleData } from '@/lib/constants/sampleData';
-import { ApiPath } from '../constants/common';
 import { OccasionEntity } from '../models/entities/OccasionEntity/OccasionEntity';
 import { convertLunarToSolarDate } from '@/utils/format';
+import { getApiUrl } from '../constants/api';
 
 /**
  * Represents a service for managing occasions.
@@ -18,7 +18,7 @@ class OccasionService {
       method: 'GET',
     };
 
-    await fetch(`${ApiPath}/api/v2/Home/getoccasion`, requestOptions)
+    await fetch(`${getApiUrl('GetOccasion')}`, requestOptions)
       .then((res) => res.json())
       .then((data) => {
         result = data
@@ -53,6 +53,99 @@ class OccasionService {
       });
 
     return result;
+  }
+  public static async GetOccasionById(
+    id: OccasionEntity['id']
+  ): Promise<OccasionEntity> {
+    const requestOptions: RequestInit = {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+    };
+
+    return await fetch(`${getApiUrl('GetOccasionById')}/${id}`, requestOptions)
+      .then((response) => response.json())
+      .then((data: OccasionEntity) => {
+        console.log(data);
+        return {
+          ...data,
+          start_at: new Date(data.start_at),
+          end_at: new Date(data.end_at),
+        };
+      })
+      .catch((error) => {
+        console.error('Lỗi:', error);
+        throw error;
+      });
+  }
+
+  public static async AddOccasion(
+    newOccasion: OccasionEntity
+  ): Promise<boolean> {
+    const requestOptions: RequestInit = {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: JSON.stringify(newOccasion),
+    };
+
+    return await fetch(`${getApiUrl('AddOccasion')}`, requestOptions)
+      .then((response) => response.json())
+      .then((data) => {
+        console.log(data);
+        return data;
+      })
+      .catch((error) => {
+        console.error('Lỗi:', error);
+        throw error;
+      });
+  }
+
+  public static async UpdateOccasion(
+    updateOccasion: OccasionEntity
+  ): Promise<boolean> {
+    const requestOptions: RequestInit = {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: JSON.stringify(updateOccasion),
+    };
+
+    return await fetch(`${getApiUrl('UpdateOccasion')}`, requestOptions)
+      .then((response) => response.json())
+      .then((data) => {
+        console.log(data);
+        return data;
+      })
+      .catch((error) => {
+        console.error('Lỗi:', error);
+        throw error;
+      });
+  }
+
+  public static async DeleteOccasion(
+    id: OccasionEntity['id']
+  ): Promise<boolean> {
+    const requestOptions: RequestInit = {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+    };
+
+    return await fetch(`${getApiUrl('DeleteOccasion')}/${id}`, requestOptions)
+      .then((response) => response.json())
+      .then((data) => {
+        console.log(data);
+        return data;
+      })
+      .catch((error) => {
+        console.error('Lỗi:', error);
+        throw error;
+      });
   }
 
   public static async getCircleOccasion(): Promise<OccasionEntity[]> {

@@ -98,8 +98,6 @@ class RecipeService {
   public static async GetRecipeByDateTime(
     limit: number
   ): Promise<RecipeEntity[]> {
-    let recipes: RecipeEntity[] = [];
-
     const requestOptions: RequestInit = {
       method: 'POST',
       headers: {
@@ -112,25 +110,19 @@ class RecipeService {
       } as PageFilter),
     };
 
-    await fetch(getApiUrl('GetRecipeByDateTime'), requestOptions)
+    return await fetch(getApiUrl('GetRecipeByDateTime'), requestOptions)
       .then((response) => response.json())
       .then((data) => {
-        recipes = data;
+        return data;
       })
       .catch((error) => {
         console.error('Lỗi:', error);
       });
-
-    console.log(recipes);
-
-    return recipes;
   }
 
   public static async GetRecipeByRating(
     limit: number
   ): Promise<RecipeEntity[]> {
-    let recipes: RecipeEntity[] = [];
-
     const requestOptions = {
       method: 'POST',
       headers: {
@@ -143,16 +135,14 @@ class RecipeService {
       } as PageFilter),
     };
 
-    await fetch(getApiUrl('GetRecipeByRating'), requestOptions)
+    return await fetch(getApiUrl('GetRecipeByRating'), requestOptions)
       .then((response) => response.json())
       .then((data) => {
-        recipes = data;
+        return data;
       })
       .catch((error) => {
         console.error('Lỗi:', error);
       });
-
-    return recipes;
   }
 
   public static async SearchRecipes(
@@ -288,19 +278,18 @@ class RecipeService {
       });
   }
 
-  public static Update(recipeId: number, updateData: RecipeReq) {
-    return fetch(getApiUrl('UpdateRecipe', recipeId.toString()), {
+  public static async Update(recipeId: number, updateData: RecipeReq) {
+    const res = await fetch(getApiUrl('UpdateRecipe', recipeId.toString()), {
       method: 'PUT',
       body: JSON.stringify(updateData),
       headers: {
         'Content-Type': 'application/json',
       },
-    }).then((res) => {
-      if (res.ok) {
-        return res.json();
-      }
-      throw new Error(res.statusText);
     });
+    if (res.ok) {
+      return res.json();
+    }
+    throw new Error(res.statusText);
   }
 }
 

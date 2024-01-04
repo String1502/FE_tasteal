@@ -5,6 +5,7 @@ import { Divider, Skeleton, Stack, Typography } from '@mui/material';
 import React, { useContext, useEffect, useState } from 'react';
 import { CustomAccodion } from './CustomAccodion';
 import SlideInDialog from '@/components/common/dialog/SlideInDialog';
+import IngredientService from '@/lib/services/ingredientService';
 
 export type DisplayIngredientType = {
   ingredientType: Ingredient_TypeEntity;
@@ -20,26 +21,36 @@ function IngredientTypeContent({
 
   const [data, setData] = React.useState<DisplayIngredientType[]>([]);
 
+  const [ingredients, setIngredients] = React.useState<IngredientEntity[]>([]);
+
   useEffect(() => {
-    if (popOverHeader && popOverHeader.ingredients.length > 0) {
-      const types = popOverHeader.ingredients
-        .map((item) => item?.ingredient_type)
-        .filter(
-          (item, index, self) =>
-            item && self.findIndex((i) => i.id == item.id) === index
-        );
+    async function fetch() {
+      try {
+        const ingres = await IngredientService.GetAll();
+        setIngredients(ingres);
+      } catch (error) {
+        console.log(error);
+      }
+    }
+    fetch();
+  }, []);
+
+  useEffect(() => {
+    if (
+      popOverHeader &&
+      popOverHeader.ingredientTypes.length > 0 &&
+      ingredients.length > 0
+    ) {
       setData(
-        types.map((item) => {
+        popOverHeader.ingredientTypes.map((item) => {
           return {
             ingredientType: item,
-            ingredients: popOverHeader.ingredients.filter(
-              (i) => i.type_id == item.id
-            ),
+            ingredients: ingredients.filter((i) => i.type_id == item.id),
           };
         })
       );
     }
-  }, [popOverHeader?.ingredients]);
+  }, [popOverHeader?.ingredientTypes, ingredients]);
 
   // Dialog
   const [ingredient, setIngredient] = useState<IngredientEntity | undefined>(

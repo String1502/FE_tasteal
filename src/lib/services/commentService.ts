@@ -2,7 +2,7 @@ import { getApiUrl } from '../constants/api';
 import { CommentEntity } from '../models/entities/CommentEntity/CommentEntity';
 
 class CommentService {
-  public static Create(
+  public static async Create(
     recipeId: number,
     uid: string,
     comment: string
@@ -13,29 +13,27 @@ class CommentService {
       comment: comment,
     };
 
-    return fetch(url, {
+    const res = await fetch(url, {
       method: 'POST',
       body: JSON.stringify(body),
       headers: {
         'Content-Type': 'application/json',
       },
-    }).then((res) => {
-      if (res.ok) {
-        return res.json();
-      }
-      throw new Error(res.statusText);
     });
+    if (res.ok) {
+      return res.json();
+    }
+    throw new Error(res.statusText);
   }
-  public static Get(recipeId: number) {
+  public static async Get(recipeId: number) {
     const url = getApiUrl('GetComments', recipeId.toString());
-    return fetch(url, {
+    const res = await fetch(url, {
       method: 'GET',
-    }).then((res) => {
-      if (res.ok) {
-        return res.json();
-      }
-      throw new Error(res.statusText);
     });
+    if (res.ok) {
+      return res.json();
+    }
+    throw new Error(res.statusText);
   }
 }
 

@@ -91,19 +91,14 @@ class AccountService {
       } as PageFilter),
     };
 
-    let result: AccountReq[] = [];
-
-    await fetch(getApiUrl('GetMostContributedAccounts'), requestOptions)
+    return await fetch(getApiUrl('GetMostContributedAccounts'), requestOptions)
       .then((res) => res.json())
       .then((data) => {
-        result = data;
-        console.log(data);
+        return data;
       })
       .catch((error) => {
         console.error('Lỗi:', error);
       });
-
-    return result;
   }
 
   /**

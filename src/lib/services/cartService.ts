@@ -30,13 +30,6 @@ class CartService {
   public static async GetCartByAccountId(
     accountId: AccountEntity['uid']
   ): Promise<CartEntity[]> {
-    // const allCarts = await this.GetAllCarts();
-    // return Promise.resolve(
-    //   allCarts.filter((cart) => cart.accountId === accountId)
-    // );
-
-    let carts: CartEntity[] = [];
-
     const requestOptions: RequestInit = {
       method: 'POST',
       headers: {
@@ -44,22 +37,19 @@ class CartService {
       },
     };
 
-    await fetch(
+    return await fetch(
       `${getApiUrl('GetAllCartByAccountId')}?accountId=${accountId}`,
       requestOptions
     )
       .then((response) => response.json())
       .then((data) => {
-        carts = data;
+        console.log(data);
+        return data;
       })
       .catch((error) => {
         console.error('Lỗi:', error);
         throw error;
       });
-
-    console.log(carts);
-
-    return carts;
   }
 
   public static async DeleteCartByAccountId(

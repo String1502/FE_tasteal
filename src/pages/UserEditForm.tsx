@@ -39,19 +39,21 @@ const UserEditForm = ({
   const image = useFirebaseImage(userData?.avatar);
   const [snackbarAlert] = useSnackbarService();
 
+  console.log(editData);
+
   const handleSave = async () => {
     try {
       const updateData = {
         ...editData,
       };
       if (file) {
-        if (editData.avatar) {
+        if (editData.avatar && editData.avatar.includes('Avatar/')) {
           deleteObject(ref(storage, editData.avatar)).then(async () => {
             const storageRef = ref(storage, `${editData.avatar}`);
             await uploadBytes(storageRef, file);
           });
         } else {
-          const storageRef = ref(storage, `${editData.uid}`);
+          const storageRef = ref(storage, `Avatar/${editData.uid}`);
           await uploadBytes(storageRef, file).then((snapshot) => {
             updateData.avatar = snapshot.metadata.fullPath;
           });
@@ -145,6 +147,14 @@ const UserEditForm = ({
               }}
             >
               <CustomTextField
+                label="Slogan"
+                value={editData.slogan}
+                onChange={(e) =>
+                  setEditData({ ...editData, slogan: e.target.value })
+                }
+              />
+
+              <CustomTextField
                 label="Tên"
                 value={editData.name}
                 onChange={(e) =>
@@ -153,7 +163,9 @@ const UserEditForm = ({
               />
 
               <CustomTextField
-                label="Mô tả"
+                label="Giới thiệu"
+                multiline
+                rows={3}
                 value={editData.introduction}
                 onChange={(e) =>
                   setEditData({ ...editData, introduction: e.target.value })
@@ -161,7 +173,7 @@ const UserEditForm = ({
               />
 
               <CustomTextField
-                label="Triết lý"
+                label="Quote"
                 value={editData.quote}
                 onChange={(e) =>
                   setEditData({ ...editData, quote: e.target.value })
@@ -173,14 +185,6 @@ const UserEditForm = ({
                 value={editData.link}
                 onChange={(e) =>
                   setEditData({ ...editData, link: e.target.value })
-                }
-              />
-
-              <CustomTextField
-                label="Slogan"
-                value={editData.slogan}
-                onChange={(e) =>
-                  setEditData({ ...editData, slogan: e.target.value })
                 }
               />
             </Stack>

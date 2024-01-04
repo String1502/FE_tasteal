@@ -39,24 +39,23 @@ class IngredientService {
       });
   }
 
-  public static GetAll2(): Promise<IngredientsGetRes> {
+  public static async GetAll2(): Promise<IngredientsGetRes> {
     const body = {
       page: 1,
       pageSize: 2147483647,
     };
 
-    return fetch(getApiUrl('GetAllIngredients'), {
+    const res = await fetch(getApiUrl('GetAllIngredients'), {
       method: 'POST',
       body: JSON.stringify(body),
       headers: {
         'Content-Type': 'application/json',
       },
-    }).then((res) => {
-      if (res.ok) {
-        return res.json();
-      }
-      throw new Error(res.statusText);
     });
+    if (res.ok) {
+      return res.json();
+    }
+    throw new Error(res.statusText);
   }
 
   public static async GetAllIngredientTypes(): Promise<
@@ -73,6 +72,30 @@ class IngredientService {
           ingredient &&
           self.findIndex((item) => item.id == ingredient.id) === index
       ) as Ingredient_TypeEntity[];
+  }
+
+  public static async DeleteIngredient(
+    id: IngredientEntity['id']
+  ): Promise<boolean> {
+    const requestOptions = {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+    };
+    return await fetch(
+      `${getApiUrl('DeleteIngredient')}?id=${id}`,
+      requestOptions
+    )
+      .then((res) => res.json())
+      .then((data) => {
+        console.log(data);
+
+        return data;
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   }
 }
 
