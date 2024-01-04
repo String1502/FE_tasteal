@@ -41,7 +41,7 @@ export const AdminOccasionsIndex: FC = () => {
       title={'Dịp lễ'}
       rows={occasions}
       columns={occasionColumns}
-      isFetching={isOccasionsFetching}
+      loading={isOccasionsFetching}
       dialogProps={{
         title: 'Xóa dịp lễ',
         content: 'Bạn có chắc muốn xóa dịp lễ này?',

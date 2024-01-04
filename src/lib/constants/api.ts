@@ -40,6 +40,9 @@ export const ApiEndPoint = {
   // Ingredient
   GetAllIngredients: 'Ingredient/getall',
   //
+  // Ingredient Type
+  GetAllIngredientTypes: 'IngredientType/getall',
+  //
   // Recipe
   CreateRecipe: 'Recipe/Add',
   SearchRecipe: 'Recipe/Search',

@@ -13,20 +13,26 @@ import { useCallback, useMemo, useState } from 'react';
 export type CommonIndexPageProps<RowType> = {
   title: string;
   rows: RowType[];
+  paginationModel: { page: number; pageSize: number };
+  rowCount: number;
   columns: GridColDef[];
-  isFetching: boolean;
+  loading: boolean;
   dialogProps: {
     title: string;
     content: string;
   };
+  onPaginationModelChange?: (model: { page: number; pageSize: number }) => void;
 };
 
 export default function CommonIndexPage<RowType>({
   title,
   rows,
-  isFetching,
+  rowCount,
+  paginationModel,
+  loading,
   columns: paramColumn,
   dialogProps,
+  onPaginationModelChange,
 }: CommonIndexPageProps<RowType>) {
   const dispatch = useAppDispatch();
   const [snackbarAlert] = useSnackbarService();
@@ -89,6 +95,7 @@ export default function CommonIndexPage<RowType>({
   );
 
   //#endregion
+
   return (
     <Box p={4} display="flex" flexDirection={'column'} gap={1}>
       <Stack direction="row" justifyContent={'space-between'}>
@@ -109,10 +116,9 @@ export default function CommonIndexPage<RowType>({
 
       <Box height={720}>
         <DataGrid
-          loading={isFetching}
+          loading={loading}
           rows={rows}
           columns={columns}
-          pageSizeOptions={[10, 25, 50]}
           slots={{
             toolbar: CustomGridToolbar,
           }}
@@ -121,6 +127,11 @@ export default function CommonIndexPage<RowType>({
               showQuickFilter: true,
             },
           }}
+          paginationMode="server"
+          rowCount={rowCount}
+          paginationModel={paginationModel}
+          pageSizeOptions={[10]}
+          onPaginationModelChange={onPaginationModelChange}
           sx={{ minHeight: '100%' }}
         />
       </Box>
