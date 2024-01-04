@@ -5,4 +5,7 @@ export type CommentRes = {
   account_id: AccountEntity['uid'];
   name: AccountEntity['name'];
   comment: string;
+  image?: string;
+  createdAt: Date;
+  updatedAt: Date;
 };
