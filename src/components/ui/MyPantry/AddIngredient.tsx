@@ -167,7 +167,7 @@ export function AddIngredient({
                 }}
                 onClick={async () => {
                   // Thêm mới PantryItem
-                  // hanlePantryItemsChange
+                  hanlePantryItemsChange('add', []);
                 }}
               >
                 Thêm

@@ -1,5 +1,4 @@
-import { DateDisplay } from '@/pages/MealPlanner';
-import { dateToDDMMYYYY } from '@/utils/format';
+import { DateDisplay, compareTwoDates } from '@/pages/MealPlanner';
 import { Box, Typography } from '@mui/material';
 
 import { AddRecipeButton } from './AddRecipeButton';
@@ -20,9 +19,10 @@ function WeekDateItem({
   handleRemovePlanItem: (id: number) => void;
 }) {
   const isToday = useMemo(
-    () => weekDates.date === new Date().toISOString().split('T')[0],
+    () => compareTwoDates(weekDates.date, new Date()),
     [weekDates.date]
   );
+
   return (
     <>
       <Box
@@ -70,7 +70,11 @@ function WeekDateItem({
                   lineHeight: 0.5,
                 }}
               >
-                {dateToDDMMYYYY(weekDates.date)}
+                {weekDates.date.toLocaleDateString('vi-VN', {
+                  year: 'numeric',
+                  month: '2-digit',
+                  day: '2-digit',
+                })}
               </Typography>
             </Box>
 
@@ -88,9 +92,17 @@ function WeekDateItem({
 
           {weekDates.date && (
             <Droppable
-              droppableId={weekDates.date}
+              droppableId={weekDates.date.toLocaleDateString('vi-VN', {
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit',
+              })}
               type="group"
-              key={weekDates.date}
+              key={weekDates.date.toLocaleDateString('vi-VN', {
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit',
+              })}
             >
               {(provided, _snapshot) => (
                 <Box
