@@ -37,6 +37,7 @@ export function ModalTimKiem({
           props={{
             size: 'small',
           }}
+          hideSearchButton={true}
         />
       </Box>
 

@@ -8,7 +8,7 @@ import { RecipeEntity } from '../models/entities/RecipeEntity/RecipeEntity';
 class PantryService {
   public static async GetRecipesByIngredientsAny(
     recipesIngreAny: RecipesIngreAny
-  ): Promise<[RecipeEntity[]]> {
+  ): Promise<RecipeEntity[]> {
     const requestOptions: RequestInit = {
       method: 'POST',
       headers: {
@@ -28,13 +28,13 @@ class PantryService {
       })
       .catch((error) => {
         console.error('Lỗi:', error);
-        throw error;
+        return [];
       });
   }
 
   public static async GetRecipesByIngredientsAll(
     recipesIngreAll: RecipesIngreAny
-  ): Promise<[RecipeEntity[]]> {
+  ): Promise<RecipeEntity[]> {
     const requestOptions: RequestInit = {
       method: 'POST',
       headers: {
@@ -54,13 +54,13 @@ class PantryService {
       })
       .catch((error) => {
         console.error('Lỗi:', error);
-        throw error;
+        return [];
       });
   }
 
   public static async GetRecipesByPantryIdAny(
     recipesPantryAny: RecipesPantryAny
-  ): Promise<[RecipeEntity[]]> {
+  ): Promise<RecipeEntity[]> {
     const requestOptions: RequestInit = {
       method: 'POST',
       headers: {
@@ -80,13 +80,13 @@ class PantryService {
       })
       .catch((error) => {
         console.error('Lỗi:', error);
-        throw error;
+        return [];
       });
   }
 
   public static async GetRecipesByPantryIdAll(
     recipesPantryAll: RecipesPantryAny
-  ): Promise<[RecipeEntity[]]> {
+  ): Promise<RecipeEntity[]> {
     const requestOptions: RequestInit = {
       method: 'POST',
       headers: {
@@ -106,7 +106,7 @@ class PantryService {
       })
       .catch((error) => {
         console.error('Lỗi:', error);
-        throw error;
+        return [];
       });
   }
 }

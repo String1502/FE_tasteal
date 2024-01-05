@@ -8,6 +8,7 @@ type CustomDialogProps = {
   children: React.ReactNode;
   title: string;
   childrenContainerSx?: SxProps;
+  action?: React.ReactNode;
 };
 
 export const CustomDialog: React.FC<CustomDialogProps> = ({
@@ -16,6 +17,7 @@ export const CustomDialog: React.FC<CustomDialogProps> = ({
   children,
   title,
   childrenContainerSx,
+  action,
 }) => {
   return (
     <Dialog
@@ -28,7 +30,7 @@ export const CustomDialog: React.FC<CustomDialogProps> = ({
         },
       }}
     >
-      <Box sx={{}}>
+      <Box>
         <Box
           sx={{
             display: 'flex',
@@ -74,6 +76,20 @@ export const CustomDialog: React.FC<CustomDialogProps> = ({
         >
           {children}
         </Box>
+
+        {action && (
+          <Box
+            sx={{
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              p: 2,
+              boxShadow: 'rgba(0, 0, 0, 0.16) 0px 1px 4px',
+            }}
+          >
+            {action}
+          </Box>
+        )}
       </Box>
     </Dialog>
   );

@@ -10,10 +10,12 @@ export function SearchTextField({
   props,
   textSearch,
   handleChangeTextSearch,
+  hideSearchButton,
 }: {
   props?: TextFieldProps;
   textSearch: string;
   handleChangeTextSearch: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  hideSearchButton?: boolean;
 }) {
   return (
     <>
@@ -35,7 +37,12 @@ export function SearchTextField({
             </InputAdornment>
           ),
           endAdornment: (
-            <InputAdornment position="end">
+            <InputAdornment
+              position="end"
+              sx={{
+                display: hideSearchButton ? 'none' : '',
+              }}
+            >
               <Button
                 variant="contained"
                 size={props?.size ?? props?.size}

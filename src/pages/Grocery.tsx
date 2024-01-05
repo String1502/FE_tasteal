@@ -167,7 +167,11 @@ export default function Grocery() {
 
   return (
     <>
-      <Layout>
+      <Layout
+        withFooter={false}
+        headerPosition="static"
+        isDynamicHeader={false}
+      >
         <Container>
           <Box
             sx={{
