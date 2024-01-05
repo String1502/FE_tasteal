@@ -72,18 +72,18 @@ const MyPantry: React.FC = () => {
   });
   const [end, setEnd] = useState(false);
 
-  const loadMore = async () => {
+  const loadMore = async (refresh = false) => {
     const recommend = await PantryService.GetRecipesByIngredientsAll({
       ingredients: pantryItems.map((item) => item.ingredient_id),
       page: {
         ...page,
-        page: page.page + 1,
+        page: refresh ? 1 : page.page + 1,
       },
     });
     if (recommend.length < page.pageSize) {
       setEnd(true);
     }
-    if (recommendRecipes) {
+    if (recommendRecipes && !refresh) {
       setRecommendRecipes((prev) => [...prev, ...recommend]);
     } else {
       setRecommendRecipes(recommend);
@@ -91,7 +91,7 @@ const MyPantry: React.FC = () => {
 
     setPage((prev) => ({
       ...prev,
-      page: prev.page + 1,
+      page: refresh ? 1 : page.page + 1,
     }));
   };
 
@@ -99,7 +99,7 @@ const MyPantry: React.FC = () => {
   useEffect(() => {
     async function fetch() {
       try {
-        await loadMore();
+        await loadMore(true);
       } catch (error) {
         console.log(error);
       }
@@ -205,7 +205,7 @@ const MyPantry: React.FC = () => {
               loadMoreButton={
                 <Button
                   variant="contained"
-                  onClick={loadMore}
+                  onClick={() => loadMore()}
                   disabled={end}
                   size="large"
                 >

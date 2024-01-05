@@ -88,12 +88,15 @@ export const ApiEndPoint = {
   //
   // Recipe
   CreateRecipe: 'Recipe/Add',
+  UpdateRecipe: (recipeId: string) => `Recipe/${recipeId}`,
   SearchRecipe: 'Recipe/Search',
   GetAllRecipe: 'Recipe/getall',
   GetRecipeById: 'Recipe/GetRecipeById',
+  GetRecipesByIds: 'Recipe/GetRecipesById',
+  GetRecipesByUserId: 'Recipe/GetRecipesByUserId',
   GetKeyWords: 'Recipe/keywords',
   DeleteRecipe: 'Recipe/recipe',
-  UpdateRecipe: (recipeId: string) => `Recipe/${recipeId}`,
+
   //
   // USER
   SignUpUser: 'User/signup',

@@ -29,12 +29,12 @@ function RecommendRecipe({
   });
   const [end, setEnd] = useState(false);
 
-  const loadMore = async () => {
+  const loadMore = async (refresh = false) => {
     const recommend = await PantryService.GetRecipesByIngredientsAny({
       ingredients: pantryItems.map((item) => item.ingredient_id),
       page: {
         ...page,
-        page: page.page + 1,
+        page: refresh ? 1 : page.page + 1,
       },
     });
     if (recommend.length < page.pageSize) {
@@ -48,20 +48,20 @@ function RecommendRecipe({
 
     setPage((prev) => ({
       ...prev,
-      page: prev.page + 1,
+      page: refresh ? 1 : page.page + 1,
     }));
   };
 
   useEffect(() => {
     async function fetch() {
       try {
-        await loadMore();
+        await loadMore(true);
       } catch (error) {
         console.log(error);
       }
     }
     fetch();
-  }, []);
+  }, [pantryItems]);
 
   return (
     <>
@@ -134,7 +134,7 @@ function RecommendRecipe({
         <InfiniteScroll
           // 3*2*2
           dataLength={needByMoreRecipes?.length ?? 0}
-          next={loadMore}
+          next={() => loadMore()}
           hasMore={!end}
           loader={
             <>
