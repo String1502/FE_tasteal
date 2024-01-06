@@ -70,7 +70,9 @@ export const AdminOccasionsIndex: FC = () => {
   const handleOnCreateClick = () => {
     navigate(PageRoute.Admin.Occasions.Create);
   };
-  const handleOnEditClick = () => {};
+  const handleOnViewClick = (id: number) => {
+    navigate(PageRoute.Admin.Occasions.View.replace(':id', id.toString()));
+  };
 
   return (
     <AdminLayout>
@@ -87,6 +89,7 @@ export const AdminOccasionsIndex: FC = () => {
         rowCount={rowCount}
         onPaginationModelChange={setPaginationModel}
         onCreateClick={handleOnCreateClick}
+        onViewClick={handleOnViewClick}
       />
     </AdminLayout>
   );

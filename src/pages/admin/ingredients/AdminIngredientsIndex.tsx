@@ -173,7 +173,7 @@ export const AdminIngredientsIndex: FC = () => {
         }}
         onPaginationModelChange={setPaginationModel}
         onCreateClick={handleCreateIngredient}
-        onEditclick={handleEditIngredient}
+        onViewClick={handleEditIngredient}
       />
     </AdminLayout>
   );

@@ -1,7 +1,7 @@
 import CustomGridToolbar from '@/components/common/datagrid/CustomGridToolbar';
 import FormTitle from '@/components/common/typos/FormTitle';
 import useSnackbarService from '@/lib/hooks/useSnackbar';
-import { Add, Close, Delete, Edit } from '@mui/icons-material';
+import { Add, Close, Delete, Edit, RemoveRedEye } from '@mui/icons-material';
 import {
   Box,
   Button,
@@ -32,7 +32,7 @@ export type CommonIndexPageProps<RowType> = {
   };
   onPaginationModelChange?: (model: { page: number; pageSize: number }) => void;
   onCreateClick?: () => void;
-  onEditclick?: (row: unknown) => void;
+  onViewClick?: (id: number) => void;
 };
 
 export default function CommonIndexPage<RowType>({
@@ -45,7 +45,7 @@ export default function CommonIndexPage<RowType>({
   dialogProps,
   onPaginationModelChange,
   onCreateClick,
-  onEditclick,
+  onViewClick,
 }: CommonIndexPageProps<RowType>) {
   //#region Hooks
 
@@ -77,11 +77,11 @@ export default function CommonIndexPage<RowType>({
   const handleCreate = useCallback(() => {
     onCreateClick && onCreateClick();
   }, [onCreateClick]);
-  const handleEdit = useCallback(
-    (row: unknown) => {
-      onEditclick && onEditclick(row);
+  const handleView = useCallback(
+    (id: number) => {
+      onViewClick && onViewClick(id);
     },
-    [onEditclick]
+    [onViewClick]
   );
   const columns: GridColDef[] = useMemo(
     () => [
@@ -93,9 +93,9 @@ export default function CommonIndexPage<RowType>({
         flex: 1,
         getActions: (params) => [
           <GridActionsCellItem
-            icon={<Edit />}
-            label="Sửa"
-            onClick={() => handleEdit(params.row)}
+            icon={<RemoveRedEye />}
+            label="Mở"
+            onClick={() => handleView(params.row.id)}
           />,
           <GridActionsCellItem
             icon={<Delete />}
@@ -108,7 +108,7 @@ export default function CommonIndexPage<RowType>({
         ],
       },
     ],
-    [handleEdit, paramColumn]
+    [handleView, paramColumn]
   );
 
   //#endregion

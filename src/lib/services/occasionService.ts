@@ -1,6 +1,7 @@
 import { occasions as occasionsSampleData } from '@/lib/constants/sampleData';
 import { convertLunarToSolarDate } from '@/utils/format';
 import { getApiUrl } from '../constants/api';
+import { OccasionReq } from '../models/dtos/Request/OccasionReq/OccasionReq';
 import { OccasionEntity } from '../models/entities/OccasionEntity/OccasionEntity';
 
 /**
@@ -80,9 +81,7 @@ class OccasionService {
       });
   }
 
-  public static async AddOccasion(
-    newOccasion: OccasionEntity
-  ): Promise<boolean> {
+  public static AddOccasion(newOccasion: OccasionReq): Promise<boolean> {
     const requestOptions: RequestInit = {
       method: 'POST',
       headers: {
@@ -91,16 +90,9 @@ class OccasionService {
       body: JSON.stringify(newOccasion),
     };
 
-    return await fetch(`${getApiUrl('AddOccasion')}`, requestOptions)
-      .then((response) => response.json())
-      .then((data) => {
-        console.log(data);
-        return data;
-      })
-      .catch((error) => {
-        console.error('Lỗi:', error);
-        throw error;
-      });
+    return fetch(`${getApiUrl('AddOccasion')}`, requestOptions).then(
+      (response) => response.json()
+    );
   }
 
   public static async UpdateOccasion(

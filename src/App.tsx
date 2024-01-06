@@ -209,11 +209,11 @@ function AllRoutes() {
         element: <AdminOccasionsCreate />,
         needSignIn: PageRoute.Admin.Occasions.Create,
       },
-      // {
-      //   path: PageRoute.Admin.Occasions.View,
-      //   element: <AdminIngredientCreate />,
-      //   needSignIn: PageRoute.Admin.Occasions.View,
-      // },
+      {
+        path: PageRoute.Admin.Occasions.View,
+        element: <AdminOccasionsCreate />,
+        needSignIn: PageRoute.Admin.Occasions.View,
+      },
       {
         path: '*',
         element: <NotFound />,

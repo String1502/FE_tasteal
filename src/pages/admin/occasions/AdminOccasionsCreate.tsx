@@ -26,7 +26,14 @@ import { DatePicker } from '@mui/x-date-pickers';
 import dayjs from 'dayjs';
 import { getDownloadURL, ref } from 'firebase/storage';
 import { nanoid } from 'nanoid';
-import { FC, useEffect, useState } from 'react';
+import {
+  Dispatch,
+  FC,
+  SetStateAction,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
 class OccasionReqCreator implements OccasionReq {
@@ -141,6 +148,7 @@ const AdminOccasionsCreate: FC = () => {
 
   const [snackbarAlert] = useSnackbarService();
   const { id } = useParams();
+  console.log(id);
 
   //#endregion
   //#region Redux
@@ -174,9 +182,9 @@ const AdminOccasionsCreate: FC = () => {
 
   useEffect(() => {
     if (!id) return;
-    setMode('edit');
 
-    OccasionService.GetById(parseInt(id))
+    setMode('view');
+    OccasionService.GetOccasionById(parseInt(id))
       .then((occasion) => setViewOccasion(occasion))
       .catch(() => setViewOccasion(undefined));
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -191,8 +199,7 @@ const AdminOccasionsCreate: FC = () => {
   const handleSubmit = async () => {
     try {
       const reqBody = await createOccasion.getReq(imageFile);
-      const occasion = await OccasionService.CreateOccasion(reqBody);
-      console.log(occasion);
+      const occasion = await OccasionService.AddOccasion(reqBody);
     } catch (err) {
       snackbarAlert('Dịp mới đã không được thêm!', 'warning');
       return;
@@ -200,6 +207,16 @@ const AdminOccasionsCreate: FC = () => {
   };
 
   //#endregion
+
+  const [form, setForm] = useMemo(() => {
+    return mode === 'create'
+      ? [createOccasion, setCreateOccasion]
+      : mode === 'view'
+      ? [viewOccasion, setViewOccasion]
+      : [updateOccasion, setUpdateOccasion];
+  }, [createOccasion, mode, updateOccasion, viewOccasion]);
+
+  const disabled = !(form instanceof OccasionReqCreator);
 
   return (
     <AdminLayout>
@@ -218,7 +235,13 @@ const AdminOccasionsCreate: FC = () => {
           >
             <ArrowBack />
           </IconButton>
-          <FormTitle>{mode === 'create' ? 'Thêm dịp' : 'Sửa dịp'}</FormTitle>
+          <FormTitle>
+            {mode === 'create'
+              ? 'Thêm dịp'
+              : mode === 'edit'
+              ? 'Sửa dịp'
+              : 'Dịp'}
+          </FormTitle>
         </Stack>
         <Grid container columnSpacing={12}>
           <Grid item xs={3}>
@@ -226,89 +249,14 @@ const AdminOccasionsCreate: FC = () => {
               <FormLabel>Hình ảnh</FormLabel>
               <ImagePicker
                 file={imageFile}
-                imagePath={createOccasion?.image || ''}
+                imagePath={form?.image || ''}
                 onChange={imageFileChange}
+                disabled={disabled}
               />
             </Stack>
           </Grid>
           <Grid item xs={9}>
-            <Stack gap={2}>
-              <Stack>
-                <FormLabel>Tên dịp lễ</FormLabel>
-                <TastealTextField
-                  placeholder="Tết"
-                  value={createOccasion.name}
-                  onChange={(e) =>
-                    setCreateOccasion((prev) => {
-                      const clone = prev.clone();
-                      clone.name = e.target.value;
-                      return clone;
-                    })
-                  }
-                />
-              </Stack>
-              <Stack>
-                <FormLabel>Mô tả</FormLabel>
-                <TastealTextField
-                  value={createOccasion.description}
-                  onChange={(e) =>
-                    setCreateOccasion((prev) => {
-                      const clone = prev.clone();
-                      clone.description = e.target.value;
-                      return clone;
-                    })
-                  }
-                  placeholder="Tết là một ngày lễ tuyệt vời..."
-                  multiline
-                  rows={4}
-                />
-              </Stack>
-              <Stack>
-                <Grid container columnSpacing={2}>
-                  <Grid item xs={6}>
-                    <FormLabel>Bắt đầu vào</FormLabel>
-                    <DatePicker
-                      value={dayjs(createOccasion.start_at_date)}
-                      onChange={(value) =>
-                        setCreateOccasion((prev) => {
-                          const clone = prev.clone();
-                          clone.start_at_date = value.toDate();
-                          return clone;
-                        })
-                      }
-                      sx={{ width: '100%' }}
-                    />
-                  </Grid>
-                  <Grid item xs={6}>
-                    <FormLabel>Kết thúc vào</FormLabel>
-                    <DatePicker
-                      value={dayjs(createOccasion.end_at_date)}
-                      onChange={(value) =>
-                        setCreateOccasion((prev) => {
-                          const clone = prev.clone();
-                          clone.end_at_date = value.toDate();
-                          return clone;
-                        })
-                      }
-                      sx={{ width: '100%' }}
-                    />
-                  </Grid>
-                </Grid>
-              </Stack>
-              <Stack>
-                <FormLabel>Dùng ngày âm</FormLabel>
-                <Switch
-                  value={createOccasion.is_lunar_date}
-                  onChange={(_, checked) =>
-                    setCreateOccasion((prev) => {
-                      const clone = prev.clone();
-                      clone.is_lunar_date = checked;
-                      return clone;
-                    })
-                  }
-                />
-              </Stack>
-            </Stack>
+            <Form value={form} setValue={setForm} />
           </Grid>
         </Grid>
 
@@ -319,7 +267,11 @@ const AdminOccasionsCreate: FC = () => {
           onClick={handleSubmit}
           sx={{ width: 240, alignSelf: 'end' }}
         >
-          {mode === 'create' ? 'Thêm' : mode === 'edit' ? 'Sửa' : 'Lỗi'}
+          {mode === 'create'
+            ? 'Thêm'
+            : mode === 'edit'
+            ? 'Cập nhật'
+            : 'Cập nhật'}
         </Button>
       </Stack>
     </AdminLayout>
@@ -327,5 +279,136 @@ const AdminOccasionsCreate: FC = () => {
 };
 
 type FormMode = 'create' | 'edit' | 'view';
+
+type FormProps = {
+  value: OccasionReqCreator | OccasionEntity;
+  setValue:
+    | Dispatch<SetStateAction<OccasionReqCreator>>
+    | Dispatch<SetStateAction<OccasionEntity>>;
+};
+const Form: FC<FormProps> = ({ value, setValue }) => {
+  const disabled = !(value instanceof OccasionReqCreator);
+
+  return (
+    <Stack gap={2}>
+      <Stack>
+        <FormLabel>Tên dịp lễ</FormLabel>
+        <TastealTextField
+          placeholder="Tết"
+          value={value?.name || ''}
+          onChange={(e) => (prev) => {
+            if (value instanceof OccasionReqCreator) {
+              const clone = prev.clone();
+              clone.name = e.target.value;
+              return clone;
+            }
+            return {
+              ...prev,
+              name: e.target.value,
+            };
+          }}
+          disabled={disabled}
+        />
+      </Stack>
+      <Stack>
+        <FormLabel>Mô tả</FormLabel>
+        <TastealTextField
+          value={value?.description || ''}
+          onChange={(e) =>
+            setValue((prev) => {
+              if (value instanceof OccasionReqCreator) {
+                const clone = prev.clone();
+                clone.description = e.target.value;
+                return clone;
+              }
+              return {
+                ...prev,
+                description: e.target.value,
+              };
+            })
+          }
+          disabled={disabled}
+          placeholder="Tết là một ngày lễ tuyệt vời..."
+          multiline
+          rows={4}
+        />
+      </Stack>
+      <Stack>
+        <Grid container columnSpacing={2}>
+          <Grid item xs={6}>
+            <FormLabel>Bắt đầu vào</FormLabel>
+            <DatePicker
+              value={dayjs(
+                value instanceof OccasionReqCreator
+                  ? value?.start_at_date || new Date()
+                  : value?.start_at || new Date()
+              )}
+              onChange={(value) =>
+                setValue((prev) => {
+                  if (prev instanceof OccasionReqCreator) {
+                    const clone = prev.clone();
+                    clone.start_at_date = value.toDate();
+                    return clone;
+                  }
+                  return {
+                    ...prev,
+                    start_at: value.toISOString(),
+                  };
+                })
+              }
+              disabled={disabled}
+              sx={{ width: '100%' }}
+            />
+          </Grid>
+          <Grid item xs={6}>
+            <FormLabel>Kết thúc vào</FormLabel>
+            <DatePicker
+              value={dayjs(
+                value instanceof OccasionReqCreator
+                  ? value?.end_at_date || new Date()
+                  : value?.end_at || new Date()
+              )}
+              onChange={(value) =>
+                setValue((prev) => {
+                  if (prev instanceof OccasionReqCreator) {
+                    const clone = prev.clone();
+                    clone.end_at_date = value.toDate();
+                    return clone;
+                  }
+                  return {
+                    ...prev,
+                    end_at: value.toISOString(),
+                  };
+                })
+              }
+              disabled={disabled}
+              sx={{ width: '100%' }}
+            />
+          </Grid>
+        </Grid>
+      </Stack>
+      <Stack>
+        <FormLabel>Dùng ngày âm</FormLabel>
+        <Switch
+          value={value?.is_lunar_date || false}
+          onChange={(_, checked) =>
+            setValue((prev) => {
+              if (value instanceof OccasionReqCreator) {
+                const clone = prev.clone();
+                clone.is_lunar_date = checked;
+                return clone;
+              }
+              return {
+                ...prev,
+                is_lunar_date: checked,
+              };
+            })
+          }
+          disabled={disabled}
+        />
+      </Stack>
+    </Stack>
+  );
+};
 
 export default AdminOccasionsCreate;
