@@ -2,6 +2,7 @@ import { OccasionEntity } from '@/lib/models/entities/OccasionEntity/OccasionEnt
 import { RecipeDirectionReq } from '../RecipeDirectionReq/RecipeDirectionReq';
 import { Recipe_IngredientReq } from '../Recipe_IngredientReq/Recipe_IngredientReq';
 import { PageReq } from '../PageReq/PageReq';
+import { AccountEntity } from '@/lib/models/entities/AccountEntity/AccountEntity';
 
 export type RecipeReq = {
   name: string;
@@ -20,6 +21,6 @@ export type RecipeReq = {
 };
 
 export type RecipeByUids = {
-  uids: string[];
+  uids: AccountEntity['uid'][];
   page: PageReq;
 };

@@ -1,4 +1,4 @@
-import { Link } from '@mui/material';
+import { Link, Skeleton } from '@mui/material';
 
 export function CustomHeaderLink({
   href,
@@ -61,5 +61,16 @@ export function CustomLink({
         {label}
       </Link>
     </>
+  );
+}
+
+export function CustomLinkSkeleton() {
+  return (
+    <Skeleton
+      sx={{
+        fontSize: 'h6.fontSize',
+      }}
+      width="100%"
+    />
   );
 }

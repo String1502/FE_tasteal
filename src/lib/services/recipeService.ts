@@ -1,13 +1,14 @@
 import { getApiUrl } from '@/lib/constants/api';
-import { recipes as recipesSampleData } from '@/lib/constants/sampleData';
 import { RecipeRes } from '@/lib/models/dtos/Response/RecipeRes/RecipeRes';
 import { createDebugStringFormatter } from '@/utils/debug/formatter';
-import simulateDelay from '@/utils/promises/stimulateDelay';
 import { DefaultPage } from '../constants/common';
 import { deleteImage } from '../firebase/image';
 import { PageFilter } from '../models/dtos/Request/PageFilter/PageFilter';
 import { PageReq } from '../models/dtos/Request/PageReq/PageReq';
-import { RecipeReq } from '../models/dtos/Request/RecipeReq/RecipeReq';
+import {
+  RecipeByUids,
+  RecipeReq,
+} from '../models/dtos/Request/RecipeReq/RecipeReq';
 import { RecipeSearchReq } from '../models/dtos/Request/RecipeSearchReq/RecipeSearchReq';
 import { RecipeEntity } from '../models/entities/RecipeEntity/RecipeEntity';
 import { NewRecipeCookBookReq } from '../models/dtos/Request/NewRecipeCookBookReq/NewRecipeCookBookReq';
@@ -61,23 +62,22 @@ class RecipeService {
    * @param id - The id of the recipe.
    * @returns - The recipe detail data.
    */
-  public static GetById(id: number): Promise<RecipeRes> {
+  public static async GetById(id: number): Promise<RecipeRes> {
     if (recipeCache.has(id)) {
       console.log('Use data in cache');
       return Promise.resolve(recipeCache.get(id));
     }
 
-    return fetch(`${getApiUrl('GetRecipeById')}?id=${id}`, {
+    const res = await fetch(`${getApiUrl('GetRecipeById')}?id=${id}`, {
       method: 'POST',
-    }).then((res) => {
-      if (res.ok) {
-        return res.json().then((data) => {
-          recipeCache.set(id, data);
-          return data;
-        });
-      }
-      throw new Error(res.statusText);
     });
+    if (res.ok) {
+      return res.json().then((data) => {
+        recipeCache.set(id, data);
+        return data;
+      });
+    }
+    throw new Error(res.statusText);
   }
 
   /**
@@ -86,20 +86,32 @@ class RecipeService {
    * @param accountId - The id of the account.
    * @returns
    */
-  public static GetByAccountId(accountId: string) {
-    // Simulate delay of 1 second
-    simulateDelay(1);
+  public static async GetRecipesByUserId(
+    recipeByUids: RecipeByUids
+  ): Promise<RecipeEntity[]> {
+    const requestOptions: RequestInit = {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: JSON.stringify(recipeByUids),
+    };
 
-    return Promise.resolve(
-      recipesSampleData.filter((recipe) => recipe.author === accountId)
-    );
+    return await fetch(`${getApiUrl('GetRecipesByUserId')}`, requestOptions)
+      .then((response) => response.json())
+      .then((data) => {
+        console.log(data);
+        return data.recipes;
+      })
+      .catch((error) => {
+        console.error('Lỗi:', error);
+        throw error;
+      });
   }
 
   public static async GetRecipeByDateTime(
     limit: number
   ): Promise<RecipeEntity[]> {
-    let recipes: RecipeEntity[] = [];
-
     const requestOptions: RequestInit = {
       method: 'POST',
       headers: {
@@ -112,25 +124,19 @@ class RecipeService {
       } as PageFilter),
     };
 
-    await fetch(getApiUrl('GetRecipeByDateTime'), requestOptions)
+    return await fetch(getApiUrl('GetRecipeByDateTime'), requestOptions)
       .then((response) => response.json())
       .then((data) => {
-        recipes = data;
+        return data;
       })
       .catch((error) => {
         console.error('Lỗi:', error);
       });
-
-    console.log(recipes);
-
-    return recipes;
   }
 
   public static async GetRecipeByRating(
     limit: number
   ): Promise<RecipeEntity[]> {
-    let recipes: RecipeEntity[] = [];
-
     const requestOptions = {
       method: 'POST',
       headers: {
@@ -143,16 +149,14 @@ class RecipeService {
       } as PageFilter),
     };
 
-    await fetch(getApiUrl('GetRecipeByRating'), requestOptions)
+    return await fetch(getApiUrl('GetRecipeByRating'), requestOptions)
       .then((response) => response.json())
       .then((data) => {
-        recipes = data;
+        return data;
       })
       .catch((error) => {
         console.error('Lỗi:', error);
       });
-
-    return recipes;
   }
 
   public static async SearchRecipes(
@@ -288,19 +292,18 @@ class RecipeService {
       });
   }
 
-  public static Update(recipeId: number, updateData: RecipeReq) {
-    return fetch(getApiUrl('UpdateRecipe', recipeId.toString()), {
+  public static async Update(recipeId: number, updateData: RecipeReq) {
+    const res = await fetch(getApiUrl('UpdateRecipe', recipeId.toString()), {
       method: 'PUT',
       body: JSON.stringify(updateData),
       headers: {
         'Content-Type': 'application/json',
       },
-    }).then((res) => {
-      if (res.ok) {
-        return res.json();
-      }
-      throw new Error(res.statusText);
     });
+    if (res.ok) {
+      return res.json();
+    }
+    throw new Error(res.statusText);
   }
 }
 

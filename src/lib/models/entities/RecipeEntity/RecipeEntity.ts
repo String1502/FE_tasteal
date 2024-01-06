@@ -24,4 +24,5 @@ export type RecipeEntity = {
   ingredients?: IngredientEntity[];
   direction?: Recipe_DirectionEntity[];
   occasions?: Recipe_OccasionEntity[];
+  calories?: number;
 };

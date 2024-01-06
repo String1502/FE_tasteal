@@ -440,7 +440,7 @@ const CreateRecipe: React.FunctionComponent<{ edit?: boolean }> = ({
           ),
           ingredients: recipe.ingredients.map((ingredient) => ({
             id: nanoid(6),
-            ingredientId: ingredient.Id,
+            ingredientId: ingredient.id,
             name: ingredient.name,
             amount: ingredient.amount,
           })),

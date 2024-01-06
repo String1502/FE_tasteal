@@ -67,7 +67,6 @@ import {
   useState,
 } from 'react';
 import { Link as RouterLink, useNavigate, useParams } from 'react-router-dom';
-import { serialize } from 'v8';
 
 // Mock bread crumbs data (will be remove later)
 const breadCrumbsLinks = [
@@ -228,7 +227,7 @@ const RecipeDetail: FC = () => {
     console.log(recipe!.id, user.uid, comment);
 
     CommentService.Create(recipe!.id, user.uid, comment)
-      .then((comment) => {
+      .then((_comment) => {
         GetComments(recipe!.id);
         setComment('');
       })

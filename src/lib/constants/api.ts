@@ -21,6 +21,17 @@ export const ApiEndPoint = {
   AddPersonalCart: 'Cart/personalcart',
   UpdatePersonalCart: 'Cart/personalcart',
   //
+  // Cart Item
+  AddRecipeToCart: 'CartItem/add-recipe-cart',
+  //
+  // COMMENT
+  CreateComment: (recipeId: string) => `Recipe/${recipeId}/Comments`,
+  GetComments: (recipeId: string) => `Recipe/${recipeId}/Comments`,
+  UpdateComment: (recipeId: string, commentId: string) =>
+    `Recipe/${recipeId}/Comments/${commentId}`,
+  DeleteComment: (recipeId: string, commentId: string) =>
+    `Recipe/${recipeId}/Comments/${commentId}`,
+  //
   // CookBook
   GetAllCookBookByAccountId: 'CookBook/cookbook',
   DeleteCookBookById: 'CookBook/cookbook',
@@ -39,23 +50,53 @@ export const ApiEndPoint = {
   //
   // Ingredient
   GetAllIngredients: 'Ingredient/getall',
-  // GetIngredientById: '...'
+  DeleteIngredient: 'Ingredient',
   //
   // Ingredient Type
   GetAllIngredientTypes: 'IngredientType/getall',
+  GetIngredientById: 'IngredientType',
+  DeleteIngredientType: 'IngredientType',
+  AddIngredientType: 'IngredientType/create',
+  UpdateIngredientType: 'IngredientType/update',
   //
   // Occasion
-  GetOccasionById: (occasionId) => `Occasion/${occasionId}`,
-  CreateOccasion: 'Occasion',
+  GetAllOccasions: 'Occasion/getAll',
+  GetOccasionById: 'Occasion',
+  AddOccasion: 'Occasion',
+  UpdateOccasion: 'Occasion',
+  DeleteOccasion: 'Occasion',
+  //
+  // Pantry
+  GetRecipesByIngredientsAny: 'Pantry/getRecipesByIngredientsAny',
+  GetRecipesByIngredientsAll: 'Pantry/getRecipesByIngredientsAll',
+  GetRecipesByPantryIdAny: 'Pantry/getRecipesByPantryIdAny',
+  GetRecipesByPantryIdAll: 'Pantry/getRecipesByPantryIdAll',
+  //
+  // Pantry Item
+
+  //
+  // Plan/ Plan Item -> PlanItemService
+  GetPlanItemsByAccountId: 'Plan',
+  AddOrUpdateRecipesToPlan: 'Plan/addorupdate',
+  DeletePlanItem: 'Plan',
+  //
+  // RATING
+  CreateRating: (recipeId: string) => `Recipe/${recipeId}/Rating`,
+  GetRatings: (recipeId: string) => `Recipe/${recipeId}/Rating`,
+  UpdateRating: (recipeId: string, ratingId: string) =>
+    `Recipe/${recipeId}/Rating/${ratingId}`,
   //
   // Recipe
   CreateRecipe: 'Recipe/Add',
+  UpdateRecipe: (recipeId: string) => `Recipe/${recipeId}`,
   SearchRecipe: 'Recipe/Search',
   GetAllRecipe: 'Recipe/getall',
   GetRecipeById: 'Recipe/GetRecipeById',
+  GetRecipesByIds: 'Recipe/GetRecipesById',
+  GetRecipesByUserId: 'Recipe/GetRecipesByUserId',
   GetKeyWords: 'Recipe/keywords',
   DeleteRecipe: 'Recipe/recipe',
-  UpdateRecipe: (recipeId: string) => `Recipe/${recipeId}`,
+
   //
   // USER
   SignUpUser: 'User/signup',
@@ -63,17 +104,6 @@ export const ApiEndPoint = {
   GetAllUser: 'User/allusers',
   GetUserByUid: 'User',
   GetCurrentUser: 'User',
-  //
-  // COMMENT
-  // TODO: consider merging all these.
-  CreateComment: (recipeId: string) => `Recipe/${recipeId}/Comments`,
-  GetComments: (recipeId: string) => `Recipe/${recipeId}/Comments`,
-  //
-  // RATING
-  CreateRating: (recipeId: string) => `Recipe/${recipeId}/Rating`,
-  GetRatings: (recipeId: string) => `Recipe/${recipeId}/Rating`,
-  UpdateRating: (recipeId: string, ratingId: string) =>
-    `Recipe/${recipeId}/Rating/${ratingId}`,
 } as const;
 
 /**

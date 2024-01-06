@@ -6,7 +6,7 @@ import {
 } from '@mui/material';
 
 export type SortType = {
-  type: 'name' | 'rating' | 'totalTime' | 'calorie' | 'serving_size';
+  type: 'name' | 'rating' | 'totalTime' | 'calories' | 'serving_size';
   sort: 'asc' | 'desc';
 };
 
@@ -46,12 +46,12 @@ const keyArray: {
     label: 'Thời gian chuẩn bị giảm dần',
   },
   {
-    type: 'calorie',
+    type: 'calories',
     sort: 'asc',
     label: 'Calo tăng dần',
   },
   {
-    type: 'calorie',
+    type: 'calories',
     sort: 'desc',
     label: 'Calo giảm dần',
   },

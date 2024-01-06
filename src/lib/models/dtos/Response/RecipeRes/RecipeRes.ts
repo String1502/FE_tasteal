@@ -18,11 +18,11 @@ export type RecipeRes = {
   author_note?: RecipeEntity['author_note'];
   image?: RecipeEntity['image'];
   author: AuthorRes;
-  ingredients?: IngredientRes[];
-  nutrition_info?: Nutrition_InfoEntity;
+  ingredients: IngredientRes[];
+  nutrition_info: Nutrition_InfoEntity;
   directions: DirectionRes[];
-  occasions?: OccasionEntity[];
-  comments?: CommentRes[];
+  comments: CommentRes[];
   createAt?: Date;
+  occasions?: OccasionEntity[];
   relatedRecipes?: RelatedRecipeRes[];
 };

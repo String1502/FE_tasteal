@@ -33,7 +33,7 @@ function MySavedRecipes() {
   console.log(login?.user?.uid);
 
   return (
-    <Layout withFooter={false}>
+    <Layout withFooter={false} headerPosition="static" isDynamicHeader={false}>
       <Container>
         <MySavedRecipesContent>
           <MySavedRecipesAction />

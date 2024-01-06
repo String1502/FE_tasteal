@@ -27,9 +27,10 @@ import AppContext from '@/lib/contexts/AppContext.ts';
 import { AccountEntity } from '@/lib/models/entities/AccountEntity/AccountEntity.ts';
 import AccountService from '@/lib/services/accountService.ts';
 import useFirebaseImage from '@/lib/hooks/useFirebaseImage.ts';
+import { PageReq } from '@/lib/models/dtos/Request/PageReq/PageReq.ts';
 
-const itemsToAdd = 4;
 const Partner = () => {
+  //#region userInfor
   const [userData, setUserData] = useState<AccountEntity | undefined>(
     undefined
   );
@@ -40,29 +41,55 @@ const Partner = () => {
     setFile(file);
   }
   const [isEditing, setIsEditing] = useState(false);
-
-  const navigate = useNavigate();
-  const {
-    login: { user },
-  } = useContext(AppContext);
-  const { uid } = useParams();
-
-  const handleStartEditing = () => {
-    setIsEditing(true);
-  };
-
   const handleChangeUserData = (data: AccountEntity) => {
     setUserData(data);
     setIsEditing(false);
   };
+  //#endregion
+
+  const navigate = useNavigate();
+  const {
+    login: { user },
+    handleSpinner,
+  } = useContext(AppContext);
+  const { uid } = useParams();
 
   //#region Recipes
-  const [recipeData, setRecipeData] = useState<RecipeEntity[]>([]);
-  const [visibleItems, setVisibleItems] = useState(8);
+  const [recipeData, setRecipeData] = useState<RecipeEntity[] | undefined>(
+    undefined
+  );
+  const [end, setEnd] = useState(false);
+  const [page, setPage] = useState<PageReq>({
+    page: 0,
+    pageSize: 12,
+  });
 
-  const handleShowMore = () => {
-    setVisibleItems(visibleItems + itemsToAdd);
+  const loadMore = async (refresh = false) => {
+    if (!uid) {
+      return;
+    }
+    const recipes = await RecipeService.GetRecipesByUserId({
+      uids: [uid],
+      page: {
+        ...page,
+        page: !refresh ? page.page + 1 : 1,
+      },
+    });
+
+    if (recipes.length < page.pageSize) {
+      setEnd(true);
+    }
+
+    setPage({
+      ...page,
+      page: !refresh ? page.page + 1 : 1,
+    });
+
+    if (recipeData && !refresh) {
+      setRecipeData([...recipeData, ...recipes]);
+    } else setRecipeData(recipes);
   };
+
   //#endregion
 
   useEffect(() => {
@@ -71,14 +98,15 @@ const Partner = () => {
         if (uid == '') {
           return;
         }
+        handleSpinner(true);
         const fetchUser = await AccountService.GetByUid(uid);
         setUserData(fetchUser);
-        console.log(fetchUser);
 
-        const recipes = await RecipeService.GetRecipeByRating(100);
-        setRecipeData(recipes);
+        await loadMore(true);
+        handleSpinner(false);
       } catch (error) {
         console.log(error);
+        handleSpinner(false);
       }
     };
     fetchData();
@@ -274,7 +302,7 @@ const Partner = () => {
                 )}
                 {userData && user && userData.uid == user.uid && (
                   <Button
-                    onClick={handleStartEditing}
+                    onClick={() => setIsEditing(true)}
                     variant="contained"
                     color="primary"
                     sx={{
@@ -306,35 +334,40 @@ const Partner = () => {
                 mt: 3,
               }}
             >
-              {recipeData.slice(0, visibleItems).map((item, index) => (
-                <Grid item xs={12} sm={6} md={4} lg={3} key={index}>
-                  <PrimaryCard recipe={item as RecipeEntity} />
-                </Grid>
-              ))}
+              {recipeData &&
+                recipeData.map((item, index) => (
+                  <Grid item xs={12} sm={6} md={4} lg={3} key={index}>
+                    <PrimaryCard recipe={item as RecipeEntity} />
+                  </Grid>
+                ))}
             </Grid>
-            {visibleItems < recipeData.length && (
-              <Box
+
+            <Box
+              sx={{
+                display: 'flex',
+                justifyContent: 'center',
+              }}
+            >
+              <Button
+                onClick={() => loadMore()}
+                variant="contained"
+                color="primary"
+                size="large"
+                disabled={end}
                 sx={{
-                  display: 'flex',
-                  justifyContent: 'center',
+                  px: 4,
+                  mt: 5,
+                  textTransform: 'none',
+                  boxShadow: 'none',
                 }}
               >
-                <Button
-                  onClick={handleShowMore}
-                  variant="contained"
-                  color="primary"
-                  size="large"
-                  sx={{
-                    px: 4,
-                    mt: 5,
-                    textTransform: 'none',
-                    boxShadow: 'none',
-                  }}
-                >
-                  Hiện thêm
-                </Button>
-              </Box>
-            )}
+                {end
+                  ? recipeData?.length > 0
+                    ? `Đã hiển thị toàn bộ công thức của ${userData?.name}`
+                    : `${userData?.name} chưa đăng tải công thức nào`
+                  : 'Hiện thêm'}
+              </Button>
+            </Box>
           </Grid>
         </Grid>
       </Container>

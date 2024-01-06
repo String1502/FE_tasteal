@@ -163,7 +163,7 @@ export function TastealAppBar({
 
           <CustomHeaderLink href={PageRoute.MyPantry} label="Tủ lạnh" />
 
-          <CustomHeaderLink href="#" label="Về Tasteal" />
+          {/* <CustomHeaderLink href="#" label="Về Tasteal" /> */}
         </Box>
 
         <Box

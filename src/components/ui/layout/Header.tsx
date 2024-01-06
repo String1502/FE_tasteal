@@ -90,7 +90,6 @@ export function Header(props: Props) {
   }[] = useMemo(
     () => [
       { label: 'Trang chủ', href: PageRoute.Home },
-      { label: 'Về Tasteal', href: '/' },
       { label: 'Tìm kiếm', href: PageRoute.Search },
       { label: 'Giỏ đi chợ', href: PageRoute.Grocery },
       { label: 'Lịch ăn', href: PageRoute.MealPlanner },

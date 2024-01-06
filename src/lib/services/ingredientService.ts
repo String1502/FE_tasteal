@@ -68,6 +68,30 @@ class IngredientService {
   public static async GetById(id: number): Promise<IngredientEntity> {
     throw new Error('not implemented yet');
   }
+
+  public static async DeleteIngredient(
+    id: IngredientEntity['id']
+  ): Promise<boolean> {
+    const requestOptions = {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+    };
+    return await fetch(
+      `${getApiUrl('DeleteIngredient')}?id=${id}`,
+      requestOptions
+    )
+      .then((res) => res.json())
+      .then((data) => {
+        console.log(data);
+
+        return data;
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }
 }
 
 export type IngredientsGetRes = {

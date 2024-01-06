@@ -3,13 +3,13 @@ import { Box, Container, Grid, Link, Typography } from '@mui/material';
 import { useContext } from 'react';
 import { TuKhoa } from '../../../pages/Search';
 
-import { CustomLink } from './CustomLink';
-import { IngredientEntity } from '@/lib/models/entities/IngredientEntity/IngredientEntity';
+import { CustomLink, CustomLinkSkeleton } from './CustomLink';
 import { OccasionEntity } from '@/lib/models/entities/OccasionEntity/OccasionEntity';
 import BoxImage from '@/components/common/image/BoxImage';
 
 import AppContext from '@/lib/contexts/AppContext';
 import { PageRoute } from '@/lib/constants/common';
+import { Ingredient_TypeEntity } from '@/lib/models/entities/Ingredient_TypeEntity/Ingredient_TypeEntity';
 
 const gridItemSX = {
   height: '100%',
@@ -22,7 +22,7 @@ const limit = 5;
 
 export type PopoverContentProps = {
   tuKhoas: TuKhoa[];
-  ingredients: IngredientEntity[];
+  ingredientTypes: Ingredient_TypeEntity[];
   occasions: OccasionEntity[];
 };
 
@@ -65,6 +65,15 @@ export function PopoverContent() {
               <Typography variant="h6" fontWeight={'bold'}>
                 Hot Trend
               </Typography>
+
+              {!popOverHeader && (
+                <>
+                  {new Array(limit).fill(0).map((_item, index) => {
+                    return <CustomLinkSkeleton key={index} />;
+                  })}
+                </>
+              )}
+
               {popOverHeader?.tuKhoas.slice(0, limit + 1).map((item) => {
                 return (
                   <CustomLink
@@ -82,23 +91,25 @@ export function PopoverContent() {
               <Typography variant="h6" fontWeight={'bold'}>
                 Loại nguyên liệu
               </Typography>
-              {popOverHeader?.ingredients
-                .map((item) => item?.ingredient_type)
-                .filter(
-                  (item, index, self) =>
-                    item && self.findIndex((i) => i.id == item.id) === index
-                )
-                .slice(0, limit)
-                .map((item) => {
-                  return (
-                    <CustomLink
-                      key={item.id}
-                      href={PageRoute.ReferenceIngredient(`${item.id}`)}
-                      label={item.name}
-                    />
-                  );
-                })}
-              {popOverHeader?.ingredients.length > 0 && (
+
+              {!popOverHeader && (
+                <>
+                  {new Array(limit).fill(0).map((_item, index) => {
+                    return <CustomLinkSkeleton key={index} />;
+                  })}
+                </>
+              )}
+
+              {popOverHeader?.ingredientTypes.slice(0, limit).map((item) => {
+                return (
+                  <CustomLink
+                    key={item.id}
+                    href={PageRoute.ReferenceIngredient(`${item.id}`)}
+                    label={item.name}
+                  />
+                );
+              })}
+              {popOverHeader?.ingredientTypes.length > 0 && (
                 <CustomLink
                   href={PageRoute.Reference('ingredients')}
                   label={'XEM TẤT CẢ'}
@@ -113,6 +124,15 @@ export function PopoverContent() {
               <Typography variant="h6" fontWeight={'bold'}>
                 Dịp
               </Typography>
+
+              {!popOverHeader && (
+                <>
+                  {new Array(limit).fill(0).map((_item, index) => {
+                    return <CustomLinkSkeleton key={index} />;
+                  })}
+                </>
+              )}
+
               {popOverHeader?.occasions.slice(0, limit).map((item) => {
                 return (
                   <CustomLink

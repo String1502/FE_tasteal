@@ -9,7 +9,7 @@ import { CookBookEntity } from '../models/entities/CookBookEntity/CookBookEntity
 import CookbookService from '../services/cookbookService';
 import { PopoverContentProps } from '@/components/ui/header/PopoverContent';
 import RecipeService from '../services/recipeService';
-import IngredientService from '../services/ingredientService';
+import IngredientTypeService from '../services/ingredientTypeService';
 
 export type ScrollApp = {
   isHeaderHide: boolean;
@@ -99,10 +99,10 @@ function useTastealTheme(): {
 
       await Promise.all([
         await RecipeService.GetKeyWords(),
-        await IngredientService.GetAll(),
+        await IngredientTypeService.GetAllIngredientTypes(),
         await OccasionService.GetAll(),
       ]).then((data) => {
-        const [tuKhoas, ingredients, occasions] = data;
+        const [tuKhoas, ingredientTypes, occasions] = data;
         setPopOverHeader({
           tuKhoas: tuKhoas.map((item) => {
             return {
@@ -110,7 +110,7 @@ function useTastealTheme(): {
               value: false,
             };
           }),
-          ingredients,
+          ingredientTypes: ingredientTypes,
           occasions,
         });
       });
