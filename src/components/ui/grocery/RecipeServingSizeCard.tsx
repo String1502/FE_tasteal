@@ -45,7 +45,7 @@ export const RecipeServingSizeCard = ({
           src={cart.recipe?.image || ''}
           alt={cart.recipe?.name}
           imgHeight={imgHeight}
-          quality={20}
+          quality={1}
         />
         <IconButton
           size="small"

@@ -5,13 +5,16 @@ import { useEffect, useState } from 'react';
 import CartItemFrame from './CartItemFrame';
 import CartItemCheckBox from './CartItemCheckBox';
 import IngredientTypeService from '@/lib/services/ingredientTypeService';
+import { Pantry_ItemEntity } from '@/lib/models/entities/Pantry_ItemEntity/Pantry_ItemEntity';
 
 function CartItemContent({
   cartItemData,
   handleChangeCartItemData,
+  pantryItems,
 }: {
   cartItemData: Cart_ItemEntity[];
   handleChangeCartItemData: (cartId: number, ingredientId: number) => void;
+  pantryItems: Pantry_ItemEntity[];
 }) {
   const [ingredientTypes, setIngredientTypes] = useState<
     Ingredient_TypeEntity[]
@@ -20,14 +23,10 @@ function CartItemContent({
     (Ingredient_TypeEntity | null)[]
   >([]);
 
-  console.log(cartItemData);
-
   useEffect(() => {
     const type_ids: Ingredient_TypeEntity['id'][] = cartItemData.map(
       (item) => item.ingredient?.type_id
     );
-    console.log(type_ids);
-
     const types = ingredientTypes.filter((x) => type_ids.includes(x.id));
     if (type_ids.includes(null)) {
       types.push(null);
@@ -76,6 +75,7 @@ function CartItemContent({
                         return total;
                       }}
                       handleChangeCartItemData={handleChangeCartItemData}
+                      pantryItems={pantryItems}
                     />
                   );
                 }

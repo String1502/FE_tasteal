@@ -7,8 +7,10 @@ import { RecipesServingSizeCarousel } from '@/components/ui/grocery/RecipesServi
 import Layout from '@/layout/Layout';
 import AppContext from '@/lib/contexts/AppContext';
 import useSnackbarService from '@/lib/hooks/useSnackbar';
+import { GetAllPantryItemReq } from '@/lib/models/dtos/Request/GetAllPantryItemReq/GetAllPantryItemReq';
 import { CartEntity } from '@/lib/models/entities/CartEntity/CartEntity';
 import { Cart_ItemEntity } from '@/lib/models/entities/Cart_ItemEntity/Cart_ItemEntity';
+import { Pantry_ItemEntity } from '@/lib/models/entities/Pantry_ItemEntity/Pantry_ItemEntity';
 import {
   PersonalCartItemEntity,
   convertPersonalCartItemToCartItem,
@@ -16,6 +18,7 @@ import {
 
 import CartItemService from '@/lib/services/CartItemService';
 import CartService from '@/lib/services/cartService';
+import PantryItemService from '@/lib/services/pantryItemService';
 import { Box, Container, Grid, Typography } from '@mui/material';
 import { useEffect, useState, useContext, useCallback } from 'react';
 
@@ -53,8 +56,6 @@ export default function Grocery() {
 
         if (finalCartData && finalCartData.length > 0) {
           const ids = finalCartData.map((cart) => cart.id);
-          console.log(ids);
-
           const cartitem = await CartItemService.GetCartItemsByCartIds(ids);
 
           setCartItemData(
@@ -66,6 +67,15 @@ export default function Grocery() {
             })
           );
         }
+
+        // lấy pantryItems
+        const final = await PantryItemService.GetAllPantryItemsByAccountId({
+          account_id: login.user.uid,
+          pageSize: 2147483647,
+          page: 1,
+        } as GetAllPantryItemReq);
+
+        setPantryItems(final);
         handleSpinner(false);
       } catch (error) {
         console.log(error);
@@ -236,6 +246,10 @@ export default function Grocery() {
     setPersonalCartItemData((prev) => [...prev, newValue]);
   };
 
+  //#region So với tủ lạnh
+  const [pantryItems, setPantryItems] = useState<Pantry_ItemEntity[]>([]);
+  //#endregion
+
   return (
     <>
       <Layout
@@ -353,6 +367,7 @@ export default function Grocery() {
               <CartItemContent
                 cartItemData={cartItemData}
                 handleChangeCartItemData={handleChangeCartItemData}
+                pantryItems={pantryItems}
               />
 
               <Grid item xs={12} lg={8}>
@@ -405,6 +420,7 @@ export default function Grocery() {
                             return total;
                           }}
                           handleChangeCartItemData={handleChangeCartItemData}
+                          pantryItems={pantryItems}
                         />
                       );
                     }

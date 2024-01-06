@@ -10,7 +10,6 @@ import {
   Typography,
 } from '@mui/material';
 import { useState } from 'react';
-import { AddRecipeButton } from '../mealPlan/AddRecipeButton';
 import SlideInDialog from '@/components/common/dialog/SlideInDialog';
 
 export function PopoverRecipes({
@@ -75,7 +74,6 @@ export function PopoverRecipes({
           }}
         >
           <List>
-            <AddRecipeButton showContent={true} />
             <ListItem disablePadding>
               <ListItemButton
                 onClick={() => {
