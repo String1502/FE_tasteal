@@ -33,7 +33,7 @@ export const AdminUserIndex: FC = () => {
       title={'Tài khoản'}
       rows={accounts}
       columns={accountColumns}
-      isFetching={isAccountsFetching}
+      loading={isAccountsFetching}
       dialogProps={{
         title: 'Xóa tài khoản',
         content: 'Bạn có chắc muốn xóa tài khoản này?',

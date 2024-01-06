@@ -12,10 +12,10 @@ const useIngredients = (): [IngredientRes[], boolean] => {
 
   useEffect(() => {
     setFetching(true);
-    IngredientService.GetAll2()
+    IngredientService.GetAll()
       .then((res) => {
-        setIngredients(res.ingredients);
-        console.log(res.ingredients);
+        setIngredients(res);
+        console.log(res);
       })
       .catch((err) => {
         console.log(err);

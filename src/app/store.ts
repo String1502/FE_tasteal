@@ -3,7 +3,6 @@ import { configureStore } from '@reduxjs/toolkit';
 
 const store = configureStore({
   reducer: {
-    // TODO: the naming seems wrong, fix this
     admin: adminReducer,
   },
 });

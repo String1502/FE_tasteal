@@ -1,41 +1,34 @@
 import { useAppDispatch } from '@/app/hook';
-import { navigateTo } from '@/features/admin/adminSlice';
-import TabCode from '@/lib/enums/AdminTabCode';
 import { SvgIconComponent } from '@mui/icons-material';
 import { ListItemButton, ListItemIcon, ListItemText } from '@mui/material';
 import { FC, useCallback, useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 export type AdminListButtonProps = {
   Icon: SvgIconComponent;
   label: string;
-  tabCode: TabCode;
   onClick?: () => void;
-  checkSelected?: (tabCode: TabCode) => boolean;
+  path: string;
+  selected: boolean;
 };
 
 const AdminListButton: FC<AdminListButtonProps> = ({
   Icon,
   label,
-  tabCode,
-  checkSelected,
+  path,
+  selected,
 }) => {
-  const dispatch = useAppDispatch();
-
+  const navigate = useNavigate();
   const handleNavigate = useCallback(
-    (tabCode: TabCode) => {
-      dispatch(navigateTo({ tab: tabCode }));
+    (path) => {
+      navigate(path);
     },
-    [dispatch]
-  );
-
-  const selected = useMemo(
-    () => checkSelected(tabCode),
-    [checkSelected, tabCode]
+    [navigate]
   );
 
   return (
     <ListItemButton
-      onClick={() => handleNavigate(tabCode)}
+      onClick={() => handleNavigate(path)}
       sx={
         selected
           ? {
