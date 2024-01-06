@@ -1,5 +1,4 @@
-import { useAppSelector } from '@/app/hook';
-import TabCode from '@/lib/enums/AdminTabCode';
+import { PageRoute } from '@/lib/constants/common';
 import {
   CalendarMonth,
   Flatware,
@@ -16,7 +15,8 @@ import {
   Paper,
   SxProps,
 } from '@mui/material';
-import { FC, PropsWithChildren, useCallback } from 'react';
+import { FC, PropsWithChildren } from 'react';
+import { useLocation } from 'react-router-dom';
 import AdminListButton from '../../admin/AdminListButton';
 
 const commonStyle: SxProps = {
@@ -24,12 +24,11 @@ const commonStyle: SxProps = {
 };
 
 const AdminLayout: FC<PropsWithChildren> = ({ children }) => {
-  const currentTab = useAppSelector((state) => state.admin.currentTab);
+  const location = useLocation();
 
-  const checkSelected = useCallback(
-    (code: TabCode) => currentTab === code,
-    [currentTab]
-  );
+  function checkSelected(path: string) {
+    return path === location.pathname;
+  }
 
   return (
     <Grid container spacing={2} sx={{ p: 4 }}>
@@ -56,26 +55,26 @@ const AdminLayout: FC<PropsWithChildren> = ({ children }) => {
             <AdminListButton
               Icon={Person}
               label="Người dùng"
-              tabCode={TabCode.UserIndex}
-              checkSelected={checkSelected}
+              path="/admin/users"
+              selected={checkSelected('/admin/users')}
             />
             <AdminListButton
               Icon={Flatware}
               label="Nguyên liệu"
-              tabCode={TabCode.IngredientIndex}
-              checkSelected={checkSelected}
+              path={PageRoute.Admin.Ingredients.Index}
+              selected={checkSelected(PageRoute.Admin.Ingredients.Index)}
             />
             <AdminListButton
               Icon={CalendarMonth}
               label="Dịp lễ"
-              tabCode={TabCode.OccasionIndex}
-              checkSelected={checkSelected}
+              path={PageRoute.Admin.Occasions.Index}
+              selected={checkSelected(PageRoute.Admin.Occasions.Index)}
             />
             <AdminListButton
               Icon={Settings}
               label="Cài đặt"
-              tabCode={TabCode.Settings}
-              checkSelected={checkSelected}
+              path="/admin/settings"
+              selected={checkSelected('/admin/settings')}
             />
           </Box>
         </Paper>

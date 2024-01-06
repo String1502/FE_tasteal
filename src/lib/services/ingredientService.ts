@@ -1,8 +1,12 @@
 import { getApiUrl } from '../constants/api';
 import { PageReq } from '../models/dtos/Request/PageReq/PageReq';
-import { IngredientRes } from '../models/dtos/Response/IngredientRes/IngredientRes';
+import {
+  IngredientPagination,
+  IngredientRes,
+} from '../models/dtos/Response/IngredientRes/IngredientRes';
 import { IngredientEntity } from '../models/entities/IngredientEntity/IngredientEntity';
-import { Ingredient_TypeEntity } from '../models/entities/Ingredient_TypeEntity/Ingredient_TypeEntity';
+
+export type IngredientGetRes = IngredientEntity & IngredientRes;
 
 /**
  * Represents a service for managing ingredients.
@@ -16,7 +20,7 @@ class IngredientService {
   public static async GetAll(
     pageSize: number = 1000000,
     page: number = 1
-  ): Promise<(IngredientEntity & IngredientRes)[]> {
+  ): Promise<IngredientGetRes[]> {
     const requestOptions = {
       method: 'POST',
       headers: {
@@ -38,40 +42,31 @@ class IngredientService {
         console.log(error);
       });
   }
-
-  public static async GetAll2(): Promise<IngredientsGetRes> {
-    const body = {
-      page: 1,
-      pageSize: 2147483647,
-    };
-
-    const res = await fetch(getApiUrl('GetAllIngredients'), {
-      method: 'POST',
-      body: JSON.stringify(body),
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
-    if (res.ok) {
-      return res.json();
+  public static async Get(
+    page: number = 1,
+    pageSize: number = 10
+  ): Promise<IngredientPagination> {
+    if (page < 1 || pageSize < 1) {
+      throw new Error('Invalid page or pageSize');
     }
-    throw new Error(res.statusText);
+    return fetch(getApiUrl('GetAllIngredients'), {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: JSON.stringify({
+        page: page,
+        pageSize: pageSize,
+      }),
+    }).then((res) => {
+      if (res.ok) {
+        return res.json();
+      }
+      throw new Error('Failed to get ingredients');
+    });
   }
-
-  public static async GetAllIngredientTypes(): Promise<
-    Ingredient_TypeEntity[]
-  > {
-    const ingredients = await this.GetAll();
-
-    return ingredients
-      .map((ingredient) => {
-        return ingredient?.ingredient_type;
-      })
-      .filter(
-        (ingredient, index, self) =>
-          ingredient &&
-          self.findIndex((item) => item.id == ingredient.id) === index
-      ) as Ingredient_TypeEntity[];
+  public static async GetById(id: number): Promise<IngredientEntity> {
+    throw new Error('not implemented yet');
   }
 
   public static async DeleteIngredient(

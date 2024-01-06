@@ -30,7 +30,19 @@ export const PageRoute = {
   Partner: (uid?: AccountEntity['uid']) =>
     uid ? `/partner/${uid}` : '/partner/:uid',
   AllPartner: '/allpartner',
-  Admin: '/admin',
+  Admin: {
+    Index: '/admin',
+    Ingredients: {
+      Index: '/admin/ingredients',
+      Create: '/admin/ingredients/create',
+      View: '/admin/ingredients/:id',
+    },
+    Occasions: {
+      Index: '/admin/occasions',
+      Create: '/admin/occasions/create',
+      View: '/admin/occasions/:id',
+    },
+  },
   ReferenceIngredient: (id?: string) =>
     id ? `/reference/ingredients/${id}` : '/reference/:type/:id',
   Reference: (type?: 'ingredients' | 'occasions') =>
