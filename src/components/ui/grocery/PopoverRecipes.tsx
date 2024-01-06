@@ -9,17 +9,14 @@ import {
   Popover,
   Typography,
 } from '@mui/material';
-import { useCallback, useState } from 'react';
+import { useState } from 'react';
 import { AddRecipeButton } from '../mealPlan/AddRecipeButton';
-import useSnackbarService from '@/lib/hooks/useSnackbar';
 import SlideInDialog from '@/components/common/dialog/SlideInDialog';
-import CartService from '@/lib/services/cartService';
-import { AccountEntity } from '@/lib/models/entities/AccountEntity/AccountEntity';
 
 export function PopoverRecipes({
-  accountId,
+  DeleteAllCartByAccountId,
 }: {
-  accountId: AccountEntity['uid'];
+  DeleteAllCartByAccountId: () => Promise<void>;
 }) {
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
 
@@ -34,22 +31,9 @@ export function PopoverRecipes({
   const open = Boolean(anchorEl);
   const id = open ? 'simple-popover' : undefined;
 
-  const [snackbarAlert] = useSnackbarService();
-
   const [openClearAll, setOpenClearAll] = useState(false);
   const handleOpenClearAll = () => setOpenClearAll(true);
   const handleCloseClearAll = () => setOpenClearAll(false);
-
-  const DeleteAllCartByAccountId = useCallback(async () => {
-    try {
-      const result = await CartService.DeleteCartByAccountId(accountId);
-      if (result) {
-        snackbarAlert('Dọn giỏ đi chợ thành công.', 'success');
-      } else snackbarAlert('Thao tác không thành công.', 'error');
-    } catch (error) {
-      console.log(error);
-    }
-  }, [accountId]);
 
   return (
     <Box>

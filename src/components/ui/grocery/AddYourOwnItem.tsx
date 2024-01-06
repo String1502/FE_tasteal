@@ -3,6 +3,7 @@ import AppContext from '@/lib/contexts/AppContext';
 import useSnackbarService from '@/lib/hooks/useSnackbar';
 import { PersonalCartItemReq } from '@/lib/models/dtos/Request/PersonalCartItemReq/PersonalCartItemReq';
 import { IngredientEntity } from '@/lib/models/entities/IngredientEntity/IngredientEntity';
+import { PersonalCartItemEntity } from '@/lib/models/entities/PersonalCartItemEntity/PersonalCartItemEntity';
 import CartService from '@/lib/services/cartService';
 import IngredientService from '@/lib/services/ingredientService';
 import { AddCircleRounded, CloseRounded } from '@mui/icons-material';
@@ -31,7 +32,11 @@ const Transition = forwardRef(function Transition(
   return <Zoom ref={ref} {...props} />;
 });
 
-function AddYourOwnItem() {
+function AddYourOwnItem({
+  handlePersonalCartItemData,
+}: {
+  handlePersonalCartItemData: (newValue: PersonalCartItemEntity) => void;
+}) {
   //#region Open_Close Dialog
   const [open, setOpen] = useState(false);
 
@@ -48,11 +53,11 @@ function AddYourOwnItem() {
 
   //#endregion
 
-  const { login } = useContext(AppContext);
+  const { login, handleSpinner } = useContext(AppContext);
   const [snackbarAlert] = useSnackbarService();
   const [ingredientData, setIngredientData] = useState<IngredientEntity[]>([]);
 
-  function handleAddPersonalCartItem() {
+  async function handleAddPersonalCartItem() {
     if (
       !login.user ||
       !login.user?.uid ||
@@ -68,19 +73,26 @@ function AddYourOwnItem() {
       ingredient_id: autoCompleteValue.id,
       account_id: login.user.uid,
       amount: amount,
-      // name: inputValue, TAS - 140
+      name: inputValue,
       is_bought: false,
     };
 
     try {
-      const updated = CartService.AddPersonalCart(data);
+      handleSpinner(true);
+      const updated: PersonalCartItemEntity = await CartService.AddPersonalCart(
+        data
+      );
       if (!updated) {
         snackbarAlert('Thêm thất bại', 'error');
+      } else {
+        handlePersonalCartItemData(updated);
+        snackbarAlert('Thêm thành công', 'success');
       }
+      handleSpinner(false);
     } catch (error) {
       console.log(error);
       snackbarAlert('Thêm thất bại', 'error');
-      throw error;
+      handleSpinner(false);
     }
     handleClose();
   }
@@ -106,10 +118,6 @@ function AddYourOwnItem() {
       setUnit('--');
     }
   }, [autoCompleteValue]);
-
-  console.log(autoCompleteValue);
-  console.log(inputValue);
-  console.log(amount);
 
   return (
     <>
@@ -302,7 +310,7 @@ function IngredientRenderOption({ item }: { item: IngredientEntity }) {
       <BoxImage
         src={item?.image}
         alt={item.name}
-        quality={30}
+        quality={1}
         sx={{
           width: 48,
           height: 48,

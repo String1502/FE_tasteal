@@ -54,7 +54,7 @@ class CartService {
   }
 
   public static async UpdateCart(
-    CardId: CartEntity['id'],
+    CartId: CartEntity['id'],
     servingSize: CartEntity['serving_size']
   ): Promise<boolean> {
     const requestOptions: RequestInit = {
@@ -65,7 +65,7 @@ class CartService {
     };
 
     return await fetch(
-      `${getApiUrl('UpdateCart')}?CardId=${CardId}&servingSize=${servingSize}`,
+      `${getApiUrl('UpdateCart')}?CartId=${CartId}&servingSize=${servingSize}`,
       requestOptions
     )
       .then((response) => response.json())
@@ -87,14 +87,14 @@ class CartService {
     };
 
     return await fetch(
-      `${getApiUrl('DeleteCartById')}?cardId=${cartId}`,
+      `${getApiUrl('DeleteCartById')}?cartId=${cartId}`,
       requestOptions
     )
       .then((response) => response.json())
       .then((data) => data)
       .catch((error) => {
         console.error('Lỗi:', error);
-        throw error;
+        return false;
       });
   }
 
@@ -122,7 +122,7 @@ class CartService {
 
   public static async AddPersonalCart(
     personalCartItem: PersonalCartItemReq
-  ): Promise<boolean> {
+  ): Promise<PersonalCartItemEntity> {
     const requestOptions: RequestInit = {
       method: 'POST',
       headers: {

@@ -102,7 +102,7 @@ export default function SignUp() {
         console.log('[AUTH] Sign in with Google failed', error);
         openSnackbar('Đăng nhập thất bại!', 'warning');
         if (login.handleLogin) {
-          login.handleLogin();
+          login.handleLogin(false, undefined);
           navigateSignIn();
         }
       });

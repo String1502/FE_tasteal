@@ -1,24 +1,24 @@
-import { Box, Typography, styled, useTheme } from "@mui/material";
-import { useEffect, useState } from "react";
-import { HashLoader } from "react-spinners";
+import { Box, Typography, styled, useTheme } from '@mui/material';
+import { useEffect, useState } from 'react';
+import { HashLoader } from 'react-spinners';
 
 const BoxSpinner = styled(Box)(({ theme }) => ({
-  position: "fixed",
-  zIndex: theme.zIndex.drawer + 1,
+  position: 'fixed',
+  zIndex: theme.zIndex.drawer + 1000,
   top: 0,
   left: 0,
-  width: "100vw",
-  height: "100dvh",
-  justifyContent: "center",
-  alignItems: "center",
-  backgroundColor: "rgba(150, 150, 150, 0.5)",
-  backdropFilter: "blur(2px)",
+  width: '100vw',
+  height: '100dvh',
+  justifyContent: 'center',
+  alignItems: 'center',
+  backgroundColor: 'rgba(150, 150, 150, 0.5)',
+  backdropFilter: 'blur(2px)',
 }));
 
 function TastealHashLoader({ spinner }: { spinner: boolean }) {
   const theme = useTheme();
-  const loadingText = "Loading...";
-  const [displayText, setDisplayText] = useState("");
+  const loadingText = 'Loading...';
+  const [displayText, setDisplayText] = useState('');
   useEffect(() => {
     if (spinner) {
       const interval = setInterval(() => {
@@ -26,7 +26,7 @@ function TastealHashLoader({ spinner }: { spinner: boolean }) {
           if (prev.length < loadingText.length) {
             return prev + loadingText[prev.length];
           } else {
-            return "";
+            return '';
           }
         });
       }, 120);
@@ -35,25 +35,25 @@ function TastealHashLoader({ spinner }: { spinner: boolean }) {
         clearInterval(interval);
       };
     } else {
-      setDisplayText("");
+      setDisplayText('');
     }
   }, [spinner]);
   return (
     <BoxSpinner
       sx={{
-        display: spinner ? "flex" : "none",
+        display: spinner ? 'flex' : 'none',
       }}
     >
       <Box
         sx={{
           borderRadius: 10,
-          background: "white",
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          justifyContent: "center",
+          background: 'white',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
           border: 4,
-          borderColor: "primary.main",
+          borderColor: 'primary.main',
           pt: 8,
           pb: 4,
         }}
@@ -67,13 +67,13 @@ function TastealHashLoader({ spinner }: { spinner: boolean }) {
         <Typography
           mt={3}
           variant="h6"
-          fontWeight={"bold"}
-          color={"primary.light"}
+          fontWeight={'bold'}
+          color={'primary.light'}
           textAlign="center"
           sx={{
-            width: "280px",
-            height: "40px",
-            fontFamily: "Dance Script, cursive",
+            width: '280px',
+            height: '40px',
+            fontFamily: 'Dance Script, cursive',
           }}
         >
           {displayText}

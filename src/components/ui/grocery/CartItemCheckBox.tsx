@@ -60,7 +60,7 @@ function CartItemCheckBox({
           isBought
         );
         if (result) {
-          snackbarAlert('Check đã mua thành công!', 'success');
+          snackbarAlert('Cập nhật thành công!', 'success');
         } else snackbarAlert('Thao tác không thành công.', 'error');
       } catch (error) {
         console.log(error);
@@ -88,9 +88,9 @@ function CartItemCheckBox({
           onChange={async () => {
             setIsBought(!isBought);
             if (type === 'cart' && handleChangeCartItemData) {
-              handleChangeCartItemData(item.cartId, item.ingredientId);
+              handleChangeCartItemData(item.cartId, item.ingredient_id);
               // Cập nhật đã/chưa mua
-              await updateCartItem(item.cartId, item.ingredientId, !isBought);
+              await updateCartItem(item.cartId, item.ingredient_id, !isBought);
               return;
             }
             if (type === 'personal' && handleChangePersonalCartItemData) {
