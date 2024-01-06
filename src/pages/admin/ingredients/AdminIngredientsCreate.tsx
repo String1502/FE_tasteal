@@ -78,7 +78,7 @@ const AdminIngredientCreate: FC = () => {
     Ingredient_TypeEntity[]
   >([]);
   useEffect(() => {
-    IngredientTypeService.Get()
+    IngredientTypeService.GetAllIngredientTypes()
       .then(setIngredientTypes)
       .catch((err) => console.log(err));
   }, []);

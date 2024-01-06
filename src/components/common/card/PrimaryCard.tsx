@@ -70,7 +70,7 @@ export function PrimaryCard({
             imgHeight={imgHeight}
             src={recipe.image}
             alt={recipe.name}
-            quality={80}
+            quality={10}
           />
           <TotalTimeRecipe
             imgHeight={imgHeight}
@@ -81,7 +81,7 @@ export function PrimaryCard({
           <AvatarRecipe
             imgHeight={imgHeight}
             padding={padding}
-            quality={10}
+            quality={1}
             account={recipe.account}
           />
         </CardActionArea>

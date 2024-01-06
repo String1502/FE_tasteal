@@ -19,7 +19,7 @@ export function AddYourFirstRecipe() {
       <BoxImage
         src="https://www.sidechef.com/static/images/3feb6c9a2065479a6792.png"
         alt="Empty"
-        quality={30}
+        quality={1}
         sx={{
           objectFit: 'contain',
         }}

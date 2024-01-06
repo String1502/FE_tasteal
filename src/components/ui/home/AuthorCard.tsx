@@ -32,6 +32,7 @@ export const AuthorCard = ({ author }: { author: AccountEntity }) => {
         >
           <BoxImage
             src={author?.avatar ?? ''}
+            quality={10}
             sx={{
               transition: 'all 0.3s ease-in-out',
               '&:hover': {

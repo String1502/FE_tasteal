@@ -65,7 +65,7 @@ class IngredientService {
       throw new Error('Failed to get ingredients');
     });
   }
-  public static async GetById(id: number): Promise<IngredientEntity> {
+  public static async GetById(_id: number): Promise<IngredientEntity> {
     throw new Error('not implemented yet');
   }
 

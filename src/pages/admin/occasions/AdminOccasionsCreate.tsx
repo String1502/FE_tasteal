@@ -176,7 +176,7 @@ const AdminOccasionsCreate: FC = () => {
     if (!id) return;
     setMode('edit');
 
-    OccasionService.GetById(parseInt(id))
+    OccasionService.GetOccasionById(parseInt(id))
       .then((occasion) => setViewOccasion(occasion))
       .catch(() => setViewOccasion(undefined));
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -191,7 +191,7 @@ const AdminOccasionsCreate: FC = () => {
   const handleSubmit = async () => {
     try {
       const reqBody = await createOccasion.getReq(imageFile);
-      const occasion = await OccasionService.CreateOccasion(reqBody);
+      const occasion = await OccasionService.AddOccasion(reqBody);
       console.log(occasion);
     } catch (err) {
       snackbarAlert('Dịp mới đã không được thêm!', 'warning');

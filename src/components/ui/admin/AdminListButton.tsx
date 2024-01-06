@@ -1,7 +1,6 @@
-import { useAppDispatch } from '@/app/hook';
 import { SvgIconComponent } from '@mui/icons-material';
 import { ListItemButton, ListItemIcon, ListItemText } from '@mui/material';
-import { FC, useCallback, useMemo } from 'react';
+import { FC, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 export type AdminListButtonProps = {

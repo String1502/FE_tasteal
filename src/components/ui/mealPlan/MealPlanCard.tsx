@@ -53,7 +53,7 @@ export function MealPlanCard({
                   imgHeight={imgHeight}
                   src={recipe.image}
                   alt={recipe.name}
-                  quality={80}
+                  quality={20}
                 />
 
                 <Button
@@ -113,6 +113,7 @@ export function MealPlanCard({
                   imgHeight={imgHeight}
                   padding={padding}
                   account={recipe.account}
+                  quality={1}
                 />
               </CardActionArea>
 

@@ -2,6 +2,7 @@ import { occasions as occasionsSampleData } from '@/lib/constants/sampleData';
 import { convertLunarToSolarDate } from '@/utils/format';
 import { getApiUrl } from '../constants/api';
 import { OccasionEntity } from '../models/entities/OccasionEntity/OccasionEntity';
+import { OccasionReq } from '../models/dtos/Request/OccasionReq/OccasionReq';
 
 /**
  * Represents a service for managing occasions.
@@ -80,9 +81,7 @@ class OccasionService {
       });
   }
 
-  public static async AddOccasion(
-    newOccasion: OccasionEntity
-  ): Promise<boolean> {
+  public static async AddOccasion(newOccasion: OccasionReq): Promise<boolean> {
     const requestOptions: RequestInit = {
       method: 'POST',
       headers: {

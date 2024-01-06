@@ -218,7 +218,7 @@ export default function SignUp() {
                 <BoxImage
                   src={defaultAvtPath}
                   alt="Tasteal"
-                  quality={20}
+                  quality={10}
                   sx={{
                     width: '32px',
                     height: '32px',

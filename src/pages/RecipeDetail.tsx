@@ -71,16 +71,15 @@ import { Link as RouterLink, useNavigate, useParams } from 'react-router-dom';
 // Mock bread crumbs data (will be remove later)
 const breadCrumbsLinks = [
   {
-    href: '/',
+    href: PageRoute.Home,
     label: 'Tasteal',
   },
   {
-    href: '/',
-    label: 'Recipes',
+    href: PageRoute.Search,
+    label: 'Công thức',
   },
   {
-    href: '/',
-    label: 'Keto',
+    label: 'Chi tiết',
   },
 ];
 
@@ -344,7 +343,7 @@ const RecipeDetail: FC = () => {
                   <BoxImage
                     src={recipe?.image ?? ''}
                     alt={'Không tìm thấy ảnh'}
-                    quality={80}
+                    quality={1}
                     sx={{
                       width: '100%',
                       height: 520,
@@ -813,7 +812,7 @@ const RecipeDetail: FC = () => {
               top: '50%',
               left: '50%',
               transform: 'translate(-50%, -50%)',
-              width: 520,
+              width: '80%',
               boxShadow: 24,
               borderRadius: '24px',
               borderStyle: 'solid',
@@ -824,7 +823,15 @@ const RecipeDetail: FC = () => {
               '::-webkit-scrollbar': { display: 'none' },
             }}
           >
-            <BoxImage quality={100} src={viewDirectionImageUrl} />
+            <BoxImage
+              quality={100}
+              src={viewDirectionImageUrl}
+              sx={{
+                width: '100%',
+                height: '100%',
+                objectFit: 'contain',
+              }}
+            />
             <IconButton
               sx={{
                 color: 'primary.contrastText',
@@ -891,7 +898,7 @@ function CommentItem({ comment }: { comment: CommentEntity }) {
                 ? 'Comment avatar of ' + account.name
                 : 'null comment avatar'
             }
-            quality={10}
+            quality={1}
             sx={{
               width: 72,
               height: 72,

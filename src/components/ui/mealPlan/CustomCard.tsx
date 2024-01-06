@@ -39,7 +39,7 @@ function CustomCardMealPlan({
             imgHeight={imgHeight}
             src={recipe.image}
             alt={recipe.name}
-            quality={80}
+            quality={20}
           />
           <TotalTimeRecipe
             imgHeight={imgHeight}
@@ -50,7 +50,7 @@ function CustomCardMealPlan({
           <AvatarRecipe
             imgHeight={imgHeight}
             padding={padding}
-            quality={10}
+            quality={1}
             account={recipe.account}
           />
         </CardActionArea>

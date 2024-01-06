@@ -47,7 +47,7 @@ function UserChatDisplay({
               height: '100%',
               borderRadius: '50%',
             }}
-            quality={70}
+            quality={1}
           />
         </Avatar>
       </Box>
