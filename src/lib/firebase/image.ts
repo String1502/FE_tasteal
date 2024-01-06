@@ -51,7 +51,6 @@ export async function uploadImage(
 ): Promise<string> {
   try {
     const storageRef = ref(storage, path.join('/'));
-    deleteImage;
     const snapshot = await uploadBytes(storageRef, file);
     console.log(debugStringFormatter('Uploaded a blob or file!'), snapshot);
     return snapshot.ref.fullPath;

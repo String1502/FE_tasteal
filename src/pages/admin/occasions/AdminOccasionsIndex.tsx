@@ -1,8 +1,11 @@
 import CommonIndexPage from '@/components/ui/admin/CommonAdminIndexPage';
+import AdminLayout from '@/components/ui/layout/AdminLayout';
+import { PageRoute } from '@/lib/constants/common';
 import { OccasionEntity } from '@/lib/models/entities/OccasionEntity/OccasionEntity';
 import OccasionService from '@/lib/services/occasionService';
 import { GridColDef } from '@mui/x-data-grid';
 import { FC, useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 export const AdminOccasionsIndex: FC = () => {
   //#region Datagrid columns
@@ -63,19 +66,28 @@ export const AdminOccasionsIndex: FC = () => {
 
   //#endregion
 
+  const navigate = useNavigate();
+  const handleOnCreateClick = () => {
+    navigate(PageRoute.Admin.Occasions.Create);
+  };
+  const handleOnEditClick = () => {};
+
   return (
-    <CommonIndexPage
-      title={'Dịp lễ'}
-      rows={rows}
-      columns={occasionColumns}
-      loading={loading}
-      dialogProps={{
-        title: 'Xóa dịp lễ',
-        content: 'Bạn có chắc muốn xóa dịp lễ này?',
-      }}
-      paginationModel={paginationModel}
-      rowCount={rowCount}
-      onPaginationModelChange={setPaginationModel}
-    />
+    <AdminLayout>
+      <CommonIndexPage
+        title={'Dịp lễ'}
+        rows={rows}
+        columns={occasionColumns}
+        loading={loading}
+        dialogProps={{
+          title: 'Xóa dịp lễ',
+          content: 'Bạn có chắc muốn xóa dịp lễ này?',
+        }}
+        paginationModel={paginationModel}
+        rowCount={rowCount}
+        onPaginationModelChange={setPaginationModel}
+        onCreateClick={handleOnCreateClick}
+      />
+    </AdminLayout>
   );
 };

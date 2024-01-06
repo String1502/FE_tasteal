@@ -7,6 +7,7 @@ import AdminLayout from '@/components/ui/layout/AdminLayout';
 import useSnackbarService from '@/lib/hooks/useSnackbar';
 import { IngredientEntity } from '@/lib/models/entities/IngredientEntity/IngredientEntity';
 import { Ingredient_TypeEntity } from '@/lib/models/entities/Ingredient_TypeEntity/Ingredient_TypeEntity';
+import IngredientService from '@/lib/services/ingredientService';
 import IngredientTypeService from '@/lib/services/ingredientTypeService';
 import { ArrowBack } from '@mui/icons-material';
 import {
@@ -21,13 +22,14 @@ import {
 } from '@mui/material';
 import { Stack } from '@mui/system';
 import { FC, useCallback, useEffect, useMemo, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
 const AdminIngredientCreate: FC = () => {
   //#region Hooks
 
   const [snackbarAlert] = useSnackbarService();
   const navigate = useNavigate();
+  const { id } = useParams();
 
   //#endregion
   //#region Redux
@@ -46,18 +48,28 @@ const AdminIngredientCreate: FC = () => {
   //#endregion
   //#region Form
 
-  const [formData, setFormData] = useState<IngredientEntity>(
-    editIngredient ? editIngredient : ({} as IngredientEntity)
+  const [ingredient, setIngredient] = useState<IngredientEntity | null>(
+    editIngredient ? editIngredient : null
   );
+
+  useEffect(() => {
+    if (mode === 'edit' || !id) return;
+
+    IngredientService.GetById(parseInt(id))
+      .then((ingredient) => setIngredient(ingredient))
+      .catch(() => setIngredient(null));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const [imageFile, setImageFile] = useState<File | null>(null);
   function imageFileChange(file: File) {
     setImageFile(file);
   }
 
   const handleSubmit = useCallback(() => {
-    console.log(formData);
+    console.log(ingredient);
     snackbarAlert('Đã thêm nguyên liệu thành công');
-  }, [formData, snackbarAlert]);
+  }, [ingredient, snackbarAlert]);
 
   //#endregion
   //#region Ingredient Types
@@ -70,15 +82,18 @@ const AdminIngredientCreate: FC = () => {
       .then(setIngredientTypes)
       .catch((err) => console.log(err));
   }, []);
-  console.log(ingredientTypes);
+  const selectedIngredientType = useMemo(() => {
+    return ingredientTypes.find((i) => i.id === ingredient?.type_id);
+  }, [ingredient?.type_id, ingredientTypes]);
 
   //#endregion
+  //#region Navigation
 
   function handleNavigateBack() {
     navigate('/admin/ingredients');
   }
 
-  console.log(formData);
+  //#endregion
 
   return (
     <AdminLayout>
@@ -97,16 +112,18 @@ const AdminIngredientCreate: FC = () => {
           >
             <ArrowBack />
           </IconButton>
-          <FormTitle>Thêm nguyên liệu</FormTitle>
+          <FormTitle>
+            {mode === 'create' ? 'Thêm nguyên liệu' : 'Sửa nguyên liệu'}
+          </FormTitle>
         </Stack>
 
-        <Grid container>
+        <Grid container columnSpacing={12}>
           <Grid item xs={3}>
             <Stack>
               <FormLabel>Hình ảnh</FormLabel>
               <ImagePicker
                 file={imageFile}
-                imagePath={formData.image}
+                imagePath={ingredient?.image || ''}
                 onChange={imageFileChange}
               />
             </Stack>
@@ -117,9 +134,9 @@ const AdminIngredientCreate: FC = () => {
                 <FormLabel>Tên nguyên liệu</FormLabel>
                 <TastealTextField
                   placeholder="Táo đen"
-                  value={formData.name}
+                  value={ingredient?.name || ''}
                   onChange={(e) =>
-                    setFormData((prev) => ({ ...prev, name: e.target.value }))
+                    setIngredient((prev) => ({ ...prev, name: e.target.value }))
                   }
                 />
               </Stack>
@@ -132,41 +149,93 @@ const AdminIngredientCreate: FC = () => {
                   placeholder="Chọn loại cho nguyên liệu"
                   noOptionsText="Không tìm thấy loại nguyên liệu nào"
                   renderInput={(params) => (
-                    <TastealTextField {...params} label="Chọn dịp" />
+                    <TastealTextField {...params} label="Chọn loại" />
                   )}
                   isOptionEqualToValue={(option, value) =>
                     option.id === value.id
                   }
-                  value={[].find((o) => o.id === formData.type_id)}
+                  value={selectedIngredientType}
                   onChange={(_, value) =>
-                    setFormData((prev) => ({ ...prev, type_id: value?.id }))
+                    setIngredient((prev) => ({
+                      ...prev,
+                      type_id: value ? prev.type_id : value.id,
+                    }))
                   }
                 />
               </Stack>
               <Divider flexItem sx={{ opacity: 0.5 }} />
               <Stack>
                 <FormLabel>Thành phần dinh dưỡng</FormLabel>
-                <Stack gap={1}>
-                  <NutritionInfoTextField label="Calories" />
-                  <NutritionInfoTextField label="Chất béo (Fat)" unit="g" />
+                <Stack gap={2}>
+                  <NutritionInfoTextField
+                    label="Calories"
+                    value={ingredient?.nutrition_info.calories || 0}
+                  />
+                  <NutritionInfoTextField
+                    label="Chất béo (Fat)"
+                    unit="g"
+                    value={ingredient?.nutrition_info.fat || 0}
+                  />
                   <NutritionInfoTextField
                     label="Chất béo bão hóa (Saturated fat)"
                     unit="g"
+                    value={ingredient?.nutrition_info.saturated_fat || 0}
                   />
                   <NutritionInfoTextField
                     label="Chất béo trans (Trans fat)"
                     unit="g"
+                    value={ingredient?.nutrition_info.trans_fat || 0}
                   />
-                  <NutritionInfoTextField label="Cholesterol" unit="mg" />
-                  <NutritionInfoTextField label="Carbonhydrate" unit="g" />
-                  <NutritionInfoTextField label="Chất xơ (Fiber)" unit="g" />
-                  <NutritionInfoTextField label="Đường (Sugars)" unit="g" />
-                  <NutritionInfoTextField label="Chất đạm (Protein)" unit="g" />
-                  <NutritionInfoTextField label="Natri (Sodium)" unit="mg" />
-                  <NutritionInfoTextField label="Vitamin D" unit="mcg" />
-                  <NutritionInfoTextField label="Canxi (Calcium)" unit="mcg" />
-                  <NutritionInfoTextField label="Sắt (Iron)" unit="mg" />
-                  <NutritionInfoTextField label="Kali (Potassium)" unit="mg" />
+                  <NutritionInfoTextField
+                    label="Cholesterol"
+                    unit="mg"
+                    value={ingredient?.nutrition_info.cholesterol || 0}
+                  />
+                  <NutritionInfoTextField
+                    label="Carbohydrates"
+                    unit="g"
+                    value={ingredient?.nutrition_info.carbohydrates || 0}
+                  />
+                  <NutritionInfoTextField
+                    label="Chất xơ (Fiber)"
+                    unit="g"
+                    value={ingredient?.nutrition_info.fiber || 0}
+                  />
+                  <NutritionInfoTextField
+                    label="Đường (Sugars)"
+                    unit="g"
+                    value={ingredient?.nutrition_info.sugars || 0}
+                  />
+                  <NutritionInfoTextField
+                    label="Chất đạm (Protein)"
+                    unit="g"
+                    value={ingredient?.nutrition_info.protein || 0}
+                  />
+                  <NutritionInfoTextField
+                    label="Natri (Sodium)"
+                    unit="mg"
+                    value={ingredient?.nutrition_info.sodium || 0}
+                  />
+                  <NutritionInfoTextField
+                    label="Vitamin D"
+                    unit="mcg"
+                    value={ingredient?.nutrition_info.vitaminD || 0}
+                  />
+                  <NutritionInfoTextField
+                    label="Canxi (Calcium)"
+                    unit="mcg"
+                    value={ingredient?.nutrition_info.calcium || 0}
+                  />
+                  <NutritionInfoTextField
+                    label="Sắt (Iron)"
+                    unit="mg"
+                    value={ingredient?.nutrition_info.iron || 0}
+                  />
+                  <NutritionInfoTextField
+                    label="Kali (Potassium)"
+                    unit="mg"
+                    value={ingredient?.nutrition_info.potassium || 0}
+                  />
                 </Stack>
               </Stack>
               <Divider flexItem sx={{ opacity: 0.5 }} />
@@ -174,13 +243,16 @@ const AdminIngredientCreate: FC = () => {
                 <Grid item xs={6}>
                   <Stack>
                     <FormLabel>Tỉ lệ quy đổi</FormLabel>
-                    <TastealTextField placeholder="0.5" />
+                    <TastealTextField
+                      placeholder="0.5"
+                      value={ingredient?.ratio || 0}
+                    />
                   </Stack>
                 </Grid>
                 <Grid item xs={6}>
                   <Stack>
                     <FormLabel>Là chất lỏng</FormLabel>
-                    <Switch />
+                    <Switch value={ingredient?.isLiquid || false} />
                   </Stack>
                 </Grid>
               </Grid>

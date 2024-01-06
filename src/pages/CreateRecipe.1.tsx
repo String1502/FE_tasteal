@@ -19,13 +19,10 @@ import AppContext from '@/lib/contexts/AppContext';
 import { deleteImage, uploadImage } from '@/lib/firebase/image';
 import useSnackbarService from '@/lib/hooks/useSnackbar';
 import { RecipeReq } from '@/lib/models/dtos/Request/RecipeReq/RecipeReq';
-import { Recipe_IngredientReq } from '@/lib/models/dtos/Request/Recipe_IngredientReq/Recipe_IngredientReq';
 import { RecipeRes } from '@/lib/models/dtos/Response/RecipeRes/RecipeRes';
-import { Direction } from '@/lib/models/dtos/common';
 import OccasionService from '@/lib/services/occasionService';
 import RecipeService from '@/lib/services/recipeService';
 import { CommonMessage } from '@/utils/constants/message';
-import { createDebugStringFormatter } from '@/utils/debug/formatter';
 import { getFileExtension } from '@/utils/file';
 import { dateTimeToMinutes } from '@/utils/format';
 import {
@@ -44,118 +41,20 @@ import { nanoid } from 'nanoid';
 import { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { v4 as uuidv4 } from 'uuid';
-
-//#region Local constants and functions
-
-/**
- * Create debug string
- */
-const createDebugString = createDebugStringFormatter('CreateRecipe');
-
-/**
- * Represents a new recipe.
- */
-type NewRecipe = {
-  /** The name of the recipe. */
-  name: string;
-  /** The introduction for the recipe. */
-  introduction: string;
-  /** The image URL of the recipe. */
-  image: string;
-  /** The serving size of the recipe. */
-  servingSize: number;
-  /** The list of ingredients for the recipe. */
-  ingredients: IngredientItemData[];
-  /** The list of directions for the recipe. */
-  directions: DirectionEditorItemValue[];
-  /** Any additional notes from the author. */
-  authorNote: string;
-  /** The total time of the recipe.  */
-  totalTime: number;
-  /** The active time of the recipe. */
-  activeTime: number;
-  /** Indicates if the recipe is private. */
-  isPrivate: boolean;
-};
-
-const DEFAULT_NEW_RECIPE: NewRecipe = {
-  name: '',
-  image: '',
-  servingSize: 1,
-  ingredients: [],
-  directions: [],
-  introduction: '',
-  totalTime: 0,
-  activeTime: 0,
-  authorNote: '',
-  isPrivate: true,
-};
-
-const resolveDirectionImage = async (
-  direction: DirectionEditorItemValue,
-  imageId: string,
-  step: number
-): Promise<Omit<Direction, 'recipe_id'>> => {
-  const { imageFile, ...others } = direction;
-
-  if (imageFile) {
-    try {
-      const path = await uploadImage(
-        imageFile,
-        `${StoragePath.DIRECTION}/${imageId}[${step}].${getFileExtension(
-          imageFile.name
-        )}`
-      );
-
-      return {
-        ...others,
-        image: path,
-      };
-    } catch (e) {
-      throw new Error('Failed to upload a blob or file!');
-    }
-  }
-
-  return Promise.resolve({
-    ...others,
-    image: '',
-  });
-};
-
-const resolveDirectionsImage = (
-  directions: DirectionEditorItemValue[],
-  imageId: string
-): Promise<Omit<Direction, 'recipe_id'>[]> => {
-  return Promise.all(
-    directions.map((dir, index) =>
-      resolveDirectionImage(dir, imageId, index + 1)
-    )
-  );
-};
-
-/**
- * Local message constants
- */
-const LocalMessageConstant = {
-  Validation: {
-    InvalidData: 'Dữ liệu không hợp lệ!',
-    NameRequired: 'Tên không được để trống!!',
-    IntroductionRequired: 'Giới thiệu không được để trống!',
-    IngredientRequired: 'Vui lòng thêm nguyên liệu!',
-    DirectionRequired: 'Vui lòng thêm bước thực hiện!',
-    TotalTimeRequired: 'Tổng thời gian không được để trống!',
-    InvalidActiveTime: 'Thời gian thực phải nhỏ hơn tổng thời gian!',
-    ImageRequired: 'Vui lòng tải ảnh đại diện!',
-  } as const,
-} as const;
+import {
+  DEFAULT_NEW_RECIPE,
+  LocalMessageConstant,
+  NewRecipe,
+  createDebugString,
+  createPutBody,
+  resolveDirectionsImage,
+} from './CreateRecipe';
 
 //#endregion
-
-const CreateRecipe: React.FunctionComponent<{ edit?: boolean }> = ({
+export const CreateRecipe: React.FunctionComponent<{ edit?: boolean }> = ({
   edit = false,
 }) => {
   //#region Hooks
-
   const { id } = useParams();
   const [snackbarAlert] = useSnackbarService();
   const {
@@ -166,7 +65,6 @@ const CreateRecipe: React.FunctionComponent<{ edit?: boolean }> = ({
 
   //#endregion
   //#region General Recipe
-
   const [recipeThumbnailFile, setRecipeThumbnailFile] = useState<File | null>(
     null
   );
@@ -186,7 +84,6 @@ const CreateRecipe: React.FunctionComponent<{ edit?: boolean }> = ({
 
   //#endregion
   //#region Occasions
-
   const [occasions, setOccasions] = useState([]);
   const [selectedOccasions, setSelectedOccasions] = useState<ChipValue[]>([]);
 
@@ -223,7 +120,6 @@ const CreateRecipe: React.FunctionComponent<{ edit?: boolean }> = ({
 
   //#endregion
   //#region Data Actions
-
   const validateNewRecipe = useCallback((): {
     isValid: boolean;
     msg: string;
@@ -356,16 +252,9 @@ const CreateRecipe: React.FunctionComponent<{ edit?: boolean }> = ({
     } finally {
       setIsProcessing(false);
     }
-  }, [
-    clearForm,
-    createPostRecipeData,
-    navigate,
-    snackbarAlert,
-    validateNewRecipe,
-  ]);
+  }, [clearForm, createPostRecipeData, snackbarAlert, validateNewRecipe]);
   //#endregion
   //#region Ingredients
-
   const [ingredientSelectModalOpen, setIngredientSelectModalOpen] =
     useState(false);
 
@@ -397,7 +286,6 @@ const CreateRecipe: React.FunctionComponent<{ edit?: boolean }> = ({
 
   //#endregion
   //#region Directions
-
   const handleDirectionsChange = useCallback(
     (directions: DirectionEditorItemValue[]) => {
       setNewRecipe((prev) => ({
@@ -410,7 +298,6 @@ const CreateRecipe: React.FunctionComponent<{ edit?: boolean }> = ({
 
   //#endregion
   //#region Edit Mode
-
   const [editRecipe, setEditRecipe] = useState<RecipeRes | null>(null);
   // Load data if it is edit mode
   useEffect(() => {
@@ -427,8 +314,8 @@ const CreateRecipe: React.FunctionComponent<{ edit?: boolean }> = ({
           name: recipe.name,
           // activeTime: recipe.activeTime, // not exist
           // authorNote: recipe.authorNote, // not exist
-          activeTime: 0, // not exist
-          authorNote: 'placeholder for retrieved note', // not exist
+          activeTime: 0,
+          authorNote: 'placeholder for retrieved note',
           directions: recipe.directions.map(
             (direction) =>
               ({
@@ -563,7 +450,6 @@ const CreateRecipe: React.FunctionComponent<{ edit?: boolean }> = ({
   }, [editRecipe, id, navigate, newRecipe, snackbarAlert, updateComplexStuffs]);
 
   //#endregion
-
   return (
     <Layout withFooter={false}>
       <Box
@@ -760,30 +646,3 @@ const CreateRecipe: React.FunctionComponent<{ edit?: boolean }> = ({
     </Layout>
   );
 };
-
-function createPutBody(recipe: RecipeRes, newRecipe: NewRecipe) {
-  const putBody: RecipeReq = {
-    name: newRecipe.name,
-    introduction: newRecipe.introduction,
-    image: recipe.image,
-    rating: recipe.rating,
-    directions: recipe.directions,
-    ingredients: newRecipe.ingredients.map(
-      (ingredient) =>
-        ({
-          id: ingredient.ingredientId,
-          amount: ingredient.amount,
-        } as Recipe_IngredientReq)
-    ),
-    author_note: newRecipe.authorNote,
-    is_private: newRecipe.isPrivate,
-    serving_size: newRecipe.servingSize,
-    totalTime: newRecipe.totalTime,
-    author: recipe.author.uid,
-    // occasions: newRecipe.occasions.map((occasion) => occasion.id),
-  };
-
-  return putBody;
-}
-
-export default CreateRecipe;

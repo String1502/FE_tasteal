@@ -1,6 +1,8 @@
 import { occasions as occasionsSampleData } from '@/lib/constants/sampleData';
 import { convertLunarToSolarDate } from '@/utils/format';
+import { getApiUrl } from '../constants/api';
 import { ApiPath } from '../constants/common';
+import { OccasionReq } from '../models/dtos/Request/OccasionReq/OccasionReq';
 import { OccasionEntity } from '../models/entities/OccasionEntity/OccasionEntity';
 
 /**
@@ -53,6 +55,14 @@ class OccasionService {
       });
 
     return result;
+  }
+  public static async GetById(id: number): Promise<OccasionEntity> {
+    return fetch(getApiUrl('GetOccasionById', id.toString())).then((res) => {
+      if (res.ok) {
+        return res.json();
+      }
+      throw new Error('Failed to get occasions');
+    });
   }
 
   public static async getCircleOccasion(): Promise<OccasionEntity[]> {
@@ -128,6 +138,16 @@ class OccasionService {
     console.log(index);
 
     return occasions[index];
+  }
+
+  public static async CreateOccasion(body: OccasionReq) {
+    return fetch(getApiUrl('CreateOccasion'), {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(body),
+    }).then((res) => res.json());
   }
 }
 

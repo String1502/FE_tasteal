@@ -39,9 +39,14 @@ export const ApiEndPoint = {
   //
   // Ingredient
   GetAllIngredients: 'Ingredient/getall',
+  // GetIngredientById: '...'
   //
   // Ingredient Type
   GetAllIngredientTypes: 'IngredientType/getall',
+  //
+  // Occasion
+  GetOccasionById: (occasionId) => `Occasion/${occasionId}`,
+  CreateOccasion: 'Occasion',
   //
   // Recipe
   CreateRecipe: 'Recipe/Add',

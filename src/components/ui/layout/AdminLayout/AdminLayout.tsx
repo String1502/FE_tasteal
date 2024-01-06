@@ -1,3 +1,4 @@
+import { PageRoute } from '@/lib/constants/common';
 import {
   CalendarMonth,
   Flatware,
@@ -60,14 +61,14 @@ const AdminLayout: FC<PropsWithChildren> = ({ children }) => {
             <AdminListButton
               Icon={Flatware}
               label="Nguyên liệu"
-              path="/admin/ingredients"
-              selected={checkSelected('/admin/ingredients')}
+              path={PageRoute.Admin.Ingredients.Index}
+              selected={checkSelected(PageRoute.Admin.Ingredients.Index)}
             />
             <AdminListButton
               Icon={CalendarMonth}
               label="Dịp lễ"
-              path="/occasions"
-              selected={checkSelected('/admin/occasions')}
+              path={PageRoute.Admin.Occasions.Index}
+              selected={checkSelected(PageRoute.Admin.Occasions.Index)}
             />
             <AdminListButton
               Icon={Settings}
