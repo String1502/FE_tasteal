@@ -16,19 +16,26 @@ const padding = 1;
 
 export function PantryCard({
   item,
+  hanlePantryItemsChange,
+  handleOpenDialog,
   ...props
 }: {
   props?: CardProps;
+  hanlePantryItemsChange: (
+    type: 'add' | 'remove' | 'update',
+    item: Pantry_ItemEntity[]
+  ) => Promise<void>;
   item: Pantry_ItemEntity;
+  handleOpenDialog: (item: Pantry_ItemEntity) => void;
 }) {
   return (
     <>
       <CustomCard {...props}>
-        <CardActionArea>
+        <CardActionArea onClick={() => handleOpenDialog(item)}>
           <ImageRecipe
             imgHeight={height}
-            src={item.Ingredient?.image}
-            alt={item.Ingredient?.name}
+            src={item.ingredient?.image}
+            alt={item.ingredient?.name}
             quality={1}
           />
 
@@ -55,7 +62,7 @@ export function PantryCard({
               color="common.white"
               sx={{ fontWeight: 'bold' }}
             >
-              {getLabelAmount(item.amount, item.Ingredient.isLiquid)}
+              {getLabelAmount(item.amount, item.ingredient.isLiquid)}
             </Typography>
           </Box>
         </CardActionArea>
@@ -76,12 +83,15 @@ export function PantryCard({
               transform: 'scale(1.15)',
             },
           }}
+          onClick={async () => {
+            await hanlePantryItemsChange('remove', [item]);
+          }}
         >
           <CloseRounded fontSize="inherit" />
         </IconButton>
 
         <Box sx={{ p: 1 }}>
-          <NameRecipe centered={true} name={item.Ingredient?.name} />
+          <NameRecipe centered={true} name={item.ingredient?.name} />
         </Box>
       </CustomCard>
     </>
@@ -92,15 +102,15 @@ function getLabelAmount(amount: number, isLiquid: boolean) {
   let amountStr = '';
   if (isLiquid) {
     if (amount >= 1000) {
-      amountStr = `${Math.round(amount / 1000)} lit`;
+      amountStr = `${amount / 1000}  lit`;
     } else {
-      amountStr = `${Math.round(amount)} ml`;
+      amountStr = `${amount} ml`;
     }
   } else {
     if (amount >= 1000) {
-      amountStr = `${Math.round(amount / 1000)} kg`;
+      amountStr = `${amount / 1000} kg`;
     } else {
-      amountStr = `${Math.round(amount)} g`;
+      amountStr = `${amount} g`;
     }
   }
 

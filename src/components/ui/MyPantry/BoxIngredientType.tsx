@@ -6,12 +6,17 @@ import { Pantry_ItemEntity } from '@/lib/models/entities/Pantry_ItemEntity/Pantr
 export function BoxIngredientType({
   displayPantryItem,
   handleOpenDialog,
+  hanlePantryItemsChange,
 }: {
   displayPantryItem: DisplayPantryItem;
   handleOpenDialog: (item: Pantry_ItemEntity) => void;
+  hanlePantryItemsChange: (
+    type: 'add' | 'remove' | 'update',
+    item: Pantry_ItemEntity[]
+  ) => Promise<void>;
 }) {
   const theme = useTheme();
-  const { ingredientType, ingredients } = displayPantryItem;
+
   return (
     <Box
       sx={{
@@ -21,7 +26,7 @@ export function BoxIngredientType({
         border: 1,
         borderColor: 'grey.500',
         overflow: 'hidden',
-        display: ingredients.length > 0 ? 'block' : 'none',
+        display: displayPantryItem.ingredients.length > 0 ? 'block' : 'none',
       }}
     >
       {/* Title */}
@@ -46,7 +51,9 @@ export function BoxIngredientType({
             py: 1,
           }}
         >
-          {ingredientType.name}
+          {displayPantryItem.ingredientType
+            ? displayPantryItem.ingredientType.name
+            : 'Khác'}
         </Typography>
         <Box
           sx={{
@@ -65,7 +72,7 @@ export function BoxIngredientType({
             py: 1,
           }}
         >
-          {ingredients.length}
+          {displayPantryItem.ingredients.length}
         </Typography>
       </Stack>
 
@@ -75,7 +82,7 @@ export function BoxIngredientType({
         sx={{ width: '100%', pt: 2, p: 1 }}
         flexWrap={'wrap'}
       >
-        {ingredients.map((item) => {
+        {displayPantryItem.ingredients.map((item) => {
           return (
             <Box
               key={item.id}
@@ -88,9 +95,12 @@ export function BoxIngredientType({
                 },
                 p: 1,
               }}
-              onClick={() => handleOpenDialog(item)}
             >
-              <PantryCard item={item} />
+              <PantryCard
+                item={item}
+                hanlePantryItemsChange={hanlePantryItemsChange}
+                handleOpenDialog={handleOpenDialog}
+              />
             </Box>
           );
         })}

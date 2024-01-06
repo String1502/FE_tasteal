@@ -10,7 +10,7 @@ import {
   TextField,
   Typography,
 } from '@mui/material';
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { SearchTextField } from '../search/SearchTextField';
 import { DisplayPantryItem } from './PantryContent';
 import { IngredientEntity } from '@/lib/models/entities/IngredientEntity/IngredientEntity';
@@ -19,6 +19,9 @@ import SecondaryCard from '@/components/common/card/SecondaryCard';
 import { removeDiacritics } from '@/utils/format';
 import { CheckCircleRounded, CircleRounded } from '@mui/icons-material';
 import { Pantry_ItemEntity } from '@/lib/models/entities/Pantry_ItemEntity/Pantry_ItemEntity';
+import PantryItemService from '@/lib/services/pantryItemService';
+import AppContext from '@/lib/contexts/AppContext';
+import useSnackbarService from '@/lib/hooks/useSnackbar';
 
 export function AddIngredient({
   pantryDataDisplay,
@@ -30,8 +33,10 @@ export function AddIngredient({
     item: Pantry_ItemEntity[]
   ) => void;
 }) {
+  const { login, handleSpinner } = useContext(AppContext);
   const [openDialog, setOpenDialog] = useState(false);
   const [textSearch, setTextSearch] = useState('');
+  const [snackbarAlert] = useSnackbarService();
 
   const [tabValue, setTabValue] = useState<IngredientEntity['id']>(
     pantryDataDisplay.length > 0 ? pantryDataDisplay[0].ingredientType.id : -1
@@ -45,13 +50,14 @@ export function AddIngredient({
     async function fetch() {
       try {
         const pantry_ingres_ids = pantryDataDisplay
-          .map((item) => item.ingredients.map((ingre) => ingre.id))
+          .map((item) => item.ingredients.map((ingre) => ingre.ingredient_id))
           .flat();
-        setIngredientData(
-          allIngredients.filter((ingre) => {
-            return !pantry_ingres_ids.includes(ingre.id);
-          })
-        );
+
+        const final = allIngredients.filter((ingre) => {
+          return !pantry_ingres_ids.includes(ingre.id);
+        });
+
+        setIngredientData(final);
       } catch (error) {
         console.log(error);
       }
@@ -167,7 +173,31 @@ export function AddIngredient({
                 }}
                 onClick={async () => {
                   // Thêm mới PantryItem
-                  hanlePantryItemsChange('add', []);
+                  if (!login.user || !login.user?.uid) return;
+                  handleSpinner(true);
+                  await Promise.all(
+                    newIngredientIds.map(
+                      async (id) =>
+                        await PantryItemService.AddPantryItem({
+                          account_id: login.user.uid,
+                          ingredient_id: id,
+                          number: amount,
+                        })
+                    )
+                  )
+                    .then((res) => {
+                      const newData: Pantry_ItemEntity[] = res;
+                      hanlePantryItemsChange('add', newData);
+                      snackbarAlert('Thêm thành công', 'success');
+                    })
+                    .catch((err) => {
+                      console.log(err);
+                      snackbarAlert('Thêm thất bại', 'error');
+                    });
+                  handleSpinner(false);
+
+                  setNewIngredientIds([]);
+                  setOpenDialog(false);
                 }}
               >
                 Thêm
@@ -215,10 +245,10 @@ export function AddIngredient({
             }}
           >
             {pantryDataDisplay.length > 0 &&
-              pantryDataDisplay.map((item) => (
+              pantryDataDisplay.map((item, index) => (
                 <Tab
-                  key={item.ingredientType.id}
-                  value={item.ingredientType.id}
+                  key={index}
+                  value={item.ingredientType ? item.ingredientType.id : null}
                   label={
                     <Typography
                       variant="caption"
@@ -227,7 +257,7 @@ export function AddIngredient({
                         color: 'inherit',
                       }}
                     >
-                      {item.ingredientType.name}
+                      {item.ingredientType ? item.ingredientType.name : 'Khác'}
                     </Typography>
                   }
                 />

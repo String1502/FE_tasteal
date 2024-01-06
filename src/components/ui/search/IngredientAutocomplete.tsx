@@ -93,7 +93,7 @@ export function IngredientAutocomplete({
             <BoxImage
               src={option.image}
               alt={option.name}
-              quality={30}
+              quality={1}
               sx={{
                 width: '32px',
                 borderRadius: 2,
