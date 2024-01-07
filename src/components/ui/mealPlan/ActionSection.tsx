@@ -11,9 +11,11 @@ import {
 export function ActionSection({
   weekCounter,
   handleChangeWeekCounter,
+  addAllToCart,
 }: {
   weekCounter: number;
   handleChangeWeekCounter: (value: number) => void;
+  addAllToCart: () => Promise<void>;
 }) {
   const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(
     null
@@ -153,6 +155,9 @@ export function ActionSection({
           size="small"
           sx={{
             px: 2,
+          }}
+          onClick={async () => {
+            await addAllToCart();
           }}
         >
           Thêm vào giỏ đi chợ

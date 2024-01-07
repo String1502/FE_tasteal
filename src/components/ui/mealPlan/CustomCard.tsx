@@ -5,7 +5,10 @@ import NameRecipe from '@/components/common/card/NameRecipe';
 import RatingRecipe from '@/components/common/card/RatingRecipe';
 import TotalTimeRecipe from '@/components/common/card/TotalTimeRecipe';
 import { PageRoute } from '@/lib/constants/common';
+import AppContext from '@/lib/contexts/AppContext';
+import { Plan_ItemEntity } from '@/lib/models/entities/Plan_ItemEntity/Plan_ItemEntity';
 import { RecipeEntity } from '@/lib/models/entities/RecipeEntity/RecipeEntity';
+import { DateDisplay } from '@/pages/MealPlanner';
 import {
   Button,
   CardActionArea,
@@ -13,17 +16,22 @@ import {
   CardProps,
   Typography,
 } from '@mui/material';
-import { useCallback } from 'react';
+import { useCallback, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { v4 as uuidv4 } from 'uuid';
 
 const imgHeight = '124px';
 const padding = 1.5;
 
 function CustomCardMealPlan({
   recipe,
+  AddPlanItem,
+  weekDates,
   ...props
 }: {
   recipe: RecipeEntity;
+  AddPlanItem: (item: Plan_ItemEntity) => Promise<void>;
+  weekDates: DateDisplay;
   props?: CardProps;
 }) {
   const navigate = useNavigate();
@@ -31,15 +39,39 @@ function CustomCardMealPlan({
   const handleCardClick = useCallback(() => {
     navigate(PageRoute.Recipe.Detail(recipe.id));
   }, [navigate, recipe.id]);
+
+  const { login } = useContext(AppContext);
   return (
     <>
       <CustomCard {...props}>
-        <CardActionArea onClick={handleCardClick}>
+        <CardActionArea
+          onClick={async () => {
+            if (!login.user || !login.user?.uid) {
+              return;
+            } else {
+              const data: Plan_ItemEntity = {
+                id: uuidv4(),
+                plan_id: -1,
+                recipe_id: recipe.id,
+                serving_size: recipe.serving_size,
+                order: -1,
+                recipe: recipe,
+                plan: {
+                  id: -1,
+                  account_id: login.user.uid,
+                  date: weekDates.date,
+                },
+              };
+
+              await AddPlanItem(data);
+            }
+          }}
+        >
           <ImageRecipe
             imgHeight={imgHeight}
             src={recipe.image}
             alt={recipe.name}
-            quality={20}
+            quality={10}
           />
           <TotalTimeRecipe
             imgHeight={imgHeight}
