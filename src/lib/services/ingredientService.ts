@@ -81,7 +81,7 @@ class IngredientService {
 
   public static async DeleteIngredient(
     id: IngredientEntity['id']
-  ): Promise<boolean> {
+  ): Promise<IngredientEntity> {
     const requestOptions = {
       method: 'DELETE',
       headers: {
