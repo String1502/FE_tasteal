@@ -428,6 +428,8 @@ const AdminOccasionsCreate: FC = () => {
 
   //#endregion
 
+  console.log(viewForm);
+
   return (
     <>
       <AdminLayout>
@@ -443,7 +445,7 @@ const AdminOccasionsCreate: FC = () => {
                 },
               }}
               onClick={handleNavigateBack}
-              disabled={loading || disabled}
+              disabled={loading}
             >
               <ArrowBack />
             </IconButton>

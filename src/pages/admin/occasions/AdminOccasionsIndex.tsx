@@ -61,7 +61,7 @@ export const AdminOccasionsIndex: FC = () => {
         }
         if (!active) return;
 
-        setRows(occasions);
+        setRows(occasions.sort((a, b) => a.id - b.id));
         setRowCount(occasions.length);
         setLoading(false);
       })();

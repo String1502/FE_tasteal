@@ -469,6 +469,7 @@ const AdminIngredientCreate: FC = () => {
                 },
               }}
               onClick={handleNavigateBack}
+              disabled={loading}
             >
               <ArrowBack />
             </IconButton>
