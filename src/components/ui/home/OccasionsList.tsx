@@ -61,7 +61,7 @@ function OccasionCard({ item }: { item: OccasionEntity }) {
       >
         <BoxImage
           src={item?.image}
-          quality={50}
+          quality={30}
           sx={{
             width: '100%',
             height: '100%',

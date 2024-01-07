@@ -263,8 +263,6 @@ const AdminOccasionsCreate: FC = () => {
       }
     })();
 
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-
     return () => {
       active = false;
     };

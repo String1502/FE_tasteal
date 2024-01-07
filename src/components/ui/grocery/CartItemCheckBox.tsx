@@ -3,6 +3,7 @@ import useSnackbarService from '@/lib/hooks/useSnackbar';
 import { CartEntity } from '@/lib/models/entities/CartEntity/CartEntity';
 import { Cart_ItemEntity } from '@/lib/models/entities/Cart_ItemEntity/Cart_ItemEntity';
 import { IngredientEntity } from '@/lib/models/entities/IngredientEntity/IngredientEntity';
+import { Pantry_ItemEntity } from '@/lib/models/entities/Pantry_ItemEntity/Pantry_ItemEntity';
 import { PersonalCartItemEntity } from '@/lib/models/entities/PersonalCartItemEntity/PersonalCartItemEntity';
 import CartItemService from '@/lib/services/CartItemService';
 import {
@@ -16,7 +17,7 @@ import {
   Typography,
   TypographyProps,
 } from '@mui/material';
-import { useCallback, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 
 function CartItemCheckBox({
   item,
@@ -24,6 +25,7 @@ function CartItemCheckBox({
   type = 'cart',
   handleChangeCartItemData,
   handleChangePersonalCartItemData,
+  pantryItems,
 }: {
   item: Cart_ItemEntity;
   total?: () => number;
@@ -32,6 +34,7 @@ function CartItemCheckBox({
   handleChangePersonalCartItemData?: (
     id: PersonalCartItemEntity['id']
   ) => Promise<void>;
+  pantryItems?: Pantry_ItemEntity[];
 }) {
   const typoProps: TypographyProps = {
     variant: 'body2',
@@ -60,7 +63,7 @@ function CartItemCheckBox({
           isBought
         );
         if (result) {
-          snackbarAlert('Check đã mua thành công!', 'success');
+          snackbarAlert('Cập nhật thành công!', 'success');
         } else snackbarAlert('Thao tác không thành công.', 'error');
       } catch (error) {
         console.log(error);
@@ -68,6 +71,17 @@ function CartItemCheckBox({
     },
     [item, isBought]
   );
+
+  const mightHave = useMemo(() => {
+    if (!pantryItems) {
+      return undefined;
+    }
+    return checkMightHave(
+      pantryItems.find((p) => p.ingredient_id === item.ingredient_id),
+      item,
+      total()
+    );
+  }, [pantryItems, item, total]);
 
   return (
     <FormControlLabel
@@ -88,9 +102,9 @@ function CartItemCheckBox({
           onChange={async () => {
             setIsBought(!isBought);
             if (type === 'cart' && handleChangeCartItemData) {
-              handleChangeCartItemData(item.cartId, item.ingredientId);
+              handleChangeCartItemData(item.cartId, item.ingredient_id);
               // Cập nhật đã/chưa mua
-              await updateCartItem(item.cartId, item.ingredientId, !isBought);
+              await updateCartItem(item.cartId, item.ingredient_id, !isBought);
               return;
             }
             if (type === 'personal' && handleChangePersonalCartItemData) {
@@ -113,7 +127,7 @@ function CartItemCheckBox({
         >
           <BoxImage
             src={item.ingredient?.image}
-            quality={30}
+            quality={1}
             sx={{
               height: '60px',
               width: '60px',
@@ -135,7 +149,44 @@ function CartItemCheckBox({
             <Typography {...typoProps}>
               {Math.ceil(item.amount)}
               {total ? (
-                <span style={{ color: 'grey' }}> /{Math.ceil(total())}</span>
+                <span style={{ color: 'grey' }}>
+                  {' '}
+                  /{Math.ceil(total())}
+                  {item?.ingredient.isLiquid ? ' (ml)' : ' (g)'}
+                </span>
+              ) : (
+                ''
+              )}
+              {pantryItems && mightHave ? (
+                <Typography
+                  component={'span'}
+                  variant="caption"
+                  sx={{
+                    color: 'white',
+                    bgcolor: 'primary.main',
+                    px: 0.8,
+                    py: 0.4,
+                    ml: 1,
+                    borderRadius: '6px',
+                  }}
+                >
+                  Tủ lạnh có đủ
+                </Typography>
+              ) : mightHave == false ? (
+                <Typography
+                  component={'span'}
+                  variant="caption"
+                  sx={{
+                    color: 'white',
+                    bgcolor: 'primary.light',
+                    px: 0.8,
+                    py: 0.4,
+                    ml: 1,
+                    borderRadius: '6px',
+                  }}
+                >
+                  Tủ lạnh có nhưng thiếu
+                </Typography>
               ) : (
                 ''
               )}
@@ -148,3 +199,22 @@ function CartItemCheckBox({
 }
 
 export default CartItemCheckBox;
+
+function checkMightHave(
+  pantryItem: Pantry_ItemEntity | undefined,
+  cartItem: Cart_ItemEntity,
+  total: number
+) {
+  if (!pantryItem) {
+    return undefined;
+  }
+  if (pantryItem.ingredient_id === cartItem.ingredient_id) {
+    if (pantryItem.amount >= total) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  return undefined;
+}

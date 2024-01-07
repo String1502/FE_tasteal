@@ -18,7 +18,7 @@ export const convertPersonalCartItemToCartItem = (
 ) => {
   return {
     cartId: personalCartItem.id,
-    ingredientId: personalCartItem.ingredient_id,
+    ingredient_id: personalCartItem.ingredient_id,
     amount: personalCartItem.amount,
     isBought: personalCartItem.is_bought,
     ingredient: personalCartItem.ingredient,

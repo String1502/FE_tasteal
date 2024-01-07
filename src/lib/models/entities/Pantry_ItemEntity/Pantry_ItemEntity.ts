@@ -6,6 +6,6 @@ export type Pantry_ItemEntity = {
   pantry_id?: number;
   ingredient_id?: number;
   amount: number;
-  Pantry?: PantryEntity;
-  Ingredient?: IngredientEntity;
+  pantry?: PantryEntity;
+  ingredient?: IngredientEntity;
 };

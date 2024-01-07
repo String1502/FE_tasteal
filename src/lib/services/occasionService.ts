@@ -84,7 +84,9 @@ class OccasionService {
       });
   }
 
-  public static AddOccasion(newOccasion: OccasionReq): Promise<OccasionEntity> {
+  public static async AddOccasion(
+    newOccasion: OccasionReq
+  ): Promise<OccasionEntity> {
     const requestOptions: RequestInit = {
       method: 'POST',
       headers: {

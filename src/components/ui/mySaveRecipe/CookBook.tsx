@@ -87,7 +87,7 @@ export function CookBook({
       >
         <BoxImage
           src={choosing?.CookbookRecipes[0]?.recipe?.image}
-          quality={30}
+          quality={1}
           sx={{
             aspectRatio: '1/1',
             borderRadius: '50%',

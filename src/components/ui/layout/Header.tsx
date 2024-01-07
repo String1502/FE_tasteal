@@ -70,14 +70,14 @@ export function Header(props: Props) {
       .then(() => {
         snackbarAlert(MESSAGE_CONSTANTS.LOGOUT_SUCESS, 'success');
         if (login.handleLogin) {
-          login.handleLogin(false);
+          login.handleLogin(false, undefined);
         }
         navigate(PageRoute.Home);
       })
       .catch(() => {
         snackbarAlert(MESSAGE_CONSTANTS.LOGOUT_FAIL, 'warning');
         if (login.handleLogin) {
-          login.handleLogin(false);
+          login.handleLogin(false, undefined);
         }
       });
   }, []);

@@ -132,6 +132,7 @@ export function ChatBody() {
                 <BoxImage
                   src={item.sender.avatar}
                   alt={item.sender.name}
+                  quality={1}
                   sx={{
                     width: '100%',
                     height: '100%',

@@ -41,14 +41,14 @@ import { nanoid } from 'nanoid';
 import { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { v4 as uuidv4 } from 'uuid';
-import {
+import 
   DEFAULT_NEW_RECIPE,
-  LocalMessageConstant,
+  resolveDirectionsImage,
+  {LocalMessageConstant,
   NewRecipe,
   createDebugString,
-  createPutBody,
-  resolveDirectionsImage,
-} from './CreateRecipe';
+  createPutBody,}
+ from './CreateRecipe';
 
 //#endregion
 export const CreateRecipe: React.FunctionComponent<{ edit?: boolean }> = ({
@@ -327,7 +327,7 @@ export const CreateRecipe: React.FunctionComponent<{ edit?: boolean }> = ({
           ),
           ingredients: recipe.ingredients.map((ingredient) => ({
             id: nanoid(6),
-            ingredientId: ingredient.Id,
+            ingredientId: ingredient.id,
             name: ingredient.name,
             amount: ingredient.amount,
           })),

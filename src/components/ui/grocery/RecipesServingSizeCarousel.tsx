@@ -5,45 +5,48 @@ import { RecipeServingSizeCard } from './RecipeServingSizeCard';
 import { Box } from '@mui/material';
 
 export function RecipesServingSizeCarousel({
-    array,
-    handleServingSizeChange,
+  array,
+  handleServingSizeChange,
+  DeleteCartById,
 }: {
-    array: CartEntity[];
-    handleServingSizeChange: (cartId: number, newValue: number) => void;
+  array: CartEntity[];
+  handleServingSizeChange: (cartId: number, newValue: number) => Promise<void>;
+  DeleteCartById: (CardId: CartEntity['id']) => Promise<void>;
 }) {
-    return (
+  return (
+    <>
+      {array.length > 0 && (
+        <CustomCarousel
+          responsive={responsive}
+          removeArrowOnDeviceType={['sm', 'xs']}
+        >
+          {array.map((item) => (
+            <RecipeServingSizeCard
+              key={item.id}
+              cart={item}
+              handleServingSizeChange={handleServingSizeChange}
+              DeleteCartById={DeleteCartById}
+              props={{
+                sx: {
+                  width: { xs: '96%', sm: cardWidth },
+                  mt: 2,
+                  mb: 4,
+                },
+              }}
+            />
+          ))}
+        </CustomCarousel>
+      )}
+      {array.length === 0 && (
         <>
-            {array.length > 0 && (
-                <CustomCarousel
-                    responsive={responsive}
-                    removeArrowOnDeviceType={['sm', 'xs']}
-                >
-                    {array.map((item) => (
-                        <RecipeServingSizeCard
-                            key={item.id}
-                            cart={item}
-                            handleServingSizeChange={handleServingSizeChange}
-                            props={{
-                                sx: {
-                                    width: { xs: '96%', sm: cardWidth },
-                                    mt: 2,
-                                    mb: 4,
-                                },
-                            }}
-                        />
-                    ))}
-                </CustomCarousel>
-            )}
-            {array.length === 0 && (
-                <>
-                    <Box
-                        sx={{
-                            mt: 2,
-                            mb: 4,
-                        }}
-                    />
-                </>
-            )}
+          <Box
+            sx={{
+              mt: 2,
+              mb: 4,
+            }}
+          />
         </>
-    );
+      )}
+    </>
+  );
 }

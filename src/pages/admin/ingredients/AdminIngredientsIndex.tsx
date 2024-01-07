@@ -142,7 +142,7 @@ export const AdminIngredientsIndex: FC = () => {
 
     (async () => {
       try {
-        const types = await IngredientTypeService.Get();
+        const types = await IngredientTypeService.GetAllIngredientTypes();
         setIngredientTypes(types);
       } catch (error) {
         console.log(error);

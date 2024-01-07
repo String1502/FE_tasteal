@@ -32,7 +32,6 @@ function Home() {
   return (
     <Layout>
       <Banner />
-
       <Grid
         container
         alignItems={'stretch'}

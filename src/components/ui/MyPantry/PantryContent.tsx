@@ -12,7 +12,7 @@ import { AddIngredient } from './AddIngredient';
 import useSnackbarService from '@/lib/hooks/useSnackbar';
 
 export type DisplayPantryItem = {
-  ingredientType: Ingredient_TypeEntity;
+  ingredientType?: Ingredient_TypeEntity;
   ingredients: Pantry_ItemEntity[];
 };
 
@@ -24,7 +24,7 @@ function PantryContent({
   hanlePantryItemsChange: (
     type: 'add' | 'remove' | 'update',
     item: Pantry_ItemEntity[]
-  ) => void;
+  ) => Promise<void>;
 }) {
   const [snackbarAlert] = useSnackbarService();
 
@@ -57,22 +57,33 @@ function PantryContent({
   useEffect(() => {
     async function fetch() {
       try {
-        const final = ingredientType
-          .map((type) => {
-            return {
-              ingredientType: type,
-              ingredients: pantryItems.filter((item) => {
-                return item.Ingredient?.type_id == type.id;
-              }),
-            };
-          })
-          .sort((a, b) => b.ingredients.length - a.ingredients.length);
+        let final = ingredientType.map((type) => {
+          return {
+            ingredientType: type,
+            ingredients: pantryItems.filter((item) => {
+              return item.ingredient?.type_id == type.id;
+            }),
+          };
+        });
+
+        if (pantryItems.map((item) => item.ingredient.type_id).includes(null)) {
+          final.push({
+            ingredientType: null,
+            ingredients: pantryItems.filter((item) => {
+              return item.ingredient.type_id == null;
+            }),
+          });
+        }
+
+        final = final.sort(
+          (a, b) => b.ingredients.length - a.ingredients.length
+        );
 
         setPantryDataDisplay(
           final.map((item) => ({
             ...item,
             ingredients: item.ingredients.sort((a, b) =>
-              a.Ingredient?.name < b.Ingredient?.name ? -1 : 1
+              a.ingredient?.name < b.ingredient?.name ? -1 : 1
             ),
           }))
         );
@@ -82,6 +93,8 @@ function PantryContent({
     }
     fetch();
   }, [pantryItems, ingredientType]);
+
+  console.log(pantryDataDisplay);
 
   useEffect(() => {
     async function fetch() {
@@ -140,19 +153,20 @@ function PantryContent({
                 sx={{ width: '100%', height: '100%' }}
                 spacing={2}
               >
-                {pantryDataDisplay.map((item) => {
+                {pantryDataDisplay.map((item, index) => {
                   return (
                     <BoxIngredientType
-                      key={item.ingredientType.id}
+                      key={index}
                       displayPantryItem={{
                         ingredientType: item.ingredientType,
                         ingredients: item.ingredients.filter((ingre) =>
                           removeDiacritics(
-                            ingre.Ingredient?.name.toLowerCase()
+                            ingre.ingredient?.name.toLowerCase()
                           ).includes(removeDiacritics(searchText.toLowerCase()))
                         ),
                       }}
                       handleOpenDialog={handleOpenDialog}
+                      hanlePantryItemsChange={hanlePantryItemsChange}
                     />
                   );
                 })}
@@ -166,7 +180,7 @@ function PantryContent({
       <SlideInDialog
         open={openDialog}
         handleClose={() => setOpenDialog(false)}
-        title={`${editPantryItem?.Ingredient.name}`}
+        title={`${editPantryItem?.ingredient.name}`}
         content={
           <>
             <Box
@@ -208,7 +222,7 @@ function PantryContent({
                   fontWeight: 'bold',
                 }}
               >
-                {editPantryItem?.Ingredient.isLiquid ? 'ml' : 'g'}
+                {editPantryItem?.ingredient.isLiquid ? 'ml' : 'g'}
               </Box>
             </Box>
           </>

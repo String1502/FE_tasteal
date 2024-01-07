@@ -492,31 +492,31 @@ export const carts: CartEntity[] = [
 export const cartItems: Cart_ItemEntity[] = [
   {
     cartId: 1,
-    ingredientId: 1,
+    ingredient_id: 1,
     amount: 5,
     isBought: true,
   },
   {
     cartId: 1,
-    ingredientId: 2,
+    ingredient_id: 2,
     amount: 2,
     isBought: true,
   },
   {
     cartId: 1,
-    ingredientId: 3,
+    ingredient_id: 3,
     amount: 5,
     isBought: false,
   },
   {
     cartId: 2,
-    ingredientId: 1,
+    ingredient_id: 1,
     amount: 2,
     isBought: false,
   },
   {
     cartId: 2,
-    ingredientId: 2,
+    ingredient_id: 2,
     amount: 3,
     isBought: false,
   },
