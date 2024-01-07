@@ -1,6 +1,7 @@
 import CommonIndexPage from '@/components/ui/admin/CommonAdminIndexPage';
 import AdminLayout from '@/components/ui/layout/AdminLayout';
 import { PageRoute } from '@/lib/constants/common';
+import useSnackbarService from '@/lib/hooks/useSnackbar';
 import { IngredientPagination } from '@/lib/models/dtos/Response/IngredientRes/IngredientRes';
 import { IngredientEntity } from '@/lib/models/entities/IngredientEntity/IngredientEntity';
 import IngredientService from '@/lib/services/ingredientService';
@@ -26,6 +27,7 @@ export const AdminIngredientsIndex: FC = () => {
   //#region Hooks
 
   const navigate = useNavigate();
+  const [snackbarAlert] = useSnackbarService();
 
   //#endregion
   //#region Redux
@@ -39,6 +41,21 @@ export const AdminIngredientsIndex: FC = () => {
     },
     [navigate]
   );
+  const handleDeleteRow = async (id: number) => {
+    if (!id) {
+      snackbarAlert('Nguyên liệu đã không bị xóa!', 'warning');
+      return;
+    }
+
+    try {
+      const ingredient = await IngredientService.DeleteIngredient(id);
+      console.log(ingredient);
+      snackbarAlert(`Nguyên này đã bị xóa thành công!`, 'success');
+    } catch (err) {
+      console.log(err);
+      snackbarAlert('Nguyên liệu đã không bị xóa!', 'warning');
+    }
+  };
 
   //#endregion
   //#region Datagrid columns
@@ -168,6 +185,7 @@ export const AdminIngredientsIndex: FC = () => {
         onPaginationModelChange={setPaginationModel}
         onCreateClick={handleCreateRow}
         onViewClick={handleViewRow}
+        onDeleteClick={handleDeleteRow}
       />
     </AdminLayout>
   );

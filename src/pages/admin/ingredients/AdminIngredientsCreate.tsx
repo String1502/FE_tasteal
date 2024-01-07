@@ -323,7 +323,7 @@ const AdminIngredientCreate: FC = () => {
       const updatedRow = await IngredientService.Update(reqBody);
       console.log(updatedRow);
 
-      switchModeToView(id);
+      switchModeToView(parseInt(id));
       snackbarAlert('Nguyên liệu cập nhật thành công!', 'success');
     } catch (err) {
       console.log(err);

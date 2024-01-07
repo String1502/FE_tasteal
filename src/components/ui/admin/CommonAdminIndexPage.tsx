@@ -1,7 +1,7 @@
 import CustomGridToolbar from '@/components/common/datagrid/CustomGridToolbar';
 import FormTitle from '@/components/common/typos/FormTitle';
 import useSnackbarService from '@/lib/hooks/useSnackbar';
-import { Add, Close, Delete, Edit, RemoveRedEye } from '@mui/icons-material';
+import { Add, Close, Delete, RemoveRedEye } from '@mui/icons-material';
 import {
   Box,
   Button,
@@ -51,7 +51,7 @@ export default function CommonIndexPage<RowType>({
 }: CommonIndexPageProps<RowType>) {
   //#region Hooks
 
-  const [snackbarAlert] = useSnackbarService();
+  // const [snackbarAlert] = useSnackbarService();
 
   //#endregion
   //#region Delete Operation

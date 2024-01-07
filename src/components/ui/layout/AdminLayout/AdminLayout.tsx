@@ -1,12 +1,5 @@
 import { PageRoute } from '@/lib/constants/common';
-import {
-  CalendarMonth,
-  Category,
-  Flatware,
-  Home,
-  Person,
-  Settings,
-} from '@mui/icons-material';
+import { CalendarMonth, Category, Flatware, Home } from '@mui/icons-material';
 import {
   Box,
   Grid,
@@ -33,8 +26,14 @@ const AdminLayout: FC<PropsWithChildren> = ({ children }) => {
 
   return (
     <Grid container spacing={2} sx={{ p: 4 }}>
-      <Grid item xs={2} sx={[commonStyle]}>
-        <Paper elevation={4}>
+      <Grid item xs={2.5} sx={[commonStyle]}>
+        <Paper
+          elevation={4}
+          sx={{
+            borderRadius: 4,
+            overflow: 'hidden',
+          }}
+        >
           <Box component="nav">
             <ListItemButton>
               <ListItemIcon>
@@ -51,14 +50,11 @@ const AdminLayout: FC<PropsWithChildren> = ({ children }) => {
             </ListItemButton>
           </Box>
         </Paper>
-        <Paper elevation={4} sx={{ mt: 1 }}>
+        <Paper
+          elevation={4}
+          sx={{ mt: 1, borderRadius: 4, overflow: 'hidden' }}
+        >
           <Box>
-            <AdminListButton
-              Icon={Person}
-              label="Người dùng"
-              path="/admin/users"
-              selected={checkSelected('/admin/users')}
-            />
             <AdminListButton
               Icon={Flatware}
               label="Nguyên liệu"
@@ -77,17 +73,18 @@ const AdminLayout: FC<PropsWithChildren> = ({ children }) => {
               path={PageRoute.Admin.Occasions.Index}
               selected={checkSelected(PageRoute.Admin.Occasions.Index)}
             />
-            <AdminListButton
-              Icon={Settings}
-              label="Cài đặt"
-              path="/admin/settings"
-              selected={checkSelected('/admin/settings')}
-            />
           </Box>
         </Paper>
       </Grid>
-      <Grid item xs={10} sx={[commonStyle]}>
-        <Paper elevation={4}>{children}</Paper>
+      <Grid item xs={9.5} sx={[commonStyle]}>
+        <Paper
+          elevation={4}
+          sx={{
+            borderRadius: 4,
+          }}
+        >
+          {children}
+        </Paper>
       </Grid>
     </Grid>
   );
