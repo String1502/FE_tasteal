@@ -15,7 +15,7 @@ import {
 import { OccasionEntity } from '@/lib/models/entities/OccasionEntity/OccasionEntity';
 import OccasionService from '@/lib/services/occasionService';
 import { convertToSnakeCase } from '@/utils/format';
-import { ArrowBack, Close, RestaurantRounded } from '@mui/icons-material';
+import { ArrowBack, Close } from '@mui/icons-material';
 import {
   Button,
   CircularProgress,
@@ -361,7 +361,7 @@ const AdminOccasionsCreate: FC = () => {
     setLoading(true);
     try {
       const reqBody = await updateForm.getReq(imageFile);
-      const occasion = await OccasionService.UpdateOccasion(reqBody);
+      await OccasionService.UpdateOccasion(reqBody);
 
       switchModeToView(id);
       snackbarAlert('Dịp cập nhật thành công!', 'success');
@@ -398,8 +398,7 @@ const AdminOccasionsCreate: FC = () => {
     setLoading(true);
 
     try {
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const deletedRow = await OccasionService.DeleteOccasion(Number(id));
+      await OccasionService.DeleteOccasion(Number(id));
       snackbarAlert('Dịp lễ đã được xóa thành công', 'success');
       navigate(PageRoute.Admin.Occasions.Index);
     } catch (err) {

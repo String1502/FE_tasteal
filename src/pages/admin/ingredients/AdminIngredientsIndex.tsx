@@ -51,7 +51,7 @@ export const AdminIngredientsIndex: FC = () => {
     setLoading(true);
 
     try {
-      const ingredient = await IngredientService.DeleteIngredient(id);
+      await IngredientService.DeleteIngredient(id);
       snackbarAlert(`Nguyên này đã bị xóa thành công!`, 'success');
       setRows(rows.filter((row) => row.id !== id));
     } catch (err) {

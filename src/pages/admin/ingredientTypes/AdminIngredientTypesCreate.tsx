@@ -164,10 +164,7 @@ const AdminIngredientTypesCreate: FC = () => {
 
     try {
       const reqBody = { ...updateForm };
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const updatedRow = await IngredientTypeService.UpdateIngredientType(
-        reqBody
-      );
+      await IngredientTypeService.UpdateIngredientType(reqBody);
 
       switchModeToView(parseInt(id));
       snackbarAlert('Loại nguyên liệu cập nhật thành công!', 'success');
@@ -204,9 +201,7 @@ const AdminIngredientTypesCreate: FC = () => {
     setLoading(true);
 
     try {
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const deletedIngredientType =
-        await IngredientTypeService.DeleteIngredientType(Number(id));
+      await IngredientTypeService.DeleteIngredientType(Number(id));
       snackbarAlert('Nguyên liệu đã được xóa thành công', 'success');
       navigate(PageRoute.Admin.IngredientTypes.Index);
     } catch (err) {

@@ -17,7 +17,6 @@ import { IngredientEntity } from '@/lib/models/entities/IngredientEntity/Ingredi
 import { Ingredient_TypeEntity } from '@/lib/models/entities/Ingredient_TypeEntity/Ingredient_TypeEntity';
 import IngredientService from '@/lib/services/ingredientService';
 import IngredientTypeService from '@/lib/services/ingredientTypeService';
-import OccasionService from '@/lib/services/occasionService';
 import { convertToSnakeCase } from '@/utils/format';
 import { ArrowBack, Close } from '@mui/icons-material';
 import {
@@ -331,12 +330,16 @@ const AdminIngredientCreate: FC = () => {
       snackbarAlert('Vui lòng nhập tên nguyên liệu!', 'warning');
       return false;
     }
-    if ((form instanceof IngredientReqCreator || form instanceof IngredientReqPutCreator) && !form.ingredient_type.id) {
+    if (
+      (form instanceof IngredientReqCreator ||
+        form instanceof IngredientReqPutCreator) &&
+      !form.ingredient_type.id
+    ) {
       snackbarAlert('Vui lòng chọn loại nguyên liệu!', 'warning');
       return false;
     }
     return true;
-  }
+  };
 
   const handleCreateSubmit = async () => {
     if (!validate()) return;
@@ -421,8 +424,7 @@ const AdminIngredientCreate: FC = () => {
     setLoading(true);
 
     try {
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const deletedRow = await IngredientService.DeleteIngredient(Number(id));
+      await IngredientService.DeleteIngredient(Number(id));
       snackbarAlert('Nguyên liệu đã được xóa thành công', 'success');
       navigate(PageRoute.Admin.Ingredients.Index);
     } catch (err) {

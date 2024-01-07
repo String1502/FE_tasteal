@@ -1,4 +1,3 @@
-import CustomGridToolbar from '@/components/common/datagrid/CustomGridToolbar';
 import FormTitle from '@/components/common/typos/FormTitle';
 import { Add, Close, Delete, RemoveRedEye } from '@mui/icons-material';
 import {
@@ -135,14 +134,6 @@ export default function CommonIndexPage<RowType>({
           loading={loading}
           rows={rows}
           columns={columns}
-          slots={{
-            toolbar: CustomGridToolbar,
-          }}
-          slotProps={{
-            toolbar: {
-              showQuickFilter: true,
-            },
-          }}
           paginationMode="server"
           rowCount={rowCount}
           paginationModel={paginationModel}
