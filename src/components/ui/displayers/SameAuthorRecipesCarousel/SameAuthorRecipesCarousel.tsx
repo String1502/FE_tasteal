@@ -15,6 +15,8 @@ type SameAuthorRecipesCarouselProps = {
 const SameAuthorRecipesCarousel: FC<SameAuthorRecipesCarouselProps> = ({
   recipes,
 }) => {
+  console.log(recipes);
+
   return (
     <>
       {recipes && recipes.length > 0 ? (

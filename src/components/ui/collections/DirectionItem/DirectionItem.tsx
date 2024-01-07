@@ -7,12 +7,14 @@ type DirectionItemProps = {
   value: Omit<Direction, 'recipe_id'>;
   onImageClick?: () => void;
   last?: boolean;
+  hideImage?: boolean;
 };
 
 const DirectionItem: FC<DirectionItemProps> = ({
   value,
   last = false,
   onImageClick,
+  hideImage = false,
 }) => {
   const handleImageClick = useCallback(() => {
     if (value.image && onImageClick) {
@@ -45,6 +47,7 @@ const DirectionItem: FC<DirectionItemProps> = ({
               outlineOffset: '2px',
               cursor: 'pointer',
             },
+            display: hideImage ? 'none' : 'block',
           }}
         />
       ) : null}

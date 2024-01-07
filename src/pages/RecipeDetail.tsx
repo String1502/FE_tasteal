@@ -1,5 +1,4 @@
 import TastealBreadCrumbs from '@/components/common/breadcrumbs/TastealBreadcrumbs';
-import TastealIconButton from '@/components/common/buttons/TastealIconButton';
 import BoxImage from '@/components/common/image/BoxImage';
 import WithFallback from '@/components/common/layouts/WithFallback';
 import TastealTextField from '@/components/common/textFields/TastealTextField';
@@ -27,19 +26,7 @@ import RatingService, {
 } from '@/lib/services/ratingService';
 import RecipeService from '@/lib/services/recipeService';
 import { createDebugStringFormatter } from '@/utils/debug/formatter';
-import {
-  Add,
-  Bookmark,
-  BookmarkOutlined,
-  Close,
-  Edit,
-  Facebook,
-  Mail,
-  Pinterest,
-  PrintOutlined,
-  StarRateRounded,
-  Twitter,
-} from '@mui/icons-material';
+import { Close, Edit, StarRateRounded } from '@mui/icons-material';
 import {
   Avatar,
   Box,
@@ -108,11 +95,13 @@ const RecipeDetail: FC = () => {
   const [loading, setLoading] = useState(false);
 
   //#endregion
+
   //#region Destructuring
 
   const { id } = useParams();
 
   //#endregion
+
   //#region Hooks
 
   const { handleSpinner, login } = useContext(AppContext);
@@ -123,6 +112,7 @@ const RecipeDetail: FC = () => {
   } = useContext(AppContext);
 
   //#endregion
+
   //#region Recipe
 
   const [isRecipeFound, setIsRecipeFound] = useState(true);
@@ -160,6 +150,7 @@ const RecipeDetail: FC = () => {
   }, [handleSpinner, id]);
 
   //#endregion
+
   //#region Nutrition
 
   const [nutritionPerServingModalOpen, setNutritionPerServingModalOpen] =
@@ -170,6 +161,7 @@ const RecipeDetail: FC = () => {
   }, [setNutritionPerServingModalOpen]);
 
   //#endregion
+
   //#region Edit Recipe
 
   const canEditRecipe = useMemo(() => {
@@ -196,6 +188,7 @@ const RecipeDetail: FC = () => {
   }, [id, navigate, snackbarAlert]);
 
   //#endregion
+
   //#region Direction
 
   const [viewDirectionImageUrl, setViewDirectionImageUrl] = useState('');
@@ -212,6 +205,7 @@ const RecipeDetail: FC = () => {
   }, []);
 
   //#endregion
+
   //#region Comment
 
   const [comment, setComment] = useState('');
@@ -260,6 +254,7 @@ const RecipeDetail: FC = () => {
   }
 
   //#endregion
+
   //#region Rating
 
   const [rating, setRating] = useState(0);
@@ -299,6 +294,8 @@ const RecipeDetail: FC = () => {
     }
   }
 
+  //#endregion
+
   //#region Others
 
   const recipeBrief = useMemo(() => {
@@ -313,16 +310,10 @@ const RecipeDetail: FC = () => {
     return `${ingredientCount} NGUYÊN LIỆU • ${directionCount} BƯỚC • ${totalTime} PHÚT`;
   }, [recipe]);
 
-  const authorLink = useMemo(() => {
-    if (!recipe) {
-      return '';
-    }
-    const route = `/partner/${recipe.author.uid}`;
-    const url = `${window.location.origin}${route}`;
-    return url;
-  }, [recipe]);
-
   //#endregion
+
+  // Ẩn hình
+  const [hideImage, setHideImage] = useState(false);
 
   return (
     <Layout>
@@ -482,27 +473,15 @@ const RecipeDetail: FC = () => {
             </Grid>
 
             <Grid item xs={4}>
-              <SimpleContainer>
+              {/* <SimpleContainer>
                 {loading ? (
                   <Skeleton variant="rounded" animation="wave" height={60} />
                 ) : (
                   <Box display="flex" flexDirection={'column'} gap={1}>
                     <Box display="flex" gap={1}>
-                      <TastealIconButton>
-                        <PrintOutlined color="primary" />
-                      </TastealIconButton>
-                      <TastealIconButton>
-                        <Pinterest color="primary" />
-                      </TastealIconButton>
-                      <TastealIconButton>
-                        <Facebook color="primary" />
-                      </TastealIconButton>
-                      <TastealIconButton>
-                        <Twitter color="primary" />
-                      </TastealIconButton>
-                      <TastealIconButton>
-                        <Mail color="primary" />
-                      </TastealIconButton>
+                      <Typography variant="h6" fontWeight={'bold'}>
+                        Hành động
+                      </Typography>
                     </Box>
                     <Button variant="contained" startIcon={<Bookmark />}>
                       LƯU CÔNG THỨC
@@ -522,7 +501,7 @@ const RecipeDetail: FC = () => {
                     </Button>
                   </Box>
                 )}
-              </SimpleContainer>
+              </SimpleContainer> */}
 
               <SimpleContainer sx={{ mt: 2 }}>
                 {loading ? (
@@ -533,7 +512,7 @@ const RecipeDetail: FC = () => {
                       <CustomAvatar path={recipe?.author.avatar} />
                       <Link
                         component={RouterLink}
-                        to={`/partner/${recipe?.author.uid}`}
+                        to={PageRoute.Partner(recipe?.author.uid)}
                       >
                         <Typography fontWeight={'bold'}>
                           {recipe?.author.name}
@@ -543,7 +522,6 @@ const RecipeDetail: FC = () => {
                     <Typography color="gray">
                       {recipe?.author.introduction}
                     </Typography>
-                    {/* TODO: Implementation this */}
                     <Link
                       color="primary.main"
                       fontWeight={'bold'}
@@ -554,7 +532,7 @@ const RecipeDetail: FC = () => {
                         textOverflow: 'ellipsis',
                       }}
                     >
-                      {authorLink}
+                      {recipe?.author.link}
                     </Link>
                   </Box>
                 )}
@@ -579,7 +557,13 @@ const RecipeDetail: FC = () => {
                 {loading ? (
                   <Skeleton variant="rounded" animation="wave" height={20} />
                 ) : (
-                  <Link href="#">Ẩn hình ảnh</Link>
+                  <Link
+                    onClick={() => {
+                      setHideImage(!hideImage);
+                    }}
+                  >
+                    {hideImage ? 'Hiện' : 'Ẩn'} hình ảnh
+                  </Link>
                 )}
               </Stack>
 
@@ -596,6 +580,7 @@ const RecipeDetail: FC = () => {
                         onImageClick={() =>
                           handleOpenViewDirectionImage(direction.image)
                         }
+                        hideImage={hideImage}
                       />
                     ))}
                   </>
@@ -630,7 +615,7 @@ const RecipeDetail: FC = () => {
                       fontSize={20}
                       fontWeight={'bold'}
                     >
-                      Chạm để đánh giá:
+                      Đánh giá:
                     </Typography>
                     <Rating
                       size="large"
@@ -704,7 +689,7 @@ const RecipeDetail: FC = () => {
                   <Button
                     variant="contained"
                     size="large"
-                    sx={{ alignSelf: 'center' }}
+                    sx={{ alignSelf: 'center', mb: 2 }}
                     onClick={() => alert('Load more comments')}
                   >
                     Hiện thêm
@@ -712,45 +697,6 @@ const RecipeDetail: FC = () => {
                 </>
               )}
             </Stack>
-
-            {/* <Box width="60%">
-            <BigSectionHeading>Tags</BigSectionHeading>
-            <Box sx={{ display: "flex", gap: 2, mt: 1, flexWrap: "wrap" }}>
-              {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((num, index) => (
-                <TagChip key={index} label={`Tag ${num}`} />
-              ))}
-            </Box>
-          </Box> */}
-
-            <Divider sx={{ width: '60%' }} />
-
-            <Box display={'flex'} justifyContent={'space-between'} width="60%">
-              <Box display="flex" alignItems={'center'} gap={1}>
-                <TastealIconButton>
-                  <BookmarkOutlined color="primary" />
-                </TastealIconButton>
-                <Typography color="primary.main" fontSize={16}>
-                  Đã lưu {122} (not implemented yet)
-                </Typography>
-              </Box>
-              <Box display="flex" gap={1}>
-                <TastealIconButton>
-                  <PrintOutlined color="primary" />
-                </TastealIconButton>
-                <TastealIconButton>
-                  <Pinterest color="primary" />
-                </TastealIconButton>
-                <TastealIconButton>
-                  <Facebook color="primary" />
-                </TastealIconButton>
-                <TastealIconButton>
-                  <Twitter color="primary" />
-                </TastealIconButton>
-                <TastealIconButton>
-                  <Mail color="primary" />
-                </TastealIconButton>
-              </Box>
-            </Box>
 
             <Box
               component="img"
@@ -779,6 +725,9 @@ const RecipeDetail: FC = () => {
                       textDecoration: 'underline',
                     },
                   }}
+                  onClick={() =>
+                    navigate(PageRoute.Partner(recipe?.author.uid))
+                  }
                 >
                   Xem tất cả
                 </Button>
@@ -787,7 +736,11 @@ const RecipeDetail: FC = () => {
                 {loading ? (
                   <Skeleton variant="rounded" animation="wave" height={320} />
                 ) : (
-                  <SameAuthorRecipesCarousel recipes={recipe?.relatedRecipes} />
+                  <SameAuthorRecipesCarousel
+                    recipes={recipe?.relatedRecipes.filter(
+                      (item) => item.id !== recipe.id
+                    )}
+                  />
                 )}
               </Box>
             </Box>
@@ -856,7 +809,17 @@ const RecipeDetail: FC = () => {
 function CustomAvatar({ path }: { path: string }) {
   const avatar = useFirebaseImage(path);
 
-  return <Avatar src={avatar} />;
+  return (
+    <Avatar>
+      <BoxImage
+        src={avatar}
+        sx={{
+          width: '100%',
+          height: '100%',
+        }}
+      />
+    </Avatar>
+  );
 }
 
 function RecipeNotFound() {
