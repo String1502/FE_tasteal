@@ -34,6 +34,8 @@ import Search from './pages/Search';
 import SignIn from './pages/SignIn';
 import SignUp from './pages/SignUp';
 import SignUpEmail from './pages/SignUpEmail';
+import AdminIngredientTypesCreate from './pages/admin/ingredientTypes/AdminIngredientTypesCreate';
+import { AdminIngredientTypesIndex } from './pages/admin/ingredientTypes/AdminIngredientTypesIndex';
 import AdminIngredientCreate from './pages/admin/ingredients/AdminIngredientsCreate';
 import { AdminIngredientsIndex } from './pages/admin/ingredients/AdminIngredientsIndex';
 import AdminOccasionsCreate from './pages/admin/occasions/AdminOccasionsCreate';
@@ -195,9 +197,34 @@ function AllRoutes() {
         needSignIn: PageRoute.Admin.Ingredients.Create,
       },
       {
+        path: PageRoute.Admin.Ingredients.Edit,
+        element: <AdminIngredientCreate />,
+        needSignIn: PageRoute.Admin.Ingredients.Edit,
+      },
+      {
         path: PageRoute.Admin.Ingredients.View,
         element: <AdminIngredientCreate />,
         needSignIn: PageRoute.Admin.Ingredients.View,
+      },
+      {
+        path: PageRoute.Admin.IngredientTypes.Index,
+        element: <AdminIngredientTypesIndex />,
+        needSignIn: PageRoute.Admin.IngredientTypes.Index,
+      },
+      {
+        path: PageRoute.Admin.IngredientTypes.Create,
+        element: <AdminIngredientTypesCreate />,
+        needSignIn: PageRoute.Admin.IngredientTypes.Create,
+      },
+      {
+        path: PageRoute.Admin.IngredientTypes.View,
+        element: <AdminIngredientTypesCreate />,
+        needSignIn: PageRoute.Admin.IngredientTypes.View,
+      },
+      {
+        path: PageRoute.Admin.IngredientTypes.Edit,
+        element: <AdminIngredientTypesCreate />,
+        needSignIn: PageRoute.Admin.IngredientTypes.Edit,
       },
       {
         path: PageRoute.Admin.Occasions.Index,
@@ -209,11 +236,16 @@ function AllRoutes() {
         element: <AdminOccasionsCreate />,
         needSignIn: PageRoute.Admin.Occasions.Create,
       },
-      // {
-      //   path: PageRoute.Admin.Occasions.View,
-      //   element: <AdminIngredientCreate />,
-      //   needSignIn: PageRoute.Admin.Occasions.View,
-      // },
+      {
+        path: PageRoute.Admin.Occasions.View,
+        element: <AdminOccasionsCreate />,
+        needSignIn: PageRoute.Admin.Occasions.View,
+      },
+      {
+        path: PageRoute.Admin.Occasions.Edit,
+        element: <AdminOccasionsCreate />,
+        needSignIn: PageRoute.Admin.Occasions.Edit,
+      },
       {
         path: '*',
         element: <NotFound />,

@@ -36,11 +36,19 @@ export const PageRoute = {
       Index: '/admin/ingredients',
       Create: '/admin/ingredients/create',
       View: '/admin/ingredients/:id',
+      Edit: '/admin/ingredients/:id/edit',
+    },
+    IngredientTypes: {
+      Index: '/admin/ingredientTypes',
+      Create: '/admin/ingredientTypes/create',
+      View: '/admin/ingredientTypes/:id',
+      Edit: '/admin/ingredientTypes/:id/edit',
     },
     Occasions: {
       Index: '/admin/occasions',
       Create: '/admin/occasions/create',
       View: '/admin/occasions/:id',
+      Edit: '/admin/occasions/:id/edit',
     },
   },
   ReferenceIngredient: (id?: string) =>

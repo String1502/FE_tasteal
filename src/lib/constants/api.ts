@@ -50,11 +50,14 @@ export const ApiEndPoint = {
   //
   // Ingredient
   GetAllIngredients: 'Ingredient/getall',
+  GetIngredientById: 'Ingredient',
+  AddIngredient: 'Ingredient',
   DeleteIngredient: 'Ingredient',
+  UpdateIngredient: 'Ingredient',
   //
   // Ingredient Type
   GetAllIngredientTypes: 'IngredientType/getall',
-  GetIngredientById: 'IngredientType',
+  GetIngredientTypeById: 'IngredientType',
   DeleteIngredientType: 'IngredientType',
   AddIngredientType: 'IngredientType/create',
   UpdateIngredientType: 'IngredientType/update',

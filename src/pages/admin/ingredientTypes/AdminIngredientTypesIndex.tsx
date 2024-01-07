@@ -2,13 +2,13 @@ import CommonIndexPage from '@/components/ui/admin/CommonAdminIndexPage';
 import AdminLayout from '@/components/ui/layout/AdminLayout';
 import { PageRoute } from '@/lib/constants/common';
 import useSnackbarService from '@/lib/hooks/useSnackbar';
-import { OccasionEntity } from '@/lib/models/entities/OccasionEntity/OccasionEntity';
-import OccasionService from '@/lib/services/occasionService';
+import { Ingredient_TypeEntity } from '@/lib/models/entities/Ingredient_TypeEntity/Ingredient_TypeEntity';
+import IngredientTypeService from '@/lib/services/ingredientTypeService';
 import { GridColDef } from '@mui/x-data-grid';
 import { FC, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-export const AdminOccasionsIndex: FC = () => {
+export const AdminIngredientTypesIndex: FC = () => {
   //#region
 
   const [snackbarAlert] = useSnackbarService();
@@ -16,7 +16,7 @@ export const AdminOccasionsIndex: FC = () => {
   //#endregion
   //#region Datagrid columns
 
-  const occasionColumns: GridColDef[] = [
+  const columns: GridColDef[] = [
     {
       field: 'id',
       headerName: 'ID',
@@ -26,17 +26,12 @@ export const AdminOccasionsIndex: FC = () => {
       headerName: 'Tên',
       flex: 1,
     },
-    {
-      field: 'description',
-      headerName: 'Miểu tả',
-      flex: 1,
-    },
   ];
 
   //#endregion
   //#region Pagination
 
-  const [rows, setRows] = useState<OccasionEntity[]>([]);
+  const [rows, setRows] = useState<Ingredient_TypeEntity[]>([]);
   const [rowCount, setRowCount] = useState(0);
   const [paginationModel, setPaginationModel] = useState({
     page: 0,
@@ -50,17 +45,17 @@ export const AdminOccasionsIndex: FC = () => {
       setLoading(true);
 
       (async () => {
-        let occasions: OccasionEntity[];
+        let rows: Ingredient_TypeEntity[];
         try {
-          occasions = await OccasionService.GetAll();
+          rows = await IngredientTypeService.GetAllIngredientTypes();
         } catch (err) {
           console.log(err);
-          occasions = [];
+          rows = [];
         }
         if (!active) return;
 
-        setRows(occasions);
-        setRowCount(occasions.length);
+        setRows(rows);
+        setRowCount(rows.length);
         setLoading(false);
       })();
     })();
@@ -74,19 +69,18 @@ export const AdminOccasionsIndex: FC = () => {
 
   const navigate = useNavigate();
   const handleCreateClick = () => {
-    navigate(PageRoute.Admin.Occasions.Create);
+    navigate(PageRoute.Admin.IngredientTypes.Create);
   };
   const handleViewClick = (id: number) => {
-    navigate(PageRoute.Admin.Occasions.View.replace(':id', id.toString()));
+    navigate(
+      PageRoute.Admin.IngredientTypes.View.replace(':id', id.toString())
+    );
   };
   const handleDeleteClick = (id: number) => {
-    OccasionService.DeleteOccasion(id)
-      .then((deletedOccasion) => {
-        if (deletedOccasion) {
-          snackbarAlert(
-            `Dịp ${deletedOccasion.name} đã xóa thành công!`,
-            'success'
-          );
+    IngredientTypeService.DeleteIngredientType(id)
+      .then((deletedRow) => {
+        if (deletedRow) {
+          snackbarAlert(`Dịp ${deletedRow.name} đã xóa thành công!`, 'success');
         }
         setRows(rows.filter((row) => row.id !== id));
       })
@@ -99,13 +93,13 @@ export const AdminOccasionsIndex: FC = () => {
   return (
     <AdminLayout>
       <CommonIndexPage
-        title={'Dịp lễ'}
+        title={'Loại nguyên liệu'}
         rows={rows}
-        columns={occasionColumns}
+        columns={columns}
         loading={loading}
         dialogProps={{
-          title: 'Xóa dịp lễ',
-          content: 'Bạn có chắc muốn xóa dịp lễ này?',
+          title: 'Xóa loại nguyên liệu',
+          content: 'Bạn có chắc muốn xóa loại nguyên liệu này?',
         }}
         paginationModel={paginationModel}
         rowCount={rowCount}

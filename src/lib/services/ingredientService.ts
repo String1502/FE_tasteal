@@ -1,4 +1,8 @@
 import { getApiUrl } from '../constants/api';
+import {
+  CreateIngredientReq,
+  UpdateIngredientReq,
+} from '../models/dtos/Request/IngredientReq/IngredientReq';
 import { PageReq } from '../models/dtos/Request/PageReq/PageReq';
 import {
   IngredientPagination,
@@ -65,8 +69,14 @@ class IngredientService {
       throw new Error('Failed to get ingredients');
     });
   }
-  public static async GetById(_id: number): Promise<IngredientEntity> {
-    throw new Error('not implemented yet');
+  public static async GetById(id: number): Promise<IngredientEntity> {
+    return fetch(`${getApiUrl('GetIngredientById')}/${id}`, {
+      method: 'GET',
+    }).then((res) => {
+      if (res.ok) {
+        return res.json();
+      }
+    });
   }
 
   public static async DeleteIngredient(
@@ -91,6 +101,37 @@ class IngredientService {
       .catch((error) => {
         console.log(error);
       });
+  }
+
+  public static Add(data: CreateIngredientReq) {
+    const body = JSON.stringify(data);
+    return fetch(getApiUrl('AddIngredient'), {
+      method: 'POST',
+      body: body,
+      headers: {
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+    }).then((res) => {
+      if (res.ok) {
+        return res.json();
+      }
+      throw new Error('Failed to add ingredient');
+    });
+  }
+  public static Update(data: UpdateIngredientReq) {
+    const body = JSON.stringify(data);
+    return fetch(getApiUrl('UpdateIngredient') + '/' + data.id + '', {
+      method: 'PUT',
+      body: body,
+      headers: {
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+    }).then((res) => {
+      if (res.ok) {
+        return res.json();
+      }
+      throw new Error('Failed to update ingredient');
+    });
   }
 }
 
