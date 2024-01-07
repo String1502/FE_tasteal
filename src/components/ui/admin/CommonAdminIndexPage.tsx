@@ -33,6 +33,7 @@ export type CommonIndexPageProps<RowType> = {
   onPaginationModelChange?: (model: { page: number; pageSize: number }) => void;
   onCreateClick?: () => void;
   onViewClick?: (id: number) => void;
+  onDeleteClick?: (id: number) => void;
 };
 
 export default function CommonIndexPage<RowType>({
@@ -46,6 +47,7 @@ export default function CommonIndexPage<RowType>({
   onPaginationModelChange,
   onCreateClick,
   onViewClick,
+  onDeleteClick,
 }: CommonIndexPageProps<RowType>) {
   //#region Hooks
 
@@ -64,12 +66,11 @@ export default function CommonIndexPage<RowType>({
   const [toDeleteRowId, setToDeleteRowId] = useState<number | null>(null);
   const handleDeleteRow = useCallback(() => {
     if (toDeleteRowId === null) {
-      snackbarAlert('Xóa thất bại (mock)', 'warning');
       return;
     }
-    snackbarAlert(`Xóa thành công ${toDeleteRowId} (mock)`);
+    onDeleteClick(toDeleteRowId);
     setDeleteDialogOpen(false);
-  }, [snackbarAlert, toDeleteRowId]);
+  }, [onDeleteClick, toDeleteRowId]);
 
   //#endregion
   //#region Datagrid Columns

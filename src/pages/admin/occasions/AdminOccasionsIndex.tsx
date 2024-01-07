@@ -1,6 +1,7 @@
 import CommonIndexPage from '@/components/ui/admin/CommonAdminIndexPage';
 import AdminLayout from '@/components/ui/layout/AdminLayout';
 import { PageRoute } from '@/lib/constants/common';
+import useSnackbarService from '@/lib/hooks/useSnackbar';
 import { OccasionEntity } from '@/lib/models/entities/OccasionEntity/OccasionEntity';
 import OccasionService from '@/lib/services/occasionService';
 import { GridColDef } from '@mui/x-data-grid';
@@ -8,6 +9,11 @@ import { FC, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 export const AdminOccasionsIndex: FC = () => {
+  //#region
+
+  const [snackbarAlert] = useSnackbarService();
+
+  //#endregion
   //#region Datagrid columns
 
   const occasionColumns: GridColDef[] = [
@@ -67,11 +73,27 @@ export const AdminOccasionsIndex: FC = () => {
   //#endregion
 
   const navigate = useNavigate();
-  const handleOnCreateClick = () => {
+  const handleCreateClick = () => {
     navigate(PageRoute.Admin.Occasions.Create);
   };
-  const handleOnViewClick = (id: number) => {
+  const handleViewClick = (id: number) => {
     navigate(PageRoute.Admin.Occasions.View.replace(':id', id.toString()));
+  };
+  const handleDeleteClick = (id: number) => {
+    OccasionService.DeleteOccasion(id)
+      .then((deletedOccasion) => {
+        if (deletedOccasion) {
+          snackbarAlert(
+            `Dịp ${deletedOccasion.name} đã xóa thành công!`,
+            'success'
+          );
+        }
+        setRows(rows.filter((row) => row.id !== id));
+      })
+      .catch((err) => {
+        console.log(err);
+        snackbarAlert('Dịp đã không được xóa!', 'warning');
+      });
   };
 
   return (
@@ -88,8 +110,9 @@ export const AdminOccasionsIndex: FC = () => {
         paginationModel={paginationModel}
         rowCount={rowCount}
         onPaginationModelChange={setPaginationModel}
-        onCreateClick={handleOnCreateClick}
-        onViewClick={handleOnViewClick}
+        onCreateClick={handleCreateClick}
+        onViewClick={handleViewClick}
+        onDeleteClick={handleDeleteClick}
       />
     </AdminLayout>
   );

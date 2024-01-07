@@ -123,7 +123,7 @@ class OccasionService {
 
   public static async DeleteOccasion(
     id: OccasionEntity['id']
-  ): Promise<boolean> {
+  ): Promise<OccasionEntity> {
     const requestOptions: RequestInit = {
       method: 'DELETE',
       headers: {
