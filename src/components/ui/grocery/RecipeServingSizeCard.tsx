@@ -1,10 +1,12 @@
 import CustomCard from '@/components/common/card/CustomCard';
 import ImageRecipe from '@/components/common/card/ImageRecipe';
 import NameRecipe from '@/components/common/card/NameRecipe';
+import { PageRoute } from '@/lib/constants/common';
 import { ServingSizes } from '@/lib/constants/options';
 import { CartEntity } from '@/lib/models/entities/CartEntity/CartEntity';
 import { CloseRounded, PeopleRounded } from '@mui/icons-material';
 import {
+  Box,
   CardContent,
   CardProps,
   IconButton,
@@ -14,6 +16,7 @@ import {
   Typography,
 } from '@mui/material';
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 export const RecipeServingSizeCard = ({
   cart,
@@ -38,15 +41,23 @@ export const RecipeServingSizeCard = ({
     }
   }, [cart.serving_size]);
 
+  const navigate = useNavigate();
+
   return (
     <>
       <CustomCard {...props}>
-        <ImageRecipe
-          src={cart.recipe?.image || ''}
-          alt={cart.recipe?.name}
-          imgHeight={imgHeight}
-          quality={1}
-        />
+        <Box
+          onClick={() => {
+            navigate(PageRoute.Recipe.Detail(cart.recipe?.id));
+          }}
+        >
+          <ImageRecipe
+            src={cart.recipe?.image || ''}
+            alt={cart.recipe?.name}
+            imgHeight={imgHeight}
+            quality={1}
+          />
+        </Box>
         <IconButton
           size="small"
           sx={{

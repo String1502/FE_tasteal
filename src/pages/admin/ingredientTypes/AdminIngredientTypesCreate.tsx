@@ -120,7 +120,26 @@ const AdminIngredientTypesCreate: FC = () => {
     };
   }, [id, location.pathname]);
 
+  const [form, setForm] = useMemo(() => {
+    return mode === 'create'
+      ? [createForm, setCreateForm]
+      : mode === 'view'
+      ? [viewForm, setViewForm]
+      : [updateForm, setUpdateForm];
+  }, [createForm, mode, updateForm, viewForm]);
+
+  const validate = () => {
+    if (!form.name) {
+      snackbarAlert('Vui lý điền đầy đủ thông tin!', 'warning');
+      return false;
+    }
+    return true;
+  };
   const handleCreateSubmit = async () => {
+    if (!validate()) {
+      return;
+    }
+
     setLoading(true);
 
     try {
@@ -137,6 +156,10 @@ const AdminIngredientTypesCreate: FC = () => {
   };
 
   const handleUpdateSubmit = async () => {
+    if (!validate()) {
+      return;
+    }
+
     setLoading(true);
 
     try {
@@ -155,14 +178,6 @@ const AdminIngredientTypesCreate: FC = () => {
       setLoading(false);
     }
   };
-
-  const [form, setForm] = useMemo(() => {
-    return mode === 'create'
-      ? [createForm, setCreateForm]
-      : mode === 'view'
-      ? [viewForm, setViewForm]
-      : [updateForm, setUpdateForm];
-  }, [createForm, mode, updateForm, viewForm]);
 
   //#endregion
   //#region State

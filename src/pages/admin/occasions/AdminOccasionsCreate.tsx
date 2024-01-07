@@ -15,7 +15,7 @@ import {
 import { OccasionEntity } from '@/lib/models/entities/OccasionEntity/OccasionEntity';
 import OccasionService from '@/lib/services/occasionService';
 import { convertToSnakeCase } from '@/utils/format';
-import { ArrowBack, Close } from '@mui/icons-material';
+import { ArrowBack, Close, RestaurantRounded } from '@mui/icons-material';
 import {
   Button,
   CircularProgress,
@@ -308,8 +308,36 @@ const AdminOccasionsCreate: FC = () => {
     setImageFile(file);
   };
 
+  const [form, setForm] = useMemo(() => {
+    return mode === 'create'
+      ? [createForm, setCreateForm]
+      : mode === 'view'
+      ? [viewForm, setViewForm]
+      : [updateForm, setUpdateForm];
+  }, [createForm, mode, updateForm, viewForm]);
+
+  const validate = () => {
+    if (!form.name) {
+      snackbarAlert('Vui lòng nhập tên dịp lễ', 'warning');
+      return false;
+    }
+    if (!form.description) {
+      snackbarAlert('Vui lòng nhập miêu tả nhịp lễ', 'warning');
+      return false;
+    }
+    return true;
+  };
+
   const handleCreateSubmit = async () => {
+    if (!validate()) return;
+
+    if (!imageFile) {
+      snackbarAlert('Vui lòng tải ảnh dịp lễ!', 'warning');
+      return;
+    }
+
     setLoading(true);
+
     try {
       const reqBody = await createForm.getReq(imageFile);
       const occasion = await OccasionService.AddOccasion(reqBody);
@@ -324,6 +352,12 @@ const AdminOccasionsCreate: FC = () => {
   };
 
   const handleUpdateSubmit = async () => {
+    if (!validate()) return;
+    if (!form.image && !imageFile) {
+      snackbarAlert('Vui loại tải ảnh dịp lễ!', 'warning');
+      return;
+    }
+
     setLoading(true);
     try {
       const reqBody = await updateForm.getReq(imageFile);
@@ -338,14 +372,6 @@ const AdminOccasionsCreate: FC = () => {
       setLoading(false);
     }
   };
-
-  const [form, setForm] = useMemo(() => {
-    return mode === 'create'
-      ? [createForm, setCreateForm]
-      : mode === 'view'
-      ? [viewForm, setViewForm]
-      : [updateForm, setUpdateForm];
-  }, [createForm, mode, updateForm, viewForm]);
 
   //#endregion
   //#region State

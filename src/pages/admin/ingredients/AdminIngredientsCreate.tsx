@@ -326,7 +326,26 @@ const AdminIngredientCreate: FC = () => {
     setImageFile(file);
   };
 
+  const validate = () => {
+    if (!form.name) {
+      snackbarAlert('Vui lòng nhập tên nguyên liệu!', 'warning');
+      return false;
+    }
+    if ((form instanceof IngredientReqCreator || form instanceof IngredientReqPutCreator) && !form.ingredient_type.id) {
+      snackbarAlert('Vui lòng chọn loại nguyên liệu!', 'warning');
+      return false;
+    }
+    return true;
+  }
+
   const handleCreateSubmit = async () => {
+    if (!validate()) return;
+
+    if (!imageFile) {
+      snackbarAlert('Vui không tải ảnh nguyên liệu!', 'warning');
+      return;
+    }
+
     setLoading(true);
 
     try {
@@ -344,6 +363,13 @@ const AdminIngredientCreate: FC = () => {
   };
 
   const handleUpdateSubmit = async () => {
+    if (!validate()) return;
+
+    if (!form.image && !imageFile) {
+      snackbarAlert('Vui lòng tải ảnh nguyên này!', 'warning');
+      return;
+    }
+
     setLoading(true);
 
     try {
