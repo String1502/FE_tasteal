@@ -2,12 +2,14 @@ import ImagePicker from '@/components/common/files/ImagePicker';
 import TastealTextField from '@/components/common/textFields/TastealTextField';
 import FormLabel from '@/components/common/typos/FormLabel';
 import FormTitle from '@/components/common/typos/FormTitle';
+import NotManager from '@/components/ui/app/NotManager';
 import AdminLayout from '@/components/ui/layout/AdminLayout';
 import { PageRoute } from '@/lib/constants/common';
 import { StoragePath } from '@/lib/constants/storage';
 import { storage } from '@/lib/firebase/config';
 import { uploadImage } from '@/lib/firebase/image';
 import useSnackbarService from '@/lib/hooks/useSnackbar';
+import useTastealTheme from '@/lib/hooks/useTastealTheme';
 import {
   OccasionReq,
   OccasionReqPut,
@@ -408,6 +410,21 @@ const AdminOccasionsCreate: FC = () => {
       setLoading(false);
     }
   };
+
+  //#endregion
+  //#region Authorization
+
+  const {
+    login: { user },
+  } = useTastealTheme();
+
+  if (!user) {
+    return '';
+  }
+
+  if (!(user.uid === 'Ah3AvtwmXrfuvGFo8sjSO2IOpCg1')) {
+    return <NotManager />;
+  }
 
   //#endregion
 

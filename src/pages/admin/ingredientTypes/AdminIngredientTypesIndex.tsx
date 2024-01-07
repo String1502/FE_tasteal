@@ -1,7 +1,9 @@
 import CommonIndexPage from '@/components/ui/admin/CommonAdminIndexPage';
+import NotManager from '@/components/ui/app/NotManager';
 import AdminLayout from '@/components/ui/layout/AdminLayout';
 import { PageRoute } from '@/lib/constants/common';
 import useSnackbarService from '@/lib/hooks/useSnackbar';
+import useTastealTheme from '@/lib/hooks/useTastealTheme';
 import { Ingredient_TypeEntity } from '@/lib/models/entities/Ingredient_TypeEntity/Ingredient_TypeEntity';
 import IngredientTypeService from '@/lib/services/ingredientTypeService';
 import { GridColDef } from '@mui/x-data-grid';
@@ -96,6 +98,21 @@ export const AdminIngredientTypesIndex: FC = () => {
       setLoading(false);
     }
   };
+
+  //#endregion
+  //#region Authorization
+
+  const {
+    login: { user },
+  } = useTastealTheme();
+
+  if (!user) {
+    return '';
+  }
+
+  if (!(user.uid === 'Ah3AvtwmXrfuvGFo8sjSO2IOpCg1')) {
+    return <NotManager />;
+  }
 
   //#endregion
 
