@@ -67,7 +67,7 @@ class CookbookService {
 
   public static async AddCookBook(
     newCookBook: NewCookBookReq
-  ): Promise<boolean> {
+  ): Promise<CookBookEntity> {
     const requestOptions: RequestInit = {
       method: 'POST',
       headers: {

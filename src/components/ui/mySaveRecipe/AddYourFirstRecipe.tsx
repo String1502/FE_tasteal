@@ -22,6 +22,7 @@ export function AddYourFirstRecipe() {
         quality={1}
         sx={{
           objectFit: 'contain',
+          width: '80%',
         }}
       />
       <Typography

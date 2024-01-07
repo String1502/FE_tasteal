@@ -4,10 +4,10 @@ import {
   Menu,
   MenuItem,
   TextField,
+  Tooltip,
   Typography,
 } from '@mui/material';
 import React, { useMemo } from 'react';
-import { CookBookEntity } from '@/lib/models/entities/CookBookEntity/CookBookEntity';
 import {
   DeleteRounded,
   DriveFileRenameOutlineRounded,
@@ -18,20 +18,26 @@ import SlideInDialog from '@/components/common/dialog/SlideInDialog';
 import useSnackbarService from '@/lib/hooks/useSnackbar';
 import CookbookService from '@/lib/services/cookbookService';
 import { NewCookBookNameReq } from '@/lib/models/dtos/Request/NewCookBookNameReq/NewCookBookNameReq';
+import { CookBookEntity } from '@/lib/models/entities/CookBookEntity/CookBookEntity';
 
 export function CookBook({
   cookbook,
   choosing,
   handleChoosing,
+  handleChangeCookbook,
   index,
 }: {
-  cookbook: CookBookEntity;
+  cookbook: CookbookChoosingType;
   choosing: CookbookChoosingType | undefined;
-  handleChoosing: (cookbook: CookBookEntity) => void;
+  handleChoosing: (cookbook: CookbookChoosingType) => void;
+  handleChangeCookbook: (
+    type: 'edit' | 'remove',
+    cookbook: CookBookEntity
+  ) => void;
   index: number;
 }) {
   const color = useMemo(() => {
-    if (cookbook.id == choosing?.Cookbook.id) {
+    if (cookbook.Cookbook.id == choosing?.Cookbook.id) {
       return 'primary.main';
     } else {
       return 'grey.400';
@@ -44,25 +50,17 @@ export function CookBook({
     event.preventDefault();
     setAnchorEl(event.currentTarget);
   };
-  const handleCloseRightClick = () => {
-    setAnchorEl(null);
-  };
 
   const [openRenameDialog, setOpenRenameDialog] = React.useState(false);
-  const handleOpenRenameDialog = () => setOpenRenameDialog(true);
-  const handleCloseRenameDialog = () => setOpenRenameDialog(false);
-  const [renameValue, setRenameValue] = React.useState(cookbook.name);
+  const [renameValue, setRenameValue] = React.useState(cookbook.Cookbook.name);
 
   const [openDelete, setOpenDelete] = React.useState(false);
-  const handleOpenDelete = () => setOpenDelete(true);
-  const handleCloseDelete = () => setOpenDelete(false);
-
   const [snackbarAlert] = useSnackbarService();
 
   return (
     <Box
       component={'div'}
-      id={cookbook.id.toString()}
+      id={cookbook.Cookbook.id.toString()}
       sx={{
         cursor: 'pointer',
       }}
@@ -86,7 +84,7 @@ export function CookBook({
         }}
       >
         <BoxImage
-          src={choosing?.CookbookRecipes[0]?.recipe?.image}
+          src={cookbook?.CookbookRecipes[0]?.recipe?.image}
           quality={1}
           sx={{
             aspectRatio: '1/1',
@@ -97,26 +95,28 @@ export function CookBook({
         />
       </Box>
 
-      <Typography
-        variant="body2"
-        fontWeight={'bold'}
-        sx={{
-          width: '100%',
-          textAlign: 'center',
-          py: 0.5,
-          color: color,
-        }}
-        whiteSpace={'nowrap'}
-        textOverflow={'ellipsis'}
-        overflow={'hidden'}
-      >
-        {cookbook.name}
-      </Typography>
+      <Tooltip title={cookbook.Cookbook.name}>
+        <Typography
+          variant="body2"
+          fontWeight={'bold'}
+          sx={{
+            width: '100%',
+            textAlign: 'center',
+            py: 0.5,
+            color: color,
+          }}
+          whiteSpace={'nowrap'}
+          textOverflow={'ellipsis'}
+          overflow={'hidden'}
+        >
+          {cookbook.Cookbook.name}
+        </Typography>
+      </Tooltip>
 
       <Menu
         anchorEl={anchorEl}
         open={openMenuContext}
-        onClose={handleCloseRightClick}
+        onClose={() => setAnchorEl(null)}
         slotProps={{
           paper: {
             sx: {
@@ -129,8 +129,8 @@ export function CookBook({
       >
         <MenuItem
           onClick={() => {
-            handleOpenRenameDialog();
-            handleCloseRightClick();
+            setOpenRenameDialog(true);
+            setAnchorEl(null);
           }}
         >
           <ListItemIcon>
@@ -143,8 +143,8 @@ export function CookBook({
         {index != 0 && (
           <MenuItem
             onClick={() => {
-              handleOpenDelete();
-              handleCloseRightClick();
+              setOpenDelete(true);
+              setAnchorEl(null);
             }}
           >
             <ListItemIcon>
@@ -160,7 +160,7 @@ export function CookBook({
       {/* Dialog đổi tên */}
       <SlideInDialog
         open={openRenameDialog}
-        handleClose={handleCloseRenameDialog}
+        handleClose={() => setOpenRenameDialog(false)}
         title="Đổi tên"
         content={
           <TextField
@@ -181,8 +181,12 @@ export function CookBook({
         cancelText="Hủy"
         confirmText="Cập nhật"
         onClickConfirm={async () => {
+          handleChangeCookbook('edit', {
+            ...cookbook.Cookbook,
+            name: renameValue,
+          });
           const data: NewCookBookNameReq = {
-            id: cookbook.id,
+            id: cookbook.Cookbook.id,
             name: renameValue,
           };
           const result = await CookbookService.UpdateCookBookName(data);
@@ -198,7 +202,7 @@ export function CookBook({
       {index !== 0 && (
         <SlideInDialog
           open={openDelete}
-          handleClose={handleCloseDelete}
+          handleClose={() => setOpenDelete(false)}
           title="Bạn chắc chắn muốn xóa?"
           content=" Các công thức đã lưu trong bộ sưu tập sẽ bị xóa!"
           cancelText="Hủy"
@@ -210,8 +214,9 @@ export function CookBook({
             color: 'primary',
           }}
           onClickConfirm={async () => {
+            handleChangeCookbook('remove', cookbook.Cookbook);
             const result = await CookbookService.DeleteCookBookById(
-              cookbook.id
+              cookbook.Cookbook.id
             );
             if (result) {
               snackbarAlert('Xóa thành công', 'success');

@@ -565,7 +565,7 @@ const CreateRecipe: React.FunctionComponent<{ edit?: boolean }> = ({
   //#endregion
 
   return (
-    <Layout withFooter={false}>
+    <Layout withFooter={false} headerPosition="static" isDynamicHeader={false}>
       <Box
         sx={{
           display: 'flex',

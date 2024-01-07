@@ -59,10 +59,13 @@ class CookbookRecipeService {
       requestOptions
     )
       .then((response) => response.json())
-      .then((data) => data)
+      .then((data) => {
+        console.log(data);
+        return data;
+      })
       .catch((error) => {
         console.error('Lỗi:', error);
-        throw error;
+        return '';
       });
   }
 }

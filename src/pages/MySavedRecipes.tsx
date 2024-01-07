@@ -1,6 +1,5 @@
 import Layout from '@/layout/Layout';
 import { Box, Container, Grid, PaperProps } from '@mui/material';
-import { useContext } from 'react';
 import { CookBookEntity } from '@/lib/models/entities/CookBookEntity/CookBookEntity';
 import { CookBook_RecipeEntity } from '@/lib/models/entities/CookBook_RecipeEntity/CookBook_RecipeEntity';
 import { CookBook } from '../components/ui/mySaveRecipe/CookBook';
@@ -8,8 +7,8 @@ import { CustomCard } from '../components/ui/mySaveRecipe/CustomCard';
 import { MySavedRecipesContent } from '../components/ui/mySaveRecipe/MySavedRecipesContent';
 import { MySavedRecipesAction } from '../components/ui/mySaveRecipe/MySavedRecipesAction';
 import { AddYourFirstRecipe } from '../components/ui/mySaveRecipe/AddYourFirstRecipe';
-import AppContext from '@/lib/contexts/AppContext';
 import { useMySavedRecipes } from '../components/ui/mySaveRecipe/useMySavedRecipes';
+import AddNewCookBook from '@/components/ui/mySaveRecipe/AddNewCookBook';
 
 export type CookbookChoosingType = {
   Cookbook: CookBookEntity;
@@ -25,12 +24,13 @@ export const DialogPaperProps: PaperProps = {
 };
 
 function MySavedRecipes() {
-  const { login } = useContext(AppContext);
-  const { cookbookData, choosing, handleChoosing } = useMySavedRecipes(
-    login?.user?.uid
-  );
-
-  console.log(login?.user?.uid);
+  const {
+    cookbookData,
+    choosing,
+    handleChoosing,
+    handleChangeCookbook,
+    handleChangeRecipeInCookbook,
+  } = useMySavedRecipes();
 
   return (
     <Layout withFooter={false} headerPosition="static" isDynamicHeader={false}>
@@ -52,10 +52,15 @@ function MySavedRecipes() {
                       cookbook={item}
                       choosing={choosing}
                       handleChoosing={handleChoosing}
+                      handleChangeCookbook={handleChangeCookbook}
                       index={i}
                     />
                   </Grid>
                 ))}
+
+              <Grid item xs={3.6} md={2.4} lg={1.2}>
+                <AddNewCookBook handleChangeCookbook={handleChangeCookbook} />
+              </Grid>
             </Grid>
           </Box>
 
@@ -76,13 +81,23 @@ function MySavedRecipes() {
                     <CustomCard
                       cookbookRecipe={item}
                       cookbookData={cookbookData}
+                      handleChangeRecipeInCookbook={
+                        handleChangeRecipeInCookbook
+                      }
                     />
                   </Grid>
                 ))}
             </Grid>
           </Box>
 
-          {choosing?.CookbookRecipes.length == 0 && <AddYourFirstRecipe />}
+          <Box
+            sx={{
+              display: choosing?.CookbookRecipes.length == 0 ? 'flex' : 'none',
+              justifyContent: 'center',
+            }}
+          >
+            <AddYourFirstRecipe />
+          </Box>
         </MySavedRecipesContent>
       </Container>
     </Layout>
