@@ -30,7 +30,7 @@ export function CookBook({
   cookbook: CookbookChoosingType;
   choosing: CookbookChoosingType | undefined;
   handleChoosing: (cookbook: CookbookChoosingType) => void;
-  handleChangeCookbook: (
+  handleChangeCookbook?: (
     type: 'edit' | 'remove',
     cookbook: CookBookEntity
   ) => void;
@@ -181,6 +181,9 @@ export function CookBook({
         cancelText="Hủy"
         confirmText="Cập nhật"
         onClickConfirm={async () => {
+          if (!handleChangeCookbook) {
+            return;
+          }
           handleChangeCookbook('edit', {
             ...cookbook.Cookbook,
             name: renameValue,
@@ -214,6 +217,9 @@ export function CookBook({
             color: 'primary',
           }}
           onClickConfirm={async () => {
+            if (!handleChangeCookbook) {
+              return;
+            }
             handleChangeCookbook('remove', cookbook.Cookbook);
             const result = await CookbookService.DeleteCookBookById(
               cookbook.Cookbook.id

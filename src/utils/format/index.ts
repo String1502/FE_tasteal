@@ -72,3 +72,25 @@ export function convertLunarToSolarDate(lunarDate: Date) {
 
   return new Date(lunarDate_Real.toSolarDate().toDate());
 }
+
+export function formatDateToStringInDB(inputDate: Date): string {
+  const year: number = inputDate.getFullYear();
+  const month: number = inputDate.getMonth() + 1; // Tháng bắt đầu từ 0, nên cộng thêm 1
+  const day: number = inputDate.getDate();
+  // const hours: number = inputDate.getHours();
+  // const minutes: number = inputDate.getMinutes();
+  // const seconds: number = inputDate.getSeconds();
+  const hours: number = 0;
+  const minutes: number = 0;
+  const seconds: number = 0;
+
+  const formattedDateString: string = `${year}-${month
+    .toString()
+    .padStart(2, '0')}-${day.toString().padStart(2, '0')}T${hours
+    .toString()
+    .padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds
+    .toString()
+    .padStart(2, '0')}`;
+
+  return formattedDateString;
+}

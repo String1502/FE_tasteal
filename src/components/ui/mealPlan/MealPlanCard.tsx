@@ -28,7 +28,11 @@ export function MealPlanCard({
   index: number;
   planItem: Plan_ItemEntity;
   recipe: RecipeEntity;
-  handleRemovePlanItem: (id: number) => void;
+  handleRemovePlanItem: (
+    date: Date,
+    recipeId: number,
+    order: number
+  ) => Promise<void>;
   props?: CardProps;
 }) {
   return (
@@ -98,7 +102,13 @@ export function MealPlanCard({
                       color: '#fff',
                     },
                   }}
-                  onClick={() => handleRemovePlanItem(planItem.id)}
+                  onClick={async () => {
+                    await handleRemovePlanItem(
+                      planItem.plan.date,
+                      planItem.recipeId,
+                      planItem.order
+                    );
+                  }}
                 >
                   <Clear fontSize="small" />
                 </IconButton>

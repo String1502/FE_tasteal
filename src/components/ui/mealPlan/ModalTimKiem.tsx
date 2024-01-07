@@ -7,6 +7,8 @@ import { useCallback, useEffect, useState } from 'react';
 import RecipeService from '@/lib/services/recipeService';
 import { PageReq } from '@/lib/models/dtos/Request/PageReq/PageReq';
 import { removeDiacritics } from '@/utils/format';
+import { Plan_ItemEntity } from '@/lib/models/entities/Plan_ItemEntity/Plan_ItemEntity';
+import { DateDisplay } from '@/pages/MealPlanner';
 
 const viewportItemAmount = 6 * 5;
 
@@ -14,10 +16,14 @@ export function ModalTimKiem({
   open,
   handleClose,
   title,
+  AddPlanItem,
+  weekDates,
 }: {
   open: boolean;
   handleClose: () => void;
   title: string;
+  AddPlanItem: (item: Plan_ItemEntity) => Promise<void>;
+  weekDates: DateDisplay;
 }) {
   const [textSearch, setTextSearch] = useState('');
   const [recipes, setRecipes] = useState<RecipeEntity[] | undefined>(undefined);
@@ -138,7 +144,11 @@ export function ModalTimKiem({
                       p: 1,
                     }}
                   >
-                    <CustomCardMealPlan recipe={item as RecipeEntity} />
+                    <CustomCardMealPlan
+                      recipe={item as RecipeEntity}
+                      AddPlanItem={AddPlanItem}
+                      weekDates={weekDates}
+                    />
                   </Box>
                 ))}
           </Stack>

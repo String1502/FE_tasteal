@@ -19,11 +19,17 @@ import { ModalThemTuBoSuuTap } from './ModalThemTuBoSuuTap';
 import { ModalTimKiem } from './ModalTimKiem';
 import { useNavigate } from 'react-router-dom';
 import { PageRoute } from '@/lib/constants/common';
+import { Plan_ItemEntity } from '@/lib/models/entities/Plan_ItemEntity/Plan_ItemEntity';
+import { DateDisplay } from '@/pages/MealPlanner';
 
 export const AddRecipeButton = ({
   showContent = false,
+  AddPlanItem,
+  weekDates,
 }: {
   showContent?: boolean;
+  AddPlanItem: (item: Plan_ItemEntity) => Promise<void>;
+  weekDates: DateDisplay;
 }) => {
   //#region Menu
   const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(
@@ -128,6 +134,8 @@ export const AddRecipeButton = ({
         open={openMySaved}
         handleClose={handleCloseMySaved}
         title="Thêm công thức từ bộ sưu tập"
+        AddPlanItem={AddPlanItem}
+        weekDates={weekDates}
       />
 
       {/* Tìm kiếm */}
@@ -135,6 +143,8 @@ export const AddRecipeButton = ({
         open={openSearch}
         handleClose={handleCloseSearch}
         title="Thêm công thức từ tìm kiếm"
+        AddPlanItem={AddPlanItem}
+        weekDates={weekDates}
       />
     </>
   );

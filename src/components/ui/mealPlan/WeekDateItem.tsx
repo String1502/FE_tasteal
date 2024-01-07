@@ -8,15 +8,22 @@ import { RecipeEntity } from '@/lib/models/entities/RecipeEntity/RecipeEntity';
 import { NoteTextField } from './NoteTextField';
 import { useMemo } from 'react';
 import { MealPlanCard } from './MealPlanCard';
+import { Plan_ItemEntity } from '@/lib/models/entities/Plan_ItemEntity/Plan_ItemEntity';
 
 function WeekDateItem({
   isDragging,
   weekDates,
   handleRemovePlanItem,
+  AddPlanItem,
 }: {
   isDragging: boolean;
   weekDates: DateDisplay;
-  handleRemovePlanItem: (id: number) => void;
+  handleRemovePlanItem: (
+    date: Date,
+    recipeId: number,
+    order: number
+  ) => Promise<void>;
+  AddPlanItem: (item: Plan_ItemEntity) => Promise<void>;
 }) {
   const isToday = useMemo(
     () => compareTwoDates(weekDates.date, new Date()),
@@ -78,7 +85,7 @@ function WeekDateItem({
               </Typography>
             </Box>
 
-            <AddRecipeButton />
+            <AddRecipeButton weekDates={weekDates} AddPlanItem={AddPlanItem} />
           </Box>
 
           <Box

@@ -9,6 +9,12 @@ import { DragDropContext, DropResult } from 'react-beautiful-dnd';
 import { Plan_ItemEntity } from '@/lib/models/entities/Plan_ItemEntity/Plan_ItemEntity';
 import AppContext from '@/lib/contexts/AppContext';
 import { ActionSection } from '../components/ui/mealPlan/ActionSection';
+import {
+  PlanDeleteReq,
+  PlanReq,
+} from '@/lib/models/dtos/Request/PlanReq/PlanReq';
+import { formatDateToStringInDB } from '@/utils/format';
+import useSnackbarService from '@/lib/hooks/useSnackbar';
 
 export const compareTwoDates = (date1: Date, date2: Date) => {
   return (
@@ -83,6 +89,7 @@ function getWeekDates(offset: number): Date[] {
 
 const MealPlanner: React.FC = () => {
   const { handleSpinner, login } = useContext(AppContext);
+  const [snackbarAlert] = useSnackbarService();
 
   //#region Week đếm số
   const [weekCounter, setWeekCounter] = React.useState(0);
@@ -97,12 +104,17 @@ const MealPlanner: React.FC = () => {
 
   const [planItemData, setPlanItemData] = React.useState<Plan_ItemEntity[]>([]);
 
+  console.log(weekDates);
+  console.log(planItemData);
+
   //#endregion
 
   //#region UseEffect
 
   useEffect(() => {
     async function fetchData(uid: string) {
+      handleSpinner(true);
+
       const planItems = await PlanItemService.GetPlanItemsByAccountId(uid);
 
       if (!planItems) {
@@ -131,16 +143,15 @@ const MealPlanner: React.FC = () => {
           });
         }
       }
+      handleSpinner(false);
 
       setWeekDates(data);
     }
 
-    handleSpinner(true);
     if (login.isUserSignedIn == true && login.user != undefined) {
       fetchData(login.user.uid);
     }
-    handleSpinner(false);
-  }, []);
+  }, [login.user]);
 
   useEffect(() => {
     const dates = getWeekDates(weekCounter);
@@ -194,7 +205,7 @@ const MealPlanner: React.FC = () => {
     setIsDragging(true);
     console.log(dragStart);
   };
-  const onDragEnd = (dropResult: DropResult) => {
+  const onDragEnd = async (dropResult: DropResult) => {
     setIsDragging(false);
 
     if (
@@ -230,9 +241,11 @@ const MealPlanner: React.FC = () => {
           item.plan?.date.getTime() !== newDate.getTime()
       ),
     ];
+    let sourceArray: Plan_ItemEntity[] = [];
+    let destinationArray: Plan_ItemEntity[] = [];
 
     if (planItemMove.from.getTime() !== planItemMove.to.getTime()) {
-      let sourceArray = planItemData
+      sourceArray = planItemData
         .filter(
           (item) => item.plan?.date.getTime() === planItemMove.from.getTime()
         )
@@ -247,7 +260,7 @@ const MealPlanner: React.FC = () => {
         };
       });
 
-      let destinationArray = planItemData
+      destinationArray = planItemData
         .filter(
           (item) => item.plan?.date.getTime() === planItemMove.to.getTime()
         )
@@ -286,7 +299,7 @@ const MealPlanner: React.FC = () => {
         ...destinationArray,
       ];
     } else {
-      let sourceArray = planItemData
+      sourceArray = planItemData
         .filter(
           (item) => item.plan?.date.getTime() === planItemMove.from.getTime()
         )
@@ -313,15 +326,61 @@ const MealPlanner: React.FC = () => {
     }
 
     setPlanItemData(finalPlanItemData);
+
+    if (!login.user || !login.user?.uid) {
+      return;
+    }
+
+    if (planItemMove.from.getTime() !== planItemMove.to.getTime()) {
+      const sourceReq: PlanReq = {
+        account_id: login.user.uid,
+        date: formatDateToStringInDB(planItemMove.from),
+        recipeIds: sourceArray.map((item) => item.recipe.id),
+      };
+
+      const destinationReq: PlanReq = {
+        account_id: login.user.uid,
+        date: formatDateToStringInDB(planItemMove.to),
+        recipeIds: destinationArray.map((item) => item.recipe.id),
+      };
+
+      await Promise.all([
+        PlanItemService.AddOrUpdateRecipesToPlan(sourceReq),
+        PlanItemService.AddOrUpdateRecipesToPlan(destinationReq),
+      ]);
+    } else {
+      const req: PlanReq = {
+        account_id: login.user.uid,
+        date: formatDateToStringInDB(planItemMove.from),
+        recipeIds: sourceArray.map((item) => item.recipe.id),
+      };
+      await PlanItemService.AddOrUpdateRecipesToPlan(req);
+    }
   };
 
   //#endregion
 
-  function handleRemovePlanItem(id: number) {
-    const planItemDelete = planItemData.find((item) => item.id === id);
+  const handleRemovePlanItem = async (
+    date: Date,
+    recipeId: number,
+    order: number
+  ) => {
+    const planItemDelete = planItemData.find(
+      (item) =>
+        item.recipe.id === recipeId &&
+        item.plan?.date.getTime() === date.getTime() &&
+        item.order === order
+    );
 
     const newPlanItemData = planItemData
-      .filter((item) => item.id !== id)
+      .filter(
+        (item) =>
+          !(
+            item.recipe.id === planItemDelete?.recipeId &&
+            item.plan?.date.getTime() === planItemDelete?.plan.date.getTime() &&
+            item.order === planItemDelete?.order
+          )
+      )
       .map((item) => {
         if (
           item.plan?.date.getTime() === planItemDelete?.plan?.date.getTime() &&
@@ -338,10 +397,56 @@ const MealPlanner: React.FC = () => {
       });
 
     setPlanItemData(newPlanItemData);
-  }
+    const req: PlanDeleteReq = {
+      account_id: planItemDelete?.plan.account_id,
+      date: formatDateToStringInDB(planItemDelete?.plan.date),
+      recipeId: planItemDelete?.recipe.id,
+      order: planItemDelete?.order,
+    };
+    const result = await PlanItemService.DeletePlanItem(req);
+
+    if (result) {
+      snackbarAlert('Xóa công thức thành công', 'success');
+    } else {
+      snackbarAlert('Xóa thất bại', 'error');
+    }
+  };
+
+  const AddPlanItem = async (item: Plan_ItemEntity) => {
+    if (!login.user || !login.user?.uid) {
+      return;
+    }
+    const remainArray = planItemData.filter(
+      (planItem) => planItem.plan?.date.getTime() !== item.plan?.date.getTime()
+    );
+
+    let array = planItemData.filter(
+      (planItem) => planItem.plan?.date.getTime() === item.plan?.date.getTime()
+    );
+    array = [...array, item].map((item, index) => {
+      return {
+        ...item,
+        order: index + 1,
+      };
+    });
+
+    setPlanItemData([...remainArray, ...array]);
+
+    const req: PlanReq = {
+      account_id: login.user.uid,
+      date: formatDateToStringInDB(item.plan?.date),
+      recipeIds: array.map((item) => item.recipe.id),
+    };
+    const result = await PlanItemService.AddOrUpdateRecipesToPlan(req);
+    if (result) {
+      snackbarAlert('Thêm công thức thành công', 'success');
+    } else {
+      snackbarAlert('Thêm công thức thất bại', 'error');
+    }
+  };
 
   return (
-    <Layout>
+    <Layout headerPosition="static" isDynamicHeader={false}>
       {login.isUserSignedIn && (
         <>
           <Grid container alignItems={'stretch'} justifyContent={'center'}>
@@ -451,6 +556,7 @@ const MealPlanner: React.FC = () => {
                               isDragging={isDragging}
                               weekDates={item}
                               handleRemovePlanItem={handleRemovePlanItem}
+                              AddPlanItem={AddPlanItem}
                             />
                           </Grid>
                         ))}
