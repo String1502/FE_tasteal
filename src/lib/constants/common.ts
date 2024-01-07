@@ -41,6 +41,7 @@ export const PageRoute = {
       Index: '/admin/occasions',
       Create: '/admin/occasions/create',
       View: '/admin/occasions/:id',
+      Edit: '/admin/occasions/:id/edit',
     },
   },
   ReferenceIngredient: (id?: string) =>

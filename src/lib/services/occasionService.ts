@@ -1,7 +1,10 @@
 import { occasions as occasionsSampleData } from '@/lib/constants/sampleData';
 import { convertLunarToSolarDate } from '@/utils/format';
 import { getApiUrl } from '../constants/api';
-import { OccasionReq } from '../models/dtos/Request/OccasionReq/OccasionReq';
+import {
+  OccasionReq,
+  OccasionReqPut,
+} from '../models/dtos/Request/OccasionReq/OccasionReq';
 import { OccasionEntity } from '../models/entities/OccasionEntity/OccasionEntity';
 
 /**
@@ -81,7 +84,7 @@ class OccasionService {
       });
   }
 
-  public static AddOccasion(newOccasion: OccasionReq): Promise<boolean> {
+  public static AddOccasion(newOccasion: OccasionReq): Promise<OccasionEntity> {
     const requestOptions: RequestInit = {
       method: 'POST',
       headers: {
@@ -96,8 +99,8 @@ class OccasionService {
   }
 
   public static async UpdateOccasion(
-    updateOccasion: OccasionEntity
-  ): Promise<boolean> {
+    updateOccasion: OccasionReqPut
+  ): Promise<OccasionEntity> {
     const requestOptions: RequestInit = {
       method: 'PUT',
       headers: {

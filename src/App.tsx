@@ -215,6 +215,11 @@ function AllRoutes() {
         needSignIn: PageRoute.Admin.Occasions.View,
       },
       {
+        path: PageRoute.Admin.Occasions.Edit,
+        element: <AdminOccasionsCreate />,
+        needSignIn: PageRoute.Admin.Occasions.Edit,
+      },
+      {
         path: '*',
         element: <NotFound />,
       },
