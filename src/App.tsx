@@ -197,6 +197,11 @@ function AllRoutes() {
         needSignIn: PageRoute.Admin.Ingredients.Create,
       },
       {
+        path: PageRoute.Admin.Ingredients.Edit,
+        element: <AdminIngredientCreate />,
+        needSignIn: PageRoute.Admin.Ingredients.Edit,
+      },
+      {
         path: PageRoute.Admin.Ingredients.View,
         element: <AdminIngredientCreate />,
         needSignIn: PageRoute.Admin.Ingredients.View,

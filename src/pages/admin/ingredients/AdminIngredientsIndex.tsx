@@ -1,7 +1,6 @@
-import { useAppDispatch } from '@/app/hook';
 import CommonIndexPage from '@/components/ui/admin/CommonAdminIndexPage';
 import AdminLayout from '@/components/ui/layout/AdminLayout';
-import { setEditIngredient } from '@/features/admin/adminSlice';
+import { PageRoute } from '@/lib/constants/common';
 import { IngredientPagination } from '@/lib/models/dtos/Response/IngredientRes/IngredientRes';
 import { IngredientEntity } from '@/lib/models/entities/IngredientEntity/IngredientEntity';
 import IngredientService from '@/lib/services/ingredientService';
@@ -31,25 +30,20 @@ export const AdminIngredientsIndex: FC = () => {
   //#endregion
   //#region Redux
 
-  const dispatch = useAppDispatch();
-
-  const handleCreateIngredient = useCallback(() => {
-    dispatch(setEditIngredient(null));
-    navigate('/admin/ingredients/create');
-  }, [dispatch, navigate]);
-  const handleEditIngredient = useCallback(
-    (ingredient: IngredientEntity) => {
-      console.log(ingredient);
-      dispatch(setEditIngredient(ingredient));
-      navigate(`/admin/ingredients/${ingredient.id}`);
+  const handleCreateRow = useCallback(() => {
+    navigate(PageRoute.Admin.Ingredients.Create);
+  }, [navigate]);
+  const handleViewRow = useCallback(
+    (id: number) => {
+      navigate(PageRoute.Admin.Ingredients.View.replace(':id', id.toString()));
     },
-    [dispatch, navigate]
+    [navigate]
   );
 
   //#endregion
   //#region Datagrid columns
 
-  const ingredientColumns: GridColDef[] = [
+  const columns: GridColDef[] = [
     {
       field: 'id',
       headerName: 'ID',
@@ -165,15 +159,15 @@ export const AdminIngredientsIndex: FC = () => {
         rows={rows}
         paginationModel={paginationModel}
         rowCount={rowCount}
-        columns={ingredientColumns}
+        columns={columns}
         loading={loading}
         dialogProps={{
           title: 'Xóa nguyên liệu',
           content: 'Bạn có chắc muốn xóa nguyên liệu này?',
         }}
         onPaginationModelChange={setPaginationModel}
-        onCreateClick={handleCreateIngredient}
-        onViewClick={handleEditIngredient}
+        onCreateClick={handleCreateRow}
+        onViewClick={handleViewRow}
       />
     </AdminLayout>
   );

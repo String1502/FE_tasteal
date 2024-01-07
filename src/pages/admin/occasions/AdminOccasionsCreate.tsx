@@ -15,7 +15,7 @@ import {
 import { OccasionEntity } from '@/lib/models/entities/OccasionEntity/OccasionEntity';
 import OccasionService from '@/lib/services/occasionService';
 import { convertToSnakeCase } from '@/utils/format';
-import { ArrowBack, DesignServices } from '@mui/icons-material';
+import { ArrowBack } from '@mui/icons-material';
 import {
   Button,
   Divider,
@@ -37,6 +37,7 @@ import {
   useState,
 } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
+import { FormMode } from '../types/FormMode';
 
 class OccasionReqCreator implements OccasionReq {
   name: string;
@@ -430,8 +431,6 @@ const AdminOccasionsCreate: FC = () => {
     </AdminLayout>
   );
 };
-
-type FormMode = 'create' | 'edit' | 'view';
 
 type FormProps = {
   value: OccasionReqCreator | OccasionEntity;

@@ -67,7 +67,6 @@ const AdminIngredientTypesCreate: FC = () => {
         setMode('view');
       }
       try {
-        console.log('run');
         const row = await IngredientTypeService.GetIngredientTypeById(
           parseInt(id)
         );
@@ -76,7 +75,7 @@ const AdminIngredientTypesCreate: FC = () => {
         setUpdateForm(row);
       } catch {
         setViewForm(undefined);
-        setUpdateForm;
+        setUpdateForm(undefined);
       }
     })();
 

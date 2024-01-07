@@ -34,7 +34,7 @@ class IngredientTypeService {
     };
 
     return await fetch(
-      `${getApiUrl('GetIngredientById')}/${id}`,
+      `${getApiUrl('GetIngredientTypeById')}/${id}`,
       requestOptions
     )
       .then((response) => response.json())
