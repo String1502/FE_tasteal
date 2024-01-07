@@ -686,14 +686,14 @@ const RecipeDetail: FC = () => {
                       ))}
                   </List>
 
-                  <Button
+                  {/* <Button
                     variant="contained"
                     size="large"
                     sx={{ alignSelf: 'center', mb: 2 }}
                     onClick={() => alert('Load more comments')}
                   >
                     Hiện thêm
-                  </Button>
+                  </Button> */}
                 </>
               )}
             </Stack>
