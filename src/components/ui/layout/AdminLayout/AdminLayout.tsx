@@ -10,7 +10,7 @@ import {
   SxProps,
 } from '@mui/material';
 import { FC, PropsWithChildren } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import AdminListButton from '../../admin/AdminListButton';
 
 const commonStyle: SxProps = {
@@ -19,6 +19,7 @@ const commonStyle: SxProps = {
 
 const AdminLayout: FC<PropsWithChildren> = ({ children }) => {
   const location = useLocation();
+  const navigate = useNavigate();
 
   function checkSelected(path: string) {
     return location.pathname.includes(path);
@@ -35,7 +36,7 @@ const AdminLayout: FC<PropsWithChildren> = ({ children }) => {
           }}
         >
           <Box component="nav">
-            <ListItemButton>
+            <ListItemButton onClick={() => navigate('/')}>
               <ListItemIcon>
                 <Home color="primary" />
               </ListItemIcon>

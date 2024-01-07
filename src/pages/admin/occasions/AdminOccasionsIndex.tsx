@@ -1,7 +1,9 @@
 import CommonIndexPage from '@/components/ui/admin/CommonAdminIndexPage';
+import NotManager from '@/components/ui/app/NotManager';
 import AdminLayout from '@/components/ui/layout/AdminLayout';
 import { PageRoute } from '@/lib/constants/common';
 import useSnackbarService from '@/lib/hooks/useSnackbar';
+import useTastealTheme from '@/lib/hooks/useTastealTheme';
 import { OccasionEntity } from '@/lib/models/entities/OccasionEntity/OccasionEntity';
 import OccasionService from '@/lib/services/occasionService';
 import { GridColDef } from '@mui/x-data-grid';
@@ -59,7 +61,7 @@ export const AdminOccasionsIndex: FC = () => {
         }
         if (!active) return;
 
-        setRows(occasions);
+        setRows(occasions.sort((a, b) => a.id - b.id));
         setRowCount(occasions.length);
         setLoading(false);
       })();
@@ -97,6 +99,22 @@ export const AdminOccasionsIndex: FC = () => {
       setLoading(false);
     }
   };
+
+  //#region Authorization
+
+  const {
+    login: { user },
+  } = useTastealTheme();
+
+  if (!user) {
+    return '';
+  }
+
+  if (!(user.uid === 'Ah3AvtwmXrfuvGFo8sjSO2IOpCg1')) {
+    return <NotManager />;
+  }
+
+  //#endregion
 
   return (
     <AdminLayout>
