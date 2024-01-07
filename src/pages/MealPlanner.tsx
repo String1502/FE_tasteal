@@ -15,6 +15,8 @@ import {
 } from '@/lib/models/dtos/Request/PlanReq/PlanReq';
 import { formatDateToStringInDB } from '@/utils/format';
 import useSnackbarService from '@/lib/hooks/useSnackbar';
+import CartItemService from '@/lib/services/CartItemService';
+import { RecipeToCartReq } from '@/lib/models/dtos/Request/RecipeToCartReq/RecipeToCartReq';
 
 export const compareTwoDates = (date1: Date, date2: Date) => {
   return (
@@ -105,7 +107,7 @@ const MealPlanner: React.FC = () => {
   const [planItemData, setPlanItemData] = React.useState<Plan_ItemEntity[]>([]);
 
   console.log(weekDates);
-  console.log(planItemData);
+  console.log(planItemData.map((item) => item.plan?.date));
 
   //#endregion
 
@@ -225,30 +227,32 @@ const MealPlanner: React.FC = () => {
     let newDate = new Date(dropResult.destination.droppableId);
 
     const planItemMove = {
-      id: parseInt(dropResult.draggableId),
+      id: dropResult.draggableId,
       from: oldDate,
       to: newDate,
       fromIndex: dropResult.source.index,
       toIndex: dropResult.destination.index,
     };
 
-    const planItem = planItemData.find((item) => item.id === planItemMove.id);
+    console.log(planItemMove);
+
+    const planItem = planItemData.find(
+      (item) => item.id.toString() === planItemMove.id
+    );
 
     let finalPlanItemData = [
       ...planItemData.filter(
         (item) =>
-          item.plan?.date.getTime() !== oldDate.getTime() &&
-          item.plan?.date.getTime() !== newDate.getTime()
+          !compareTwoDates(item.plan?.date, oldDate) &&
+          !compareTwoDates(item.plan?.date, newDate)
       ),
     ];
     let sourceArray: Plan_ItemEntity[] = [];
     let destinationArray: Plan_ItemEntity[] = [];
 
-    if (planItemMove.from.getTime() !== planItemMove.to.getTime()) {
+    if (!compareTwoDates(planItemMove.from, planItemMove.to)) {
       sourceArray = planItemData
-        .filter(
-          (item) => item.plan?.date.getTime() === planItemMove.from.getTime()
-        )
+        .filter((item) => compareTwoDates(item.plan?.date, planItemMove.from))
         .sort((a, b) => {
           return a.order - b.order;
         });
@@ -261,9 +265,7 @@ const MealPlanner: React.FC = () => {
       });
 
       destinationArray = planItemData
-        .filter(
-          (item) => item.plan?.date.getTime() === planItemMove.to.getTime()
-        )
+        .filter((item) => compareTwoDates(item.plan?.date, planItemMove.to))
         .sort((a, b) => {
           return a.order - b.order;
         });
@@ -300,9 +302,7 @@ const MealPlanner: React.FC = () => {
       ];
     } else {
       sourceArray = planItemData
-        .filter(
-          (item) => item.plan?.date.getTime() === planItemMove.from.getTime()
-        )
+        .filter((item) => compareTwoDates(item.plan?.date, planItemMove.from))
         .sort((a, b) => {
           return a.order - b.order;
         });
@@ -331,7 +331,7 @@ const MealPlanner: React.FC = () => {
       return;
     }
 
-    if (planItemMove.from.getTime() !== planItemMove.to.getTime()) {
+    if (!compareTwoDates(planItemMove.from, planItemMove.to)) {
       const sourceReq: PlanReq = {
         account_id: login.user.uid,
         date: formatDateToStringInDB(planItemMove.from),
@@ -368,7 +368,7 @@ const MealPlanner: React.FC = () => {
     const planItemDelete = planItemData.find(
       (item) =>
         item.recipe.id === recipeId &&
-        item.plan?.date.getTime() === date.getTime() &&
+        compareTwoDates(item.plan?.date, date) &&
         item.order === order
     );
 
@@ -376,14 +376,14 @@ const MealPlanner: React.FC = () => {
       .filter(
         (item) =>
           !(
-            item.recipe.id === planItemDelete?.recipeId &&
-            item.plan?.date.getTime() === planItemDelete?.plan.date.getTime() &&
+            item.recipe.id === planItemDelete?.recipe_id &&
+            compareTwoDates(item.plan?.date, planItemDelete?.plan.date) &&
             item.order === planItemDelete?.order
           )
       )
       .map((item) => {
         if (
-          item.plan?.date.getTime() === planItemDelete?.plan?.date.getTime() &&
+          compareTwoDates(item.plan?.date, planItemDelete?.plan.date) &&
           item.order >= planItemDelete?.order
         ) {
           return {
@@ -417,12 +417,23 @@ const MealPlanner: React.FC = () => {
       return;
     }
     const remainArray = planItemData.filter(
-      (planItem) => planItem.plan?.date.getTime() !== item.plan?.date.getTime()
+      (planItem) => !compareTwoDates(planItem.plan?.date, item.plan?.date)
     );
 
-    let array = planItemData.filter(
-      (planItem) => planItem.plan?.date.getTime() === item.plan?.date.getTime()
+    let array = planItemData.filter((planItem) =>
+      compareTwoDates(planItem.plan?.date, item.plan?.date)
     );
+
+    const exist = array.find(
+      (planItem) => planItem.recipe_id === item.recipe_id
+    );
+    if (exist) {
+      if (confirm('Công thức trùng lặp! Bạn vẫn muốn thêm?')) {
+      } else {
+        return;
+      }
+    }
+
     array = [...array, item].map((item, index) => {
       return {
         ...item,
@@ -437,11 +448,52 @@ const MealPlanner: React.FC = () => {
       date: formatDateToStringInDB(item.plan?.date),
       recipeIds: array.map((item) => item.recipe.id),
     };
+
     const result = await PlanItemService.AddOrUpdateRecipesToPlan(req);
     if (result) {
       snackbarAlert('Thêm công thức thành công', 'success');
     } else {
       snackbarAlert('Thêm công thức thất bại', 'error');
+    }
+  };
+
+  const addAllToCart = async () => {
+    if (!login.user || !login.user?.uid) {
+      return;
+    }
+
+    const weeks: string[] = weekDates.map((item) =>
+      item.date.toLocaleDateString('vi-VN')
+    );
+
+    const allRecipeids = planItemData
+      .filter((item) => {
+        return weeks.includes(item.plan?.date.toLocaleDateString('vi-VN'));
+      })
+      .map((item) => item.recipe_id);
+
+    if (allRecipeids.length === 0) {
+      snackbarAlert('Lịch ăn tuần chọn đang trống!', 'error');
+      return;
+    }
+
+    try {
+      handleSpinner(true);
+      const recipeToCartReq: RecipeToCartReq = {
+        account_id: login.user.uid,
+        recipe_ids: allRecipeids,
+      };
+      const result = await CartItemService.AddRecipeToCart(recipeToCartReq);
+      handleSpinner(false);
+
+      if (result) {
+        snackbarAlert('Thêm vào giỏ đi chợ thành công', 'success');
+      } else {
+        snackbarAlert('Thêm vào giỏ đi chợ thất bại', 'error');
+      }
+    } catch (error) {
+      console.log(error);
+      handleSpinner(false);
     }
   };
 
@@ -501,6 +553,7 @@ const MealPlanner: React.FC = () => {
                       handleChangeWeekCounter={(value: number) => {
                         setWeekCounter(value);
                       }}
+                      addAllToCart={addAllToCart}
                     />
                   </Grid>
 

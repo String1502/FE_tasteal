@@ -90,7 +90,7 @@ export function formatDateToStringInDB(inputDate: Date): string {
     .toString()
     .padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds
     .toString()
-    .padStart(2, '0')}`;
+    .padStart(2, '0')}.000Z`;
 
   return formattedDateString;
 }

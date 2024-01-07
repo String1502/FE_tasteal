@@ -18,6 +18,7 @@ import {
 } from '@mui/material';
 import { useCallback, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { v4 as uuidv4 } from 'uuid';
 
 const imgHeight = '124px';
 const padding = 1.5;
@@ -49,9 +50,9 @@ function CustomCardMealPlan({
               return;
             } else {
               const data: Plan_ItemEntity = {
-                id: -1,
-                planId: -1,
-                recipeId: recipe.id,
+                id: uuidv4(),
+                plan_id: -1,
+                recipe_id: recipe.id,
                 serving_size: recipe.serving_size,
                 order: -1,
                 recipe: recipe,

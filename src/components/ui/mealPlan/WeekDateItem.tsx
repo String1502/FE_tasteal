@@ -99,17 +99,9 @@ function WeekDateItem({
 
           {weekDates.date && (
             <Droppable
-              droppableId={weekDates.date.toLocaleDateString('vi-VN', {
-                year: 'numeric',
-                month: '2-digit',
-                day: '2-digit',
-              })}
+              droppableId={weekDates.date.toString()}
               type="group"
-              key={weekDates.date.toLocaleDateString('vi-VN', {
-                year: 'numeric',
-                month: '2-digit',
-                day: '2-digit',
-              })}
+              key={weekDates.date.toString()}
             >
               {(provided, _snapshot) => (
                 <Box
