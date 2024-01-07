@@ -79,21 +79,23 @@ export const AdminOccasionsIndex: FC = () => {
   const handleViewClick = (id: number) => {
     navigate(PageRoute.Admin.Occasions.View.replace(':id', id.toString()));
   };
-  const handleDeleteClick = (id: number) => {
-    OccasionService.DeleteOccasion(id)
-      .then((deletedOccasion) => {
-        if (deletedOccasion) {
-          snackbarAlert(
-            `Dịp ${deletedOccasion.name} đã xóa thành công!`,
-            'success'
-          );
-        }
-        setRows(rows.filter((row) => row.id !== id));
-      })
-      .catch((err) => {
-        console.log(err);
-        snackbarAlert('Dịp đã không được xóa!', 'warning');
-      });
+  const handleDeleteClick = async (id: number) => {
+    setLoading(true);
+    try {
+      const deletedOccasion = await OccasionService.DeleteOccasion(id);
+      if (deletedOccasion) {
+        snackbarAlert(
+          `Dịp ${deletedOccasion.name} đã xóa thành công!`,
+          'success'
+        );
+      }
+      setRows(rows.filter((row) => row.id !== id));
+    } catch (err) {
+      console.log(err);
+      snackbarAlert('Dịp đã không được xóa!', 'warning');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (

@@ -17,17 +17,26 @@ import { IngredientEntity } from '@/lib/models/entities/IngredientEntity/Ingredi
 import { Ingredient_TypeEntity } from '@/lib/models/entities/Ingredient_TypeEntity/Ingredient_TypeEntity';
 import IngredientService from '@/lib/services/ingredientService';
 import IngredientTypeService from '@/lib/services/ingredientTypeService';
+import OccasionService from '@/lib/services/occasionService';
 import { convertToSnakeCase } from '@/utils/format';
-import { ArrowBack } from '@mui/icons-material';
+import { ArrowBack, Close } from '@mui/icons-material';
 import {
   Autocomplete,
   Button,
+  CircularProgress,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
   Divider,
   Grid,
   IconButton,
   InputAdornment,
+  Slide,
   Switch,
   TextFieldProps,
+  Typography,
 } from '@mui/material';
 import { Stack } from '@mui/system';
 import { getDownloadURL, ref } from 'firebase/storage';
@@ -250,6 +259,22 @@ const AdminIngredientCreate: FC = () => {
   //#region Mode
 
   const [mode, setMode] = useState<FormMode>('create');
+  const switchModeToEdit = () => {
+    if (!form || !('id' in form)) return;
+
+    setMode('edit');
+    let path: string = PageRoute.Admin.Ingredients.Edit;
+    path = path.replace(':id', form?.id?.toString() || '');
+    navigate(path, { replace: true, preventScrollReset: true });
+  };
+  const switchModeToView = (id?: number) => {
+    if (!id) return;
+
+    setMode('view');
+    let path: string = PageRoute.Admin.Ingredients.View;
+    path = path.replace(':id', id.toString() || '');
+    navigate(path, { replace: true, preventScrollReset: true });
+  };
 
   //#endregion
   //#region Navigation
@@ -281,8 +306,6 @@ const AdminIngredientCreate: FC = () => {
       }
       try {
         const row = await IngredientService.GetById(parseInt(id));
-        console.log(row);
-
         if (!active) return;
         setViewForm(row);
         setUpdateForm(IngredientReqPutCreator.fromEntity(row));
@@ -304,6 +327,8 @@ const AdminIngredientCreate: FC = () => {
   };
 
   const handleCreateSubmit = async () => {
+    setLoading(true);
+
     try {
       const reqBody = await createForm.getReq(imageFile);
       console.log(reqBody);
@@ -313,10 +338,14 @@ const AdminIngredientCreate: FC = () => {
     } catch (err) {
       snackbarAlert('Nguyên liệu mới đã không được thêm!', 'warning');
       return;
+    } finally {
+      setLoading(false);
     }
   };
 
   const handleUpdateSubmit = async () => {
+    setLoading(true);
+
     try {
       const reqBody = await updateForm.getReq(imageFile);
       console.log(reqBody);
@@ -328,10 +357,10 @@ const AdminIngredientCreate: FC = () => {
     } catch (err) {
       console.log(err);
       snackbarAlert('Nguyên liệu đã không được cập nhật', 'warning');
+    } finally {
+      setLoading(false);
     }
   };
-
-  //#endregion
 
   const [form, setForm] = useMemo(() => {
     return mode === 'create'
@@ -341,117 +370,216 @@ const AdminIngredientCreate: FC = () => {
       : [updateForm, setUpdateForm];
   }, [createForm, mode, updateForm, viewForm]);
 
+  //#endregion
+  //#region State
+
   const disabled = mode === 'view';
+  const [loading, setLoading] = useState(false);
 
-  const switchModeToEdit = () => {
-    if (!form || !('id' in form)) return;
+  //#endregion
+  //#region Deletion
 
-    setMode('edit');
-    let path: string = PageRoute.Admin.Ingredients.Edit;
-    path = path.replace(':id', form?.id?.toString() || '');
-    navigate(path, { replace: true, preventScrollReset: true });
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState<boolean>(false);
+  const handleDeleteDialogOpen = () => {
+    setDeleteDialogOpen(true);
   };
-  const switchModeToView = (id?: number) => {
-    if (!id) return;
+  const handleDeleteDialogClose = () => {
+    setDeleteDialogOpen(false);
+  };
+  const handleDelete = async () => {
+    if (!id) {
+      snackbarAlert('Nguyên liệu đã không được xóa', 'warning');
+      return;
+    }
 
-    setMode('view');
-    let path: string = PageRoute.Admin.Ingredients.View;
-    path = path.replace(':id', id.toString() || '');
-    navigate(path, { replace: true, preventScrollReset: true });
+    setLoading(true);
+
+    try {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const deletedRow = await IngredientService.DeleteIngredient(Number(id));
+      snackbarAlert('Nguyên liệu đã được xóa thành công', 'success');
+      navigate(PageRoute.Admin.Ingredients.Index);
+    } catch (err) {
+      console.log(err);
+      snackbarAlert('Nguyên liệu đã không được xóa', 'warning');
+    } finally {
+      setLoading(false);
+    }
   };
 
-  console.log(createForm);
+  //#endregion
 
   return (
-    <AdminLayout>
-      <Stack alignItems={'start'} p={4} gap={4}>
-        <Stack direction="row" gap={1}>
-          <IconButton
-            sx={{
-              borderRadius: 4,
-              backgroundColor: 'primary.main',
-              color: 'primary.contrastText',
-              ':hover': {
-                backgroundColor: 'primary.dark',
-              },
-            }}
-            onClick={handleNavigateBack}
-          >
-            <ArrowBack />
-          </IconButton>
-          <FormTitle>
-            {mode === 'create' ? 'Thêm nguyên liệu' : 'Sửa nguyên liệu'}
-          </FormTitle>
-        </Stack>
-
-        <Grid container columnSpacing={12}>
-          <Grid item xs={3}>
-            <Stack>
-              <FormLabel>Hình ảnh</FormLabel>
-              <ImagePicker
-                file={imageFile}
-                imagePath={form?.image || ''}
-                onChange={imageFileChange}
-              />
-            </Stack>
-          </Grid>
-          <Grid item xs={9}>
-            <Form value={form} setValue={setForm} disabled={disabled} />
-          </Grid>
-        </Grid>
-        <Divider flexItem sx={{ opacity: 0.5 }} />
-        <Stack
-          direction="row"
-          justifyContent={'end'}
-          alignItems={'center'}
-          width="100%"
-          gap={1}
-        >
-          {mode === 'create' && (
-            <Button
-              variant="contained"
-              onClick={handleCreateSubmit}
-              sx={{ width: 240 }}
-            >
-              Thêm
-            </Button>
-          )}
-          {mode === 'view' && (
-            <Button
-              variant="contained"
-              onClick={() => switchModeToEdit()}
-              sx={{ width: 240 }}
-            >
-              Cập nhật
-            </Button>
-          )}
-          {mode === 'edit' && (
-            <Button
-              variant="contained"
-              onClick={() => handleUpdateSubmit()}
-              sx={{ width: 240 }}
-            >
-              Cập nhật
-            </Button>
-          )}
-          {mode === 'edit' && (
-            <Button
-              variant="outlined"
+    <>
+      <AdminLayout>
+        <Stack alignItems={'start'} p={4} gap={4}>
+          <Stack direction="row" gap={1}>
+            <IconButton
               sx={{
-                width: 240,
+                borderRadius: 4,
+                backgroundColor: 'primary.main',
+                color: 'primary.contrastText',
+                ':hover': {
+                  backgroundColor: 'primary.dark',
+                },
               }}
-              onClick={() =>
-                switchModeToView(
-                  form instanceof IngredientReqPutCreator ? form?.id : undefined
-                )
-              }
+              onClick={handleNavigateBack}
             >
-              Hủy
-            </Button>
-          )}
+              <ArrowBack />
+            </IconButton>
+            <FormTitle>
+              {mode === 'create' ? 'Thêm nguyên liệu' : 'Sửa nguyên liệu'}
+            </FormTitle>
+          </Stack>
+
+          <Grid container columnSpacing={12}>
+            <Grid item xs={3}>
+              <Stack>
+                <FormLabel>Hình ảnh</FormLabel>
+                <ImagePicker
+                  file={imageFile}
+                  imagePath={form?.image || ''}
+                  onChange={imageFileChange}
+                />
+              </Stack>
+            </Grid>
+            <Grid item xs={9}>
+              <Form value={form} setValue={setForm} disabled={disabled} />
+            </Grid>
+          </Grid>
+          <Divider flexItem sx={{ opacity: 0.5 }} />
+          <Stack
+            direction="row"
+            justifyContent={'end'}
+            alignItems={'center'}
+            width="100%"
+            gap={1}
+          >
+            {mode === 'create' && (
+              <Button
+                variant="contained"
+                onClick={handleCreateSubmit}
+                sx={{ width: 240 }}
+                disabled={loading}
+              >
+                {loading ? (
+                  <CircularProgress size={24} sx={{ color: 'white' }} />
+                ) : (
+                  'Thêm'
+                )}
+              </Button>
+            )}
+            {mode === 'view' && (
+              <Button
+                variant="contained"
+                color="error"
+                onClick={handleDeleteDialogOpen}
+                sx={{ width: 240 }}
+                disabled={loading}
+              >
+                Xóa
+              </Button>
+            )}
+            {mode === 'view' && (
+              <Button
+                variant="contained"
+                onClick={() => switchModeToEdit()}
+                sx={{ width: 240 }}
+                disabled={loading}
+              >
+                Cập nhật
+              </Button>
+            )}
+            {mode === 'edit' && (
+              <Button
+                variant="contained"
+                onClick={() => handleUpdateSubmit()}
+                sx={{ width: 240 }}
+                disabled={loading}
+              >
+                {loading ? (
+                  <CircularProgress size={24} sx={{ color: 'white' }} />
+                ) : (
+                  'Cập nhật'
+                )}
+              </Button>
+            )}
+            {mode === 'edit' && (
+              <Button
+                variant="outlined"
+                sx={{
+                  width: 240,
+                }}
+                onClick={() => switchModeToView(parseInt(id))}
+                disabled={loading}
+              >
+                Hủy
+              </Button>
+            )}
+          </Stack>
         </Stack>
-      </Stack>
-    </AdminLayout>
+      </AdminLayout>
+      <Dialog
+        open={deleteDialogOpen}
+        onClose={handleDeleteDialogClose}
+        TransitionComponent={Slide}
+        PaperProps={{
+          sx: {
+            borderRadius: 4,
+            width: '50%',
+          },
+        }}
+      >
+        <DialogTitle>
+          <Stack
+            direction="row"
+            justifyContent={'space-between'}
+            alignItems={'center'}
+          >
+            <Typography typography={'h6'}>Xóa dịp lễ</Typography>
+            <IconButton onClick={handleDeleteDialogClose} disabled={loading}>
+              <Close />
+            </IconButton>
+          </Stack>
+        </DialogTitle>
+        <Divider
+          sx={{
+            opacity: 0.5,
+          }}
+        />
+        <DialogContent>
+          <DialogContentText>{`Dịp lễ "${viewForm?.id || 'loading'} - ${
+            createForm?.name
+          }" sẽ bị xóa!`}</DialogContentText>
+        </DialogContent>
+        <Divider
+          sx={{
+            opacity: 0.5,
+          }}
+        />
+        <DialogActions>
+          <Button
+            variant="contained"
+            color="error"
+            onClick={handleDelete}
+            disabled={loading}
+          >
+            {loading ? (
+              <CircularProgress size={24} sx={{ color: 'white' }} />
+            ) : (
+              'Xóa'
+            )}
+          </Button>
+          <Button
+            variant="contained"
+            onClick={handleDeleteDialogClose}
+            disabled={loading}
+          >
+            Hủy
+          </Button>
+        </DialogActions>
+      </Dialog>
+    </>
   );
 };
 

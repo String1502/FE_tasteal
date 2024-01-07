@@ -15,6 +15,7 @@ type CacheValue<T> = {
   value: T;
 };
 const cache: Map<string, CacheValue<IngredientPagination>> = new Map();
+
 function createCacheKey(...args: unknown[]) {
   return JSON.stringify(args);
 }
@@ -47,13 +48,17 @@ export const AdminIngredientsIndex: FC = () => {
       return;
     }
 
+    setLoading(true);
+
     try {
       const ingredient = await IngredientService.DeleteIngredient(id);
-      console.log(ingredient);
       snackbarAlert(`Nguyên này đã bị xóa thành công!`, 'success');
+      setRows(rows.filter((row) => row.id !== id));
     } catch (err) {
       console.log(err);
       snackbarAlert('Nguyên liệu đã không bị xóa!', 'warning');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -149,6 +154,7 @@ export const AdminIngredientsIndex: FC = () => {
 
   const [ingredientTypes, setIngredientTypes] = useState([]);
   useEffect(() => {
+    cache.clear();
     let active = true;
 
     (async () => {
