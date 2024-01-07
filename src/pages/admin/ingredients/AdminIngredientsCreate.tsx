@@ -323,7 +323,7 @@ const AdminIngredientCreate: FC = () => {
       const updatedRow = await IngredientService.Update(reqBody);
       console.log(updatedRow);
 
-      switchModeToView();
+      switchModeToView(id);
       snackbarAlert('Nguyên liệu cập nhật thành công!', 'success');
     } catch (err) {
       console.log(err);
@@ -360,7 +360,7 @@ const AdminIngredientCreate: FC = () => {
     navigate(path, { replace: true, preventScrollReset: true });
   };
 
-  console.log(updateForm);
+  console.log(createForm);
 
   return (
     <AdminLayout>
@@ -399,9 +399,7 @@ const AdminIngredientCreate: FC = () => {
             <Form value={form} setValue={setForm} disabled={disabled} />
           </Grid>
         </Grid>
-
         <Divider flexItem sx={{ opacity: 0.5 }} />
-
         <Stack
           direction="row"
           justifyContent={'end'}
@@ -531,10 +529,12 @@ const Form: FC<FormProps> = ({ value, setValue, disabled = false }) => {
                 prev instanceof IngredientReqCreator ||
                 prev instanceof IngredientReqPutCreator
               ) {
+                console.log('run');
                 const clone = prev.clone();
                 clone.name = e.target.value;
                 return clone;
               }
+              console.log('run');
               return { ...prev, name: e.target.value };
             })
           }
@@ -561,9 +561,11 @@ const Form: FC<FormProps> = ({ value, setValue, disabled = false }) => {
                 prev instanceof IngredientReqPutCreator
               ) {
                 const clone = prev.clone();
+                console.log(clone);
+                console.log(value);
                 clone.ingredient_type.id = value
-                  ? prev.ingredient_type.id
-                  : value.id;
+                  ? value.id
+                  : prev.ingredient_type.id;
                 return clone;
               }
               return {
