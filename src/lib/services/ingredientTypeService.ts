@@ -23,7 +23,7 @@ class IngredientTypeService {
       });
   }
 
-  public static async GetIngredientById(
+  public static async GetIngredientTypeById(
     id: Ingredient_TypeEntity['id']
   ): Promise<Ingredient_TypeEntity> {
     const requestOptions = {
@@ -49,9 +49,9 @@ class IngredientTypeService {
 
   public static async DeleteIngredientType(
     id: Ingredient_TypeEntity['id']
-  ): Promise<boolean> {
+  ): Promise<Ingredient_TypeEntity> {
     const requestOptions = {
-      method: 'GET',
+      method: 'DELETE',
       headers: {
         'Content-Type': 'application/json; charset=UTF-8',
       },
@@ -75,7 +75,7 @@ class IngredientTypeService {
     name,
   }: {
     name: Ingredient_TypeEntity['name'];
-  }): Promise<boolean> {
+  }): Promise<Ingredient_TypeEntity> {
     const requestOptions = {
       method: 'POST',
       headers: {

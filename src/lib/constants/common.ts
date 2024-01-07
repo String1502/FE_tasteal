@@ -37,6 +37,12 @@ export const PageRoute = {
       Create: '/admin/ingredients/create',
       View: '/admin/ingredients/:id',
     },
+    IngredientTypes: {
+      Index: '/admin/ingredientTypes',
+      Create: '/admin/ingredientTypes/create',
+      View: '/admin/ingredientTypes/:id',
+      Edit: '/admin/ingredientTypes/:id/edit',
+    },
     Occasions: {
       Index: '/admin/occasions',
       Create: '/admin/occasions/create',
