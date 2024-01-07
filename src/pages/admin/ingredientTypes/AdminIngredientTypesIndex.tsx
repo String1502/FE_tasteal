@@ -9,7 +9,7 @@ import { FC, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 export const AdminIngredientTypesIndex: FC = () => {
-  //#region
+  //#region Hooks
 
   const [snackbarAlert] = useSnackbarService();
 
@@ -66,8 +66,13 @@ export const AdminIngredientTypesIndex: FC = () => {
   }, [paginationModel, paginationModel.page, paginationModel.pageSize]);
 
   //#endregion
+  //#region Navigation
 
   const navigate = useNavigate();
+
+  //#endregion
+  //#region Operation
+
   const handleCreateClick = () => {
     navigate(PageRoute.Admin.IngredientTypes.Create);
   };
@@ -76,19 +81,23 @@ export const AdminIngredientTypesIndex: FC = () => {
       PageRoute.Admin.IngredientTypes.View.replace(':id', id.toString())
     );
   };
-  const handleDeleteClick = (id: number) => {
-    IngredientTypeService.DeleteIngredientType(id)
-      .then((deletedRow) => {
-        if (deletedRow) {
-          snackbarAlert(`Dịp ${deletedRow.name} đã xóa thành công!`, 'success');
-        }
-        setRows(rows.filter((row) => row.id !== id));
-      })
-      .catch((err) => {
-        console.log(err);
-        snackbarAlert('Dịp đã không được xóa!', 'warning');
-      });
+  const handleDeleteClick = async (id: number) => {
+    setLoading(true);
+    try {
+      const deletedRow = await IngredientTypeService.DeleteIngredientType(id);
+      if (deletedRow) {
+        snackbarAlert(`Dịp ${deletedRow.name} đã xóa thành công!`, 'success');
+      }
+      setRows(rows.filter((row) => row.id !== id));
+    } catch (err) {
+      console.log(err);
+      snackbarAlert('Dịp đã không được xóa!', 'warning');
+    } finally {
+      setLoading(false);
+    }
   };
+
+  //#endregion
 
   return (
     <AdminLayout>

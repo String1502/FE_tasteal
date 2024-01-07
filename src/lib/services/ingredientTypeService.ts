@@ -1,6 +1,13 @@
 import { getApiUrl } from '../constants/api';
 import { Ingredient_TypeEntity } from '../models/entities/Ingredient_TypeEntity/Ingredient_TypeEntity';
 
+type CacheValue<T> = {
+  value: T;
+  time: number;
+};
+const cache = new Map<number, CacheValue<Ingredient_TypeEntity>>();
+const CACHE_LIFE_TIME = 60 * 1000;
+
 class IngredientTypeService {
   public static async GetAllIngredientTypes(): Promise<
     Ingredient_TypeEntity[]
@@ -33,13 +40,22 @@ class IngredientTypeService {
       },
     };
 
+    if (cache.has(id)) {
+      const value = cache.get(id);
+      if (Date.now() - value.time < CACHE_LIFE_TIME) {
+        return value.value;
+      } else {
+        cache.delete(id);
+      }
+    }
+
     return await fetch(
       `${getApiUrl('GetIngredientTypeById')}/${id}`,
       requestOptions
     )
       .then((response) => response.json())
       .then((data) => {
-        console.log(data);
+        cache.set(id, { value: data, time: Date.now() });
         return data;
       })
       .catch((error) => {
@@ -109,7 +125,7 @@ class IngredientTypeService {
     return await fetch(`${getApiUrl('UpdateIngredientType')}`, requestOptions)
       .then((response) => response.json())
       .then((data) => {
-        console.log(data);
+        cache.delete(data.id);
         return data;
       })
       .catch((error) => {

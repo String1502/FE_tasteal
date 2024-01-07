@@ -1,10 +1,9 @@
-import CustomGridToolbar from '@/components/common/datagrid/CustomGridToolbar';
 import FormTitle from '@/components/common/typos/FormTitle';
-import useSnackbarService from '@/lib/hooks/useSnackbar';
 import { Add, Close, Delete, RemoveRedEye } from '@mui/icons-material';
 import {
   Box,
   Button,
+  CircularProgress,
   Dialog,
   DialogActions,
   DialogContent,
@@ -33,7 +32,7 @@ export type CommonIndexPageProps<RowType> = {
   onPaginationModelChange?: (model: { page: number; pageSize: number }) => void;
   onCreateClick?: () => void;
   onViewClick?: (id: number) => void;
-  onDeleteClick?: (id: number) => void;
+  onDeleteClick?: (id: number) => Promise<void>;
 };
 
 export default function CommonIndexPage<RowType>({
@@ -64,11 +63,11 @@ export default function CommonIndexPage<RowType>({
 
   // Delete states and functions
   const [toDeleteRowId, setToDeleteRowId] = useState<number | null>(null);
-  const handleDeleteRow = useCallback(() => {
+  const handleDeleteRow = useCallback(async () => {
     if (toDeleteRowId === null) {
       return;
     }
-    onDeleteClick(toDeleteRowId);
+    await onDeleteClick(toDeleteRowId);
     setDeleteDialogOpen(false);
   }, [onDeleteClick, toDeleteRowId]);
 
@@ -135,14 +134,6 @@ export default function CommonIndexPage<RowType>({
           loading={loading}
           rows={rows}
           columns={columns}
-          slots={{
-            toolbar: CustomGridToolbar,
-          }}
-          slotProps={{
-            toolbar: {
-              showQuickFilter: true,
-            },
-          }}
           paginationMode="server"
           rowCount={rowCount}
           paginationModel={paginationModel}
@@ -169,7 +160,7 @@ export default function CommonIndexPage<RowType>({
             alignItems={'center'}
           >
             <Typography typography={'h6'}>{dialogProps.title}</Typography>
-            <IconButton onClick={handleDeleteClose}>
+            <IconButton onClick={handleDeleteClose} disabled={loading}>
               <Close />
             </IconButton>
           </Stack>
@@ -188,10 +179,23 @@ export default function CommonIndexPage<RowType>({
           }}
         />
         <DialogActions>
-          <Button variant="contained" color="error" onClick={handleDeleteRow}>
-            Xóa
+          <Button
+            variant="contained"
+            color="error"
+            onClick={handleDeleteRow}
+            disabled={loading}
+          >
+            {loading ? (
+              <CircularProgress size={24} sx={{ color: 'white' }} />
+            ) : (
+              'Xóa'
+            )}
           </Button>
-          <Button variant="contained" onClick={handleDeleteClose}>
+          <Button
+            variant="contained"
+            onClick={handleDeleteClose}
+            disabled={loading}
+          >
             Hủy
           </Button>
         </DialogActions>
