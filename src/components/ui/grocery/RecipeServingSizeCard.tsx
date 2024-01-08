@@ -119,7 +119,7 @@ export const RecipeServingSizeCard = ({
           value={servingSize}
           onChange={async (e) => {
             setServingSize(parseInt(e.target.value));
-            await handleServingSizeChange(cart.id, servingSize);
+            await handleServingSizeChange(cart.id, parseInt(e.target.value));
           }}
         >
           {ServingSizes.map((item) => (

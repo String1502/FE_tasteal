@@ -1,6 +1,5 @@
 import CustomGridToolbar from '@/components/common/datagrid/CustomGridToolbar';
 import FormTitle from '@/components/common/typos/FormTitle';
-import useSnackbarService from '@/lib/hooks/useSnackbar';
 import { Add, Close, Delete, RemoveRedEye } from '@mui/icons-material';
 import {
   Box,

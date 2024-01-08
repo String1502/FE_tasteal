@@ -13,6 +13,7 @@ import { IngredientItemData } from '@/components/ui/collections/IngredientSelect
 import NewIngredientModal from '@/components/ui/modals/NewIngredientModal';
 import ServingSizeSelect from '@/components/ui/selects/ServingSizeSelect';
 import Layout from '@/layout/Layout';
+import { PageRoute } from '@/lib/constants/common';
 import { ServingSizes } from '@/lib/constants/options';
 import { StoragePath } from '@/lib/constants/storage';
 import AppContext from '@/lib/contexts/AppContext';
@@ -22,6 +23,7 @@ import { RecipeReq } from '@/lib/models/dtos/Request/RecipeReq/RecipeReq';
 import { Recipe_IngredientReq } from '@/lib/models/dtos/Request/Recipe_IngredientReq/Recipe_IngredientReq';
 import { RecipeRes } from '@/lib/models/dtos/Response/RecipeRes/RecipeRes';
 import { Direction } from '@/lib/models/dtos/common';
+import CookbookService from '@/lib/services/cookbookService';
 import OccasionService from '@/lib/services/occasionService';
 import RecipeService from '@/lib/services/recipeService';
 import { CommonMessage } from '@/utils/constants/message';
@@ -339,17 +341,27 @@ const CreateRecipe: React.FunctionComponent<{ edit?: boolean }> = ({
 
       console.log(postData);
 
-      RecipeService.CreateRecipe(postData)
-        .then((response) => {
-          console.log(response);
+      const result = await RecipeService.CreateRecipe(postData);
+
+      if (result) {
+        try {
+          const cookBook = await CookbookService.GetAllCookBookByAccountId(
+            user?.uid ?? ''
+          );
+          if (cookBook && cookBook.length > 0) {
+            await RecipeService.AddRecipeToCookBook({
+              cook_book_id: cookBook[0].id,
+              recipe_id: result.id,
+            });
+          }
           snackbarAlert('Công thức tạo thành công!', 'success');
+
           clearForm();
-          navigate(`/recipe/${response.id}`);
-        })
-        .catch((e) => {
-          console.log(createDebugString(e.message ?? 'Unknown error'));
-          snackbarAlert('Công thức tạo thất bại!', 'warning');
-        });
+          navigate(PageRoute.Recipe.Detail(result.id));
+        } catch (error) {}
+      } else {
+        snackbarAlert('Công thức tạo thất bại!', 'warning');
+      }
     } catch (e) {
       console.log(createDebugString(e));
       snackbarAlert(e.message, 'warning');

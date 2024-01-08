@@ -31,6 +31,7 @@ function useTastealTheme(): {
   cookbooks?: CookBookEntity[];
   popOverHeader?: PopoverContentProps;
   scroll?: ScrollApp;
+  handleUpdateCookbook: () => void;
 } {
   //#region Theme
   const [mode, setMode] = useState<PaletteMode>('light');
@@ -91,6 +92,41 @@ function useTastealTheme(): {
 
   const [scrollPos, setScrollPos] = useState(0);
   //#endregion
+  console.log(login);
+
+  useEffect(() => {
+    if (login.isUserSignedIn == undefined) {
+      handleSpinner(true);
+      const unsubscribe = onAuthStateChanged(auth, async (user) => {
+        if (user) {
+          setLogin({ isUserSignedIn: true, user: user });
+
+          const cookbooks = await CookbookService.GetAllCookBookByAccountId(
+            user.uid
+          );
+          setCookbooks(cookbooks);
+        } else {
+          setCookbooks([]);
+          setLogin({ isUserSignedIn: false, user: undefined });
+        }
+      });
+      handleSpinner(false);
+      return () => {
+        unsubscribe();
+      };
+    }
+  }, [login]);
+
+  const handleUpdateCookbook = async () => {
+    if (login.isUserSignedIn && login.user) {
+      const cookbooks = await CookbookService.GetAllCookBookByAccountId(
+        login.user.uid
+      );
+      setCookbooks(cookbooks);
+    } else {
+      setCookbooks([]);
+    }
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -116,32 +152,10 @@ function useTastealTheme(): {
       });
     };
     fetchData();
-
     const handleScroll = () => {
       setScrollPos(window.scrollY);
     };
     window.addEventListener('scroll', handleScroll);
-
-    if (login.isUserSignedIn == undefined) {
-      handleSpinner(true);
-      const unsubscribe = onAuthStateChanged(auth, async (user) => {
-        if (user) {
-          setLogin({ isUserSignedIn: true, user: user });
-          const cookbooks = await CookbookService.GetAllCookBookByAccountId(
-            user.uid
-          );
-          setCookbooks(cookbooks);
-        } else {
-          setCookbooks([]);
-          setLogin({ isUserSignedIn: false, user: undefined });
-        }
-      });
-      handleSpinner(false);
-      return () => {
-        window.removeEventListener('scroll', handleScroll);
-        unsubscribe();
-      };
-    }
     return () => {
       window.removeEventListener('scroll', handleScroll);
     };
@@ -162,6 +176,7 @@ function useTastealTheme(): {
     cookbooks,
     popOverHeader,
     scroll: { isHeaderHide: isHeaderHide, scrollPos: scrollPos },
+    handleUpdateCookbook,
   };
 }
 

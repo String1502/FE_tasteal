@@ -175,7 +175,11 @@ export function useSearchRecipe(viewportItemAmount: number = 12) {
     });
 
     setPage((prev) => prev + 1);
-    setRecipes((prev) => [...prev, ...nextData]);
+    if (recipes) {
+      setRecipes((prev) => [...prev, ...nextData]);
+    } else {
+      setRecipes(nextData);
+    }
     if (nextData.length < viewportItemAmount) setEnd(true);
   }, [recipes]);
   //#endregion

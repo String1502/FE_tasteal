@@ -66,7 +66,7 @@ function Home() {
             }}
           >
             <Container>
-              <Typography {...typoProps}>Công thức theo dịp</Typography>
+              <Typography {...typoProps}>Các dịp trong năm</Typography>
               <Occasion_Component />
             </Container>
           </Box>
