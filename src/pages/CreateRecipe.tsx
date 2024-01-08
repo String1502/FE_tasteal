@@ -730,13 +730,13 @@ const CreateRecipe: React.FunctionComponent<{ edit?: boolean }> = ({
                   <FormControlLabel
                     value={true}
                     control={<Radio />}
-                    label="Người khác không thể xem"
+                    label="Riêng tư"
                     disabled={isProcessing}
                   />
                   <FormControlLabel
                     value={false}
                     control={<Radio />}
-                    label="Chia sẻ công thức thông qua link"
+                    label="Công khai"
                     disabled={isProcessing}
                   />
                 </RadioGroup>
