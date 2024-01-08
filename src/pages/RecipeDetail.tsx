@@ -584,7 +584,7 @@ const RecipeDetail: FC = () => {
           }}
         >
           <Container sx={{ py: 8, width: '100%' }}>
-            <Stack width={'60%'} gap={1}>
+            <Stack width={{ xs: '100%', md: '60%' }} gap={1}>
               <Stack
                 direction="row"
                 justifyContent={'space-between'}
@@ -636,7 +636,7 @@ const RecipeDetail: FC = () => {
               gap: 2,
             }}
           >
-            <Stack width="60%" gap={1}>
+            <Stack width={{ xs: '100%', md: '60%' }} gap={1}>
               <Stack
                 direction="row"
                 alignItems={'end'}

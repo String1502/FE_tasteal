@@ -589,10 +589,10 @@ const CreateRecipe: React.FunctionComponent<{ edit?: boolean }> = ({
       >
         <Card
           sx={{
-            width: '52%',
             borderRadius: 12,
             p: 4,
-            bgcolor: '##FFFAF9',
+            width: { xs: '96%', sm: '70%', md: '60%' },
+            bgcolor: '#FFFAF9',
           }}
         >
           <CardContent>
