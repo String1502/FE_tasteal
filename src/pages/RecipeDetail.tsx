@@ -716,6 +716,7 @@ const RecipeDetail: FC = () => {
                       comments.map((comment, index) => (
                         <>
                           <CommentItem comment={comment} />
+
                           {index < comments.length - 1 && (
                             <Divider sx={{ my: 2, opacity: 0.4 }} />
                           )}
@@ -920,9 +921,19 @@ function CommentItem({ comment }: { comment: CommentEntity }) {
             <Typography typography="h6">
               {account?.name ?? 'Không tìm thấy'}
             </Typography>
-            <Typography typography="body1">5 tháng, 4 tuần trước</Typography>
+            <Typography typography="body1">
+              {comment.created_at
+                ? new Date(comment.created_at).toLocaleDateString('vi-VN', {
+                    year: 'numeric',
+                    month: '2-digit',
+                    day: '2-digit',
+                    hour: '2-digit',
+                    minute: '2-digit',
+                  })
+                : 'Trống'}
+            </Typography>
           </Stack>
-          <Rating readOnly />
+          {/* <Rating readOnly /> */}
           <Typography fontSize={20}>{comment.comment}</Typography>
         </Stack>
       </Stack>

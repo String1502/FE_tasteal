@@ -715,7 +715,11 @@ const CreateRecipe: React.FunctionComponent<{ edit?: boolean }> = ({
                   placeholder={`Thêm mẹo / lưu ý cho công thức này`}
                 />
               </Stack>
-              <Stack>
+              <Stack
+                sx={{
+                  display: 'none',
+                }}
+              >
                 <RadioGroup
                   value={newRecipe.isPrivate}
                   onChange={(e) =>
@@ -724,17 +728,17 @@ const CreateRecipe: React.FunctionComponent<{ edit?: boolean }> = ({
                       e.target.value === 'true'
                     )
                   }
-                  defaultValue={true}
+                  defaultValue={false}
                   name="isRecipePrivate"
                 >
                   <FormControlLabel
-                    value={true}
+                    value={false}
                     control={<Radio />}
                     label="Riêng tư"
                     disabled={isProcessing}
                   />
                   <FormControlLabel
-                    value={false}
+                    value={true}
                     control={<Radio />}
                     label="Công khai"
                     disabled={isProcessing}
