@@ -19,6 +19,7 @@ import useSnackbarService from '@/lib/hooks/useSnackbar';
 import { RecipeRes } from '@/lib/models/dtos/Response/RecipeRes/RecipeRes';
 import { AccountEntity } from '@/lib/models/entities/AccountEntity/AccountEntity';
 import { CommentEntity } from '@/lib/models/entities/CommentEntity/CommentEntity';
+import { Nutrition_InfoEntity } from '@/lib/models/entities/Nutrition_InfoEntity/Nutrition_InfoEntity';
 import AccountService from '@/lib/services/accountService';
 import CommentService from '@/lib/services/commentService';
 import RatingService, {

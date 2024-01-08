@@ -1,4 +1,4 @@
-import { MeasurementUnit } from "../enums/measurement";
+import { MeasurementUnit } from '../enums/measurement';
 
 /**
  * Resolve the correct measurement unit label
@@ -7,7 +7,7 @@ import { MeasurementUnit } from "../enums/measurement";
  * @returns {string} The label for the correct measurement unit.
  */
 export function MeasurementUnitResolver(isLiquid: boolean | undefined) {
-  if (!isLiquid) {
+  if (isLiquid === undefined) {
     return MeasurementUnit.none;
   }
 
