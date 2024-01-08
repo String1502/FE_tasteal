@@ -2,7 +2,6 @@ import { getApiUrl } from '@/lib/constants/api';
 import { RecipeRes } from '@/lib/models/dtos/Response/RecipeRes/RecipeRes';
 import { createDebugStringFormatter } from '@/utils/debug/formatter';
 import { DefaultPage } from '../constants/common';
-import { deleteImage } from '../firebase/image';
 import { PageFilter } from '../models/dtos/Request/PageFilter/PageFilter';
 import { PageReq } from '../models/dtos/Request/PageReq/PageReq';
 import {
@@ -193,40 +192,19 @@ class RecipeService {
    * Create a new recipe
    */
   public static async CreateRecipe(postData: RecipeReq) {
-    return fetch(getApiUrl('CreateRecipe'), {
+    return await fetch(getApiUrl('CreateRecipe'), {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify(postData),
     })
-      .then((response: Response) => {
-        if (response.ok) return response.json();
-
-        return Promise.reject(response);
-      })
-      .then((data: RecipeRes) => {
-        console.log(createDebugString('POST succeeded!', 'CreateRecipe'), data);
+      .then((response) => response.json())
+      .then((data) => {
         return data;
       })
       .catch((e) => {
-        // Initial handle
-        switch (e.code) {
-          default:
-            // TODO: test this
-            // This is not tested
-            deleteImage(postData.image).catch();
-            Promise.all(
-              postData.directions.map((direction) =>
-                deleteImage(direction.image)
-              )
-            ).catch();
-            break;
-        }
-
-        const msg = createDebugString('POST fail!', 'CreateRecipe');
-        console.error(msg, e);
-        return Promise.reject(e);
+        console.error(createDebugString('POST failed!', 'CreateRecipe'), e);
       });
   }
 
@@ -303,6 +281,26 @@ class RecipeService {
       return res.json();
     }
     throw new Error(res.statusText);
+  }
+
+  public static async Delete(recipeId: number): Promise<boolean> {
+    const requestOptions: RequestInit = {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+    };
+
+    return await fetch(
+      `${getApiUrl('DeleteRecipe')}?recipeId=${recipeId}`,
+      requestOptions
+    )
+      .then((response) => response.json())
+      .then((data) => data)
+      .catch((error) => {
+        console.error('Lỗi:', error);
+        throw error;
+      });
   }
 }
 

@@ -741,7 +741,11 @@ const RecipeDetail: FC = () => {
               borderRadius={6}
             ></Box>
 
-            <Box>
+            <Box
+              sx={{
+                display: recipe?.relatedRecipes.length > 1 ? 'block' : 'none',
+              }}
+            >
               <Box
                 display="flex"
                 justifyContent={'space-between'}

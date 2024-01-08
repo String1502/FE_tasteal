@@ -300,6 +300,7 @@ export default function SignUp() {
                     },
                     fontSize: 'caption.fontSize',
                     fontWeight: 'bold',
+                    display: 'none',
                   }}
                   startIcon={<Facebook fontSize="large" />}
                 >

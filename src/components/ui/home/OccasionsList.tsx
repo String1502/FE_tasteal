@@ -55,8 +55,7 @@ function OccasionCard({ item }: { item: OccasionEntity }) {
           flexDirection: 'column',
         }}
         onClick={() => {
-          localStorage.setItem(localOcacions, JSON.stringify(item));
-          navigate(PageRoute.Search);
+          navigate(PageRoute.Reference('occasions'));
         }}
       >
         <BoxImage

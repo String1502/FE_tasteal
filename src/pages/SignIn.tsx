@@ -113,6 +113,8 @@ export default function SignIn() {
                 if (isSuccess) {
                   console.log(createDebugString('Sign up successfully'));
                   openSnackbar('Đăng ký thành công!');
+                  login.handleLogin(true, userCredential.user);
+
                   navigate(PageRoute.SignIn);
                 } else {
                   console.log(createDebugString('Sign up failed'));
@@ -300,6 +302,7 @@ export default function SignIn() {
                     },
                     fontSize: 'caption.fontSize',
                     fontWeight: 'bold',
+                    display: 'none',
                   }}
                   startIcon={<Facebook fontSize="large" />}
                   onClick={handleSignInWithFacebook}

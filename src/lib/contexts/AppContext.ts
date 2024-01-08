@@ -16,6 +16,7 @@ export type AppContextState = {
   cookbooks?: CookBookEntity[];
   popOverHeader?: PopoverContentProps;
   scroll?: ScrollApp;
+  handleUpdateCookbook: () => void;
 };
 const AppContext = React.createContext<AppContextState>({
   handleSpinner: () => {},
@@ -28,6 +29,7 @@ const AppContext = React.createContext<AppContextState>({
   cookbooks: undefined,
   popOverHeader: undefined,
   scroll: undefined,
+  handleUpdateCookbook: () => {},
 });
 
 export default AppContext;

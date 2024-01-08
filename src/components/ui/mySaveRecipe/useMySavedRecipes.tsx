@@ -13,7 +13,7 @@ export function useMySavedRecipes() {
     undefined
   );
 
-  const { login, handleSpinner } = useContext(AppContext);
+  const { login, handleSpinner, handleUpdateCookbook } = useContext(AppContext);
 
   const handleChoosing = (cookbook: CookbookChoosingType) => {
     setChoosing(cookbook);
@@ -97,6 +97,7 @@ export function useMySavedRecipes() {
           setChoosing(undefined);
         }
       }
+      handleUpdateCookbook();
     } else if (type == 'add') {
       setCookbookData([
         ...cookbookData,
@@ -105,6 +106,7 @@ export function useMySavedRecipes() {
           CookbookRecipes: [],
         },
       ]);
+      handleUpdateCookbook();
     }
   };
 

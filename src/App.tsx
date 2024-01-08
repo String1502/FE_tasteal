@@ -59,6 +59,7 @@ type AppWrapperProps = {
   currentOccasion?: OccasionEntity;
   popOverHeader?: PopoverContentProps;
   scroll?: ScrollApp;
+  handleUpdateCookbook: () => void;
 };
 
 function AppWrapper({
