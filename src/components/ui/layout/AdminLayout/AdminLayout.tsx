@@ -10,7 +10,7 @@ import {
   SxProps,
 } from '@mui/material';
 import { FC, PropsWithChildren } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import AdminListButton from '../../admin/AdminListButton';
 
 const commonStyle: SxProps = {
@@ -19,9 +19,10 @@ const commonStyle: SxProps = {
 
 const AdminLayout: FC<PropsWithChildren> = ({ children }) => {
   const location = useLocation();
+  const navigate = useNavigate();
 
   function checkSelected(path: string) {
-    return path === location.pathname;
+    return location.pathname.includes(path);
   }
 
   return (
@@ -35,7 +36,7 @@ const AdminLayout: FC<PropsWithChildren> = ({ children }) => {
           }}
         >
           <Box component="nav">
-            <ListItemButton>
+            <ListItemButton onClick={() => navigate('/')}>
               <ListItemIcon>
                 <Home color="primary" />
               </ListItemIcon>
@@ -59,19 +60,19 @@ const AdminLayout: FC<PropsWithChildren> = ({ children }) => {
               Icon={Flatware}
               label="Nguyên liệu"
               path={PageRoute.Admin.Ingredients.Index}
-              selected={checkSelected(PageRoute.Admin.Ingredients.Index)}
+              selected={checkSelected('ingredients')}
             />
             <AdminListButton
               Icon={Category}
               label="Loại nguyên liệu"
               path={PageRoute.Admin.IngredientTypes.Index}
-              selected={checkSelected(PageRoute.Admin.IngredientTypes.Index)}
+              selected={checkSelected('ingredientTypes')}
             />
             <AdminListButton
               Icon={CalendarMonth}
               label="Dịp lễ"
               path={PageRoute.Admin.Occasions.Index}
-              selected={checkSelected(PageRoute.Admin.Occasions.Index)}
+              selected={checkSelected(`occasions`)}
             />
           </Box>
         </Paper>

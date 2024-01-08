@@ -1,7 +1,9 @@
 import CommonIndexPage from '@/components/ui/admin/CommonAdminIndexPage';
+import NotManager from '@/components/ui/app/NotManager';
 import AdminLayout from '@/components/ui/layout/AdminLayout';
 import { PageRoute } from '@/lib/constants/common';
 import useSnackbarService from '@/lib/hooks/useSnackbar';
+import useTastealTheme from '@/lib/hooks/useTastealTheme';
 import { IngredientPagination } from '@/lib/models/dtos/Response/IngredientRes/IngredientRes';
 import { IngredientEntity } from '@/lib/models/entities/IngredientEntity/IngredientEntity';
 import IngredientService from '@/lib/services/ingredientService';
@@ -15,6 +17,7 @@ type CacheValue<T> = {
   value: T;
 };
 const cache: Map<string, CacheValue<IngredientPagination>> = new Map();
+
 function createCacheKey(...args: unknown[]) {
   return JSON.stringify(args);
 }
@@ -47,13 +50,17 @@ export const AdminIngredientsIndex: FC = () => {
       return;
     }
 
+    setLoading(true);
+
     try {
-      const ingredient = await IngredientService.DeleteIngredient(id);
-      console.log(ingredient);
+      await IngredientService.DeleteIngredient(id);
       snackbarAlert(`Nguyên này đã bị xóa thành công!`, 'success');
+      setRows(rows.filter((row) => row.id !== id));
     } catch (err) {
       console.log(err);
       snackbarAlert('Nguyên liệu đã không bị xóa!', 'warning');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -149,6 +156,7 @@ export const AdminIngredientsIndex: FC = () => {
 
   const [ingredientTypes, setIngredientTypes] = useState([]);
   useEffect(() => {
+    cache.clear();
     let active = true;
 
     (async () => {
@@ -166,6 +174,21 @@ export const AdminIngredientsIndex: FC = () => {
       active = false;
     };
   }, []);
+
+  //#endregion
+  //#region Authorization
+
+  const {
+    login: { user },
+  } = useTastealTheme();
+
+  if (!user) {
+    return '';
+  }
+
+  if (!(user.uid === 'Ah3AvtwmXrfuvGFo8sjSO2IOpCg1')) {
+    return <NotManager />;
+  }
 
   //#endregion
 
