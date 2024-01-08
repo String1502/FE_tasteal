@@ -8,6 +8,7 @@ import RecipeTimeInfo from '@/components/ui/cards/RecipeTimeInfo';
 import DirectionItem from '@/components/ui/collections/DirectionItem';
 import IngredientDisplayer from '@/components/ui/collections/IngredientDisplayer';
 import SimpleContainer from '@/components/ui/container/SimpleContainer';
+import NutrionPerServingInfo from '@/components/ui/displayers/NutrionPerServingInfo';
 import SameAuthorRecipesCarousel from '@/components/ui/displayers/SameAuthorRecipesCarousel/SameAuthorRecipesCarousel';
 import NutrionPerServingModal from '@/components/ui/modals/NutrionPerServingModal';
 import Layout from '@/layout/Layout';
@@ -54,6 +55,24 @@ import {
   useState,
 } from 'react';
 import { Link as RouterLink, useNavigate, useParams } from 'react-router-dom';
+
+const DEFAULT_NUTRITION_VALUE: Nutrition_InfoEntity = {
+  id: 0,
+  calories: 0,
+  fat: 0,
+  saturated_fat: 0,
+  trans_fat: 0,
+  cholesterol: 0,
+  carbohydrates: 0,
+  fiber: 0,
+  sugars: 0,
+  protein: 0,
+  sodium: 0,
+  vitaminD: 0,
+  calcium: 0,
+  iron: 0,
+  potassium: 0,
+};
 
 // Mock bread crumbs data (will be remove later)
 const breadCrumbsLinks = [
@@ -220,7 +239,7 @@ const RecipeDetail: FC = () => {
     console.log(recipe!.id, user.uid, comment);
 
     CommentService.Create(recipe!.id, user.uid, comment)
-      .then((_comment) => {
+      .then(() => {
         GetComments(recipe!.id);
         setComment('');
       })
@@ -445,6 +464,16 @@ const RecipeDetail: FC = () => {
                         height={120}
                       />
                     </Stack>
+                    <Stack>
+                      <SectionHeading>
+                        Hàm lượng dinh dưỡng trên khẩu phần ăn
+                      </SectionHeading>
+                      <Skeleton
+                        variant="rounded"
+                        animation="wave"
+                        height={120}
+                      />
+                    </Stack>
                   </>
                 ) : (
                   <>
@@ -467,6 +496,13 @@ const RecipeDetail: FC = () => {
                         {recipe?.author_note ?? 'Không'}
                       </Typography>
                     </Stack>
+
+                    <NutrionPerServingInfo
+                      onClick={() => setNutritionPerServingModalOpen(true)}
+                      nutritionInfo={
+                        recipe?.nutrition_info ?? DEFAULT_NUTRITION_VALUE
+                      }
+                    />
                   </>
                 )}
               </Stack>
