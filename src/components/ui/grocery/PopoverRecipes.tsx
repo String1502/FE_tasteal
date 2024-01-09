@@ -1,4 +1,8 @@
-import { DeleteRounded, MoreHorizRounded } from '@mui/icons-material';
+import {
+  ArchiveRounded,
+  DeleteRounded,
+  MoreHorizRounded,
+} from '@mui/icons-material';
 import {
   Box,
   List,
@@ -14,8 +18,10 @@ import SlideInDialog from '@/components/common/dialog/SlideInDialog';
 
 export function PopoverRecipes({
   DeleteAllCartByAccountId,
+  addToPantry,
 }: {
   DeleteAllCartByAccountId: () => Promise<void>;
+  addToPantry: () => Promise<void>;
 }) {
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
 
@@ -31,8 +37,8 @@ export function PopoverRecipes({
   const id = open ? 'simple-popover' : undefined;
 
   const [openClearAll, setOpenClearAll] = useState(false);
-  const handleOpenClearAll = () => setOpenClearAll(true);
-  const handleCloseClearAll = () => setOpenClearAll(false);
+
+  const [openAddTuLanh, setOpenAddTuLanh] = useState(false);
 
   return (
     <Box>
@@ -77,7 +83,28 @@ export function PopoverRecipes({
             <ListItem disablePadding>
               <ListItemButton
                 onClick={() => {
-                  handleOpenClearAll();
+                  setOpenAddTuLanh(true);
+                  handleClose();
+                }}
+              >
+                <ListItemIcon sx={{ minWidth: '40px' }}>
+                  <ArchiveRounded color="primary" fontSize="small" />
+                </ListItemIcon>
+                <ListItemText>
+                  <Typography
+                    variant="body2"
+                    fontWeight={'bold'}
+                    color={'primary'}
+                  >
+                    Thêm vào tủ lạnh
+                  </Typography>
+                </ListItemText>
+              </ListItemButton>
+            </ListItem>
+            <ListItem disablePadding>
+              <ListItemButton
+                onClick={() => {
+                  setOpenClearAll(true);
                   handleClose();
                 }}
               >
@@ -102,7 +129,7 @@ export function PopoverRecipes({
       {/* Dialog Clear All */}
       <SlideInDialog
         open={openClearAll}
-        handleClose={handleCloseClearAll}
+        handleClose={() => setOpenClearAll(false)}
         withCloseButton={true}
         title="Bạn chắc chứ ?"
         content={
@@ -115,7 +142,27 @@ export function PopoverRecipes({
         }}
         onClickConfirm={async () => {
           await DeleteAllCartByAccountId();
-          handleCloseClearAll();
+          setOpenClearAll(false);
+        }}
+      />
+
+      {/* Dialog Thêm tủ lạnh */}
+      <SlideInDialog
+        open={openAddTuLanh}
+        handleClose={() => setOpenAddTuLanh(false)}
+        withCloseButton={true}
+        title="Thêm vào tủ lạnh?"
+        content={
+          'Tất cả nguyên liệu đã mua (ngoại trừ đồ cá nhân không nằm trong hệ thống) sẽ được thêm vào tủ lạnh của bạn. Sau đó giỏ đi chợ sẽ được dọn!'
+        }
+        cancelText="Hủy"
+        confirmText="Thêm"
+        confirmButtonProps={{
+          color: 'primary',
+        }}
+        onClickConfirm={async () => {
+          await addToPantry();
+          setOpenAddTuLanh(false);
         }}
       />
     </Box>
