@@ -3,7 +3,7 @@ import useSnackbarService from '@/lib/hooks/useSnackbar';
 import { CartEntity } from '@/lib/models/entities/CartEntity/CartEntity';
 import { Cart_ItemEntity } from '@/lib/models/entities/Cart_ItemEntity/Cart_ItemEntity';
 import { IngredientEntity } from '@/lib/models/entities/IngredientEntity/IngredientEntity';
-import { Pantry_ItemEntity } from '@/lib/models/entities/Pantry_ItemEntity/Pantry_ItemEntity';
+
 import { PersonalCartItemEntity } from '@/lib/models/entities/PersonalCartItemEntity/PersonalCartItemEntity';
 import { MeasurementUnitResolver } from '@/lib/resolvers/measurement';
 import CartItemService from '@/lib/services/CartItemService';
@@ -18,7 +18,7 @@ import {
   Typography,
   TypographyProps,
 } from '@mui/material';
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useState } from 'react';
 
 function CartItemCheckBox({
   item,
@@ -26,7 +26,6 @@ function CartItemCheckBox({
   type = 'cart',
   handleChangeCartItemData,
   handleChangePersonalCartItemData,
-  pantryItems,
   shorten = false,
 }: {
   item: Cart_ItemEntity;
@@ -36,7 +35,6 @@ function CartItemCheckBox({
   handleChangePersonalCartItemData?: (
     id: PersonalCartItemEntity['id']
   ) => Promise<void>;
-  pantryItems?: Pantry_ItemEntity[];
   shorten?: boolean;
 }) {
   const typoProps: TypographyProps = {
@@ -75,28 +73,18 @@ function CartItemCheckBox({
     [item, isBought]
   );
 
-  const mightHave = useMemo(() => {
-    if (!pantryItems || !total) {
-      return undefined;
-    }
-    return checkMightHave(
-      pantryItems.find((p) => p.ingredient_id === item.ingredient_id),
-      item,
-      total()
-    );
-  }, [pantryItems, item, total]);
-
   return (
     <FormControlLabel
       sx={{
         width: '100%',
         py: 1,
-        borderTop: 1,
+        borderTop: shorten ? 0 : 1,
         borderColor: 'grey.300',
         '.MuiFormControlLabel-label': {
           width: '100%',
         },
         mx: 0,
+        pr: 4,
       }}
       labelPlacement="start"
       control={
@@ -106,13 +94,11 @@ function CartItemCheckBox({
             setIsBought(!isBought);
             if (type === 'cart' && handleChangeCartItemData) {
               handleChangeCartItemData(item.cartId, item.ingredient_id);
-              // Cập nhật đã/chưa mua
               await updateCartItem(item.cartId, item.ingredient_id, !isBought);
               return;
             }
             if (type === 'personal' && handleChangePersonalCartItemData) {
               await handleChangePersonalCartItemData(item.cartId);
-              // cập nhật đã/chưa mua ở trong hàm trên do trong đây thiếu name
             }
           }}
           icon={<RadioButtonUncheckedRounded />}
@@ -136,7 +122,8 @@ function CartItemCheckBox({
               width: '60px',
               objectFit: 'contain',
               borderRadius: '50%',
-              mr: 2,
+              mx: 2,
+              display: shorten ? 'none' : 'block',
             }}
           />
           <Box
@@ -146,56 +133,24 @@ function CartItemCheckBox({
             }}
           >
             <Typography {...typoProps} fontWeight={900}>
-              {item.ingredient?.name}
-            </Typography>
-            <Typography {...typoProps}>
-              {Math.ceil(item.amount)}
-              {' ('}
-              {MeasurementUnitResolver(item.ingredient.isLiquid)}
-              {') '}
-              {item.cart?.recipe?.name}
+              {shorten ? item.cart?.recipe?.name : item.ingredient?.name}
             </Typography>
 
             <Typography {...typoProps}>
+              {shorten
+                ? Math.ceil(item.amount) +
+                  ' (' +
+                  MeasurementUnitResolver(item.ingredient.isLiquid) +
+                  ') '
+                : item.cart?.recipe?.name}
+            </Typography>
+
+            <Typography {...typoProps} display={shorten ? 'none' : 'block'}>
               {total ? (
                 <span style={{ color: 'grey' }}>
-                  {' '}
-                  /{Math.ceil(total())}
+                  {Math.ceil(item.amount)} /{Math.ceil(total())}
                   {item?.ingredient.isLiquid ? ' (ml)' : ' (g)'}
                 </span>
-              ) : (
-                ''
-              )}
-              {pantryItems && mightHave ? (
-                <Typography
-                  component={'span'}
-                  variant="caption"
-                  sx={{
-                    color: 'white',
-                    bgcolor: 'primary.main',
-                    px: 0.8,
-                    py: 0.4,
-                    ml: 1,
-                    borderRadius: '6px',
-                  }}
-                >
-                  Tủ lạnh có đủ
-                </Typography>
-              ) : mightHave == false ? (
-                <Typography
-                  component={'span'}
-                  variant="caption"
-                  sx={{
-                    color: 'white',
-                    bgcolor: 'primary.light',
-                    px: 0.8,
-                    py: 0.4,
-                    ml: 1,
-                    borderRadius: '6px',
-                  }}
-                >
-                  Tủ lạnh có nhưng thiếu
-                </Typography>
               ) : (
                 ''
               )}
@@ -208,22 +163,3 @@ function CartItemCheckBox({
 }
 
 export default CartItemCheckBox;
-
-function checkMightHave(
-  pantryItem: Pantry_ItemEntity | undefined,
-  cartItem: Cart_ItemEntity,
-  total: number
-) {
-  if (!pantryItem) {
-    return undefined;
-  }
-  if (pantryItem.ingredient_id === cartItem.ingredient_id) {
-    if (pantryItem.amount >= total) {
-      return true;
-    } else {
-      return false;
-    }
-  }
-
-  return undefined;
-}

@@ -466,7 +466,6 @@ export default function Grocery() {
                               return total;
                             }}
                             handleChangeCartItemData={handleChangeCartItemData}
-                            pantryItems={pantryItems}
                           />
                         );
                       }

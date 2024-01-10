@@ -46,9 +46,9 @@ export function CustomAccodion({
       <Accordion
         elevation={0}
         disableGutters
-        TransitionProps={{ unmountOnExit: true }}
         expanded={expanded}
         onChange={() => setExpanded(!expanded)}
+        TransitionProps={{ unmountOnExit: true }}
         sx={{
           boxShadow: 'none',
           bgcolor: 'transparent',
