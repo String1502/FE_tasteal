@@ -250,6 +250,49 @@ export default function Grocery() {
   const [pantryItems, setPantryItems] = useState<Pantry_ItemEntity[]>([]);
   //#endregion
 
+  const addToPantry = async () => {
+    if (!login.user || !login.user?.uid || login.user.uid == '') return;
+    const accountId = login.user.uid;
+    if (cartItemData.length == 0 && personalCartItemData.length == 0) {
+      snackbarAlert('Giỏ đi chợ trống', 'error');
+      return;
+    }
+
+    try {
+      handleSpinner(true);
+      await Promise.all([
+        ...cartItemData
+          .filter((item) => item.isBought)
+          .map(
+            async (item) =>
+              await PantryItemService.AddPantryItem({
+                account_id: accountId,
+                ingredient_id: item.ingredient_id,
+                number: item.amount,
+              })
+          ),
+        ...personalCartItemData
+          .filter((item) => item.is_bought && item.ingredient)
+          .map(
+            async (item) =>
+              await PantryItemService.AddPantryItem({
+                account_id: accountId,
+                ingredient_id: item.ingredient_id,
+                number: item.amount,
+              })
+          ),
+        await DeleteAllCartByAccountId(),
+      ]);
+      handleSpinner(false);
+      snackbarAlert(
+        'Thêm vào tủ lạnh và dọn giỏ đi chợ thành công!',
+        'success'
+      );
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
     <>
       <Layout
@@ -287,6 +330,7 @@ export default function Grocery() {
 
               <PopoverRecipes
                 DeleteAllCartByAccountId={DeleteAllCartByAccountId}
+                addToPantry={addToPantry}
               />
             </Box>
           </Box>
