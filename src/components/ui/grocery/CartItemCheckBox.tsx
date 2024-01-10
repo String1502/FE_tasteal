@@ -5,6 +5,7 @@ import { Cart_ItemEntity } from '@/lib/models/entities/Cart_ItemEntity/Cart_Item
 import { IngredientEntity } from '@/lib/models/entities/IngredientEntity/IngredientEntity';
 import { Pantry_ItemEntity } from '@/lib/models/entities/Pantry_ItemEntity/Pantry_ItemEntity';
 import { PersonalCartItemEntity } from '@/lib/models/entities/PersonalCartItemEntity/PersonalCartItemEntity';
+import { MeasurementUnitResolver } from '@/lib/resolvers/measurement';
 import CartItemService from '@/lib/services/CartItemService';
 import {
   CheckCircleRounded,
@@ -26,6 +27,7 @@ function CartItemCheckBox({
   handleChangeCartItemData,
   handleChangePersonalCartItemData,
   pantryItems,
+  shorten = false,
 }: {
   item: Cart_ItemEntity;
   total?: () => number;
@@ -35,6 +37,7 @@ function CartItemCheckBox({
     id: PersonalCartItemEntity['id']
   ) => Promise<void>;
   pantryItems?: Pantry_ItemEntity[];
+  shorten?: boolean;
 }) {
   const typoProps: TypographyProps = {
     variant: 'body2',
@@ -73,7 +76,7 @@ function CartItemCheckBox({
   );
 
   const mightHave = useMemo(() => {
-    if (!pantryItems) {
+    if (!pantryItems || !total) {
       return undefined;
     }
     return checkMightHave(
@@ -142,12 +145,18 @@ function CartItemCheckBox({
               height: 'fit-content',
             }}
           >
-            <Typography {...typoProps}>{item.cart?.recipe?.name}</Typography>
             <Typography {...typoProps} fontWeight={900}>
               {item.ingredient?.name}
             </Typography>
             <Typography {...typoProps}>
               {Math.ceil(item.amount)}
+              {' ('}
+              {MeasurementUnitResolver(item.ingredient.isLiquid)}
+              {') '}
+              {item.cart?.recipe?.name}
+            </Typography>
+
+            <Typography {...typoProps}>
               {total ? (
                 <span style={{ color: 'grey' }}>
                   {' '}

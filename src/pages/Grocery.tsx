@@ -448,27 +448,29 @@ export default function Grocery() {
                     }
                   })}
 
-                  {cartItemData.map((item, index) => {
-                    if (item.isBought) {
-                      return (
-                        <CartItemCheckBox
-                          key={index}
-                          item={item}
-                          total={() => {
-                            let total = 0;
-                            cartItemData.forEach((x) => {
-                              if (x.ingredient_id == item.ingredient_id) {
-                                total += x.amount;
-                              }
-                            });
-                            return total;
-                          }}
-                          handleChangeCartItemData={handleChangeCartItemData}
-                          pantryItems={pantryItems}
-                        />
-                      );
-                    }
-                  })}
+                  {cartItemData
+                    .sort((a, b) => a.ingredient_id - b.ingredient_id)
+                    .map((item, index) => {
+                      if (item.isBought) {
+                        return (
+                          <CartItemCheckBox
+                            key={index}
+                            item={item}
+                            total={() => {
+                              let total = 0;
+                              cartItemData.forEach((x) => {
+                                if (x.ingredient_id == item.ingredient_id) {
+                                  total += x.amount;
+                                }
+                              });
+                              return total;
+                            }}
+                            handleChangeCartItemData={handleChangeCartItemData}
+                            pantryItems={pantryItems}
+                          />
+                        );
+                      }
+                    })}
                 </CartItemFrame>
               </Grid>
             </Grid>
