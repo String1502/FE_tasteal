@@ -55,7 +55,7 @@ export function TastealAppBar({
 
   const [needFillInfor, setNeedFillInfor] = useState<boolean>(false);
 
-  console.log(login.user);
+  console.log(needFillInfor);
 
   //#region Avatar Menu
   const avatarButtonRef = useRef<HTMLButtonElement>(null);
@@ -80,6 +80,7 @@ export function TastealAppBar({
         const data = await AccountService.GetByUid(uid);
         if (!data) return;
         setAccountData(data);
+
         if (!isAccountEntityFullInfor(data)) {
           setNeedFillInfor(true);
         }

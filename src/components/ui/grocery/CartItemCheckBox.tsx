@@ -77,7 +77,7 @@ function CartItemCheckBox({
     <FormControlLabel
       sx={{
         width: '100%',
-        py: 1,
+        py: 1.5,
         borderTop: shorten ? 0 : 1,
         borderColor: 'grey.300',
         '.MuiFormControlLabel-label': {

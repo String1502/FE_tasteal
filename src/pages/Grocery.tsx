@@ -7,6 +7,7 @@ import { RecipesServingSizeCarousel } from '@/components/ui/grocery/RecipesServi
 import Layout from '@/layout/Layout';
 import AppContext from '@/lib/contexts/AppContext';
 import useSnackbarService from '@/lib/hooks/useSnackbar';
+import { CreatePantryItemReq } from '@/lib/models/dtos/Request/CreatePantryItemReq/CreatePantryItemReq';
 import { GetAllPantryItemReq } from '@/lib/models/dtos/Request/GetAllPantryItemReq/GetAllPantryItemReq';
 import { CartEntity } from '@/lib/models/entities/CartEntity/CartEntity';
 import { Cart_ItemEntity } from '@/lib/models/entities/Cart_ItemEntity/Cart_ItemEntity';
@@ -90,6 +91,24 @@ export default function Grocery() {
     setCartItemData((prev) => {
       return prev.map((item) => {
         if (item.cartId === cartId && item.ingredient_id === ingredientId) {
+          return {
+            ...item,
+            isBought: !item.isBought,
+          };
+        } else {
+          return item;
+        }
+      });
+    });
+  }
+
+  function handleChangeCartItemsData(cartIds: number[], ingredientId: number) {
+    setCartItemData((prev) => {
+      return prev.map((item) => {
+        if (
+          cartIds.includes(item.cartId) &&
+          item.ingredient_id === ingredientId
+        ) {
           return {
             ...item,
             isBought: !item.isBought,
@@ -250,10 +269,10 @@ export default function Grocery() {
   const [pantryItems, setPantryItems] = useState<Pantry_ItemEntity[]>([]);
   //#endregion
 
-  const addToPantry = async () => {
+  const addToPantry = async (cartItemAdd: CreatePantryItemReq[]) => {
     if (!login.user || !login.user?.uid || login.user.uid == '') return;
     const accountId = login.user.uid;
-    if (cartItemData.length == 0 && personalCartItemData.length == 0) {
+    if (cartItemAdd.length == 0 && personalCartItemData.length == 0) {
       snackbarAlert('Giỏ đi chợ trống', 'error');
       return;
     }
@@ -261,16 +280,14 @@ export default function Grocery() {
     try {
       handleSpinner(true);
       await Promise.all([
-        ...cartItemData
-          .filter((item) => item.isBought)
-          .map(
-            async (item) =>
-              await PantryItemService.AddPantryItem({
-                account_id: accountId,
-                ingredient_id: item.ingredient_id,
-                number: item.amount,
-              })
-          ),
+        ...cartItemAdd.map(
+          async (item) =>
+            await PantryItemService.AddPantryItem({
+              account_id: accountId,
+              ingredient_id: item.ingredient_id,
+              number: item.number,
+            })
+        ),
         ...personalCartItemData
           .filter((item) => item.is_bought && item.ingredient)
           .map(
@@ -329,8 +346,10 @@ export default function Grocery() {
               </Typography>
 
               <PopoverRecipes
+                cartItemData={cartItemData}
                 DeleteAllCartByAccountId={DeleteAllCartByAccountId}
                 addToPantry={addToPantry}
+                pantryItems={pantryItems}
               />
             </Box>
           </Box>
@@ -411,6 +430,7 @@ export default function Grocery() {
               <CartItemContent
                 cartItemData={cartItemData}
                 handleChangeCartItemData={handleChangeCartItemData}
+                handleChangeCartItemsData={handleChangeCartItemsData}
                 pantryItems={pantryItems}
               />
 
