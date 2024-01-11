@@ -126,7 +126,7 @@ export function DialogContent({
               width: '100%',
               p: 4,
               borderRadius: 4,
-              bgcolor: 'error.light',
+              bgcolor: 'parimary.light',
               color: 'white',
             }}
             gap={2}
@@ -170,6 +170,9 @@ export function DialogContent({
           ></Box>
           <Stack direction={'row'} alignItems={'center'} gap={1}>
             <FormControlLabel
+              sx={{
+                display: tulanhs.length == 0 ? 'none' : '',
+              }}
               control={
                 <Checkbox
                   checked={checkAllTuLanh}

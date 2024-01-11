@@ -350,6 +350,7 @@ export default function Grocery() {
                 DeleteAllCartByAccountId={DeleteAllCartByAccountId}
                 addToPantry={addToPantry}
                 pantryItems={pantryItems}
+                personalCartItemData={personalCartItemData}
               />
             </Box>
           </Box>
@@ -379,7 +380,7 @@ export default function Grocery() {
             >
               <Grid item xs={12} lg={8}>
                 <Typography variant="h6" fontWeight={'bold'} color={'primary'}>
-                  Danh sách cần mua
+                  Danh sách cần có
                 </Typography>
               </Grid>
 
@@ -435,7 +436,7 @@ export default function Grocery() {
               />
 
               <Grid item xs={12} lg={8}>
-                <CartItemFrame label="Đã mua">
+                <CartItemFrame label="Đã có">
                   {personalCartItemData.map((item, index) => {
                     if (item.is_bought) {
                       return (

@@ -52,6 +52,10 @@ const calorieFilterItems = [
     min: 600,
     max: 800,
   },
+  {
+    min: 800,
+    max: 5000,
+  },
 ];
 
 const CustomAccordion = ({
@@ -353,8 +357,17 @@ export function SearchFilter({
                   }
                   label={
                     <Typography variant="body2">
-                      {item.min > 0 ? item.min + ' - ' : 'Dưới '}
-                      {item.max} Cal
+                      {item.max ==
+                      calorieFilterItems[calorieFilterItems.length - 1].max ? (
+                        <>
+                          {'>'} {item.min} Cal
+                        </>
+                      ) : (
+                        <>
+                          {item.min > 0 ? item.min + ' - ' : 'Dưới '}
+                          {item.max} Cal
+                        </>
+                      )}
                     </Typography>
                   }
                   onClick={handleChangeCalorie}

@@ -659,6 +659,7 @@ const RecipeDetail: FC = () => {
                       icon={<StarRateRounded />}
                       emptyIcon={<StarRateRounded />}
                       value={rating}
+                      precision={0.5}
                       onChange={(_, value) => handleRatingClicked(value)}
                     />
                   </Stack>

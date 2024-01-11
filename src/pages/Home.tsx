@@ -208,6 +208,20 @@ function Home() {
           </Container>
         </Grid>
       </Grid>
+      <div
+        style={{ zIndex: 9999, position: 'relative' }}
+        dangerouslySetInnerHTML={{
+          __html: `
+   <df-messenger
+            intent="WELCOME"
+            chat-title="Tasteal"
+            agent-id="0d650d0a-e61f-4d6e-95ba-4e67dd594680"
+            language-code="vi"
+            chat-icon="/icon.svg"
+          ></df-messenger>
+`,
+        }}
+      ></div>
     </Layout>
   );
 }

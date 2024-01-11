@@ -20,17 +20,20 @@ import { DialogThemVaoTuLanh } from './DialogThemVaoTuLanh';
 import { Pantry_ItemEntity } from '@/lib/models/entities/Pantry_ItemEntity/Pantry_ItemEntity';
 import useSnackbarService from '@/lib/hooks/useSnackbar';
 import { CreatePantryItemReq } from '@/lib/models/dtos/Request/CreatePantryItemReq/CreatePantryItemReq';
+import { PersonalCartItemEntity } from '@/lib/models/entities/PersonalCartItemEntity/PersonalCartItemEntity';
 
 export function PopoverRecipes({
   DeleteAllCartByAccountId,
   addToPantry,
   cartItemData,
   pantryItems,
+  personalCartItemData,
 }: {
   DeleteAllCartByAccountId: () => Promise<void>;
   addToPantry: (cartItemAdd: CreatePantryItemReq[]) => Promise<void>;
   cartItemData: Cart_ItemEntity[];
   pantryItems: Pantry_ItemEntity[];
+  personalCartItemData: PersonalCartItemEntity[];
 }) {
   const [snackbarAlert] = useSnackbarService();
 
@@ -94,7 +97,11 @@ export function PopoverRecipes({
             <ListItem disablePadding>
               <ListItemButton
                 onClick={() => {
-                  if (cartItemData.filter((item) => item.isBought).length > 0) {
+                  if (
+                    cartItemData.filter((item) => item.isBought).length > 0 ||
+                    personalCartItemData.filter((item) => item.is_bought)
+                      .length > 0
+                  ) {
                     setOpenAddTuLanh(true);
                   } else {
                     snackbarAlert('Bạn chưa mua nguyên liệu nào!', 'error');
@@ -119,7 +126,10 @@ export function PopoverRecipes({
             <ListItem disablePadding>
               <ListItemButton
                 onClick={() => {
-                  if (cartItemData.length > 0) {
+                  if (
+                    cartItemData.length > 0 ||
+                    personalCartItemData.length > 0
+                  ) {
                     setOpenClearAll(true);
                   } else {
                     snackbarAlert('Giỏ đi chợ trống!', 'error');
