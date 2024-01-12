@@ -78,6 +78,8 @@ type NewRecipe = {
   activeTime: number;
   /** Indicates if the recipe is private. */
   isPrivate: boolean;
+
+  occasions: number[];
 };
 
 const DEFAULT_NEW_RECIPE: NewRecipe = {
@@ -91,6 +93,7 @@ const DEFAULT_NEW_RECIPE: NewRecipe = {
   activeTime: 0,
   authorNote: '',
   isPrivate: true,
+  occasions: [],
 };
 
 const resolveDirectionImage = async (
@@ -353,7 +356,9 @@ const CreateRecipe: React.FunctionComponent<{ edit?: boolean }> = ({
 
           clearForm();
           navigate(PageRoute.Recipe.Detail(result.id));
-        } catch (error) {}
+        } catch (error) {
+          //empty
+        }
       } else {
         snackbarAlert('Công thức tạo thất bại!', 'warning');
       }
@@ -458,8 +463,16 @@ const CreateRecipe: React.FunctionComponent<{ edit?: boolean }> = ({
           isPrivate: true,
           servingSize: recipe.serving_size,
           totalTime: dateTimeToMinutes(recipe.totalTime),
+          occasions: recipe.occasions?.map((occasion) => occasion.id) || [],
         });
         setEditRecipe(recipe);
+        console.log(recipe.occasions);
+        setSelectedOccasions(
+          recipe.occasions.map((occasion) => ({
+            id: occasion.id,
+            name: occasion.name,
+          }))
+        );
       })
       .catch((err) => {
         console.log(err);
@@ -552,7 +565,11 @@ const CreateRecipe: React.FunctionComponent<{ edit?: boolean }> = ({
     console.log(newRecipe);
 
     const recipeId = parseInt(id);
-    let putBody = createPutBody(editRecipe, newRecipe);
+    let putBody = createPutBody(
+      editRecipe,
+      newRecipe,
+      selectedOccasions.map((s) => s.id)
+    );
     console.log('body', putBody);
     putBody = await updateComplexStuffs(putBody);
 
@@ -568,9 +585,19 @@ const CreateRecipe: React.FunctionComponent<{ edit?: boolean }> = ({
         snackbarAlert('Cập nhật công thức thất bại!', 'error');
       })
       .finally(() => setIsProcessing(false));
-  }, [editRecipe, id, navigate, newRecipe, snackbarAlert, updateComplexStuffs]);
+  }, [
+    editRecipe,
+    id,
+    navigate,
+    newRecipe,
+    selectedOccasions,
+    snackbarAlert,
+    updateComplexStuffs,
+  ]);
 
   //#endregion
+
+  console.log(newRecipe);
 
   return (
     <Layout withFooter={false} headerPosition="static" isDynamicHeader={false}>
@@ -622,8 +649,8 @@ const CreateRecipe: React.FunctionComponent<{ edit?: boolean }> = ({
                 <FormLabel>Dịp</FormLabel>
                 <Autocomplete
                   disabled={isProcessing}
-                  options={filteredOccasions}
-                  getOptionLabel={(o) => o.name}
+                  options={[null, ...filteredOccasions]}
+                  getOptionLabel={(o) => o?.name || 'Chọn dịp'}
                   title="Chọn dịp"
                   placeholder="Chọn dịp cho công thức"
                   noOptionsText="Không tìm thấy dịp lễ nào"
@@ -631,9 +658,11 @@ const CreateRecipe: React.FunctionComponent<{ edit?: boolean }> = ({
                     <TastealTextField {...params} label="Chọn dịp" />
                   )}
                   onChange={(_, value) => handleSelectOccasion(value)}
-                  isOptionEqualToValue={(option, value) =>
-                    option.id === value.id
-                  }
+                  isOptionEqualToValue={(option, value) => {
+                    if (value === null || option === null) return true;
+                    return option.id === value.id;
+                  }}
+                  value={null}
                 />
                 <ChipsDisplayer
                   chips={selectedOccasions}
@@ -641,7 +670,7 @@ const CreateRecipe: React.FunctionComponent<{ edit?: boolean }> = ({
                 />
               </Stack>
               <Stack>
-                <FormLabel>Thêm hình bìa (Không bắt buộc)</FormLabel>
+                <FormLabel>Thêm hình bìa</FormLabel>
                 <ImagePicker
                   file={recipeThumbnailFile}
                   imagePath={newRecipe.image}
@@ -773,7 +802,11 @@ const CreateRecipe: React.FunctionComponent<{ edit?: boolean }> = ({
   );
 };
 
-function createPutBody(recipe: RecipeRes, newRecipe: NewRecipe) {
+function createPutBody(
+  recipe: RecipeRes,
+  newRecipe: NewRecipe,
+  occasions: number[]
+) {
   const putBody: RecipeReq = {
     name: newRecipe.name,
     introduction: newRecipe.introduction,
@@ -792,7 +825,7 @@ function createPutBody(recipe: RecipeRes, newRecipe: NewRecipe) {
     serving_size: newRecipe.servingSize,
     totalTime: newRecipe.totalTime,
     author: recipe.author.uid,
-    // occasions: newRecipe.occasions.map((occasion) => occasion.id),
+    occasions: occasions,
   };
 
   return putBody;

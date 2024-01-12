@@ -2,6 +2,7 @@ import { getApiUrl } from '@/lib/constants/api';
 import { RecipeRes } from '@/lib/models/dtos/Response/RecipeRes/RecipeRes';
 import { createDebugStringFormatter } from '@/utils/debug/formatter';
 import { DefaultPage } from '../constants/common';
+import { NewRecipeCookBookReq } from '../models/dtos/Request/NewRecipeCookBookReq/NewRecipeCookBookReq';
 import { PageFilter } from '../models/dtos/Request/PageFilter/PageFilter';
 import { PageReq } from '../models/dtos/Request/PageReq/PageReq';
 import {
@@ -9,9 +10,8 @@ import {
   RecipeReq,
 } from '../models/dtos/Request/RecipeReq/RecipeReq';
 import { RecipeSearchReq } from '../models/dtos/Request/RecipeSearchReq/RecipeSearchReq';
-import { RecipeEntity } from '../models/entities/RecipeEntity/RecipeEntity';
-import { NewRecipeCookBookReq } from '../models/dtos/Request/NewRecipeCookBookReq/NewRecipeCookBookReq';
 import { RecipeToCookBookReq } from '../models/dtos/Request/RecipeToCookBook/RecipeToCookBook';
+import { RecipeEntity } from '../models/entities/RecipeEntity/RecipeEntity';
 
 const DEBUG_IDENTIFIER = '[RecipeService]';
 const createDebugString = createDebugStringFormatter(DEBUG_IDENTIFIER);
@@ -269,7 +269,10 @@ class RecipeService {
       });
   }
 
-  public static async Update(recipeId: number, updateData: RecipeReq) {
+  public static async Update(
+    recipeId: number,
+    updateData: RecipeReq
+  ): Promise<boolean> {
     const res = await fetch(getApiUrl('UpdateRecipe', recipeId.toString()), {
       method: 'PUT',
       body: JSON.stringify(updateData),
@@ -278,9 +281,9 @@ class RecipeService {
       },
     });
     if (res.ok) {
-      return res.json();
+      return true;
     }
-    throw new Error(res.statusText);
+    return false;
   }
 
   public static async Delete(recipeId: number): Promise<boolean> {

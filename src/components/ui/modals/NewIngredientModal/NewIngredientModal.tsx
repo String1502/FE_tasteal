@@ -6,6 +6,7 @@ import {
   Autocomplete,
   Box,
   Button,
+  InputAdornment,
   Modal,
   Stack,
   Typography,
@@ -105,6 +106,16 @@ const NewIngredientModal: React.FunctionComponent<{
   );
 
   //#endregion
+  //#region Ingredient
+
+  const selectedIngredient = useMemo(() => {
+    return (
+      ingredientOptions.find((o) => o.id === newIngredientItem.ingredientId) ||
+      null
+    );
+  }, [ingredientOptions, newIngredientItem.ingredientId]);
+
+  //#endregion
 
   return (
     <Modal
@@ -157,10 +168,15 @@ const NewIngredientModal: React.FunctionComponent<{
             <TastealTextField
               autoComplete="off"
               InputProps={{
-                sx: {
-                  borderBottomRightRadius: 0,
-                  borderTopRightRadius: 0,
-                },
+                endAdornment: (
+                  <InputAdornment position="end">
+                    {selectedIngredient
+                      ? selectedIngredient.isLiquid
+                        ? 'ml'
+                        : 'g'
+                      : ''}
+                  </InputAdornment>
+                ),
               }}
               onChange={(e) =>
                 setNewIngredientItem({
