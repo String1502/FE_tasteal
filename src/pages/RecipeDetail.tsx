@@ -56,6 +56,7 @@ import {
   useState,
 } from 'react';
 import { Link as RouterLink, useNavigate, useParams } from 'react-router-dom';
+import { badWords } from 'vn-badwords';
 
 const DEFAULT_NUTRITION_VALUE: Nutrition_InfoEntity = {
   id: 0,
@@ -239,7 +240,11 @@ const RecipeDetail: FC = () => {
 
     console.log(recipe!.id, user.uid, comment);
 
-    CommentService.Create(recipe!.id, user.uid, comment)
+    CommentService.Create(
+      recipe!.id,
+      user.uid,
+      badWords(comment, '*') as string
+    )
       .then(() => {
         GetComments(recipe!.id);
         setComment('');

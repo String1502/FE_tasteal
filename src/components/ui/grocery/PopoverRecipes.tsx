@@ -104,7 +104,7 @@ export function PopoverRecipes({
                   ) {
                     setOpenAddTuLanh(true);
                   } else {
-                    snackbarAlert('Bạn chưa mua nguyên liệu nào!', 'error');
+                    snackbarAlert('Bạn chưa có nguyên liệu nào!', 'error');
                   }
                   handleClose();
                 }}

@@ -126,7 +126,7 @@ export function DialogContent({
               width: '100%',
               p: 4,
               borderRadius: 4,
-              bgcolor: 'parimary.light',
+              bgcolor: 'primary.light',
               color: 'white',
             }}
             gap={2}
