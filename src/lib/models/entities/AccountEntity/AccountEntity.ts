@@ -6,6 +6,7 @@ export type AccountEntity = {
   link?: string;
   slogan?: string;
   quote?: string;
+  isDeleted?: boolean;
 };
 
 export function isAccountEntityFullInfor(item: AccountEntity) {
@@ -13,8 +14,9 @@ export function isAccountEntityFullInfor(item: AccountEntity) {
     if (Object.prototype.hasOwnProperty.call(item, key)) {
       const value = item[key];
       if (value == null || value == '' || typeof value == 'undefined') {
-        // If the value is not null or undefined, return true
-        return false;
+        if (key != 'isDeleted') {
+          return false;
+        }
       }
     }
   }

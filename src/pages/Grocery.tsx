@@ -7,6 +7,7 @@ import { RecipesServingSizeCarousel } from '@/components/ui/grocery/RecipesServi
 import Layout from '@/layout/Layout';
 import AppContext from '@/lib/contexts/AppContext';
 import useSnackbarService from '@/lib/hooks/useSnackbar';
+import { CreatePantryItemReq } from '@/lib/models/dtos/Request/CreatePantryItemReq/CreatePantryItemReq';
 import { GetAllPantryItemReq } from '@/lib/models/dtos/Request/GetAllPantryItemReq/GetAllPantryItemReq';
 import { CartEntity } from '@/lib/models/entities/CartEntity/CartEntity';
 import { Cart_ItemEntity } from '@/lib/models/entities/Cart_ItemEntity/Cart_ItemEntity';
@@ -90,6 +91,24 @@ export default function Grocery() {
     setCartItemData((prev) => {
       return prev.map((item) => {
         if (item.cartId === cartId && item.ingredient_id === ingredientId) {
+          return {
+            ...item,
+            isBought: !item.isBought,
+          };
+        } else {
+          return item;
+        }
+      });
+    });
+  }
+
+  function handleChangeCartItemsData(cartIds: number[], ingredientId: number) {
+    setCartItemData((prev) => {
+      return prev.map((item) => {
+        if (
+          cartIds.includes(item.cartId) &&
+          item.ingredient_id === ingredientId
+        ) {
           return {
             ...item,
             isBought: !item.isBought,
@@ -250,6 +269,47 @@ export default function Grocery() {
   const [pantryItems, setPantryItems] = useState<Pantry_ItemEntity[]>([]);
   //#endregion
 
+  const addToPantry = async (cartItemAdd: CreatePantryItemReq[]) => {
+    if (!login.user || !login.user?.uid || login.user.uid == '') return;
+    const accountId = login.user.uid;
+    if (cartItemAdd.length == 0 && personalCartItemData.length == 0) {
+      snackbarAlert('Giỏ đi chợ trống', 'error');
+      return;
+    }
+
+    try {
+      handleSpinner(true);
+      await Promise.all([
+        ...cartItemAdd.map(
+          async (item) =>
+            await PantryItemService.AddPantryItem({
+              account_id: accountId,
+              ingredient_id: item.ingredient_id,
+              number: item.number,
+            })
+        ),
+        ...personalCartItemData
+          .filter((item) => item.is_bought && item.ingredient)
+          .map(
+            async (item) =>
+              await PantryItemService.AddPantryItem({
+                account_id: accountId,
+                ingredient_id: item.ingredient_id,
+                number: item.amount,
+              })
+          ),
+        await DeleteAllCartByAccountId(),
+      ]);
+      handleSpinner(false);
+      snackbarAlert(
+        'Thêm vào tủ lạnh và dọn giỏ đi chợ thành công!',
+        'success'
+      );
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
     <>
       <Layout
@@ -286,7 +346,11 @@ export default function Grocery() {
               </Typography>
 
               <PopoverRecipes
+                cartItemData={cartItemData}
                 DeleteAllCartByAccountId={DeleteAllCartByAccountId}
+                addToPantry={addToPantry}
+                pantryItems={pantryItems}
+                personalCartItemData={personalCartItemData}
               />
             </Box>
           </Box>
@@ -316,7 +380,7 @@ export default function Grocery() {
             >
               <Grid item xs={12} lg={8}>
                 <Typography variant="h6" fontWeight={'bold'} color={'primary'}>
-                  Danh sách cần mua
+                  Danh sách cần có
                 </Typography>
               </Grid>
 
@@ -367,11 +431,12 @@ export default function Grocery() {
               <CartItemContent
                 cartItemData={cartItemData}
                 handleChangeCartItemData={handleChangeCartItemData}
+                handleChangeCartItemsData={handleChangeCartItemsData}
                 pantryItems={pantryItems}
               />
 
               <Grid item xs={12} lg={8}>
-                <CartItemFrame label="Đã mua">
+                <CartItemFrame label="Đã có">
                   {personalCartItemData.map((item, index) => {
                     if (item.is_bought) {
                       return (
@@ -404,27 +469,28 @@ export default function Grocery() {
                     }
                   })}
 
-                  {cartItemData.map((item, index) => {
-                    if (item.isBought) {
-                      return (
-                        <CartItemCheckBox
-                          key={index}
-                          item={item}
-                          total={() => {
-                            let total = 0;
-                            cartItemData.forEach((x) => {
-                              if (x.ingredient_id == item.ingredient_id) {
-                                total += x.amount;
-                              }
-                            });
-                            return total;
-                          }}
-                          handleChangeCartItemData={handleChangeCartItemData}
-                          pantryItems={pantryItems}
-                        />
-                      );
-                    }
-                  })}
+                  {cartItemData
+                    .sort((a, b) => a.ingredient_id - b.ingredient_id)
+                    .map((item, index) => {
+                      if (item.isBought) {
+                        return (
+                          <CartItemCheckBox
+                            key={index}
+                            item={item}
+                            total={() => {
+                              let total = 0;
+                              cartItemData.forEach((x) => {
+                                if (x.ingredient_id == item.ingredient_id) {
+                                  total += x.amount;
+                                }
+                              });
+                              return total;
+                            }}
+                            handleChangeCartItemData={handleChangeCartItemData}
+                          />
+                        );
+                      }
+                    })}
                 </CartItemFrame>
               </Grid>
             </Grid>

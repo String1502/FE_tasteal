@@ -585,10 +585,10 @@ const CreateRecipe: React.FunctionComponent<{ edit?: boolean }> = ({
       >
         <Card
           sx={{
-            width: '52%',
             borderRadius: 12,
             p: 4,
-            bgcolor: '##FFFAF9',
+            width: { xs: '96%', sm: '70%', md: '60%' },
+            bgcolor: '#FFFAF9',
           }}
         >
           <CardContent>
@@ -711,7 +711,11 @@ const CreateRecipe: React.FunctionComponent<{ edit?: boolean }> = ({
                   placeholder={`Thêm mẹo / lưu ý cho công thức này`}
                 />
               </Stack>
-              <Stack>
+              <Stack
+                sx={{
+                  display: 'none',
+                }}
+              >
                 <RadioGroup
                   value={newRecipe.isPrivate}
                   onChange={(e) =>
@@ -720,19 +724,19 @@ const CreateRecipe: React.FunctionComponent<{ edit?: boolean }> = ({
                       e.target.value === 'true'
                     )
                   }
-                  defaultValue={true}
+                  defaultValue={false}
                   name="isRecipePrivate"
                 >
                   <FormControlLabel
-                    value={true}
+                    value={false}
                     control={<Radio />}
-                    label="Người khác không thể xem"
+                    label="Riêng tư"
                     disabled={isProcessing}
                   />
                   <FormControlLabel
-                    value={false}
+                    value={true}
                     control={<Radio />}
-                    label="Chia sẻ công thức thông qua link"
+                    label="Công khai"
                     disabled={isProcessing}
                   />
                 </RadioGroup>

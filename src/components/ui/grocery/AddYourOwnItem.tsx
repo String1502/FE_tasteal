@@ -61,16 +61,15 @@ function AddYourOwnItem({
     if (
       !login.user ||
       !login.user?.uid ||
-      !autoCompleteValue ||
-      amount == 0 ||
-      inputValue == ''
+      (!autoCompleteValue && inputValue == '') ||
+      amount == 0
     ) {
       snackbarAlert('Vui lòng điền đủ thông tin', 'warning');
       return;
     }
 
     const data: PersonalCartItemReq = {
-      ingredient_id: autoCompleteValue.id,
+      ingredient_id: autoCompleteValue?.id ?? null,
       account_id: login.user.uid,
       amount: amount,
       name: inputValue,

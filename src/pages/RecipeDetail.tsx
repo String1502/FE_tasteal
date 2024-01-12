@@ -56,6 +56,7 @@ import {
   useState,
 } from 'react';
 import { Link as RouterLink, useNavigate, useParams } from 'react-router-dom';
+import { badWords } from 'vn-badwords';
 
 const DEFAULT_NUTRITION_VALUE: Nutrition_InfoEntity = {
   id: 0,
@@ -239,7 +240,11 @@ const RecipeDetail: FC = () => {
 
     console.log(recipe!.id, user.uid, comment);
 
-    CommentService.Create(recipe!.id, user.uid, comment)
+    CommentService.Create(
+      recipe!.id,
+      user.uid,
+      badWords(comment, '*') as string
+    )
       .then(() => {
         GetComments(recipe!.id);
         setComment('');
@@ -584,7 +589,7 @@ const RecipeDetail: FC = () => {
           }}
         >
           <Container sx={{ py: 8, width: '100%' }}>
-            <Stack width={'60%'} gap={1}>
+            <Stack width={{ xs: '100%', md: '60%' }} gap={1}>
               <Stack
                 direction="row"
                 justifyContent={'space-between'}
@@ -636,7 +641,7 @@ const RecipeDetail: FC = () => {
               gap: 2,
             }}
           >
-            <Stack width="60%" gap={1}>
+            <Stack width={{ xs: '100%', md: '60%' }} gap={1}>
               <Stack
                 direction="row"
                 alignItems={'end'}
@@ -659,6 +664,7 @@ const RecipeDetail: FC = () => {
                       icon={<StarRateRounded />}
                       emptyIcon={<StarRateRounded />}
                       value={rating}
+                      precision={0.5}
                       onChange={(_, value) => handleRatingClicked(value)}
                     />
                   </Stack>
@@ -716,6 +722,7 @@ const RecipeDetail: FC = () => {
                       comments.map((comment, index) => (
                         <>
                           <CommentItem comment={comment} />
+
                           {index < comments.length - 1 && (
                             <Divider sx={{ my: 2, opacity: 0.4 }} />
                           )}
@@ -920,9 +927,19 @@ function CommentItem({ comment }: { comment: CommentEntity }) {
             <Typography typography="h6">
               {account?.name ?? 'Không tìm thấy'}
             </Typography>
-            <Typography typography="body1">5 tháng, 4 tuần trước</Typography>
+            <Typography typography="body1">
+              {comment.created_at
+                ? new Date(comment.created_at).toLocaleDateString('vi-VN', {
+                    year: 'numeric',
+                    month: '2-digit',
+                    day: '2-digit',
+                    hour: '2-digit',
+                    minute: '2-digit',
+                  })
+                : 'Trống'}
+            </Typography>
           </Stack>
-          <Rating readOnly />
+          {/* <Rating readOnly /> */}
           <Typography fontSize={20}>{comment.comment}</Typography>
         </Stack>
       </Stack>

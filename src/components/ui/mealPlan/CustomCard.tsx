@@ -41,6 +41,7 @@ function CustomCardMealPlan({
   }, [navigate, recipe.id]);
 
   const { login } = useContext(AppContext);
+
   return (
     <>
       <CustomCard {...props}>

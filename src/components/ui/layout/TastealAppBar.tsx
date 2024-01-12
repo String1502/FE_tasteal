@@ -19,6 +19,7 @@ import {
   IconButton,
   Menu,
   Toolbar,
+  Tooltip,
   Typography,
 } from '@mui/material';
 import { useCallback, useContext, useEffect, useRef, useState } from 'react';
@@ -55,8 +56,6 @@ export function TastealAppBar({
 
   const [needFillInfor, setNeedFillInfor] = useState<boolean>(false);
 
-  console.log(login.user);
-
   //#region Avatar Menu
   const avatarButtonRef = useRef<HTMLButtonElement>(null);
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
@@ -80,6 +79,7 @@ export function TastealAppBar({
         const data = await AccountService.GetByUid(uid);
         if (!data) return;
         setAccountData(data);
+
         if (!isAccountEntityFullInfor(data)) {
           setNeedFillInfor(true);
         }
@@ -186,7 +186,9 @@ export function TastealAppBar({
               navigate(PageRoute.Search);
             }}
           >
-            <SearchRounded fontSize="inherit" />
+            <Tooltip title="Tìm kiếm">
+              <SearchRounded fontSize="inherit" />
+            </Tooltip>
           </IconButton>
 
           {/* Bộ sưu tập */}
@@ -201,7 +203,9 @@ export function TastealAppBar({
               navigate(PageRoute.MySavedRecipes);
             }}
           >
-            <BookmarkBorderRounded fontSize="inherit" />
+            <Tooltip title="Bộ sưu tập">
+              <BookmarkBorderRounded fontSize="inherit" />
+            </Tooltip>
           </IconButton>
 
           {/* Giỏ đi chợ */}
@@ -216,7 +220,9 @@ export function TastealAppBar({
               navigate(PageRoute.Grocery);
             }}
           >
-            <ShoppingBagRounded fontSize="inherit" />
+            <Tooltip title="Giỏ đi chợ">
+              <ShoppingBagRounded fontSize="inherit" />
+            </Tooltip>
           </IconButton>
 
           {/* Chat */}
@@ -225,25 +231,27 @@ export function TastealAppBar({
           {/* Avatar */}
           {login.isUserSignedIn == true && (
             <>
-              <ButtonBase ref={avatarButtonRef} onClick={handleAvatarClick}>
-                <Badge
-                  color="error"
-                  overlap="circular"
-                  badgeContent={needFillInfor ? '?' : 0}
-                  variant="dot"
-                >
-                  <Avatar
-                    alt="user avatar"
-                    src={userAvatar}
-                    sx={{
-                      width: '33.83px',
-                      height: '33.83px',
-                      border: 1,
-                      borderColor: 'primary.main',
-                    }}
-                  />
-                </Badge>
-              </ButtonBase>
+              <Tooltip title="Thông tin cá nhân">
+                <ButtonBase ref={avatarButtonRef} onClick={handleAvatarClick}>
+                  <Badge
+                    color="error"
+                    overlap="circular"
+                    badgeContent={needFillInfor ? '?' : 0}
+                    variant="dot"
+                  >
+                    <Avatar
+                      alt="user avatar"
+                      src={userAvatar}
+                      sx={{
+                        width: '33.83px',
+                        height: '33.83px',
+                        border: 1,
+                        borderColor: 'primary.main',
+                      }}
+                    />
+                  </Badge>
+                </ButtonBase>
+              </Tooltip>
 
               <Menu
                 open={isAvatarMenuOpen}

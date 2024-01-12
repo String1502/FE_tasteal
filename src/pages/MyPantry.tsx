@@ -171,7 +171,7 @@ const MyPantry: React.FC = () => {
                 alignItems="center"
                 justifyContent="center"
                 sx={{
-                  width: '280px',
+                  width: { xs: '140px', md: '280px' },
                 }}
                 spacing={1}
               >
@@ -191,7 +191,7 @@ const MyPantry: React.FC = () => {
                 alignItems="center"
                 justifyContent="center"
                 sx={{
-                  width: '280px',
+                  width: { xs: '140px', md: '280px' },
                 }}
                 spacing={1}
               >

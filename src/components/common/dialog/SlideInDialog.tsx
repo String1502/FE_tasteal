@@ -70,7 +70,6 @@ function SlideInDialog(props: SlideInDialogProps) {
         aria-describedby="alert-dialog-slide-description"
         PaperProps={{
           sx: {
-            minWidth: '240px',
             borderRadius: 4,
             p: 2,
             pt: 1,

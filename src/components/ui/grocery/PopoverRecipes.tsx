@@ -1,4 +1,8 @@
-import { DeleteRounded, MoreHorizRounded } from '@mui/icons-material';
+import {
+  ArchiveRounded,
+  DeleteRounded,
+  MoreHorizRounded,
+} from '@mui/icons-material';
 import {
   Box,
   List,
@@ -11,12 +15,28 @@ import {
 } from '@mui/material';
 import { useState } from 'react';
 import SlideInDialog from '@/components/common/dialog/SlideInDialog';
+import { Cart_ItemEntity } from '@/lib/models/entities/Cart_ItemEntity/Cart_ItemEntity';
+import { DialogThemVaoTuLanh } from './DialogThemVaoTuLanh';
+import { Pantry_ItemEntity } from '@/lib/models/entities/Pantry_ItemEntity/Pantry_ItemEntity';
+import useSnackbarService from '@/lib/hooks/useSnackbar';
+import { CreatePantryItemReq } from '@/lib/models/dtos/Request/CreatePantryItemReq/CreatePantryItemReq';
+import { PersonalCartItemEntity } from '@/lib/models/entities/PersonalCartItemEntity/PersonalCartItemEntity';
 
 export function PopoverRecipes({
   DeleteAllCartByAccountId,
+  addToPantry,
+  cartItemData,
+  pantryItems,
+  personalCartItemData,
 }: {
   DeleteAllCartByAccountId: () => Promise<void>;
+  addToPantry: (cartItemAdd: CreatePantryItemReq[]) => Promise<void>;
+  cartItemData: Cart_ItemEntity[];
+  pantryItems: Pantry_ItemEntity[];
+  personalCartItemData: PersonalCartItemEntity[];
 }) {
+  const [snackbarAlert] = useSnackbarService();
+
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
 
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -31,8 +51,8 @@ export function PopoverRecipes({
   const id = open ? 'simple-popover' : undefined;
 
   const [openClearAll, setOpenClearAll] = useState(false);
-  const handleOpenClearAll = () => setOpenClearAll(true);
-  const handleCloseClearAll = () => setOpenClearAll(false);
+
+  const [openAddTuLanh, setOpenAddTuLanh] = useState(false);
 
   return (
     <Box>
@@ -77,7 +97,43 @@ export function PopoverRecipes({
             <ListItem disablePadding>
               <ListItemButton
                 onClick={() => {
-                  handleOpenClearAll();
+                  if (
+                    cartItemData.filter((item) => item.isBought).length > 0 ||
+                    personalCartItemData.filter((item) => item.is_bought)
+                      .length > 0
+                  ) {
+                    setOpenAddTuLanh(true);
+                  } else {
+                    snackbarAlert('Bạn chưa có nguyên liệu nào!', 'error');
+                  }
+                  handleClose();
+                }}
+              >
+                <ListItemIcon sx={{ minWidth: '40px' }}>
+                  <ArchiveRounded color="primary" fontSize="small" />
+                </ListItemIcon>
+                <ListItemText>
+                  <Typography
+                    variant="body2"
+                    fontWeight={'bold'}
+                    color={'primary'}
+                  >
+                    Thêm vào tủ lạnh
+                  </Typography>
+                </ListItemText>
+              </ListItemButton>
+            </ListItem>
+            <ListItem disablePadding>
+              <ListItemButton
+                onClick={() => {
+                  if (
+                    cartItemData.length > 0 ||
+                    personalCartItemData.length > 0
+                  ) {
+                    setOpenClearAll(true);
+                  } else {
+                    snackbarAlert('Giỏ đi chợ trống!', 'error');
+                  }
                   handleClose();
                 }}
               >
@@ -102,7 +158,7 @@ export function PopoverRecipes({
       {/* Dialog Clear All */}
       <SlideInDialog
         open={openClearAll}
-        handleClose={handleCloseClearAll}
+        handleClose={() => setOpenClearAll(false)}
         withCloseButton={true}
         title="Bạn chắc chứ ?"
         content={
@@ -115,8 +171,17 @@ export function PopoverRecipes({
         }}
         onClickConfirm={async () => {
           await DeleteAllCartByAccountId();
-          handleCloseClearAll();
+          setOpenClearAll(false);
         }}
+      />
+
+      {/* Dialog Thêm tủ lạnh */}
+      <DialogThemVaoTuLanh
+        open={openAddTuLanh}
+        handleClose={() => setOpenAddTuLanh(false)}
+        cartItemData={cartItemData}
+        addToPantry={addToPantry}
+        pantryItems={pantryItems}
       />
     </Box>
   );

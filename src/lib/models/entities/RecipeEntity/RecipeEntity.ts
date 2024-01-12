@@ -25,4 +25,5 @@ export type RecipeEntity = {
   direction?: Recipe_DirectionEntity[];
   occasions?: Recipe_OccasionEntity[];
   calories?: number;
+  isDeleted?: boolean;
 };

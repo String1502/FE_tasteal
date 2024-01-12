@@ -26,7 +26,7 @@ export const CustomDialog: React.FC<CustomDialogProps> = ({
       PaperProps={{
         sx: {
           borderRadius: 4,
-          minWidth: '700px',
+          minWidth: '80%',
         },
       }}
     >

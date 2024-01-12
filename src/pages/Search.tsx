@@ -1,5 +1,5 @@
-import { Box, Button, Container, Grid, Stack, Typography } from '@mui/material';
-import { CheckBoxButton } from '../components/ui/search/CheckBoxButton.tsx';
+import { Box, Button, Container, Grid, Typography } from '@mui/material';
+// import { CheckBoxButton } from '../components/ui/search/CheckBoxButton.tsx';
 import { PrimaryCard } from '../components/common/card/PrimaryCard.tsx';
 import { SearchFilter } from '../components/ui/search/SearchFilter.tsx';
 import Layout from '../layout/Layout';
@@ -54,8 +54,8 @@ function Search() {
     handleChangeFilter,
     textSearch,
     handleChangeTextSearch,
-    tuKhoas,
-    handleChangeTuKhoa,
+    // tuKhoas,
+    // handleChangeTuKhoa,
     loadNext,
     end,
     sortType,
@@ -80,6 +80,7 @@ function Search() {
                 <SearchTextField
                   textSearch={textSearch}
                   handleChangeTextSearch={handleChangeTextSearch}
+                  hideSearchButton={true}
                 />
               </Box>
             </Grid>
@@ -137,7 +138,7 @@ function Search() {
                 </Box>
               </Box>
 
-              <Stack flexWrap={'wrap'} direction="row" sx={{ my: 2 }}>
+              {/* <Stack flexWrap={'wrap'} direction="row" sx={{ my: 2 }}>
                 {tuKhoas.map(
                   (item) =>
                     item && (
@@ -148,7 +149,7 @@ function Search() {
                       />
                     )
                 )}
-              </Stack>
+              </Stack> */}
 
               <SearchInfiniteScroll
                 loadNext={loadNext}

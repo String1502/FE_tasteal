@@ -20,6 +20,7 @@ import {
   Tab,
   Tabs,
   TextField,
+  Tooltip,
   Typography,
 } from '@mui/material';
 import { onSnapshot } from 'firebase/firestore';
@@ -288,9 +289,11 @@ function LiveChat() {
         }}
         onClick={handleClick}
       >
-        <Badge badgeContent={news} color="error">
-          <ChatRounded fontSize="small" />
-        </Badge>
+        <Tooltip title="Chat trực tiếp">
+          <Badge badgeContent={news} color="error">
+            <ChatRounded fontSize="small" />
+          </Badge>
+        </Tooltip>
       </IconButton>
 
       <Popover

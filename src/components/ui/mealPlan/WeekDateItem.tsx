@@ -5,7 +5,6 @@ import { AddRecipeButton } from './AddRecipeButton';
 import { HighlightAltRounded } from '@mui/icons-material';
 import { Droppable } from 'react-beautiful-dnd';
 import { RecipeEntity } from '@/lib/models/entities/RecipeEntity/RecipeEntity';
-import { NoteTextField } from './NoteTextField';
 import { useMemo } from 'react';
 import { MealPlanCard } from './MealPlanCard';
 import { Plan_ItemEntity } from '@/lib/models/entities/Plan_ItemEntity/Plan_ItemEntity';
@@ -88,14 +87,14 @@ function WeekDateItem({
             <AddRecipeButton weekDates={weekDates} AddPlanItem={AddPlanItem} />
           </Box>
 
-          <Box
+          {/* <Box
             sx={{
               width: '100%',
               p: 2,
             }}
           >
             <NoteTextField />
-          </Box>
+          </Box> */}
 
           {weekDates.date && (
             <Droppable

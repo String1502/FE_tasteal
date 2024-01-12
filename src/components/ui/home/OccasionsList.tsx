@@ -32,7 +32,7 @@ function OccasionCard({ item }: { item: OccasionEntity }) {
   return (
     <Box
       sx={{
-        width: { xs: '100%', sm: '50%', md: '33%', lg: '25%' },
+        width: { xs: '100%', sm: '50%', md: '33%', lg: '20%' },
         p: 1.5,
       }}
     >

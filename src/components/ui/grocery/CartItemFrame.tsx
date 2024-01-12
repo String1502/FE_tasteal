@@ -1,5 +1,5 @@
-import { Box, Typography } from "@mui/material";
-import React from "react";
+import { Box, Typography } from '@mui/material';
+import React from 'react';
 
 function CartItemFrame({
   children,
@@ -12,21 +12,22 @@ function CartItemFrame({
     <>
       <Box
         sx={{
-          width: "100%",
-          background: "white",
+          width: '100%',
+          background: 'white',
           borderRadius: 4,
-          px: 3,
-          pt: 2,
-          pb: 1,
+          overflow: 'hidden',
         }}
       >
         <Typography
           variant="body1"
           sx={{
-            width: "100%",
-            textAlign: "left",
+            width: '100%',
+            textAlign: 'left',
             mb: 1,
-            color: "grey.600",
+            color: 'grey.600',
+            px: 3,
+            pt: 2,
+            pb: 1,
           }}
           fontWeight={900}
         >
