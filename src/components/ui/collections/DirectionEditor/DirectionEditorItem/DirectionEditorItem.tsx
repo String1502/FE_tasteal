@@ -201,6 +201,7 @@ const DirectionEditorItem: React.FC<DirectionEditorItemProps> = ({
             hidden
             type="file"
             onChange={(e) => handleImageFileChange(e.target.files![0])}
+            accept="image/*"
           />
         </Button>
       </AccordionDetails>

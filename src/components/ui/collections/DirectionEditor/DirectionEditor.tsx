@@ -1,15 +1,15 @@
-import CollectionItemAddButton from "@/components/common/buttons/CollectionItemAddButton";
-import { useCallback } from "react";
+import CollectionItemAddButton from '@/components/common/buttons/CollectionItemAddButton';
+import { useCallback } from 'react';
 import DirectionEditorItem, {
   DirectionEditorItemValue,
-} from "./DirectionEditorItem/DirectionEditorItem";
+} from './DirectionEditorItem/DirectionEditorItem';
 
 /**
  * Default direction to add to recipe
  */
 const DEFAULT_DIRECTION: DirectionEditorItemValue = {
   step: 0,
-  direction: "",
+  direction: '',
   imageFile: null,
 };
 
@@ -34,12 +34,12 @@ const DirectionEditor: React.FC<DirectionEditorProps> = ({
   //#region Handlers
 
   const handleAdd = useCallback(() => {
-    onChange([ ...directions, createDefaultDirection(directions.length + 1) ]);
-  }, [ directions, onChange ]);
+    onChange([...directions, createDefaultDirection(directions.length + 1)]);
+  }, [directions, onChange]);
 
   const handleItemValueChange = useCallback(
     (step: number, value: DirectionEditorItemValue) => {
-      const cloned = [ ...directions ];
+      const cloned = [...directions];
       cloned.splice(
         directions.findIndex((dir) => dir.step === step),
         1,
@@ -47,19 +47,23 @@ const DirectionEditor: React.FC<DirectionEditorProps> = ({
       );
       onChange(cloned);
     },
-    [ directions, onChange ]
+    [directions, onChange]
   );
 
   const handleRemoveItem = useCallback(
     (step) => {
-      const cloned = [ ...directions ];
+      let cloned = [...directions];
       cloned.splice(
         directions.findIndex((dir) => dir.step === step),
         1
       );
+      cloned = cloned.map((direction, index) => ({
+        ...direction,
+        step: index + 1,
+      }));
       onChange(cloned);
     },
-    [ directions, onChange ]
+    [directions, onChange]
   );
 
   //#endregion

@@ -94,6 +94,7 @@ export const ImagePicker: FC<ImagePickerProps> = ({
           style={{ display: 'none' }}
           onChange={handleFileChange}
           disabled={disabled}
+          accept="image/*"
         />
       </Box>
     </label>

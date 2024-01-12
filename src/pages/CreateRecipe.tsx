@@ -248,11 +248,6 @@ const CreateRecipe: React.FunctionComponent<{ edit?: boolean }> = ({
       setInvalid(LocalMessageConstant.Validation.DirectionRequired);
     } else if (newRecipe.totalTime <= 0) {
       setInvalid(LocalMessageConstant.Validation.TotalTimeRequired);
-    } else if (
-      newRecipe.activeTime > 0 &&
-      newRecipe.activeTime > newRecipe.totalTime
-    ) {
-      setInvalid(LocalMessageConstant.Validation.InvalidActiveTime);
     }
 
     return { isValid, msg };
@@ -373,6 +368,7 @@ const CreateRecipe: React.FunctionComponent<{ edit?: boolean }> = ({
     createPostRecipeData,
     navigate,
     snackbarAlert,
+    user?.uid,
     validateNewRecipe,
   ]);
   //#endregion
