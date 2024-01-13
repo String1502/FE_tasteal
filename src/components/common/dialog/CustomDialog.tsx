@@ -1,18 +1,24 @@
 import { CloseRounded } from '@mui/icons-material';
-import { Box, Dialog, IconButton, Typography } from '@mui/material';
+import { Box, Dialog, IconButton, SxProps, Typography } from '@mui/material';
 import React from 'react';
 
-export function CustomDialog({
-  open,
-  handleClose,
-  children,
-  title,
-}: {
+type CustomDialogProps = {
   open: boolean;
   handleClose: () => void;
   children: React.ReactNode;
   title: string;
-}) {
+  childrenContainerSx?: SxProps;
+  action?: React.ReactNode;
+};
+
+export const CustomDialog: React.FC<CustomDialogProps> = ({
+  open,
+  handleClose,
+  children,
+  title,
+  childrenContainerSx,
+  action,
+}) => {
   return (
     <Dialog
       open={open}
@@ -24,7 +30,7 @@ export function CustomDialog({
         },
       }}
     >
-      <Box sx={{}}>
+      <Box>
         <Box
           sx={{
             display: 'flex',
@@ -65,11 +71,26 @@ export function CustomDialog({
             },
             p: 2,
             pt: 0,
+            ...childrenContainerSx,
           }}
         >
           {children}
         </Box>
+
+        {action && (
+          <Box
+            sx={{
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              p: 2,
+              boxShadow: 'rgba(0, 0, 0, 0.16) 0px 1px 4px',
+            }}
+          >
+            {action}
+          </Box>
+        )}
       </Box>
     </Dialog>
   );
-}
+};

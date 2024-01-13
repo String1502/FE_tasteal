@@ -1,4 +1,6 @@
+import { AccountEntity } from '@/lib/models/entities/AccountEntity/AccountEntity';
+
 export type NewCookBookReq = {
   name: string;
-  owner: string;
+  owner: AccountEntity['uid'];
 };

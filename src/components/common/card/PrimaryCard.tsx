@@ -1,9 +1,6 @@
 import { PageRoute } from '@/lib/constants/common';
-import { CookBookEntity } from '@/lib/models/entities/CookBookEntity/CookBookEntity';
 import { RecipeEntity } from '@/lib/models/entities/RecipeEntity/RecipeEntity';
-import CookbookService from '@/lib/services/cookbookService';
 import {
-  AddCircleRounded,
   BookmarkBorderRounded,
   BookmarkRounded,
   PlayArrowRounded,
@@ -20,7 +17,7 @@ import {
   MenuItem,
   Typography,
 } from '@mui/material';
-import { useCallback, useContext, useEffect, useState } from 'react';
+import { useCallback, useContext, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import CustomCard from './CustomCard';
 import TotalTimeRecipe from './TotalTimeRecipe';
@@ -29,7 +26,7 @@ import RatingRecipe from './RatingRecipe';
 import NameRecipe from './NameRecipe';
 import ImageRecipe from './ImageRecipe';
 import AppContext from '@/lib/contexts/AppContext';
-import { RecipeToCookBookReq } from '@/lib/models/dtos/Request/RecipeToCookBookReq/RecipeToCookBook';
+import { RecipeToCookBookReq } from '@/lib/models/dtos/Request/RecipeToCookBook/RecipeToCookBook';
 import RecipeService from '@/lib/services/recipeService';
 import useSnackbarService from '@/lib/hooks/useSnackbar';
 
@@ -62,7 +59,6 @@ export function PrimaryCard({
     navigate(PageRoute.Recipe.Detail(recipe.id));
   }, [navigate, recipe.id]);
   const [snackbarAlert] = useSnackbarService();
-  console.log(cookbooks);
 
   return (
     <>

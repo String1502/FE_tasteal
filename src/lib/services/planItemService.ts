@@ -1,10 +1,13 @@
-import { planItems as planItemSampleData } from "@/lib/constants/sampleData";
-import simulateDelay from "@/utils/promises/stimulateDelay";
-import { PlanEntity } from "../models/entities/PlanEntity/PlanEntity";
-import { Plan_ItemEntity } from "../models/entities/Plan_ItemEntity/Plan_ItemEntity";
-import { RecipeEntity } from "../models/entities/RecipeEntity/RecipeEntity";
-import PlanService from "./planService";
-import RecipeService from "./recipeService";
+import { planItems as planItemSampleData } from '@/lib/constants/sampleData';
+import simulateDelay from '@/utils/promises/stimulateDelay';
+import { PlanEntity } from '../models/entities/PlanEntity/PlanEntity';
+import { Plan_ItemEntity } from '../models/entities/Plan_ItemEntity/Plan_ItemEntity';
+import { RecipeEntity } from '../models/entities/RecipeEntity/RecipeEntity';
+import PlanService from './planService';
+import RecipeService from './recipeService';
+import { AccountEntity } from '../models/entities/AccountEntity/AccountEntity';
+import { getApiUrl } from '../constants/api';
+import { PlanDeleteReq, PlanReq } from '../models/dtos/Request/PlanReq/PlanReq';
 
 class PlanItemService {
   public static async GetAllPlanItems(): Promise<Plan_ItemEntity[]> {
@@ -37,27 +40,68 @@ class PlanItemService {
   }
 
   public static async GetPlanItemsByAccountId(
-    accountId: string | undefined
+    accountId: AccountEntity['uid']
   ): Promise<Plan_ItemEntity[]> {
-    if (!accountId) {
-      return Promise.resolve([]);
-    }
-    const planIds = (await PlanService.GetPlansByAccountId(accountId)).map(
-      (plan) => plan.id
-    );
-    if (planIds.length <= 0) {
-      return Promise.resolve([]);
-    }
+    const requestOptions: RequestInit = {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+    };
 
-    let result: Plan_ItemEntity[] = [];
+    return await fetch(
+      `${getApiUrl('GetPlanItemsByAccountId')}?accountId=${accountId}`,
+      requestOptions
+    )
+      .then((response) => response.json())
+      .then((data) => data)
+      .catch((error) => {
+        console.error('Lỗi:', error);
+        throw error;
+      });
+  }
 
-    await Promise.all(
-      planIds.map(async (planId) => {
-        const planItems = await this.GetPlanItemsByPlanId(planId);
-        result = result.concat(planItems);
-      })
-    );
-    return Promise.resolve(result);
+  public static async AddOrUpdateRecipesToPlan(
+    planReq: PlanReq
+  ): Promise<boolean> {
+    const requestOptions: RequestInit = {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: JSON.stringify(planReq),
+    };
+
+    return await fetch(
+      `${getApiUrl('AddOrUpdateRecipesToPlan')}`,
+      requestOptions
+    )
+      .then((response) => response.json())
+      .then((data) => data)
+      .catch((error) => {
+        console.error('Lỗi:', error);
+        throw error;
+      });
+  }
+
+  public static async DeletePlanItem(
+    planDeleteReq: PlanDeleteReq
+  ): Promise<boolean> {
+    const requestOptions: RequestInit = {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: JSON.stringify(planDeleteReq),
+    };
+
+    return await fetch(`${getApiUrl('DeletePlanItem')}`, requestOptions)
+      .then((response) => response.json())
+      .then((data) => data)
+      .catch((error) => {
+        console.error('Lỗi:', error);
+        throw error;
+      });
   }
 }
 

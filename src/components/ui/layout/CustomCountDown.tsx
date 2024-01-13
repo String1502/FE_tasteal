@@ -1,13 +1,6 @@
 import AppContext from '@/lib/contexts/AppContext';
-import {
-  Box,
-  Container,
-  Grid,
-  Skeleton,
-  Stack,
-  Typography,
-} from '@mui/material';
-import { Suspense, useContext, useEffect, useRef, useState } from 'react';
+import { Box, Container, Skeleton, Stack, Typography } from '@mui/material';
+import { Suspense, useContext, useEffect, useState } from 'react';
 import { FlareRounded } from '@mui/icons-material';
 import { formatNumberWithLeadingZero } from '@/utils/format';
 export function CustomCountDown() {
@@ -16,8 +9,6 @@ export function CustomCountDown() {
   const [dateCountDown, setDateCountDown] = useState<number | undefined>(
     undefined
   );
-
-  console.log(currentOccasion);
 
   useEffect(() => {
     if (currentOccasion) {

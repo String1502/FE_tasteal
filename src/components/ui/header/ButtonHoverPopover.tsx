@@ -1,6 +1,7 @@
 import { ExpandMoreRounded } from '@mui/icons-material';
-import { Box, Popover, useTheme } from '@mui/material';
+import { Box, Popover } from '@mui/material';
 import React from 'react';
+import { headerHeight } from '../layout/Header';
 
 export function ButtonHoverPopover({
   children,
@@ -9,7 +10,6 @@ export function ButtonHoverPopover({
   children: React.ReactNode;
   customLink: React.ReactNode;
 }) {
-  const theme = useTheme();
   const [anchorElement, setAnchorEl] = React.useState<HTMLElement | null>(null);
 
   const handlePopoverOpen = (event: React.MouseEvent<HTMLElement>) => {
@@ -43,7 +43,7 @@ export function ButtonHoverPopover({
         onClose={handlePopoverClose}
         elevation={3}
         anchorPosition={{
-          top: anchorElement ? anchorElement.offsetHeight + 36 + 50 : 0,
+          top: anchorElement ? headerHeight + 2 : 0,
           left: 0,
         }}
         anchorOrigin={{
@@ -57,8 +57,8 @@ export function ButtonHoverPopover({
         slotProps={{
           paper: {
             sx: {
-              borderRadius: '16px',
               overflow: 'visible',
+              borderRadius: '16px',
             },
           },
         }}

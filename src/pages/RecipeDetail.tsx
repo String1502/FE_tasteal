@@ -14,10 +14,18 @@ import NutrionPerServingModal from '@/components/ui/modals/NutrionPerServingModa
 import Layout from '@/layout/Layout';
 import { N_AValue, PageRoute } from '@/lib/constants/common';
 import AppContext from '@/lib/contexts/AppContext';
+import useFirebaseImage from '@/lib/hooks/useFirebaseImage';
 import useSnackbarService from '@/lib/hooks/useSnackbar';
 import { RecipeRes } from '@/lib/models/dtos/Response/RecipeRes/RecipeRes';
+import { AccountEntity } from '@/lib/models/entities/AccountEntity/AccountEntity';
+import { CommentEntity } from '@/lib/models/entities/CommentEntity/CommentEntity';
+import AccountService from '@/lib/services/accountService';
+import CommentService from '@/lib/services/commentService';
+import RatingService, {
+  Rating as RatingModel,
+  RatingRes,
+} from '@/lib/services/ratingService';
 import RecipeService from '@/lib/services/recipeService';
-import createCacheAsyncFunction from '@/utils/cache/createCacheAsyncFunction';
 import { createDebugStringFormatter } from '@/utils/debug/formatter';
 import {
   Add,
@@ -42,6 +50,8 @@ import {
   Grid,
   IconButton,
   Link,
+  List,
+  ListItem,
   Modal,
   Rating,
   Skeleton,
@@ -56,7 +66,7 @@ import {
   useMemo,
   useState,
 } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { Link as RouterLink, useNavigate, useParams } from 'react-router-dom';
 
 // Mock bread crumbs data (will be remove later)
 const breadCrumbsLinks = [
@@ -92,11 +102,6 @@ const RecipeDetailStringConstants = {
  * Formatter help attach page identifier to message log.
  */
 const debugStringFormatter = createDebugStringFormatter(PAGE_ID);
-
-/**
- * Cached version of RecipeService.GetById
- */
-const getRecipeById = createCacheAsyncFunction(RecipeService.GetById);
 
 const RecipeDetail: FC = () => {
   //#region Loading
@@ -138,16 +143,16 @@ const RecipeDetail: FC = () => {
 
     const parsedId = parseInt(id);
 
-    getRecipeById(parsedId)
+    RecipeService.GetById(parsedId)
       .then((recipe) => {
         setRecipe(recipe);
         setIsRecipeFound(true);
-        console.log(debugStringFormatter('Get recipe data sucessfully!'));
       })
-      .catch(() => {
+      .catch((err) => {
         setRecipe(null);
         setIsRecipeFound(false);
         console.log(debugStringFormatter('Failed to get recipe data!'));
+        console.log('error', err);
       })
       .finally(() => {
         handleSpinner(false);
@@ -208,6 +213,93 @@ const RecipeDetail: FC = () => {
   }, []);
 
   //#endregion
+  //#region Comment
+
+  const [comment, setComment] = useState('');
+
+  function handleComment() {
+    const [valid, message] = validateComment();
+    if (!valid) {
+      snackbarAlert(message, 'warning');
+      return;
+    }
+
+    console.log(recipe!.id, user.uid, comment);
+
+    CommentService.Create(recipe!.id, user.uid, comment)
+      .then((_comment) => {
+        GetComments(recipe!.id);
+        setComment('');
+      })
+      .catch((error) => console.log('error', error));
+  }
+  function validateComment(): [boolean, string] {
+    if (!comment) {
+      return [false, 'Vui lòng nhập comment'];
+    }
+    if (!user) {
+      return [false, 'Vui lòng đăng nhập!'];
+    }
+    if (!recipe) {
+      return [false, 'Không lấy được thông tin công thức!'];
+    }
+
+    return [true, ''];
+  }
+
+  const [comments, setComments] = useState<CommentEntity[]>([]);
+  useEffect(() => {
+    if (!recipe) {
+      return;
+    }
+    GetComments(recipe!.id);
+  }, [recipe]);
+  async function GetComments(id: number) {
+    CommentService.Get(id)
+      .then((res) => setComments(res.comments))
+      .catch(() => setComments([]));
+  }
+
+  //#endregion
+  //#region Rating
+
+  const [rating, setRating] = useState(0);
+  const [ratingData, setRatingData] = useState<RatingRes | null>(null);
+  useEffect(() => {
+    if (!recipe) return;
+    RatingService.Get(recipe.id).then((res) => {
+      setRatingData(res);
+      const userRating = res?.comments.find((r) => r.account_id === user?.uid);
+      if (userRating) {
+        setRating(userRating.rating);
+      }
+      if (res) {
+        setRatingData(res);
+      }
+    });
+  }, [recipe, user?.uid]);
+  async function handleRatingClicked(rating: number) {
+    // Check if user rated before
+    setRating(rating);
+
+    let oldRating: RatingModel;
+
+    try {
+      const ratingRes = await RatingService.Get(recipe.id);
+      if (ratingRes) {
+        oldRating = ratingRes.comments.find((r) => r.account_id === user.uid);
+      }
+    } catch (err) {
+      console.log(err);
+    }
+
+    if (oldRating) {
+      await RatingService.Update(recipe.id, oldRating.id, rating);
+    } else {
+      await RatingService.Create(recipe.id, user.uid, rating);
+    }
+  }
+
   //#region Others
 
   const recipeBrief = useMemo(() => {
@@ -220,6 +312,15 @@ const RecipeDetail: FC = () => {
     const totalTime = recipe.totalTime;
 
     return `${ingredientCount} NGUYÊN LIỆU • ${directionCount} BƯỚC • ${totalTime} PHÚT`;
+  }, [recipe]);
+
+  const authorLink = useMemo(() => {
+    if (!recipe) {
+      return '';
+    }
+    const route = `/partner/${recipe.author.uid}`;
+    const url = `${window.location.origin}${route}`;
+    return url;
   }, [recipe]);
 
   //#endregion
@@ -430,8 +531,11 @@ const RecipeDetail: FC = () => {
                 ) : (
                   <Box display={'flex'} flexDirection={'column'} gap={1}>
                     <Stack direction="row" alignItems={'center'} gap={2}>
-                      <Avatar src={recipe?.author.avatar} />
-                      <Link>
+                      <CustomAvatar path={recipe?.author.avatar} />
+                      <Link
+                        component={RouterLink}
+                        to={`/partner/${recipe?.author.uid}`}
+                      >
                         <Typography fontWeight={'bold'}>
                           {recipe?.author.name}
                         </Typography>
@@ -441,8 +545,17 @@ const RecipeDetail: FC = () => {
                       {recipe?.author.introduction}
                     </Typography>
                     {/* TODO: Implementation this */}
-                    <Link color="primary.main" fontWeight={'bold'}>
-                      https://www.sidechef.com/(not implemented)
+                    <Link
+                      color="primary.main"
+                      fontWeight={'bold'}
+                      component={RouterLink}
+                      to={`/partner/${recipe?.author.uid}`}
+                      sx={{
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis',
+                      }}
+                    >
+                      {authorLink}
                     </Link>
                   </Box>
                 )}
@@ -499,10 +612,10 @@ const RecipeDetail: FC = () => {
               py: 4,
               display: 'flex',
               flexDirection: 'column',
-              gap: 4,
+              gap: 2,
             }}
           >
-            <Box width="60%">
+            <Stack width="60%" gap={1}>
               <Stack
                 direction="row"
                 alignItems={'end'}
@@ -524,23 +637,82 @@ const RecipeDetail: FC = () => {
                       size="large"
                       icon={<StarRateRounded />}
                       emptyIcon={<StarRateRounded />}
-                    ></Rating>
+                      value={rating}
+                      onChange={(_, value) => handleRatingClicked(value)}
+                    />
                   </Stack>
                 )}
+              </Stack>
+              <Stack direction="row" gap={1}>
+                <Typography>{ratingData?.rating ?? 0}</Typography>
+                <Rating
+                  size="large"
+                  value={ratingData?.rating ?? 0}
+                  icon={<StarRateRounded />}
+                  emptyIcon={<StarRateRounded />}
+                  readOnly
+                />
+                <Typography>
+                  {ratingData?.comments.length ?? 0} đánh giá
+                </Typography>
               </Stack>
 
               {loading ? (
                 <Skeleton variant="rounded" animation="wave" height={160} />
               ) : (
-                <TastealTextField
-                  multiline
-                  rows={4}
-                  placeholder="Để lại bình luận"
-                  fullWidth
-                  sx={{ mt: 1 }}
-                />
+                <>
+                  <Box position="relative">
+                    <TastealTextField
+                      value={comment}
+                      onChange={(e) => setComment(e.target.value)}
+                      multiline
+                      rows={4}
+                      placeholder="Để lại bình luận"
+                      fullWidth
+                      sx={{ mt: 1 }}
+                    />
+                    <Button
+                      variant="contained"
+                      color="primary"
+                      onClick={handleComment}
+                      sx={{
+                        position: 'absolute',
+                        right: 10,
+                        bottom: 10,
+                        opacity: comment ? 1 : 0,
+                        transition: 'all 0.3s',
+                      }}
+                    >
+                      Bình luận
+                    </Button>
+                  </Box>
+                  <List>
+                    {/* {recipe?.comments?.length > 0 &&
+                        recipe?.comments.map((comment) => (
+                          <CommentItem comment={comment} />
+                        ))} */}
+                    {comments.length > 0 &&
+                      comments.map((comment, index) => (
+                        <>
+                          <CommentItem comment={comment} />
+                          {index < comments.length - 1 && (
+                            <Divider sx={{ my: 2, opacity: 0.4 }} />
+                          )}
+                        </>
+                      ))}
+                  </List>
+
+                  <Button
+                    variant="contained"
+                    size="large"
+                    sx={{ alignSelf: 'center' }}
+                    onClick={() => alert('Load more comments')}
+                  >
+                    Hiện thêm
+                  </Button>
+                </>
               )}
-            </Box>
+            </Stack>
 
             {/* <Box width="60%">
             <BigSectionHeading>Tags</BigSectionHeading>
@@ -620,17 +792,6 @@ const RecipeDetail: FC = () => {
                 )}
               </Box>
             </Box>
-
-            <Box>
-              <Box
-                display="flex"
-                justifyContent={'space-between'}
-                alignItems={'center'}
-              >
-                <BigSectionHeading>Công thức gợi ý</BigSectionHeading>
-              </Box>
-              <Box>{'Not yet implemented'}</Box>
-            </Box>
           </Container>
         </Box>
 
@@ -685,6 +846,12 @@ const RecipeDetail: FC = () => {
   );
 };
 
+function CustomAvatar({ path }: { path: string }) {
+  const avatar = useFirebaseImage(path);
+
+  return <Avatar src={avatar} />;
+}
+
 function RecipeNotFound() {
   return (
     <Box
@@ -697,6 +864,58 @@ function RecipeNotFound() {
         Xin lỗi, công thức không tồn tại!
       </Typography>
     </Box>
+  );
+}
+
+function CommentItem({ comment }: { comment: CommentEntity }) {
+  const [account, setAccount] = useState<AccountEntity | null>(null);
+  useEffect(() => {
+    AccountService.GetByUid(comment.account_id)
+      .then((account) => setAccount(account))
+      .catch(() => setAccount(null));
+  }, [comment.account_id]);
+
+  return (
+    <ListItem
+      disablePadding
+      sx={{
+        pb: 2,
+      }}
+    >
+      <Stack direction="row" width="100%">
+        <Box pr={3}>
+          <BoxImage
+            src={account?.avatar ?? ''}
+            alt={
+              account
+                ? 'Comment avatar of ' + account.name
+                : 'null comment avatar'
+            }
+            quality={10}
+            sx={{
+              width: 72,
+              height: 72,
+              borderRadius: '50%',
+            }}
+          />
+        </Box>
+        <Stack
+          gap={2}
+          sx={{
+            flexGrow: 1,
+          }}
+        >
+          <Stack gap={1}>
+            <Typography typography="h6">
+              {account?.name ?? 'Không tìm thấy'}
+            </Typography>
+            <Typography typography="body1">5 tháng, 4 tuần trước</Typography>
+          </Stack>
+          <Rating readOnly />
+          <Typography fontSize={20}>{comment.comment}</Typography>
+        </Stack>
+      </Stack>
+    </ListItem>
   );
 }
 

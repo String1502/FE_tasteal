@@ -7,8 +7,8 @@ import { Recipe_OccasionEntity } from '../Recipe_OccasionEntity/Recipe_OccasionE
 export type RecipeEntity = {
   id: number;
   name?: string;
-  rating: number;
-  totalTime: number;
+  rating?: number;
+  totalTime?: number;
   active_time?: Date;
   serving_size: number;
   introduction?: string;
@@ -24,4 +24,5 @@ export type RecipeEntity = {
   ingredients?: IngredientEntity[];
   direction?: Recipe_DirectionEntity[];
   occasions?: Recipe_OccasionEntity[];
+  calories?: number;
 };

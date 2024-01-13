@@ -10,9 +10,15 @@ import { Plan_ItemEntity } from '@/lib/models/entities/Plan_ItemEntity/Plan_Item
 import AppContext from '@/lib/contexts/AppContext';
 import { ActionSection } from '../components/ui/mealPlan/ActionSection';
 
+export const compareTwoDates = (date1: Date, date2: Date) => {
+  return (
+    date1.toLocaleDateString('vi-VN') === date2.toLocaleDateString('vi-VN')
+  );
+};
+
 export type DateDisplay = {
   label: string;
-  date?: string;
+  date?: Date;
   planItems?: Plan_ItemEntity[];
 };
 
@@ -44,33 +50,32 @@ export const getStart_EndOfWeek = (
   offset: number
 ): { start: Date; end: Date } => {
   const currentDate = new Date();
-  const currentDay = currentDate.getUTCDay();
+  const currentDay = currentDate.getDay();
 
   const startOfWeek = new Date(currentDate);
-  startOfWeek.setUTCDate(
-    currentDate.getUTCDate() - currentDay + (currentDay === 0 ? -6 : 1)
+  startOfWeek.setDate(
+    currentDate.getDate() - currentDay + (currentDay === 0 ? -6 : 1)
   );
 
-  startOfWeek.setUTCDate(startOfWeek.getUTCDate() + 7 * offset);
+  startOfWeek.setDate(startOfWeek.getDate() + 7 * offset);
 
   const endOfWeek = new Date(startOfWeek);
-  endOfWeek.setUTCDate(endOfWeek.getUTCDate() + 6);
+  endOfWeek.setDate(endOfWeek.getDate() + 6);
 
   return { start: startOfWeek, end: endOfWeek };
 };
 
-function getWeekDates(offset: number): string[] {
+function getWeekDates(offset: number): Date[] {
   const { start: startOfWeek, end: endOfWeek } = getStart_EndOfWeek(offset);
 
-  const dates: string[] = [];
+  const dates: Date[] = [];
 
   for (
     let day = new Date(startOfWeek);
     day <= endOfWeek;
-    day.setUTCDate(day.getUTCDate() + 1)
+    day.setDate(day.getDate() + 1)
   ) {
-    const dateString = new Date(day.getTime()).toISOString().slice(0, 10);
-    dates.push(dateString);
+    dates.push(new Date(day.getTime()));
   }
 
   return dates;
@@ -118,7 +123,7 @@ const MealPlanner: React.FC = () => {
             planItems: planItems
               .filter((item) => {
                 const itemDate = new Date(item.plan?.date);
-                return itemDate.toISOString().split('T')[0] === date;
+                return compareTwoDates(itemDate, date);
               })
               .sort((a, b) => {
                 return a.order - b.order;
@@ -150,7 +155,7 @@ const MealPlanner: React.FC = () => {
           planItems: planItemData
             .filter((item) => {
               const itemDate = new Date(item.plan?.date);
-              return itemDate.toISOString().split('T')[0] === date;
+              return compareTwoDates(itemDate, date);
             })
             .sort((a, b) => {
               return a.order - b.order;
@@ -170,7 +175,7 @@ const MealPlanner: React.FC = () => {
           planItems: planItemData
             .filter((item) => {
               const itemDate = new Date(item.plan?.date);
-              return itemDate.toISOString().split('T')[0] === date.date;
+              return compareTwoDates(itemDate, date.date);
             })
             .sort((a, b) => {
               return a.order - b.order;

@@ -127,28 +127,33 @@ function SlideInDialog(props: SlideInDialogProps) {
             justifyContent: 'center',
           }}
         >
-          <Button
-            onClick={() => {
-              onClickCancel?.();
-              handleClose();
-            }}
-            {...buttonProps}
-            {...cancelButtonProps}
-            variant="outlined"
-          >
-            {cancelText ?? 'Quay lại'}
-          </Button>
-          <Button
-            onClick={() => {
-              onClickConfirm?.();
-              handleClose();
-            }}
-            {...buttonProps}
-            {...confirmButtonProps}
-            variant="contained"
-          >
-            {confirmText ?? 'Tiếp tục'}
-          </Button>
+          {(cancelText || onClickCancel) && (
+            <Button
+              onClick={() => {
+                onClickCancel?.();
+                handleClose();
+              }}
+              {...buttonProps}
+              {...cancelButtonProps}
+              variant="outlined"
+            >
+              {cancelText ?? 'Quay lại'}
+            </Button>
+          )}
+
+          {(confirmText || onClickConfirm) && (
+            <Button
+              onClick={() => {
+                onClickConfirm?.();
+                handleClose();
+              }}
+              {...buttonProps}
+              {...confirmButtonProps}
+              variant="contained"
+            >
+              {confirmText ?? 'Tiếp tục'}
+            </Button>
+          )}
         </DialogActions>
       </Dialog>
     </>

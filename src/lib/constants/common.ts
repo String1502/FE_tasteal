@@ -31,4 +31,8 @@ export const PageRoute = {
     uid ? `/partner/${uid}` : '/partner/:uid',
   AllPartner: '/allpartner',
   Admin: '/admin',
+  ReferenceIngredient: (id?: string) =>
+    id ? `/reference/ingredients/${id}` : '/reference/:type/:id',
+  Reference: (type?: 'ingredients' | 'occasions') =>
+    type ? `/reference/${type}` : '/reference/:type',
 } as const;

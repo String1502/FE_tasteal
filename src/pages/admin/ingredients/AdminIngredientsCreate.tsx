@@ -4,6 +4,7 @@ import FormLabel from '@/components/common/typos/FormLabel';
 import FormTitle from '@/components/common/typos/FormTitle';
 import { navigateTo } from '@/features/admin/adminSlice';
 import TabCode from '@/lib/enums/AdminTabCode';
+import useSnackbarService from '@/lib/hooks/useSnackbar';
 import { IngredientRes } from '@/lib/models/dtos/Response/IngredientRes/IngredientRes';
 import { ArrowBack } from '@mui/icons-material';
 import { Autocomplete, Button, IconButton } from '@mui/material';
@@ -31,10 +32,11 @@ type IngredientCreateFormData = {
 };
 
 const AdminIngredientCreate: FC = () => {
+  const [snackbarAlert] = useSnackbarService();
   const params: IngredientRes = useAppSelector((state) => state.admin.params);
   const dispatch = useAppDispatch();
 
-  const [mode, setMode] = useState<'view' | 'create' | 'edit'>(
+  const [mode, _setMode] = useState<'view' | 'create' | 'edit'>(
     params ? 'edit' : 'create'
   );
 
@@ -54,7 +56,9 @@ const AdminIngredientCreate: FC = () => {
 
   const handleSubmit = useCallback(() => {
     console.log(formData);
-  }, [formData]);
+    snackbarAlert('Đã thêm nguyên liệu thành công');
+    dispatch(navigateTo({ tab: TabCode.IngredientIndex, params: null }));
+  }, [dispatch, formData, snackbarAlert]);
 
   return (
     <Stack alignItems={'start'} p={4} gap={4}>

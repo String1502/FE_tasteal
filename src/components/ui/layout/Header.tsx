@@ -1,6 +1,6 @@
 import { PageRoute } from '@/lib/constants/common';
 import AppContext from '@/lib/contexts/AppContext';
-import ColorModeContext from '@/lib/contexts/ColorModeContext';
+// import ColorModeContext from '@/lib/contexts/ColorModeContext';
 import { signOutUser } from '@/lib/firebase/auth';
 import useSnackbarService from '@/lib/hooks/useSnackbar';
 import {
@@ -17,7 +17,7 @@ import {
   Toolbar,
   Typography,
   useScrollTrigger,
-  useTheme,
+  // useTheme,
 } from '@mui/material';
 import { useCallback, useContext, useMemo, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -26,6 +26,8 @@ import { TastealAppBar } from './TastealAppBar';
 
 interface Props {
   window_?: () => Window;
+  isDynamicHeader?: boolean;
+  headerPosition?: 'fixed' | 'static';
 }
 
 const drawerWidth = 240;
@@ -47,11 +49,11 @@ const TastealAppBarProps: AppBarProps['sx'] = {
 };
 
 export function Header(props: Props) {
-  const { window_ } = props;
+  const { window_, isDynamicHeader, headerPosition } = props;
 
   // Dùng cho đổi theme
-  const colorMode = useContext(ColorModeContext);
-  const theme = useTheme();
+  // const colorMode = useContext(ColorModeContext);
+  // const theme = useTheme();
   const navigate = useNavigate();
   const [snackbarAlert] = useSnackbarService();
 
@@ -88,7 +90,6 @@ export function Header(props: Props) {
   }[] = useMemo(
     () => [
       { label: 'Trang chủ', href: PageRoute.Home },
-      { label: 'Về Tasteal', href: '/' },
       { label: 'Tìm kiếm', href: PageRoute.Search },
       { label: 'Giỏ đi chợ', href: PageRoute.Grocery },
       { label: 'Lịch ăn', href: PageRoute.MealPlanner },
@@ -193,8 +194,24 @@ export function Header(props: Props) {
 
   return (
     <Box component={'div'} id="headerApp">
-      <Slide appear={false} direction="down" in={!trigger}>
-        <AppBar ref={boxRef} sx={TastealAppBarProps}>
+      <Slide
+        appear={false}
+        direction="down"
+        in={
+          headerPosition == 'static'
+            ? true
+            : isDynamicHeader == undefined
+            ? !trigger
+            : isDynamicHeader == true
+            ? !trigger
+            : true
+        }
+      >
+        <AppBar
+          position={headerPosition == undefined ? 'fixed' : headerPosition}
+          ref={boxRef}
+          sx={TastealAppBarProps}
+        >
           <CustomCountDown />
           <TastealAppBar
             handleDrawerToggle={handleDrawerToggle}
@@ -206,6 +223,7 @@ export function Header(props: Props) {
       <Toolbar
         sx={{
           height: boxRef.current?.offsetHeight,
+          display: headerPosition == 'static' ? 'none' : 'block',
         }}
       />
       <nav>

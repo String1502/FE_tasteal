@@ -1,6 +1,6 @@
-import TastealTextField from "@/components/common/textFields/TastealTextField";
-import FormTitle from "@/components/common/typos/FormTitle";
-import { Close, ExpandMore, Photo } from "@mui/icons-material";
+import TastealTextField from '@/components/common/textFields/TastealTextField';
+import useFirebaseImage from '@/lib/hooks/useFirebaseImage';
+import { Close, ExpandMore, Photo } from '@mui/icons-material';
 import {
   Accordion,
   AccordionDetails,
@@ -10,18 +10,18 @@ import {
   FormLabel,
   IconButton,
   Stack,
-} from "@mui/material";
-import React, { useCallback, useMemo, useState } from "react";
+} from '@mui/material';
+import React, { useCallback, useMemo, useState } from 'react';
 
 type ImageProps = {
   url: string;
   onRemove: () => void;
 };
 
-const Image: React.FC<ImageProps> = ({ url = "", onRemove }) => {
+const Image: React.FC<ImageProps> = ({ url = '', onRemove }) => {
   //#region UseStates
 
-  const [ isHovered, setIsHovered ] = useState(false);
+  const [isHovered, setIsHovered] = useState(false);
 
   //#endregion
 
@@ -29,16 +29,17 @@ const Image: React.FC<ImageProps> = ({ url = "", onRemove }) => {
 
   const handleRemoveImage = useCallback(() => {
     onRemove && onRemove();
-  }, [ onRemove ]);
+  }, [onRemove]);
 
   //#endregion
+  console.log(url);
 
   return (
     <Box
-      position={"relative"}
+      position={'relative'}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
-      display={url !== "" ? "block" : "none"}
+      display={url !== '' ? 'block' : 'none'}
     >
       <Box
         component="img"
@@ -46,32 +47,32 @@ const Image: React.FC<ImageProps> = ({ url = "", onRemove }) => {
         sx={[
           {
             borderWidth: 2,
-            borderStyle: "solid",
-            borderColor: "grey.300",
+            borderStyle: 'solid',
+            borderColor: 'grey.300',
             boxShadow: 4,
             borderRadius: 4,
             width: 280,
-            objectFit: "contain",
-            objectPosition: "center",
-            transition: "all 0.2s ease-in-out",
+            objectFit: 'contain',
+            objectPosition: 'center',
+            transition: 'all 0.2s ease-in-out',
           },
           isHovered && {
-            cursor: "pointer",
-            borderColor: "primary.main",
+            cursor: 'pointer',
+            borderColor: 'primary.main',
           },
         ]}
       ></Box>
       <IconButton
         sx={[
           {
-            position: "absolute",
+            position: 'absolute',
             right: 1,
             top: 1,
-            "&:hover": {
-              rotate: "15deg",
-              scale: "1.2",
+            '&:hover': {
+              rotate: '15deg',
+              scale: '1.2',
             },
-            transition: "all 0.2s ease-in-out",
+            transition: 'all 0.2s ease-in-out',
           },
         ]}
         onClick={handleRemoveImage}
@@ -86,6 +87,7 @@ export type DirectionEditorItemValue = {
   step: number;
   direction: string;
   imageFile?: File | null;
+  imagePath?: string;
 };
 
 export type DirectionEditorItemProps = {
@@ -103,9 +105,15 @@ const DirectionEditorItem: React.FC<DirectionEditorItemProps> = ({
 }) => {
   //#region UseMemos
 
+  const img = useFirebaseImage(value.imagePath ?? '', 100, false);
   const url = useMemo(() => {
-    return (value.imageFile && URL.createObjectURL(value.imageFile!)) || "";
-  }, [ value.imageFile ]);
+    if (value.imageFile) {
+      return URL.createObjectURL(value.imageFile);
+    }
+    if (img) {
+      return img;
+    }
+  }, [img, value.imageFile]);
 
   //#endregion
 
@@ -118,7 +126,7 @@ const DirectionEditorItem: React.FC<DirectionEditorItemProps> = ({
         direction: desc,
       });
     },
-    [ onChange, value ]
+    [onChange, value]
   );
 
   const handleImageFileChange = useCallback(
@@ -126,9 +134,10 @@ const DirectionEditorItem: React.FC<DirectionEditorItemProps> = ({
       onChange({
         ...value,
         imageFile: file,
+        imagePath: '',
       });
     },
-    [ onChange, value ]
+    [onChange, value]
   );
 
   //#endregion
@@ -136,8 +145,8 @@ const DirectionEditorItem: React.FC<DirectionEditorItemProps> = ({
   return (
     <Accordion
       sx={{
-        border: "1px solid",
-        borderColor: "grey.300",
+        border: '1px solid',
+        borderColor: 'grey.300',
       }}
     >
       <AccordionSummary expandIcon={<ExpandMore />} sx={{}}>
@@ -150,7 +159,7 @@ const DirectionEditorItem: React.FC<DirectionEditorItemProps> = ({
           <FormLabel>Bước {value.step}</FormLabel>
           <IconButton
             onClick={onRemove}
-            sx={value.step === 1 ? { display: "none" } : {}}
+            sx={value.step === 1 ? { display: 'none' } : {}}
           >
             <Close />
           </IconButton>
@@ -158,9 +167,9 @@ const DirectionEditorItem: React.FC<DirectionEditorItemProps> = ({
       </AccordionSummary>
       <AccordionDetails
         sx={{
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "start",
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'start',
           gap: 1,
         }}
       >
@@ -182,7 +191,7 @@ const DirectionEditorItem: React.FC<DirectionEditorItemProps> = ({
           startIcon={<Photo />}
           sx={
             value.imageFile && {
-              display: "none",
+              display: 'none',
             }
           }
           disabled={disabled}
@@ -191,7 +200,7 @@ const DirectionEditorItem: React.FC<DirectionEditorItemProps> = ({
           <input
             hidden
             type="file"
-            onChange={(e) => handleImageFileChange(e.target.files![ 0 ])}
+            onChange={(e) => handleImageFileChange(e.target.files![0])}
           />
         </Button>
       </AccordionDetails>

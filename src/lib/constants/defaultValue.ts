@@ -7,11 +7,10 @@ import { Nutrition_InfoEntity } from '../models/entities/Nutrition_InfoEntity/Nu
  */
 // TODO: Move this to its own component file
 export const DefaultIngredientItemData: IngredientItemData = {
-    id: 'default',
-    ingredientId: 0,
-    name: '',
-    amount: 0,
-    isLiquid: false,
+  id: 'default',
+  ingredientId: 0,
+  name: '',
+  amount: 0,
 };
 
 /**
@@ -19,19 +18,19 @@ export const DefaultIngredientItemData: IngredientItemData = {
  */
 // TODO: Move this to its own component file
 export const DefaultNutritionValue: Nutrition_InfoEntity = {
-    id: 0,
-    calories: 0,
-    fat: 0,
-    saturated_fat: 0,
-    trans_fat: 0,
-    cholesterol: 0,
-    carbohydrates: 0,
-    fiber: 0,
-    sugars: 0,
-    protein: 0,
-    sodium: 0,
-    vitaminD: 0,
-    calcium: 0,
-    iron: 0,
-    potassium: 0,
+  id: 0,
+  calories: 0,
+  fat: 0,
+  saturated_fat: 0,
+  trans_fat: 0,
+  cholesterol: 0,
+  carbohydrates: 0,
+  fiber: 0,
+  sugars: 0,
+  protein: 0,
+  sodium: 0,
+  vitaminD: 0,
+  calcium: 0,
+  iron: 0,
+  potassium: 0,
 };

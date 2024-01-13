@@ -1,7 +1,10 @@
 enum TabCode {
   Dashboard,
+  UserIndex,
   IngredientIndex,
   IngredientCreate,
+  OccasionIndex,
+  OccasionCreate,
   Settings,
 }
 

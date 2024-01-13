@@ -1,9 +1,3 @@
-import {
-  accounts,
-  carts as cartSampleData,
-  recipes,
-} from '@/lib/constants/sampleData';
-import simulateDelay from '@/utils/promises/stimulateDelay';
 import { CartEntity } from '../models/entities/CartEntity/CartEntity';
 import { getApiUrl } from '../constants/api';
 import { AccountEntity } from '../models/entities/AccountEntity/AccountEntity';
@@ -12,31 +6,9 @@ import { PersonalCartItemReq } from '../models/dtos/Request/PersonalCartItemReq/
 import { PersonalCartItemUpdateReq } from '../models/dtos/Request/PersonalCartItemUpdateReq/PersonalCartItemUpdateReq';
 
 class CartService {
-  // Bỏ GetAllCarts!
-  public static GetAllCarts(): Promise<CartEntity[]> {
-    simulateDelay(1);
-
-    const carts: CartEntity[] = cartSampleData.map((cart) => {
-      return {
-        ...cart,
-        account: accounts.find((account) => account.uid === cart.accountId),
-        recipe: recipes.find((recipe) => recipe.id === cart.recipeId),
-      };
-    });
-
-    return Promise.resolve(carts);
-  }
-
   public static async GetCartByAccountId(
     accountId: AccountEntity['uid']
   ): Promise<CartEntity[]> {
-    // const allCarts = await this.GetAllCarts();
-    // return Promise.resolve(
-    //   allCarts.filter((cart) => cart.accountId === accountId)
-    // );
-
-    let carts: CartEntity[] = [];
-
     const requestOptions: RequestInit = {
       method: 'POST',
       headers: {
@@ -44,22 +16,19 @@ class CartService {
       },
     };
 
-    await fetch(
+    return await fetch(
       `${getApiUrl('GetAllCartByAccountId')}?accountId=${accountId}`,
       requestOptions
     )
       .then((response) => response.json())
       .then((data) => {
-        carts = data;
+        console.log(data);
+        return data;
       })
       .catch((error) => {
         console.error('Lỗi:', error);
         throw error;
       });
-
-    console.log(carts);
-
-    return carts;
   }
 
   public static async DeleteCartByAccountId(
