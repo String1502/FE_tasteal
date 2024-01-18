@@ -562,7 +562,6 @@ const CreateRecipe: React.FunctionComponent<{ edit?: boolean }> = ({
 
   const handleSaveRecipe = useCallback(async () => {
     setIsProcessing(true);
-    console.log(newRecipe);
 
     const recipeId = parseInt(id);
     let putBody = createPutBody(
@@ -570,11 +569,7 @@ const CreateRecipe: React.FunctionComponent<{ edit?: boolean }> = ({
       newRecipe,
       selectedOccasions.map((s) => s.id)
     );
-    console.log('body', putBody);
     putBody = await updateComplexStuffs(putBody);
-
-    console.log('id', putBody);
-    console.log('body', putBody);
 
     RecipeService.Update(recipeId, putBody)
       .then(() => {
