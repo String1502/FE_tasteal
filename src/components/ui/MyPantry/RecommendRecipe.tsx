@@ -172,6 +172,7 @@ function RecommendRecipe({
           }}
         >
           {needByMoreRecipes &&
+            needByMoreRecipes.length > 0 &&
             needByMoreRecipes.map((recipe) => (
               <Box
                 key={recipe.id}
