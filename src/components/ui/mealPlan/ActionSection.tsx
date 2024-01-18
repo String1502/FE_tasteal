@@ -1,35 +1,17 @@
-import React from 'react';
-import { Typography, Button, Box, IconButton, Popover } from '@mui/material';
-import {
-  HighlightAltRounded,
-  MapsUgcRounded,
-  QuestionMarkRounded,
-  RotateLeftRounded,
-  RotateRightRounded,
-} from '@mui/icons-material';
+import { Button, Box } from '@mui/material';
+import DuplicateMealPlanDialog from './DuplicateMealPlanDialog';
+import { useState } from 'react';
+import { CustomDialog } from '@/components/common/dialog/CustomDialog';
 
 export function ActionSection({
   weekCounter,
-  handleChangeWeekCounter,
   addAllToCart,
 }: {
   weekCounter: number;
-  handleChangeWeekCounter: (value: number) => void;
   addAllToCart: () => Promise<void>;
 }) {
-  const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(
-    null
-  );
-
-  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-    setAnchorEl(event.currentTarget);
-  };
-
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
-
-  const open = Boolean(anchorEl);
+  // Dialog Sao chép
+  const [open, setOpen] = useState(false);
 
   return (
     <>
@@ -42,112 +24,89 @@ export function ActionSection({
           gap: 2,
         }}
       >
-        <IconButton
+        <Button
+          variant="contained"
           color="primary"
-          onClick={() => handleChangeWeekCounter(0)}
-          sx={{
-            border: 1,
-          }}
           size="small"
-          disabled={weekCounter === 0}
-        >
-          <RotateRightRounded fontSize="small" />
-        </IconButton>
-
-        <IconButton
-          color="primary"
-          onClick={handleClick}
           sx={{
-            border: 1,
+            px: 2,
           }}
-          size="small"
+          onClick={() => setOpen(true)}
         >
-          <QuestionMarkRounded fontSize="small" />
-        </IconButton>
-
-        <Popover
+          Sao chép
+        </Button>
+        <CustomDialog
           open={open}
-          anchorEl={anchorEl}
-          onClose={handleClose}
-          anchorOrigin={{
-            vertical: 'bottom',
-            horizontal: 'center',
+          handleClose={() => setOpen(false)}
+          title="Thêm vào tủ lạnh"
+          children={<DuplicateMealPlanDialog />}
+          childrenContainerSx={{
+            px: 0,
           }}
-          transformOrigin={{
-            vertical: 'top',
-            horizontal: 'center',
-          }}
-          slotProps={{
-            paper: {
-              sx: {
-                borderRadius: 4,
-                background: 'white',
-                width: '280px',
-              },
-            },
-          }}
-        >
-          <Box
-            sx={{
-              p: 2,
-              display: 'flex',
-              flexDirection: 'column',
-              justifyContent: 'center',
-              alignItems: 'center',
-              gap: 4,
-            }}
-          >
-            <Box
-              sx={{
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center',
-                gap: 2,
-              }}
-            >
-              <HighlightAltRounded fontSize="small" />
-              <Typography variant="body2" fontWeight={'light'}>
-                <span style={{ fontWeight: 'bold' }}>Kéo và thả </span>
-                công thức để di chuyển nó tới bất kỳ ngày nào trong tuần.
-              </Typography>
-            </Box>
-
-            <Box
-              sx={{
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center',
-                gap: 2,
-              }}
-            >
-              <MapsUgcRounded
-                sx={{
-                  transform: 'scaleX(-1)',
-                }}
-                fontSize="small"
-              />
-              <Typography variant="body2" fontWeight={'light'}>
-                <span style={{ fontWeight: 'bold' }}>Thêm </span>
-                nhiều công thức nấu ăn ngon từ Tasteal.
-              </Typography>
-            </Box>
-
-            <Box
-              sx={{
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center',
-                gap: 2,
-              }}
-            >
-              <RotateLeftRounded fontSize="small" />
-              <Typography variant="body2" fontWeight={'light'}>
-                <span style={{ fontWeight: 'bold' }}>Đổi </span>
-                một công thức để thay thế nó bằng một gợi ý khác.
-              </Typography>
-            </Box>
-          </Box>
-        </Popover>
+          // action={
+          //   <Stack
+          //     gap={2}
+          //     direction={'row'}
+          //     sx={{
+          //       width: '100%',
+          //     }}
+          //     justifyContent={'center'}
+          //   >
+          //     <Button variant="outlined" onClick={handleClose}>
+          //       Hủy
+          //     </Button>
+          //     <Button
+          //       variant="contained"
+          //       disabled={cartItemAdd.length == 0}
+          //       sx={{
+          //         boxShadow: 0,
+          //       }}
+          //       onClick={async () => {
+          //         const useTuLanh = pantryItems.filter((item) =>
+          //           cartItemDungTuLanh.includes(item.id)
+          //         );
+          //         let data: CreatePantryItemReq[] = cartItemAdd
+          //           .reduce((result: Cart_ItemEntity[][], element) => {
+          //             const foundItem = result.find(
+          //               (item) =>
+          //                 item[0].ingredient_id === element.ingredient_id
+          //             );
+          //             if (foundItem) {
+          //               foundItem.push(element);
+          //             } else {
+          //               result.push([element]);
+          //             }
+          //             return result;
+          //           }, [])
+          //           .map((item) => {
+          //             let total = item.reduce(
+          //               (result, element) => result + element.amount,
+          //               0
+          //             );
+          //             const foundTulanh = useTuLanh.find(
+          //               (tulanh) =>
+          //                 tulanh.ingredient_id === item[0].ingredient_id
+          //             );
+          //             if (foundTulanh) {
+          //               total = total - foundTulanh.amount;
+          //             }
+          //             return {
+          //               account_id: '',
+          //               ingredient_id: item[0].ingredient_id,
+          //               number: total,
+          //             };
+          //           })
+          //           .filter((item) => item.number > 0);
+          //         console.log(data);
+          //         handleClose();
+          //         await addToPantry(data);
+          //       }}
+          //     >
+          //       Thêm
+          //     </Button>
+          //   </Stack>
+          // }
+        />
 
         <Button
           variant="contained"

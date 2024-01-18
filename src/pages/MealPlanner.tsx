@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { Container, Grid, Typography, Box } from '@mui/material';
+import { Container, Grid, Box } from '@mui/material';
 import Layout from '../layout/Layout';
 import { WeekNavigation } from '@/components/ui/mealPlan/WeekNavigation.tsx';
 import WeekDateItem from '@/components/ui/mealPlan/WeekDateItem.tsx';
@@ -17,6 +17,7 @@ import { formatDateToStringInDB } from '@/utils/format';
 import useSnackbarService from '@/lib/hooks/useSnackbar';
 import CartItemService from '@/lib/services/CartItemService';
 import { RecipeToCartReq } from '@/lib/models/dtos/Request/RecipeToCartReq/RecipeToCartReq';
+import LeftActionSection from '@/components/ui/mealPlan/LeftActionSection';
 
 export const compareTwoDates = (date1: Date, date2: Date) => {
   return (
@@ -519,15 +520,12 @@ const MealPlanner: React.FC = () => {
                   }}
                 >
                   <Grid item xs={12} md={4}>
-                    <Typography
-                      variant="h5"
-                      sx={{
-                        fontWeight: '900',
-                        textTransform: 'uppercase',
+                    <LeftActionSection
+                      weekCounter={weekCounter}
+                      handleChangeWeekCounter={(value: number) => {
+                        setWeekCounter(value);
                       }}
-                    >
-                      Lịch ăn của tôi
-                    </Typography>
+                    />
                   </Grid>
 
                   <Grid
@@ -550,9 +548,6 @@ const MealPlanner: React.FC = () => {
                   <Grid item xs={12} md={4}>
                     <ActionSection
                       weekCounter={weekCounter}
-                      handleChangeWeekCounter={(value: number) => {
-                        setWeekCounter(value);
-                      }}
                       addAllToCart={addAllToCart}
                     />
                   </Grid>
