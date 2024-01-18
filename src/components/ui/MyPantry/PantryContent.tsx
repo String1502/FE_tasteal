@@ -10,6 +10,7 @@ import { removeDiacritics } from '@/utils/format';
 import SlideInDialog from '@/components/common/dialog/SlideInDialog';
 import { AddIngredient } from './AddIngredient';
 import useSnackbarService from '@/lib/hooks/useSnackbar';
+import { NumericFormat } from 'react-number-format';
 
 export type DisplayPantryItem = {
   ingredientType?: Ingredient_TypeEntity;
@@ -200,13 +201,13 @@ function PantryContent({
                   });
                 }}
                 size="small"
-                type="number"
                 placeholder="Số lượng"
                 InputProps={{
                   sx: {
                     borderRadius: '40px 0px 0px 40px',
                     mt: 1,
                   },
+                  inputComponent: NumberFormatCustom,
                 }}
               />
               <Box
@@ -241,3 +242,24 @@ function PantryContent({
 }
 
 export default PantryContent;
+
+export function NumberFormatCustom(props) {
+  const { inputRef, onChange, ...other } = props;
+
+  return (
+    <NumericFormat
+      {...other}
+      getInputRef={inputRef}
+      onValueChange={(values) => {
+        onChange({
+          target: {
+            name: props.name,
+            value: values.value,
+          },
+        });
+      }}
+      thousandSeparator
+      isNumericString
+    />
+  );
+}

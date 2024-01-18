@@ -22,6 +22,7 @@ import {
 } from '@mui/material';
 import { TransitionProps } from '@mui/material/transitions';
 import { forwardRef, useContext, useEffect, useState } from 'react';
+import { NumberFormatCustom } from '../MyPantry/PantryContent';
 
 const Transition = forwardRef(function Transition(
   props: TransitionProps & {
@@ -256,13 +257,13 @@ function AddYourOwnItem({
                   setAmount(Number(event.target.value));
                 }}
                 size="small"
-                type="number"
                 placeholder="Số lượng"
                 InputProps={{
                   sx: {
                     borderRadius: '40px 0px 0px 40px',
                     mt: 1,
                   },
+                  inputComponent: NumberFormatCustom,
                 }}
               />
               <Box

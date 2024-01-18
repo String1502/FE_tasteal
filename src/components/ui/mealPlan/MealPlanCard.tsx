@@ -2,7 +2,6 @@ import {
   Box,
   Button,
   CardActionArea,
-  CardContent,
   CardProps,
   IconButton,
 } from '@mui/material';
@@ -10,7 +9,6 @@ import { Clear, RotateLeftRounded } from '@mui/icons-material';
 import { Draggable } from 'react-beautiful-dnd';
 import { Plan_ItemEntity } from '@/lib/models/entities/Plan_ItemEntity/Plan_ItemEntity';
 import { RecipeEntity } from '@/lib/models/entities/RecipeEntity/RecipeEntity';
-import { imgHeight, padding } from '@/components/common/card/PrimaryCard';
 import CustomCard from '@/components/common/card/CustomCard';
 import TotalTimeRecipe from '@/components/common/card/TotalTimeRecipe';
 import AvatarRecipe from '@/components/common/card/AvatarRecipe';
@@ -20,6 +18,10 @@ import ImageRecipe from '@/components/common/card/ImageRecipe';
 import { useNavigate } from 'react-router-dom';
 import { useCallback } from 'react';
 import { PageRoute } from '@/lib/constants/common';
+
+const imgHeight = '84px';
+const padding = 1.4;
+
 export function MealPlanCard({
   index,
   planItem,
@@ -134,14 +136,14 @@ export function MealPlanCard({
                 <Clear fontSize="small" />
               </IconButton>
 
-              <CardContent
+              <Box
                 sx={{
                   p: padding,
                 }}
               >
                 <RatingRecipe rating={recipe.rating} />
                 <NameRecipe name={recipe.name} />
-              </CardContent>
+              </Box>
             </CustomCard>
           </Box>
         )}

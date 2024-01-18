@@ -12,7 +12,7 @@ import {
 } from '@mui/material';
 import { useContext, useEffect, useState } from 'react';
 import { SearchTextField } from '../search/SearchTextField';
-import { DisplayPantryItem } from './PantryContent';
+import { DisplayPantryItem, NumberFormatCustom } from './PantryContent';
 import { IngredientEntity } from '@/lib/models/entities/IngredientEntity/IngredientEntity';
 import IngredientService from '@/lib/services/ingredientService';
 import SecondaryCard from '@/components/common/card/SecondaryCard';
@@ -122,7 +122,6 @@ export function AddIngredient({
             <TextField
               size="small"
               color="primary"
-              type="number"
               value={amount}
               onChange={(e) => {
                 setAmount(Number(e.target.value));
@@ -158,6 +157,7 @@ export function AddIngredient({
                     </Typography>
                   </InputAdornment>
                 ),
+                inputComponent: NumberFormatCustom,
               }}
             />
 
