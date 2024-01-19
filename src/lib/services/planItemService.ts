@@ -4,6 +4,9 @@ import { AccountEntity } from '../models/entities/AccountEntity/AccountEntity';
 import { getApiUrl } from '../constants/api';
 import { PlanDeleteReq, PlanReq } from '../models/dtos/Request/PlanReq/PlanReq';
 
+import { RecommendMealPlanReq } from '../models/dtos/Request/RecommendMealPlanReq/RecommendMealPlanReq';
+import { RecommendMealPlanRes } from '../models/dtos/Response/RecommendMealPlanRes/RecommendMealPlanRes';
+
 class PlanItemService {
   public static async GetPlanItemsByAccountId(
     accountId: AccountEntity['uid']
@@ -74,6 +77,26 @@ class PlanItemService {
     };
 
     return await fetch(`${getApiUrl('DeletePlanItem')}`, requestOptions)
+      .then((response) => response.json())
+      .then((data) => data)
+      .catch((error) => {
+        console.error('Lỗi:', error);
+        throw error;
+      });
+  }
+
+  public static async RecommendMealPlan(
+    recommendMealPlanReq: RecommendMealPlanReq
+  ): Promise<RecommendMealPlanRes> {
+    const requestOptions: RequestInit = {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: JSON.stringify(recommendMealPlanReq),
+    };
+
+    return await fetch(`${getApiUrl('RecommendMealPlan')}`, requestOptions)
       .then((response) => response.json())
       .then((data) => data)
       .catch((error) => {

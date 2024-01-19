@@ -86,6 +86,7 @@ export const ApiEndPoint = {
   GetPlanItemsByAccountId: 'Plan',
   AddOrUpdateRecipesToPlan: 'Plan/addorupdate',
   DeletePlanItem: 'Plan',
+  RecommendMealPlan: 'Plan/recommendMealPlan',
   //
   // RATING
   CreateRating: (recipeId: string) => `Recipe/${recipeId}/Rating`,

@@ -5,7 +5,7 @@ import React from 'react';
 type CustomDialogProps = {
   open: boolean;
   handleClose: () => void;
-  children: React.ReactNode;
+  children?: React.ReactNode;
   title: string;
   childrenContainerSx?: SxProps;
   action?: React.ReactNode;
