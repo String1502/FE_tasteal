@@ -21,6 +21,9 @@ import RecommendRecipe from '@/components/ui/MyPantry/RecommendRecipe';
 import { RecipeEntity } from '@/lib/models/entities/RecipeEntity/RecipeEntity';
 import PantryService from '@/lib/services/pantryService';
 import { PageReq } from '@/lib/models/dtos/Request/PageReq/PageReq';
+import PantryItemService from '@/lib/services/pantryItemService';
+import { GetAllPantryItemReq } from '@/lib/models/dtos/Request/GetAllPantryItemReq/GetAllPantryItemReq';
+import useSnackbarService from '@/lib/hooks/useSnackbar';
 
 const MyPantry: React.FC = () => {
   //#region Tab value
@@ -32,11 +35,12 @@ const MyPantry: React.FC = () => {
   //#endregion
 
   const { login } = useContext(AppContext);
+  const [snackbarAlert] = useSnackbarService();
 
   // tab tủ lạnh
   const [pantryItems, setPantryItems] = useState<Pantry_ItemEntity[]>([]);
 
-  const hanlePantryItemsChange = (
+  const hanlePantryItemsChange = async (
     type: 'add' | 'remove' | 'update',
     item: Pantry_ItemEntity[]
   ) => {
@@ -47,6 +51,15 @@ const MyPantry: React.FC = () => {
         break;
       case 'remove':
         setPantryItems((prev) => prev.filter((i) => !ids.includes(i.id)));
+        const deleteResult = await PantryItemService.DeletePantryItem(
+          item[0].id
+        );
+        if (deleteResult) {
+          snackbarAlert('Xóa thành công', 'success');
+        } else {
+          snackbarAlert('Xóa thất bại', 'error');
+        }
+
         break;
       case 'update':
         setPantryItems((prev) => {
@@ -58,6 +71,15 @@ const MyPantry: React.FC = () => {
             }
           });
         });
+        const result = await PantryItemService.UpdatePantryItem(
+          item[0].id,
+          item[0].amount
+        );
+        if (result) {
+          snackbarAlert('Cập nhật thành công', 'success');
+        } else {
+          snackbarAlert('Cập nhật thất bại', 'error');
+        }
         break;
     }
   };
@@ -73,6 +95,8 @@ const MyPantry: React.FC = () => {
   const [end, setEnd] = useState(false);
 
   const loadMore = async (refresh = false) => {
+    console.log(pantryItems.map((item) => item.ingredient_id));
+
     const recommend = await PantryService.GetRecipesByIngredientsAll({
       ingredients: pantryItems.map((item) => item.ingredient_id),
       page: {
@@ -114,7 +138,13 @@ const MyPantry: React.FC = () => {
           return;
         }
         // lấy pantryItems
-        // setPantryItems
+        const final = await PantryItemService.GetAllPantryItemsByAccountId({
+          account_id: login.user.uid,
+          pageSize: 2147483647,
+          page: 1,
+        } as GetAllPantryItemReq);
+
+        setPantryItems(final);
       } catch (error) {
         console.log(error);
       }
@@ -141,7 +171,7 @@ const MyPantry: React.FC = () => {
                 alignItems="center"
                 justifyContent="center"
                 sx={{
-                  width: '280px',
+                  width: { xs: '140px', md: '280px' },
                 }}
                 spacing={1}
               >
@@ -161,7 +191,7 @@ const MyPantry: React.FC = () => {
                 alignItems="center"
                 justifyContent="center"
                 sx={{
-                  width: '280px',
+                  width: { xs: '140px', md: '280px' },
                 }}
                 spacing={1}
               >

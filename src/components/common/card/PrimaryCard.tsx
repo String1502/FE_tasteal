@@ -29,6 +29,8 @@ import AppContext from '@/lib/contexts/AppContext';
 import { RecipeToCookBookReq } from '@/lib/models/dtos/Request/RecipeToCookBook/RecipeToCookBook';
 import RecipeService from '@/lib/services/recipeService';
 import useSnackbarService from '@/lib/hooks/useSnackbar';
+import { RecipeToCartReq } from '@/lib/models/dtos/Request/RecipeToCartReq/RecipeToCartReq';
+import CartItemService from '@/lib/services/CartItemService';
 
 export const imgHeight = '224px';
 export const padding = 2;
@@ -53,7 +55,7 @@ export function PrimaryCard({
     setAnchorEl(null);
   };
 
-  const { login, cookbooks } = useContext(AppContext);
+  const { login, cookbooks, handleSpinner } = useContext(AppContext);
 
   const handleCardClick = useCallback(() => {
     navigate(PageRoute.Recipe.Detail(recipe.id));
@@ -68,7 +70,7 @@ export function PrimaryCard({
             imgHeight={imgHeight}
             src={recipe.image}
             alt={recipe.name}
-            quality={80}
+            quality={10}
           />
           <TotalTimeRecipe
             imgHeight={imgHeight}
@@ -79,7 +81,7 @@ export function PrimaryCard({
           <AvatarRecipe
             imgHeight={imgHeight}
             padding={padding}
-            quality={10}
+            quality={1}
             account={recipe.account}
           />
         </CardActionArea>
@@ -124,6 +126,29 @@ export function PrimaryCard({
               borderRadius: '40px',
               mt: 2,
               width: '100%',
+            }}
+            onClick={async () => {
+              if (!login.user || !login.user?.uid) {
+                snackbarAlert('Vui lòng đăng nhập lại!', 'error');
+                return;
+              }
+
+              handleSpinner(true);
+              const uid = login.user.uid;
+
+              const addData: RecipeToCartReq = {
+                account_id: uid,
+                recipe_ids: [recipe.id],
+              };
+
+              const result = await CartItemService.AddRecipeToCart(addData);
+
+              handleSpinner(false);
+              if (result) {
+                snackbarAlert('Thêm vào giỏ đi chợ thành công', 'success');
+              } else {
+                snackbarAlert('Thêm thất bại', 'error');
+              }
             }}
           >
             <Typography variant="body2" sx={{ fontWeight: 'bold' }}>

@@ -13,6 +13,7 @@ import { IngredientItemData } from '@/components/ui/collections/IngredientSelect
 import NewIngredientModal from '@/components/ui/modals/NewIngredientModal';
 import ServingSizeSelect from '@/components/ui/selects/ServingSizeSelect';
 import Layout from '@/layout/Layout';
+import { PageRoute } from '@/lib/constants/common';
 import { ServingSizes } from '@/lib/constants/options';
 import { StoragePath } from '@/lib/constants/storage';
 import AppContext from '@/lib/contexts/AppContext';
@@ -22,6 +23,7 @@ import { RecipeReq } from '@/lib/models/dtos/Request/RecipeReq/RecipeReq';
 import { Recipe_IngredientReq } from '@/lib/models/dtos/Request/Recipe_IngredientReq/Recipe_IngredientReq';
 import { RecipeRes } from '@/lib/models/dtos/Response/RecipeRes/RecipeRes';
 import { Direction } from '@/lib/models/dtos/common';
+import CookbookService from '@/lib/services/cookbookService';
 import OccasionService from '@/lib/services/occasionService';
 import RecipeService from '@/lib/services/recipeService';
 import { CommonMessage } from '@/utils/constants/message';
@@ -76,6 +78,8 @@ type NewRecipe = {
   activeTime: number;
   /** Indicates if the recipe is private. */
   isPrivate: boolean;
+
+  occasions: number[];
 };
 
 const DEFAULT_NEW_RECIPE: NewRecipe = {
@@ -89,6 +93,7 @@ const DEFAULT_NEW_RECIPE: NewRecipe = {
   activeTime: 0,
   authorNote: '',
   isPrivate: true,
+  occasions: [],
 };
 
 const resolveDirectionImage = async (
@@ -246,11 +251,6 @@ const CreateRecipe: React.FunctionComponent<{ edit?: boolean }> = ({
       setInvalid(LocalMessageConstant.Validation.DirectionRequired);
     } else if (newRecipe.totalTime <= 0) {
       setInvalid(LocalMessageConstant.Validation.TotalTimeRequired);
-    } else if (
-      newRecipe.activeTime > 0 &&
-      newRecipe.activeTime > newRecipe.totalTime
-    ) {
-      setInvalid(LocalMessageConstant.Validation.InvalidActiveTime);
     }
 
     return { isValid, msg };
@@ -339,24 +339,43 @@ const CreateRecipe: React.FunctionComponent<{ edit?: boolean }> = ({
 
       console.log(postData);
 
-      RecipeService.CreateRecipe(postData)
-        .then((response) => {
-          console.log(response);
+      const result = await RecipeService.CreateRecipe(postData);
+
+      if (result) {
+        try {
+          const cookBook = await CookbookService.GetAllCookBookByAccountId(
+            user?.uid ?? ''
+          );
+          if (cookBook && cookBook.length > 0) {
+            await RecipeService.AddRecipeToCookBook({
+              cook_book_id: cookBook[0].id,
+              recipe_id: result.id,
+            });
+          }
           snackbarAlert('Công thức tạo thành công!', 'success');
+
           clearForm();
-          navigate(`/recipe/${response.id}`);
-        })
-        .catch((e) => {
-          console.log(createDebugString(e.message ?? 'Unknown error'));
-          snackbarAlert('Công thức tạo thất bại!', 'warning');
-        });
+          navigate(PageRoute.Recipe.Detail(result.id));
+        } catch (error) {
+          //empty
+        }
+      } else {
+        snackbarAlert('Công thức tạo thất bại!', 'warning');
+      }
     } catch (e) {
       console.log(createDebugString(e));
       snackbarAlert(e.message, 'warning');
     } finally {
       setIsProcessing(false);
     }
-  }, [clearForm, createPostRecipeData, snackbarAlert, validateNewRecipe]);
+  }, [
+    clearForm,
+    createPostRecipeData,
+    navigate,
+    snackbarAlert,
+    user?.uid,
+    validateNewRecipe,
+  ]);
   //#endregion
   //#region Ingredients
 
@@ -444,8 +463,16 @@ const CreateRecipe: React.FunctionComponent<{ edit?: boolean }> = ({
           isPrivate: true,
           servingSize: recipe.serving_size,
           totalTime: dateTimeToMinutes(recipe.totalTime),
+          occasions: recipe.occasions?.map((occasion) => occasion.id) || [],
         });
         setEditRecipe(recipe);
+        console.log(recipe.occasions);
+        setSelectedOccasions(
+          recipe.occasions.map((occasion) => ({
+            id: occasion.id,
+            name: occasion.name,
+          }))
+        );
       })
       .catch((err) => {
         console.log(err);
@@ -538,7 +565,11 @@ const CreateRecipe: React.FunctionComponent<{ edit?: boolean }> = ({
     console.log(newRecipe);
 
     const recipeId = parseInt(id);
-    let putBody = createPutBody(editRecipe, newRecipe);
+    let putBody = createPutBody(
+      editRecipe,
+      newRecipe,
+      selectedOccasions.map((s) => s.id)
+    );
     console.log('body', putBody);
     putBody = await updateComplexStuffs(putBody);
 
@@ -554,12 +585,22 @@ const CreateRecipe: React.FunctionComponent<{ edit?: boolean }> = ({
         snackbarAlert('Cập nhật công thức thất bại!', 'error');
       })
       .finally(() => setIsProcessing(false));
-  }, [editRecipe, id, navigate, newRecipe, snackbarAlert, updateComplexStuffs]);
+  }, [
+    editRecipe,
+    id,
+    navigate,
+    newRecipe,
+    selectedOccasions,
+    snackbarAlert,
+    updateComplexStuffs,
+  ]);
 
   //#endregion
 
+  console.log(newRecipe);
+
   return (
-    <Layout withFooter={false}>
+    <Layout withFooter={false} headerPosition="static" isDynamicHeader={false}>
       <Box
         sx={{
           display: 'flex',
@@ -571,10 +612,10 @@ const CreateRecipe: React.FunctionComponent<{ edit?: boolean }> = ({
       >
         <Card
           sx={{
-            width: '52%',
             borderRadius: 12,
             p: 4,
-            bgcolor: '##FFFAF9',
+            width: { xs: '96%', sm: '70%', md: '60%' },
+            bgcolor: '#FFFAF9',
           }}
         >
           <CardContent>
@@ -608,8 +649,8 @@ const CreateRecipe: React.FunctionComponent<{ edit?: boolean }> = ({
                 <FormLabel>Dịp</FormLabel>
                 <Autocomplete
                   disabled={isProcessing}
-                  options={filteredOccasions}
-                  getOptionLabel={(o) => o.name}
+                  options={[null, ...filteredOccasions]}
+                  getOptionLabel={(o) => o?.name || 'Chọn dịp'}
                   title="Chọn dịp"
                   placeholder="Chọn dịp cho công thức"
                   noOptionsText="Không tìm thấy dịp lễ nào"
@@ -617,9 +658,11 @@ const CreateRecipe: React.FunctionComponent<{ edit?: boolean }> = ({
                     <TastealTextField {...params} label="Chọn dịp" />
                   )}
                   onChange={(_, value) => handleSelectOccasion(value)}
-                  isOptionEqualToValue={(option, value) =>
-                    option.id === value.id
-                  }
+                  isOptionEqualToValue={(option, value) => {
+                    if (value === null || option === null) return true;
+                    return option.id === value.id;
+                  }}
+                  value={null}
                 />
                 <ChipsDisplayer
                   chips={selectedOccasions}
@@ -627,7 +670,7 @@ const CreateRecipe: React.FunctionComponent<{ edit?: boolean }> = ({
                 />
               </Stack>
               <Stack>
-                <FormLabel>Thêm hình bìa (Không bắt buộc)</FormLabel>
+                <FormLabel>Thêm hình bìa</FormLabel>
                 <ImagePicker
                   file={recipeThumbnailFile}
                   imagePath={newRecipe.image}
@@ -697,7 +740,11 @@ const CreateRecipe: React.FunctionComponent<{ edit?: boolean }> = ({
                   placeholder={`Thêm mẹo / lưu ý cho công thức này`}
                 />
               </Stack>
-              <Stack>
+              <Stack
+                sx={{
+                  display: 'none',
+                }}
+              >
                 <RadioGroup
                   value={newRecipe.isPrivate}
                   onChange={(e) =>
@@ -706,19 +753,19 @@ const CreateRecipe: React.FunctionComponent<{ edit?: boolean }> = ({
                       e.target.value === 'true'
                     )
                   }
-                  defaultValue={true}
+                  defaultValue={false}
                   name="isRecipePrivate"
                 >
                   <FormControlLabel
-                    value={true}
+                    value={false}
                     control={<Radio />}
-                    label="Người khác không thể xem"
+                    label="Riêng tư"
                     disabled={isProcessing}
                   />
                   <FormControlLabel
-                    value={false}
+                    value={true}
                     control={<Radio />}
-                    label="Chia sẻ công thức thông qua link"
+                    label="Công khai"
                     disabled={isProcessing}
                   />
                 </RadioGroup>
@@ -755,7 +802,11 @@ const CreateRecipe: React.FunctionComponent<{ edit?: boolean }> = ({
   );
 };
 
-function createPutBody(recipe: RecipeRes, newRecipe: NewRecipe) {
+function createPutBody(
+  recipe: RecipeRes,
+  newRecipe: NewRecipe,
+  occasions: number[]
+) {
   const putBody: RecipeReq = {
     name: newRecipe.name,
     introduction: newRecipe.introduction,
@@ -774,7 +825,7 @@ function createPutBody(recipe: RecipeRes, newRecipe: NewRecipe) {
     serving_size: newRecipe.servingSize,
     totalTime: newRecipe.totalTime,
     author: recipe.author.uid,
-    // occasions: newRecipe.occasions.map((occasion) => occasion.id),
+    occasions: occasions,
   };
 
   return putBody;

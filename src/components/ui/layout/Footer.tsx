@@ -1,15 +1,7 @@
-import {
-  Box,
-  Button,
-  Container,
-  FormControl,
-  FormHelperText,
-  Grid,
-  Input,
-  Typography,
-} from '@mui/material';
+import { Box, Container, Grid, Typography } from '@mui/material';
 import { CustomHeaderLink, CustomLink } from '../header/CustomLink';
 import logo2 from '@/assets/logo2.png';
+import { PageRoute } from '@/lib/constants/common';
 const gap = 4;
 
 export function Footer() {
@@ -68,60 +60,6 @@ export function Footer() {
             >
               Tasteal
             </Typography>
-
-            <form action="post">
-              <Box
-                sx={{
-                  display: 'flex',
-                  flexDirection: 'row',
-                  alignItems: 'flex-start',
-                  justifyContent: 'center',
-                  gap: 1,
-                }}
-              >
-                <FormControl>
-                  <Input
-                    sx={{
-                      borderRadius: '40px',
-                      backgroundColor: 'white',
-                      px: 3,
-                      py: 1,
-                      fontSize: 'caption.fontSize',
-                    }}
-                    type="email"
-                    placeholder="Email của bạn"
-                    disableUnderline
-                    aria-describedby="my-helper-text"
-                  />
-                  <FormHelperText sx={{ color: 'white' }}>
-                    Chúng tôi sẽ không chia sẻ Email của bạn.
-                  </FormHelperText>
-                </FormControl>
-                <Button
-                  variant="contained"
-                  type="submit"
-                  sx={{
-                    borderRadius: '40px',
-                    backgroundColor: 'white',
-                    px: 3,
-                    py: 1.3,
-                    fontSize: 'caption.fontSize',
-                    color: 'primary.main',
-                    width: '140px',
-                    boxShadow: 'none',
-                    opacity: 1,
-                    '&:hover': {
-                      boxShadow: 'none',
-                      backgroundColor: 'white',
-                      color: 'primary.main',
-                      opacity: 0.8,
-                    },
-                  }}
-                >
-                  Đăng ký
-                </Button>
-              </Box>
-            </form>
           </Grid>
 
           <Grid
@@ -138,10 +76,25 @@ export function Footer() {
                 textAlign: { xs: 'center', md: 'left' },
               }}
             >
-              <CustomHeaderLink href="#" label="Giới thiệu" color="white" />
-              <CustomLink href="#" label="Công thức" color="white" my={gap} />
-              <CustomLink href="#" label="Lịch ăn" color="white" my={gap} />
-              <CustomLink href="#" label="Tìm kiếm" color="white" my={gap} />
+              <CustomHeaderLink href={'#'} label="Giới thiệu" color="white" />
+              <CustomLink
+                href={PageRoute.Search}
+                label="Công thức"
+                color="white"
+                my={gap}
+              />
+              <CustomLink
+                href={PageRoute.MealPlanner}
+                label="Lịch ăn"
+                color="white"
+                my={gap}
+              />
+              <CustomLink
+                href={PageRoute.Search}
+                label="Tìm kiếm"
+                color="white"
+                my={gap}
+              />
             </Box>
           </Grid>
 
@@ -159,11 +112,13 @@ export function Footer() {
                 textAlign: { xs: 'center', md: 'left' },
               }}
             >
-              <CustomHeaderLink href="#" label="Doanh nghiệp" color="white" />
-              <CustomLink href="#" label="Về Tasteal" color="white" my={gap} />
-              <CustomLink href="#" label="Liên lạc" color="white" my={gap} />
-              <CustomLink href="#" label="Điều khoản" color="white" my={gap} />
-              <CustomLink href="#" label="FAQ" color="white" my={gap} />
+              <CustomHeaderLink href={'#'} label="Doanh nghiệp" color="white" />
+              <CustomLink
+                href={PageRoute.Home}
+                label="Về Tasteal"
+                color="white"
+                my={gap}
+              />
             </Box>
           </Grid>
 

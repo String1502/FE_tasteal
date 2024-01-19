@@ -14,3 +14,20 @@ export type Nutrition_InfoReq = {
   iron: number;
   potassium: number;
 };
+
+export type Text_Nutrition_InfoReq = {
+  calories?: string;
+  fat?: string;
+  saturated_fat?: string;
+  trans_fat?: string;
+  cholesterol?: string;
+  carbohydrates?: string;
+  fiber?: string;
+  sugars?: string;
+  protein?: string;
+  sodium?: string;
+  vitaminD?: string;
+  calcium?: string;
+  iron?: string;
+  potassium?: string;
+};

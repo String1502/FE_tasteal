@@ -24,15 +24,22 @@ import MySavedRecipes from './pages/MySavedRecipes';
 import Partner from './pages/Partner';
 
 import store from '@/app/store';
+import { LocalizationProvider } from '@mui/x-date-pickers';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { Provider } from 'react-redux';
+import { PopoverContentProps } from './components/ui/header/PopoverContent';
+import { ChatContext, initChatContext } from './lib/contexts/ChatContext';
+import Reference from './pages/Reference';
 import Search from './pages/Search';
 import SignIn from './pages/SignIn';
 import SignUp from './pages/SignUp';
 import SignUpEmail from './pages/SignUpEmail';
-import AdminPage from './pages/admin/AdminPage';
-import { PopoverContentProps } from './components/ui/header/PopoverContent';
-import Reference from './pages/Reference';
-import { ChatContext, initChatContext } from './lib/contexts/ChatContext';
+import AdminIngredientTypesCreate from './pages/admin/ingredientTypes/AdminIngredientTypesCreate';
+import { AdminIngredientTypesIndex } from './pages/admin/ingredientTypes/AdminIngredientTypesIndex';
+import AdminIngredientCreate from './pages/admin/ingredients/AdminIngredientsCreate';
+import { AdminIngredientsIndex } from './pages/admin/ingredients/AdminIngredientsIndex';
+import AdminOccasionsCreate from './pages/admin/occasions/AdminOccasionsCreate';
+import { AdminOccasionsIndex } from './pages/admin/occasions/AdminOccasionsIndex';
 
 //#region AppWrapper
 
@@ -52,6 +59,7 @@ type AppWrapperProps = {
   currentOccasion?: OccasionEntity;
   popOverHeader?: PopoverContentProps;
   scroll?: ScrollApp;
+  handleUpdateCookbook: () => void;
 };
 
 function AppWrapper({
@@ -66,13 +74,20 @@ function AppWrapper({
       <AppContext.Provider value={{ ...contextProps }}>
         <ChatContext.Provider value={initChatContext()}>
           <ColorModeContext.Provider value={colorMode}>
-            <CssBaseline />
-            <ThemeProvider theme={theme}>
-              <SnackbarProvider>
-                <TastealHashLoader spinner={spinner} />
-                {children}
-              </SnackbarProvider>
-            </ThemeProvider>
+            <LocalizationProvider
+              dateAdapter={AdapterDayjs}
+              // vietnam
+              // this doesn't seem to work
+              adapterLocale="vi"
+            >
+              <CssBaseline />
+              <ThemeProvider theme={theme}>
+                <SnackbarProvider>
+                  <TastealHashLoader spinner={spinner} />
+                  {children}
+                </SnackbarProvider>
+              </ThemeProvider>
+            </LocalizationProvider>
           </ColorModeContext.Provider>
         </ChatContext.Provider>
       </AppContext.Provider>
@@ -167,10 +182,70 @@ function AllRoutes() {
         element: <MySavedRecipes />,
         needSignIn: PageRoute.MySavedRecipes,
       },
+      // {
+      //   path: PageRoute.Admin.Index,
+      //   element: <AdminPage />,
+      //   needSignIn: PageRoute.Admin.Index,
+      // },
       {
-        path: PageRoute.Admin,
-        element: <AdminPage />,
-        needSignIn: PageRoute.Admin,
+        path: PageRoute.Admin.Ingredients.Index,
+        element: <AdminIngredientsIndex />,
+        needSignIn: PageRoute.Admin.Ingredients.Index,
+      },
+      {
+        path: PageRoute.Admin.Ingredients.Create,
+        element: <AdminIngredientCreate />,
+        needSignIn: PageRoute.Admin.Ingredients.Create,
+      },
+      {
+        path: PageRoute.Admin.Ingredients.Edit,
+        element: <AdminIngredientCreate />,
+        needSignIn: PageRoute.Admin.Ingredients.Edit,
+      },
+      {
+        path: PageRoute.Admin.Ingredients.View,
+        element: <AdminIngredientCreate />,
+        needSignIn: PageRoute.Admin.Ingredients.View,
+      },
+      {
+        path: PageRoute.Admin.IngredientTypes.Index,
+        element: <AdminIngredientTypesIndex />,
+        needSignIn: PageRoute.Admin.IngredientTypes.Index,
+      },
+      {
+        path: PageRoute.Admin.IngredientTypes.Create,
+        element: <AdminIngredientTypesCreate />,
+        needSignIn: PageRoute.Admin.IngredientTypes.Create,
+      },
+      {
+        path: PageRoute.Admin.IngredientTypes.View,
+        element: <AdminIngredientTypesCreate />,
+        needSignIn: PageRoute.Admin.IngredientTypes.View,
+      },
+      {
+        path: PageRoute.Admin.IngredientTypes.Edit,
+        element: <AdminIngredientTypesCreate />,
+        needSignIn: PageRoute.Admin.IngredientTypes.Edit,
+      },
+      {
+        path: PageRoute.Admin.Occasions.Index,
+        element: <AdminOccasionsIndex />,
+        needSignIn: PageRoute.Admin.Occasions.Index,
+      },
+      {
+        path: PageRoute.Admin.Occasions.Create,
+        element: <AdminOccasionsCreate />,
+        needSignIn: PageRoute.Admin.Occasions.Create,
+      },
+      {
+        path: PageRoute.Admin.Occasions.View,
+        element: <AdminOccasionsCreate />,
+        needSignIn: PageRoute.Admin.Occasions.View,
+      },
+      {
+        path: PageRoute.Admin.Occasions.Edit,
+        element: <AdminOccasionsCreate />,
+        needSignIn: PageRoute.Admin.Occasions.Edit,
       },
       {
         path: '*',

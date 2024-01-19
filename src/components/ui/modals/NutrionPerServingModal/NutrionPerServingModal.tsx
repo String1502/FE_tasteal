@@ -14,8 +14,6 @@ import {
 } from '@mui/material';
 import { FC, useCallback, useMemo } from 'react';
 
-const YOUR_DAILY_VALUE = 2000;
-
 function calculatePercentage(value: number, total: number): number {
   return Math.ceil((value / total) * 100);
 }
@@ -53,22 +51,23 @@ const NutrionPerServingModal: React.FunctionComponent<{
         iron: 0,
         potassium: 0,
       } as NutritionPercentage;
+    console.log(nutritionInfo);
 
     const result: NutritionPercentage = {
       calories: calculatePercentage(nutritionInfo.calories, 2000),
-      fat: calculatePercentage(nutritionInfo.fat, 70),
+      fat: calculatePercentage(nutritionInfo.fat, 78),
       saturated_fat: calculatePercentage(nutritionInfo.saturated_fat, 20),
-      trans_fat: calculatePercentage(nutritionInfo.trans_fat, YOUR_DAILY_VALUE),
+      trans_fat: calculatePercentage(nutritionInfo.trans_fat, 0),
       cholesterol: calculatePercentage(nutritionInfo.cholesterol, 300),
       carbohydrates: calculatePercentage(nutritionInfo.carbohydrates, 275),
       fiber: calculatePercentage(nutritionInfo.fiber, 28),
       sugars: calculatePercentage(nutritionInfo.sugars, 50),
       protein: calculatePercentage(nutritionInfo.protein, 50),
-      sodium: calculatePercentage(nutritionInfo.sodium, 2400),
-      vitaminD: calculatePercentage(nutritionInfo.vitaminD, YOUR_DAILY_VALUE),
-      calcium: calculatePercentage(nutritionInfo.calcium, YOUR_DAILY_VALUE),
-      iron: calculatePercentage(nutritionInfo.iron, YOUR_DAILY_VALUE),
-      potassium: calculatePercentage(nutritionInfo.potassium, YOUR_DAILY_VALUE),
+      sodium: calculatePercentage(nutritionInfo.sodium, 2300),
+      vitaminD: calculatePercentage(nutritionInfo.vitaminD, 600),
+      calcium: calculatePercentage(nutritionInfo.calcium, 1000),
+      iron: calculatePercentage(nutritionInfo.iron, 18),
+      potassium: calculatePercentage(nutritionInfo.potassium, 4700),
     };
 
     return result;
@@ -143,46 +142,55 @@ const NutrionPerServingModal: React.FunctionComponent<{
                   name="Fat"
                   value={nutritionInfo.fat}
                   percent={nutritionInfoPercentage.fat}
+                  unit="g"
                 />
                 <NutritionTableRow
                   name="Cholesterol"
                   value={nutritionInfo.cholesterol}
                   percent={nutritionInfoPercentage.cholesterol}
+                  unit="mg"
                 />
                 <NutritionTableRow
                   name="Carbonhydrates"
                   value={nutritionInfo.carbohydrates}
                   percent={nutritionInfoPercentage.carbohydrates}
+                  unit="g"
                 />
                 <NutritionTableRow
                   name="Protein"
                   value={nutritionInfo.protein}
                   percent={nutritionInfoPercentage.protein}
+                  unit="g"
                 />
                 <NutritionTableRow
                   name="Sodium"
                   value={nutritionInfo.sodium}
                   percent={nutritionInfoPercentage.sodium}
+                  unit="mg"
                 />
                 <NutritionTableRow
                   name="Vitamin D"
                   value={nutritionInfo.vitaminD}
                   percent={nutritionInfoPercentage.vitaminD}
+                  unit="mcg"
                 />
                 <NutritionTableRow
                   name="Calcium"
                   value={nutritionInfo.calcium}
                   percent={nutritionInfoPercentage.calcium}
+                  unit="mg"
                 />
                 <NutritionTableRow
                   name="Iron"
                   value={nutritionInfo.iron}
                   percent={nutritionInfoPercentage.iron}
+                  unit="mg"
                 />
                 <NutritionTableRow
                   name="Potassium"
                   value={nutritionInfo.potassium}
                   percent={nutritionInfoPercentage.potassium}
+                  unit="mg"
                 />
               </TableBody>
             </Table>
@@ -201,6 +209,7 @@ type NutritionTableRowProps = {
   percent: number;
   hasUnit?: boolean;
   hasPercent?: boolean;
+  unit?: string;
 };
 
 const NutritionTableRowTypography = styled(Typography)({
@@ -213,6 +222,7 @@ const NutritionTableRow: FC<NutritionTableRowProps> = ({
   value,
   percent,
   hasPercent = true,
+  unit,
 }) => {
   return (
     <TableRow>
@@ -220,7 +230,9 @@ const NutritionTableRow: FC<NutritionTableRowProps> = ({
         <NutritionTableRowTypography>{name}</NutritionTableRowTypography>
       </TableCell>
       <TableCell>
-        <NutritionTableRowTypography>{value}</NutritionTableRowTypography>
+        <NutritionTableRowTypography>
+          {unit ? `${value} ${unit}` : `${value}`}
+        </NutritionTableRowTypography>
       </TableCell>
       {hasPercent && (
         <TableCell>

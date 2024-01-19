@@ -50,11 +50,14 @@ export const ApiEndPoint = {
   //
   // Ingredient
   GetAllIngredients: 'Ingredient/getall',
+  GetIngredientById: 'Ingredient',
+  AddIngredient: 'Ingredient',
   DeleteIngredient: 'Ingredient',
+  UpdateIngredient: 'Ingredient',
   //
   // Ingredient Type
   GetAllIngredientTypes: 'IngredientType/getall',
-  GetIngredientById: 'IngredientType',
+  GetIngredientTypeById: 'IngredientType',
   DeleteIngredientType: 'IngredientType',
   AddIngredientType: 'IngredientType/create',
   UpdateIngredientType: 'IngredientType/update',
@@ -73,7 +76,11 @@ export const ApiEndPoint = {
   GetRecipesByPantryIdAll: 'Pantry/getRecipesByPantryIdAll',
   //
   // Pantry Item
-
+  GetAllPantryItemsByAccountId: 'PantryItem/all_pantry_item',
+  GetPantryItemById: 'PantryItem/pantry_item',
+  AddPantryItem: 'PantryItem/pantry_item',
+  UpdatePantryItem: 'PantryItem/pantry_item',
+  DeletePantryItem: 'PantryItem/pantry_item',
   //
   // Plan/ Plan Item -> PlanItemService
   GetPlanItemsByAccountId: 'Plan',

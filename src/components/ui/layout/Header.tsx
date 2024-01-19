@@ -70,14 +70,14 @@ export function Header(props: Props) {
       .then(() => {
         snackbarAlert(MESSAGE_CONSTANTS.LOGOUT_SUCESS, 'success');
         if (login.handleLogin) {
-          login.handleLogin(false);
+          login.handleLogin(false, undefined);
         }
         navigate(PageRoute.Home);
       })
       .catch(() => {
         snackbarAlert(MESSAGE_CONSTANTS.LOGOUT_FAIL, 'warning');
         if (login.handleLogin) {
-          login.handleLogin(false);
+          login.handleLogin(false, undefined);
         }
       });
   }, []);
@@ -93,10 +93,14 @@ export function Header(props: Props) {
       { label: 'Tìm kiếm', href: PageRoute.Search },
       { label: 'Giỏ đi chợ', href: PageRoute.Grocery },
       { label: 'Lịch ăn', href: PageRoute.MealPlanner },
-      { label: 'Tủ lạnh', href: 'PageRoute.MyPantry' },
+      { label: 'Tủ lạnh', href: PageRoute.MyPantry },
       {
         label: 'Bộ sưu tập',
         href: PageRoute.MySavedRecipes,
+      },
+      {
+        label: 'Tất cả nguyên liệu',
+        href: PageRoute.Reference('ingredients'),
       },
       //
       { label: 'Đăng ký', href: PageRoute.SignUp, isHiden: true },
@@ -117,7 +121,7 @@ export function Header(props: Props) {
     () => (
       <Box onClick={handleDrawerToggle} sx={{ textAlign: 'center' }}>
         <Typography variant="h6" sx={{ my: 2 }}>
-          MUI
+          Tasteal
         </Typography>
         <Divider />
         <List>

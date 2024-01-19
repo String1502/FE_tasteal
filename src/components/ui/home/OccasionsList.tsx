@@ -32,7 +32,7 @@ function OccasionCard({ item }: { item: OccasionEntity }) {
   return (
     <Box
       sx={{
-        width: { xs: '100%', sm: '50%', md: '33%', lg: '25%' },
+        width: { xs: '100%', sm: '50%', md: '33%', lg: '20%' },
         p: 1.5,
       }}
     >
@@ -55,13 +55,12 @@ function OccasionCard({ item }: { item: OccasionEntity }) {
           flexDirection: 'column',
         }}
         onClick={() => {
-          localStorage.setItem(localOcacions, JSON.stringify(item));
-          navigate(PageRoute.Search);
+          navigate(PageRoute.Reference('occasions'));
         }}
       >
         <BoxImage
           src={item?.image}
-          quality={50}
+          quality={30}
           sx={{
             width: '100%',
             height: '100%',

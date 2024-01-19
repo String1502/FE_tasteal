@@ -102,7 +102,7 @@ export default function SignUp() {
         console.log('[AUTH] Sign in with Google failed', error);
         openSnackbar('Đăng nhập thất bại!', 'warning');
         if (login.handleLogin) {
-          login.handleLogin();
+          login.handleLogin(false, undefined);
           navigateSignIn();
         }
       });
@@ -218,7 +218,7 @@ export default function SignUp() {
                 <BoxImage
                   src={defaultAvtPath}
                   alt="Tasteal"
-                  quality={20}
+                  quality={10}
                   sx={{
                     width: '32px',
                     height: '32px',
@@ -300,6 +300,7 @@ export default function SignUp() {
                     },
                     fontSize: 'caption.fontSize',
                     fontWeight: 'bold',
+                    display: 'none',
                   }}
                   startIcon={<Facebook fontSize="large" />}
                 >

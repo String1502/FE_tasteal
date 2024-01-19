@@ -1,7 +1,11 @@
 import { occasions as occasionsSampleData } from '@/lib/constants/sampleData';
-import { OccasionEntity } from '../models/entities/OccasionEntity/OccasionEntity';
 import { convertLunarToSolarDate } from '@/utils/format';
 import { getApiUrl } from '../constants/api';
+import {
+  OccasionReq,
+  OccasionReqPut,
+} from '../models/dtos/Request/OccasionReq/OccasionReq';
+import { OccasionEntity } from '../models/entities/OccasionEntity/OccasionEntity';
 
 /**
  * Represents a service for managing occasions.
@@ -23,8 +27,8 @@ class OccasionService {
       .then((data) => {
         result = data
           .map((item: any) => {
-            let start_at = new Date(item.start_at);
-            let end_at = new Date(item.end_at);
+            const start_at = new Date(item.start_at);
+            const end_at = new Date(item.end_at);
             return {
               ...item,
               start_at,
@@ -81,8 +85,8 @@ class OccasionService {
   }
 
   public static async AddOccasion(
-    newOccasion: OccasionEntity
-  ): Promise<boolean> {
+    newOccasion: OccasionReq
+  ): Promise<OccasionEntity> {
     const requestOptions: RequestInit = {
       method: 'POST',
       headers: {
@@ -91,21 +95,14 @@ class OccasionService {
       body: JSON.stringify(newOccasion),
     };
 
-    return await fetch(`${getApiUrl('AddOccasion')}`, requestOptions)
-      .then((response) => response.json())
-      .then((data) => {
-        console.log(data);
-        return data;
-      })
-      .catch((error) => {
-        console.error('Lỗi:', error);
-        throw error;
-      });
+    return fetch(`${getApiUrl('AddOccasion')}`, requestOptions).then(
+      (response) => response.json()
+    );
   }
 
   public static async UpdateOccasion(
-    updateOccasion: OccasionEntity
-  ): Promise<boolean> {
+    updateOccasion: OccasionReqPut
+  ): Promise<OccasionEntity> {
     const requestOptions: RequestInit = {
       method: 'PUT',
       headers: {
@@ -128,7 +125,7 @@ class OccasionService {
 
   public static async DeleteOccasion(
     id: OccasionEntity['id']
-  ): Promise<boolean> {
+  ): Promise<OccasionEntity> {
     const requestOptions: RequestInit = {
       method: 'DELETE',
       headers: {

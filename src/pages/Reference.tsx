@@ -45,11 +45,29 @@ function Reference() {
 
   // Lễ
   const [occasions, setOccasions] = useState<OccasionEntity[]>([]);
+  console.log(occasions);
+
   useEffect(() => {
     async function get() {
       try {
         const data = await OccasionService.GetAll();
-        setOccasions(data);
+        setOccasions(
+          data.map((item) => {
+            const start_at = new Date(item.start_at);
+            if (item.id == 10) {
+              start_at.setFullYear(new Date().getFullYear() - 1);
+            } else {
+              start_at.setFullYear(new Date().getFullYear());
+            }
+            const end_at = new Date(item.end_at);
+            end_at.setFullYear(new Date().getFullYear());
+            return {
+              ...item,
+              start_at: start_at,
+              end_at: end_at,
+            };
+          })
+        );
       } catch (error) {
         console.log(error);
       }

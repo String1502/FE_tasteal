@@ -16,7 +16,7 @@ export const ImagePicker: FC<ImagePickerProps> = ({
   onChange,
   disabled = false,
 }) => {
-  const imageUrl = useFirebaseImage(imagePath);
+  const imageUrl = useFirebaseImage(imagePath, 100, false);
 
   const previewUrl = useMemo(() => {
     if (file) {
@@ -94,6 +94,7 @@ export const ImagePicker: FC<ImagePickerProps> = ({
           style={{ display: 'none' }}
           onChange={handleFileChange}
           disabled={disabled}
+          accept="image/*"
         />
       </Box>
     </label>

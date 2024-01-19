@@ -1,9 +1,9 @@
-import { CartEntity } from "../CartEntity/CartEntity";
-import { IngredientEntity } from "../IngredientEntity/IngredientEntity";
+import { CartEntity } from '../CartEntity/CartEntity';
+import { IngredientEntity } from '../IngredientEntity/IngredientEntity';
 
 export type Cart_ItemEntity = {
   cartId: number;
-  ingredientId: number;
+  ingredient_id: number;
   amount: number;
   isBought: boolean;
   cart?: CartEntity;

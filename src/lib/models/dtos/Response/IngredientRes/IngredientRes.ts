@@ -9,3 +9,8 @@ export type IngredientRes = {
   amount_per_serving: Recipe_IngredientEntity['amount_per_serving'];
   isLiquid: IngredientEntity['isLiquid'];
 };
+
+export type IngredientPagination = {
+  maxPage: number;
+  ingredients: IngredientEntity[];
+};

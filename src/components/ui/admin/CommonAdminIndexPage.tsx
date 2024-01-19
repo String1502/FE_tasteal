@@ -1,36 +1,58 @@
-import { useAppDispatch } from '@/app/hook';
-import CustomGridToolbar from '@/components/common/datagrid/CustomGridToolbar';
-import { CustomDialog } from '@/components/common/dialog/CustomDialog';
 import FormTitle from '@/components/common/typos/FormTitle';
-import { navigateTo } from '@/features/admin/adminSlice';
-import TabCode from '@/lib/enums/AdminTabCode';
-import useSnackbarService from '@/lib/hooks/useSnackbar';
-import { Add, Delete, Edit } from '@mui/icons-material';
-import { Box, Button, Divider, Stack, Typography } from '@mui/material';
+import { Add, Close, Delete, RemoveRedEye } from '@mui/icons-material';
+import {
+  Box,
+  Button,
+  CircularProgress,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  Divider,
+  IconButton,
+  Slide,
+  Stack,
+  Typography,
+} from '@mui/material';
 import { DataGrid, GridActionsCellItem, GridColDef } from '@mui/x-data-grid';
 import { useCallback, useMemo, useState } from 'react';
 
 export type CommonIndexPageProps<RowType> = {
   title: string;
   rows: RowType[];
+  paginationModel: { page: number; pageSize: number };
+  rowCount: number;
   columns: GridColDef[];
-  isFetching: boolean;
+  loading: boolean;
   dialogProps: {
     title: string;
     content: string;
   };
+  onPaginationModelChange?: (model: { page: number; pageSize: number }) => void;
+  onCreateClick?: () => void;
+  onViewClick?: (id: number) => void;
+  onDeleteClick?: (id: number) => Promise<void>;
 };
 
 export default function CommonIndexPage<RowType>({
   title,
   rows,
-  isFetching,
+  rowCount,
+  paginationModel,
+  loading,
   columns: paramColumn,
   dialogProps,
+  onPaginationModelChange,
+  onCreateClick,
+  onViewClick,
+  onDeleteClick,
 }: CommonIndexPageProps<RowType>) {
-  const dispatch = useAppDispatch();
-  const [snackbarAlert] = useSnackbarService();
+  //#region Hooks
 
+  // const [snackbarAlert] = useSnackbarService();
+
+  //#endregion
   //#region Delete Operation
 
   // Dialog
@@ -41,18 +63,26 @@ export default function CommonIndexPage<RowType>({
 
   // Delete states and functions
   const [toDeleteRowId, setToDeleteRowId] = useState<number | null>(null);
-  const handleDeleteRow = useCallback(() => {
+  const handleDeleteRow = useCallback(async () => {
     if (toDeleteRowId === null) {
-      snackbarAlert('Xóa thất bại (mock)', 'warning');
       return;
     }
-    snackbarAlert(`Xóa thành công ${toDeleteRowId} (mock)`);
+    await onDeleteClick(toDeleteRowId);
     setDeleteDialogOpen(false);
-  }, [snackbarAlert, toDeleteRowId]);
+  }, [onDeleteClick, toDeleteRowId]);
 
   //#endregion
   //#region Datagrid Columns
 
+  const handleCreate = useCallback(() => {
+    onCreateClick && onCreateClick();
+  }, [onCreateClick]);
+  const handleView = useCallback(
+    (id: number) => {
+      onViewClick && onViewClick(id);
+    },
+    [onViewClick]
+  );
   const columns: GridColDef[] = useMemo(
     () => [
       ...paramColumn,
@@ -63,16 +93,9 @@ export default function CommonIndexPage<RowType>({
         flex: 1,
         getActions: (params) => [
           <GridActionsCellItem
-            icon={<Edit />}
-            label="Sửa"
-            onClick={() =>
-              dispatch(
-                navigateTo({
-                  tab: TabCode.IngredientCreate,
-                  params: params.row,
-                })
-              )
-            }
+            icon={<RemoveRedEye />}
+            label="Mở"
+            onClick={() => handleView(params.row.id)}
           />,
           <GridActionsCellItem
             icon={<Delete />}
@@ -85,10 +108,11 @@ export default function CommonIndexPage<RowType>({
         ],
       },
     ],
-    [dispatch, paramColumn]
+    [handleView, paramColumn]
   );
 
   //#endregion
+
   return (
     <Box p={4} display="flex" flexDirection={'column'} gap={1}>
       <Stack direction="row" justifyContent={'space-between'}>
@@ -96,9 +120,7 @@ export default function CommonIndexPage<RowType>({
         <Button
           startIcon={<Add />}
           variant="contained"
-          onClick={() =>
-            dispatch(navigateTo({ tab: TabCode.IngredientCreate }))
-          }
+          onClick={handleCreate}
           sx={{ width: 100, borderRadius: 4 }}
         >
           Thêm
@@ -109,70 +131,75 @@ export default function CommonIndexPage<RowType>({
 
       <Box height={720}>
         <DataGrid
-          loading={isFetching}
+          loading={loading}
           rows={rows}
           columns={columns}
-          pageSizeOptions={[10, 25, 50]}
-          slots={{
-            toolbar: CustomGridToolbar,
-          }}
-          slotProps={{
-            toolbar: {
-              showQuickFilter: true,
-            },
-          }}
+          paginationMode="server"
+          rowCount={rowCount}
+          paginationModel={paginationModel}
+          pageSizeOptions={[10]}
+          onPaginationModelChange={onPaginationModelChange}
           sx={{ minHeight: '100%' }}
         />
       </Box>
-
-      <CustomDialog
+      <Dialog
         open={deleteDialogOpen}
-        handleClose={handleDeleteClose}
-        title={dialogProps.title}
-        childrenContainerSx={{
-          height: 160,
+        onClose={handleDeleteClose}
+        TransitionComponent={Slide}
+        PaperProps={{
+          sx: {
+            borderRadius: 4,
+            width: '50%',
+          },
         }}
       >
-        <Stack justifyContent={'space-between'} height={'100%'}>
-          <Box
-            height={'100%'}
-            display={'flex'}
-            alignItems={'center'}
-            justifyContent={'center'}
-          >
-            <Typography typography={'body1'} fontSize={20}>
-              {dialogProps.content}
-            </Typography>
-          </Box>
-
+        <DialogTitle>
           <Stack
-            direction={'row'}
-            justifyContent={'end'}
-            gap={1}
-            sx={{
-              borderTop: 1.4,
-              borderColor: 'secondary.main',
-              pt: 1,
-            }}
+            direction="row"
+            justifyContent={'space-between'}
+            alignItems={'center'}
           >
-            <Button
-              variant="contained"
-              color="error"
-              sx={{ width: 100, borderRadius: 4 }}
-              onClick={handleDeleteRow}
-            >
-              Xóa
-            </Button>
-            <Button
-              variant="contained"
-              sx={{ width: 100, borderRadius: 4 }}
-              onClick={handleDeleteClose}
-            >
-              Đóng
-            </Button>
+            <Typography typography={'h6'}>{dialogProps.title}</Typography>
+            <IconButton onClick={handleDeleteClose} disabled={loading}>
+              <Close />
+            </IconButton>
           </Stack>
-        </Stack>
-      </CustomDialog>
+        </DialogTitle>
+        <Divider
+          sx={{
+            opacity: 0.5,
+          }}
+        />
+        <DialogContent>
+          <DialogContentText>{dialogProps.content}</DialogContentText>
+        </DialogContent>
+        <Divider
+          sx={{
+            opacity: 0.5,
+          }}
+        />
+        <DialogActions>
+          <Button
+            variant="contained"
+            color="error"
+            onClick={handleDeleteRow}
+            disabled={loading}
+          >
+            {loading ? (
+              <CircularProgress size={24} sx={{ color: 'white' }} />
+            ) : (
+              'Xóa'
+            )}
+          </Button>
+          <Button
+            variant="contained"
+            onClick={handleDeleteClose}
+            disabled={loading}
+          >
+            Hủy
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Box>
   );
 }

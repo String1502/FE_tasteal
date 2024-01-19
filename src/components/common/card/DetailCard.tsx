@@ -21,7 +21,7 @@ function DetailCard({
             imgHeight={'360px'}
             src={occasion.image}
             alt={occasion.name}
-            quality={80}
+            quality={20}
           />
         </CardActionArea>
         {children}

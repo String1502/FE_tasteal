@@ -5,8 +5,7 @@ import {
   MenuItem,
   Typography,
 } from '@mui/material';
-import React, { useMemo, useState } from 'react';
-import { CookBookEntity } from '@/lib/models/entities/CookBookEntity/CookBookEntity';
+import React, { useContext, useMemo, useState } from 'react';
 import { CookBook_RecipeEntity } from '@/lib/models/entities/CookBook_RecipeEntity/CookBook_RecipeEntity';
 import { PrimaryCard } from '@/components/common/card/PrimaryCard';
 import { DeleteRounded, PlayArrowRounded } from '@mui/icons-material';
@@ -15,23 +14,30 @@ import CookbookRecipeService from '@/lib/services/cookbookRecipeService';
 import useSnackbarService from '@/lib/hooks/useSnackbar';
 import RecipeService from '@/lib/services/recipeService';
 import { NewRecipeCookBookReq } from '@/lib/models/dtos/Request/NewRecipeCookBookReq/NewRecipeCookBookReq';
+import { CookbookChoosingType } from '@/pages/MySavedRecipes';
+import { CookBookEntity } from '@/lib/models/entities/CookBookEntity/CookBookEntity';
+import AppContext from '@/lib/contexts/AppContext';
 
 export function CustomCard({
   cookbookRecipe,
   cookbookData,
+  handleChangeRecipeInCookbook,
 }: {
   cookbookRecipe: CookBook_RecipeEntity;
-  cookbookData: CookBookEntity[];
+  cookbookData: CookbookChoosingType[];
+  handleChangeRecipeInCookbook: (
+    type: 'move' | 'remove',
+    cookbook_recipe: CookBook_RecipeEntity,
+    newIdCookBook?: CookBookEntity['id']
+  ) => void;
 }) {
   //#region Dialog Xóa recipe khỏi cookbook
   const [openDelete, setOpenDelete] = React.useState(false);
-  const handleOpenDelete = () => setOpenDelete(true);
-  const handleCloseDelete = () => setOpenDelete(false);
+  const [openDeletePermanently, setOpenDeletePermanently] =
+    React.useState(false);
   //#endregion
   //#region Di chuyển recipe tới cookbook khác
   const [openMove, setOpenMove] = React.useState(false);
-  const handleOpenMove = () => setOpenMove(true);
-  const handleCloseMove = () => setOpenMove(false);
   const [moveToNewCookbook_Id, setMoveToNewCookbook_Id] = React.useState(-1);
   //#endregion
   //#region Menu context
@@ -55,6 +61,8 @@ export function CustomCard({
 
   const [snackbarAlert] = useSnackbarService();
 
+  const { login } = useContext(AppContext);
+
   return (
     <>
       <PrimaryCard
@@ -72,22 +80,22 @@ export function CustomCard({
             sx: {
               background: 'white',
               borderRadius: 4,
-              width: '200px',
+              width: '250px',
             },
           },
         }}
       >
         {cookbookData &&
           cookbookData.map((cookbook) => {
-            if (cookbook.id == cookbookRecipe.cook_book_id) {
+            if (cookbook.Cookbook.id == cookbookRecipe.cook_book_id) {
               return null;
             }
             return (
               <MenuItem
-                key={cookbook.id}
+                key={cookbook.Cookbook.id}
                 onClick={() => {
-                  handleOpenMove();
-                  setMoveToNewCookbook_Id(cookbook.id);
+                  setOpenMove(true);
+                  setMoveToNewCookbook_Id(cookbook.Cookbook.id);
                   handleClose();
                 }}
               >
@@ -102,48 +110,79 @@ export function CustomCard({
                   textOverflow={'ellipsis'}
                   overflow={'hidden'}
                 >
-                  {cookbook.name}
+                  {cookbook.Cookbook.name}
                 </Typography>
               </MenuItem>
             );
           })}
 
-        <MenuItem
-          onClick={async () => {
-            handleOpenDelete();
-            handleClose();
-          }}
-        >
-          <ListItemIcon>
-            <DeleteRounded color="error" fontSize="small" />
-          </ListItemIcon>
-          <Typography
-            variant="body2"
-            color="error"
-            fontWeight={'bold'}
-            whiteSpace={'nowrap'}
-            textOverflow={'ellipsis'}
-            overflow={'hidden'}
+        {login &&
+        login.user &&
+        login.user.uid &&
+        login.user.uid == cookbookRecipe.recipe.author ? (
+          <MenuItem
+            onClick={async () => {
+              setOpenDeletePermanently(true);
+              handleClose();
+            }}
           >
-            Xóa
-          </Typography>
-        </MenuItem>
+            <ListItemIcon>
+              <DeleteRounded color="error" fontSize="small" />
+            </ListItemIcon>
+            <Typography
+              variant="body2"
+              color="error"
+              fontWeight={'bold'}
+              whiteSpace={'nowrap'}
+              textOverflow={'ellipsis'}
+              overflow={'hidden'}
+            >
+              Xóa vĩnh viễn
+            </Typography>
+          </MenuItem>
+        ) : (
+          <MenuItem
+            onClick={async () => {
+              setOpenDelete(true);
+              handleClose();
+            }}
+          >
+            <ListItemIcon>
+              <DeleteRounded color="error" fontSize="small" />
+            </ListItemIcon>
+            <Typography
+              variant="body2"
+              color="error"
+              fontWeight={'bold'}
+              whiteSpace={'nowrap'}
+              textOverflow={'ellipsis'}
+              overflow={'hidden'}
+            >
+              Xóa khỏi bộ sưu tập
+            </Typography>
+          </MenuItem>
+        )}
       </Menu>
 
       {/* Dialog di chuyển */}
       <SlideInDialog
         open={openMove}
-        handleClose={handleCloseMove}
+        handleClose={() => setOpenMove(false)}
         title="Bạn muốn di chuyển công thức?"
         content={`
                 Công thức sẽ di chuyển đến ${
                   cookbookData.find(
-                    (cookbook) => cookbook.id == moveToNewCookbook_Id
-                  )?.name
+                    (cookbook) => cookbook.Cookbook.id == moveToNewCookbook_Id
+                  )?.Cookbook.name
                 }`}
         cancelText="Hủy"
         confirmText="Xác nhận"
         onClickConfirm={async () => {
+          handleChangeRecipeInCookbook(
+            'move',
+            cookbookRecipe,
+            moveToNewCookbook_Id
+          );
           const data: NewRecipeCookBookReq = {
             cookbook_recipe_id: cookbookRecipe.id,
             cookbook_id: moveToNewCookbook_Id,
@@ -160,7 +199,7 @@ export function CustomCard({
       {/* Dialog xóa */}
       <SlideInDialog
         open={openDelete}
-        handleClose={handleCloseDelete}
+        handleClose={() => setOpenDelete(false)}
         title="Bạn muốn xóa công thức?"
         content={`Công thức sẽ bị xóa khỏi bộ sưu tập ${cookbookRecipe?.cook_book?.name}!`}
         confirmButtonProps={{
@@ -169,10 +208,36 @@ export function CustomCard({
         cancelText="Hủy"
         confirmText="Xóa"
         onClickConfirm={async () => {
+          handleChangeRecipeInCookbook('remove', cookbookRecipe);
           const result = await CookbookRecipeService.DeleteCookBookRecipe(
             cookbookRecipe.id
           );
           if (result) {
+            snackbarAlert('Xóa thành công', 'success');
+          } else {
+            snackbarAlert('Xóa thất bại', 'error');
+          }
+        }}
+      />
+
+      {/* Dialog xóa vĩnh viễn */}
+      <SlideInDialog
+        open={openDeletePermanently}
+        handleClose={() => setOpenDeletePermanently(false)}
+        title="Bạn muốn xóa công thức vĩnh viễn?"
+        content={`Công thức sẽ bị xóa vĩnh viễn?`}
+        confirmButtonProps={{
+          color: 'error',
+        }}
+        cancelText="Hủy"
+        confirmText="Xóa"
+        onClickConfirm={async () => {
+          handleChangeRecipeInCookbook('remove', cookbookRecipe);
+          const result = await CookbookRecipeService.DeleteCookBookRecipe(
+            cookbookRecipe.id
+          );
+          const result1 = await RecipeService.Delete(cookbookRecipe.recipe_id);
+          if (result && result1) {
             snackbarAlert('Xóa thành công', 'success');
           } else {
             snackbarAlert('Xóa thất bại', 'error');

@@ -49,7 +49,7 @@ export function PopoverContent() {
           <Grid item xs={3}>
             <BoxImage
               src={popoverPath}
-              quality={40}
+              quality={10}
               sx={{
                 width: '100%',
                 aspectRatio: '1/1',

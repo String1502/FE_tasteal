@@ -1,12 +1,5 @@
-import { useAppSelector } from '@/app/hook';
-import TabCode from '@/lib/enums/AdminTabCode';
-import {
-  CalendarMonth,
-  Flatware,
-  Home,
-  Person,
-  Settings,
-} from '@mui/icons-material';
+import { PageRoute } from '@/lib/constants/common';
+import { CalendarMonth, Category, Flatware, Home } from '@mui/icons-material';
 import {
   Box,
   Grid,
@@ -16,7 +9,8 @@ import {
   Paper,
   SxProps,
 } from '@mui/material';
-import { FC, PropsWithChildren, useCallback } from 'react';
+import { FC, PropsWithChildren } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import AdminListButton from '../../admin/AdminListButton';
 
 const commonStyle: SxProps = {
@@ -24,19 +18,25 @@ const commonStyle: SxProps = {
 };
 
 const AdminLayout: FC<PropsWithChildren> = ({ children }) => {
-  const currentTab = useAppSelector((state) => state.admin.currentTab);
+  const location = useLocation();
+  const navigate = useNavigate();
 
-  const checkSelected = useCallback(
-    (code: TabCode) => currentTab === code,
-    [currentTab]
-  );
+  function checkSelected(path: string) {
+    return location.pathname.includes(path);
+  }
 
   return (
     <Grid container spacing={2} sx={{ p: 4 }}>
-      <Grid item xs={2} sx={[commonStyle]}>
-        <Paper elevation={4}>
+      <Grid item xs={2.5} sx={[commonStyle]}>
+        <Paper
+          elevation={4}
+          sx={{
+            borderRadius: 4,
+            overflow: 'hidden',
+          }}
+        >
           <Box component="nav">
-            <ListItemButton>
+            <ListItemButton onClick={() => navigate('/')}>
               <ListItemIcon>
                 <Home color="primary" />
               </ListItemIcon>
@@ -51,37 +51,41 @@ const AdminLayout: FC<PropsWithChildren> = ({ children }) => {
             </ListItemButton>
           </Box>
         </Paper>
-        <Paper elevation={4} sx={{ mt: 1 }}>
+        <Paper
+          elevation={4}
+          sx={{ mt: 1, borderRadius: 4, overflow: 'hidden' }}
+        >
           <Box>
-            <AdminListButton
-              Icon={Person}
-              label="Người dùng"
-              tabCode={TabCode.UserIndex}
-              checkSelected={checkSelected}
-            />
             <AdminListButton
               Icon={Flatware}
               label="Nguyên liệu"
-              tabCode={TabCode.IngredientIndex}
-              checkSelected={checkSelected}
+              path={PageRoute.Admin.Ingredients.Index}
+              selected={checkSelected('ingredients')}
+            />
+            <AdminListButton
+              Icon={Category}
+              label="Loại nguyên liệu"
+              path={PageRoute.Admin.IngredientTypes.Index}
+              selected={checkSelected('ingredientTypes')}
             />
             <AdminListButton
               Icon={CalendarMonth}
               label="Dịp lễ"
-              tabCode={TabCode.OccasionIndex}
-              checkSelected={checkSelected}
-            />
-            <AdminListButton
-              Icon={Settings}
-              label="Cài đặt"
-              tabCode={TabCode.Settings}
-              checkSelected={checkSelected}
+              path={PageRoute.Admin.Occasions.Index}
+              selected={checkSelected(`occasions`)}
             />
           </Box>
         </Paper>
       </Grid>
-      <Grid item xs={10} sx={[commonStyle]}>
-        <Paper elevation={4}>{children}</Paper>
+      <Grid item xs={9.5} sx={[commonStyle]}>
+        <Paper
+          elevation={4}
+          sx={{
+            borderRadius: 4,
+          }}
+        >
+          {children}
+        </Paper>
       </Grid>
     </Grid>
   );

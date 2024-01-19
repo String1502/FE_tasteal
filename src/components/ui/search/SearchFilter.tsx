@@ -19,7 +19,6 @@ import { IngredientEntity } from '@/lib/models/entities/IngredientEntity/Ingredi
 import { RecipeSearchReq } from '@/lib/models/dtos/Request/RecipeSearchReq/RecipeSearchReq';
 import OccasionService from '@/lib/services/occasionService';
 import { OccasionEntity } from '@/lib/models/entities/OccasionEntity/OccasionEntity';
-import { localOcacions } from '../home/OccasionsList';
 
 const timeFilterItems = [
   {
@@ -52,6 +51,10 @@ const calorieFilterItems = [
   {
     min: 600,
     max: 800,
+  },
+  {
+    min: 800,
+    max: 5000,
   },
 ];
 
@@ -108,16 +111,6 @@ export function SearchFilter({
       setOccasionData(await OccasionService.GetAll());
     }
     fetchData();
-    const localOcacions_Value = localStorage.getItem(localOcacions);
-    if (localOcacions_Value && localOcacions_Value.length > 0) {
-      const value = JSON.parse(localOcacions_Value) as OccasionEntity;
-      if (value) {
-        handleChangeFilter('OccasionID', [
-          value.id,
-        ] as RecipeSearchReq['OccasionID']);
-      }
-      localStorage.removeItem(localOcacions);
-    }
   }, []);
 
   useEffect(() => {
@@ -210,11 +203,11 @@ export function SearchFilter({
   const [occasionData, setOccasionData] = useState<OccasionEntity[]>([]);
 
   const handleChangeDip = (event: any) => {
-    const newValue = event.target.value;
-    let newSelectedDip: string[] = [];
-    const selectedDip = filter.OccasionID
-      ? filter.OccasionID.map((item) => item.toString())
-      : [];
+    const newValue = parseInt(event.target.value);
+
+    let newSelectedDip: OccasionEntity['id'][] = [];
+
+    const selectedDip = filter.OccasionID ? filter.OccasionID : [];
 
     if (selectedDip.includes(newValue)) {
       newSelectedDip = [...selectedDip.filter((dip) => dip !== newValue)];
@@ -222,9 +215,7 @@ export function SearchFilter({
       newSelectedDip = [...selectedDip, newValue];
     }
 
-    const updateData: RecipeSearchReq['OccasionID'] = newSelectedDip.map(
-      (dip) => parseInt(dip)
-    );
+    const updateData: RecipeSearchReq['OccasionID'] = newSelectedDip;
 
     handleChangeFilter(
       'OccasionID',
@@ -366,8 +357,17 @@ export function SearchFilter({
                   }
                   label={
                     <Typography variant="body2">
-                      {item.min > 0 ? item.min + ' - ' : 'Dưới '}
-                      {item.max} Cal
+                      {item.max ==
+                      calorieFilterItems[calorieFilterItems.length - 1].max ? (
+                        <>
+                          {'>'} {item.min} Cal
+                        </>
+                      ) : (
+                        <>
+                          {item.min > 0 ? item.min + ' - ' : 'Dưới '}
+                          {item.max} Cal
+                        </>
+                      )}
                     </Typography>
                   }
                   onClick={handleChangeCalorie}

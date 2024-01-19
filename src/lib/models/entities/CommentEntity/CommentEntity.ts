@@ -9,6 +9,7 @@ export type CommentEntity = {
   image?: string;
   created_at?: Date;
   updated_at?: Date;
-  Recipe: RecipeEntity;
-  Account: AccountEntity;
+  isDeleted?: boolean;
+  Recipe?: RecipeEntity;
+  Account?: AccountEntity;
 };

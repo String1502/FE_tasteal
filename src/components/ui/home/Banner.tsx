@@ -6,10 +6,12 @@ import {
   Typography,
   useTheme,
 } from '@mui/material';
-import React, { Suspense, useContext } from 'react';
-import { SearchTextField } from '../search/SearchTextField';
+import { Suspense, useContext } from 'react';
+// import { SearchTextField } from '../search/SearchTextField';
 import bannerImage from '@/assets/banner.jpg';
 import AppContext from '@/lib/contexts/AppContext';
+import { useNavigate } from 'react-router-dom';
+import { PageRoute } from '@/lib/constants/common';
 const height = '520px';
 
 export function Banner() {
@@ -18,10 +20,10 @@ export function Banner() {
   const { currentOccasion } = useContext(AppContext);
   // const image = useFirebaseImage(currentOccasion?.image);
 
-  const [textSearch, setTextSearch] = React.useState<string>('');
-  const handleChangeTextSearch = (event: React.ChangeEvent<HTMLInputElement>) =>
-    setTextSearch(event.target.value);
-
+  // const [textSearch, setTextSearch] = React.useState<string>('');
+  // const handleChangeTextSearch = (event: React.ChangeEvent<HTMLInputElement>) =>
+  //   setTextSearch(event.target.value);
+  const navigate = useNavigate();
   return (
     <>
       <Suspense
@@ -82,6 +84,9 @@ export function Banner() {
                     px: 4,
                     py: 1.5,
                   }}
+                  onClick={() => {
+                    navigate(PageRoute.Search);
+                  }}
                 >
                   <Typography
                     variant="caption"
@@ -92,10 +97,10 @@ export function Banner() {
                   </Typography>
                 </Button>
 
-                <SearchTextField
+                {/* <SearchTextField
                   textSearch={textSearch}
                   handleChangeTextSearch={handleChangeTextSearch}
-                />
+                /> */}
               </Box>
             </Container>
           </Box>

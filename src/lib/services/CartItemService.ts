@@ -13,12 +13,14 @@ class CartItemService {
       headers: {
         'Content-Type': 'application/json; charset=UTF-8',
       },
-      body: JSON.stringify([...cartIds]),
+      body: JSON.stringify(cartIds),
     };
 
     return await fetch(`${getApiUrl('GetCartItemByCartId')}`, requestOptions)
       .then((response) => response.json())
       .then((data) => {
+        console.log(data);
+
         return data;
       })
       .catch((error) => {
@@ -49,7 +51,7 @@ class CartItemService {
       .then((data) => data)
       .catch((error) => {
         console.error('Lỗi:', error);
-        throw error;
+        return false;
       });
   }
 

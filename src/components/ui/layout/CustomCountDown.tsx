@@ -67,7 +67,7 @@ export function CustomCountDown() {
           >
             <Box
               sx={{
-                width: `calc(100% - 156px)`,
+                width: `calc(100% - 100px)`,
               }}
             >
               <Box
@@ -119,42 +119,35 @@ export function CustomCountDown() {
               </Box>
             </Box>
 
-            <Box
-              sx={{
-                pl: 4,
-              }}
-            >
+            <Box sx={{}}>
               {dateCountDown && (
                 <Box sx={{}}>
                   <Stack gap={0.4} direction={'row'} divider={<>:</>}>
-                    {[
-                      Math.floor(dateCountDown / 3600),
-                      Math.floor((dateCountDown % 3600) / 60),
-                      Math.floor(dateCountDown % 60),
-                    ].map((item, i) => (
-                      <Box
-                        key={i}
-                        sx={{
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          aspectRatio: '1/1',
-                          borderRadius: 2,
-                          backgroundColor: 'white',
-                          width: '34px',
-                        }}
-                      >
-                        <Typography
-                          color="primary"
+                    {[Math.floor(dateCountDown / (60 * 60 * 24))].map(
+                      (item, i) => (
+                        <Box
+                          key={i}
                           sx={{
-                            fontWeight: 800,
-                            fontSize: '12px',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            borderRadius: 2,
+                            backgroundColor: 'white',
+                            p: 1,
                           }}
                         >
-                          {formatNumberWithLeadingZero(item)}
-                        </Typography>
-                      </Box>
-                    ))}
+                          <Typography
+                            color="primary"
+                            sx={{
+                              fontWeight: 800,
+                              fontSize: '12px',
+                            }}
+                          >
+                            {formatNumberWithLeadingZero(item)} ngày
+                          </Typography>
+                        </Box>
+                      )
+                    )}
                   </Stack>
                 </Box>
               )}

@@ -47,7 +47,7 @@ function UserChatDisplay({
               height: '100%',
               borderRadius: '50%',
             }}
-            quality={70}
+            quality={1}
           />
         </Avatar>
       </Box>
@@ -114,19 +114,21 @@ function UserChatDisplay({
           </Stack>
         ) : (
           <>
-            <Typography
-              variant="body2"
-              fontWeight={'regular'}
-              sx={{
-                textAlign: 'left',
-                textOverflow: 'ellipsis',
-                overflow: 'hidden',
-                whiteSpace: 'nowrap',
-                textTransform: 'none',
-              }}
-            >
-              {item.slogan}
-            </Typography>
+            <Box sx={{ width: '100%' }}>
+              <Typography
+                variant="body2"
+                fontWeight={'regular'}
+                sx={{
+                  textAlign: 'left',
+                  textOverflow: 'ellipsis',
+                  overflow: 'hidden',
+                  whiteSpace: 'nowrap',
+                  textTransform: 'none',
+                }}
+              >
+                {item.slogan}
+              </Typography>
+            </Box>
           </>
         )}
       </Stack>

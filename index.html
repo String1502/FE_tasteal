@@ -1,8 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="vi">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <link rel="icon" href="/icon.ico" />
+    <link rel="icon" type="image/svg+xml" href="/icon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta
       name="google-site-verification"
@@ -13,7 +14,21 @@
       content="Tasteal - một nền tảng mạng xã hội giúp
     tìm kiếm, tra cứu công thức nấu ăn cho những người đam mê việc bếp núc!"
     />
+
+    <meta
+      name="keywords"
+      content="Tra cứu công thức, công thức nấu ăn, Tasteal, tasteal, TASTEAL"
+    />
+    <meta name="author" content="Tasteal" />
     <title>Tasteal</title>
+
+    <meta property="og:title" content="Tasteal" />
+    <meta
+      property="og:description"
+      content="Tasteal - một nền tảng mạng xã hội giúp
+    tìm kiếm, tra cứu công thức nấu ăn cho những người đam mê việc bếp núc!"
+    />
+    <meta property="og:url" content="https://tasteal-191ca.web.app/" />
     <style>
       @import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&display=swap');
       ::-webkit-scrollbar {
@@ -30,7 +45,17 @@
       ::-webkit-scrollbar-thumb:hover {
         background: #00404e;
       }
+      df-messenger {
+        --df-messenger-bot-message: #00404e;
+        --df-messenger-button-titlebar-color: #00404e;
+        --df-messenger-chat-background-color: #fafafa;
+        --df-messenger-font-color: white;
+        --df-messenger-send-icon: #005468;
+        --df-messenger-user-message: #005468;
+        --df-messenger-font-family: 'Roboto', cursive;
+      }
     </style>
+    <script src="https://www.gstatic.com/dialogflow-console/fast/messenger/bootstrap.js?v=1"></script>
   </head>
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
@@ -40,6 +65,15 @@
       cho những người đam mê việc bếp núc!
     </h2>
     <div id="root"></div>
+    <div style="z-index: 9999; position: relative">
+      <df-messenger
+        intent="WELCOME"
+        chat-title="Tasteal"
+        agent-id="0d650d0a-e61f-4d6e-95ba-4e67dd594680"
+        language-code="vi"
+        chat-icon="/icon.svg"
+      ></df-messenger>
+    </div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

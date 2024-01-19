@@ -7,8 +7,11 @@ import { RecipesServingSizeCarousel } from '@/components/ui/grocery/RecipesServi
 import Layout from '@/layout/Layout';
 import AppContext from '@/lib/contexts/AppContext';
 import useSnackbarService from '@/lib/hooks/useSnackbar';
+import { CreatePantryItemReq } from '@/lib/models/dtos/Request/CreatePantryItemReq/CreatePantryItemReq';
+import { GetAllPantryItemReq } from '@/lib/models/dtos/Request/GetAllPantryItemReq/GetAllPantryItemReq';
 import { CartEntity } from '@/lib/models/entities/CartEntity/CartEntity';
 import { Cart_ItemEntity } from '@/lib/models/entities/Cart_ItemEntity/Cart_ItemEntity';
+import { Pantry_ItemEntity } from '@/lib/models/entities/Pantry_ItemEntity/Pantry_ItemEntity';
 import {
   PersonalCartItemEntity,
   convertPersonalCartItemToCartItem,
@@ -16,12 +19,13 @@ import {
 
 import CartItemService from '@/lib/services/CartItemService';
 import CartService from '@/lib/services/cartService';
+import PantryItemService from '@/lib/services/pantryItemService';
 import { Box, Container, Grid, Typography } from '@mui/material';
 import { useEffect, useState, useContext, useCallback } from 'react';
 
 export default function Grocery() {
   const [snackbarAlert] = useSnackbarService();
-  const { login } = useContext(AppContext);
+  const { login, handleSpinner } = useContext(AppContext);
 
   //#region Data
   const [cartData, setCartData] = useState<CartEntity[]>([]);
@@ -39,36 +43,54 @@ export default function Grocery() {
         return;
       }
       try {
-        const personalCartItemData = await CartService.GetPersonalCartsByUserId(
-          login.user.uid
-        );
-        setPersonalCartItemData(personalCartItemData);
-
+        handleSpinner(true);
         const finalCartData = await CartService.GetCartByAccountId(
           login.user.uid
         );
 
         setCartData(finalCartData);
 
-        if (finalCartData && finalCartData.length > 0) {
-          const ids = finalCartData
-            .map((cart) => cart.id)
-            .filter((id) => id > 0);
+        const personalCartItemData = await CartService.GetPersonalCartsByUserId(
+          login.user.uid
+        );
+        setPersonalCartItemData(personalCartItemData);
 
-          setCartItemData(await CartItemService.GetCartItemsByCartIds(ids));
+        if (finalCartData && finalCartData.length > 0) {
+          const ids = finalCartData.map((cart) => cart.id);
+          const cartitem = await CartItemService.GetCartItemsByCartIds(ids);
+
+          setCartItemData(
+            cartitem.map((item) => {
+              return {
+                ...item,
+                cart: finalCartData.find((cart) => cart.id === item.cartId),
+              };
+            })
+          );
         }
+
+        // lấy pantryItems
+        const final = await PantryItemService.GetAllPantryItemsByAccountId({
+          account_id: login.user.uid,
+          pageSize: 2147483647,
+          page: 1,
+        } as GetAllPantryItemReq);
+
+        setPantryItems(final);
+        handleSpinner(false);
       } catch (error) {
         console.log(error);
+        handleSpinner(false);
       }
     };
     fetchData();
-  }, [login.user?.uid]);
+  }, [login.user]);
 
   function handleChangeCartItemData(cartId: number, ingredientId: number) {
     // Cập nhật UI
     setCartItemData((prev) => {
       return prev.map((item) => {
-        if (item.cartId === cartId && item.ingredientId === ingredientId) {
+        if (item.cartId === cartId && item.ingredient_id === ingredientId) {
           return {
             ...item,
             isBought: !item.isBought,
@@ -80,7 +102,25 @@ export default function Grocery() {
     });
   }
 
-  function handleServingSizeChange(cartId: number, newValue: number) {
+  function handleChangeCartItemsData(cartIds: number[], ingredientId: number) {
+    setCartItemData((prev) => {
+      return prev.map((item) => {
+        if (
+          cartIds.includes(item.cartId) &&
+          item.ingredient_id === ingredientId
+        ) {
+          return {
+            ...item,
+            isBought: !item.isBought,
+          };
+        } else {
+          return item;
+        }
+      });
+    });
+  }
+
+  async function handleServingSizeChange(cartId: number, newValue: number) {
     // Cập nhật UI
     setCartData((prev) => {
       return prev.map((item) => {
@@ -113,30 +153,22 @@ export default function Grocery() {
         }
       });
     });
+
+    try {
+      const result = await CartService.UpdateCart(cartId, newValue);
+      if (result) {
+        snackbarAlert('Cập nhật thành công', 'success');
+      } else {
+        snackbarAlert('Cập nhật không thành công', 'error');
+      }
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   async function handleChangePersonalCartItemData(
     id: PersonalCartItemEntity['id']
   ) {
-    let updated = false;
-    const item = personalCartItemData.find((item) => item.id === id);
-    // Cập nhật DB
-    try {
-      updated = await CartService.UpdatePersonalCart({
-        id: item.id,
-        name: item.name,
-        amount: item.amount,
-        is_bought: !item.is_bought,
-      });
-    } catch (error) {
-      console.log(error);
-      throw error;
-    }
-    if (!updated) {
-      snackbarAlert('Cập nhật không thành công', 'error');
-      return;
-    }
-
     // Cập nhật UIs
     setPersonalCartItemData((prev) => {
       return prev.map((item) => {
@@ -150,6 +182,26 @@ export default function Grocery() {
         }
       });
     });
+
+    let updated = false;
+    const item = personalCartItemData.find((item) => item.id === id);
+    // Cập nhật DB
+    try {
+      updated = await CartService.UpdatePersonalCart({
+        id: item.id,
+        name: item.name,
+        amount: item.amount,
+        is_bought: !item.is_bought,
+      });
+      snackbarAlert('Cập nhật thành công', 'success');
+    } catch (error) {
+      console.log(error);
+      snackbarAlert('Cập nhật không thành công', 'error');
+    }
+    if (!updated) {
+      snackbarAlert('Cập nhật không thành công', 'error');
+      return;
+    }
   }
 
   const getTotalIngredient = useCallback(() => {
@@ -164,6 +216,99 @@ export default function Grocery() {
     const personalCartItemDataAmount = personalCartItemData.length;
     return cartItemDataAmount + personalCartItemDataAmount;
   }, [cartItemData, personalCartItemData]);
+
+  const DeleteCartById = async (CardId: CartEntity['id']) => {
+    try {
+      handleSpinner(true);
+      const result = await CartService.DeleteCartById(CardId);
+      if (result) {
+        snackbarAlert('Xóa công thức khỏi giỏ đi chợ thành công.', 'success');
+        setCartData((prev) => prev.filter((item) => item.id !== CardId));
+        setCartItemData((prev) =>
+          prev.filter((item) => item.cartId !== CardId)
+        );
+      } else {
+        snackbarAlert('Thao tác không thành công', 'error');
+      }
+      handleSpinner(false);
+    } catch (error) {
+      console.log(error);
+      snackbarAlert('Thao tác không thành công', 'error');
+      handleSpinner(false);
+    }
+  };
+
+  const DeleteAllCartByAccountId = async () => {
+    if (!login.user || !login.user?.uid || login.user.uid == '') return;
+    const accountId = login.user.uid;
+    if (cartData.length == 0 && personalCartItemData.length == 0) {
+      snackbarAlert('Giỏ đi chợ trống', 'error');
+      return;
+    }
+    try {
+      handleSpinner(true);
+      const result = await CartService.DeleteCartByAccountId(accountId);
+      if (result) {
+        snackbarAlert('Dọn giỏ đi chợ thành công.', 'success');
+        setCartData([]);
+        setPersonalCartItemData([]);
+        setCartItemData([]);
+      } else snackbarAlert('Thao tác không thành công.', 'error');
+      handleSpinner(false);
+    } catch (error) {
+      console.log(error);
+      handleSpinner(false);
+    }
+  };
+
+  const handlePersonalCartItemData = (newValue: PersonalCartItemEntity) => {
+    setPersonalCartItemData((prev) => [...prev, newValue]);
+  };
+
+  //#region So với tủ lạnh
+  const [pantryItems, setPantryItems] = useState<Pantry_ItemEntity[]>([]);
+  //#endregion
+
+  const addToPantry = async (cartItemAdd: CreatePantryItemReq[]) => {
+    if (!login.user || !login.user?.uid || login.user.uid == '') return;
+    const accountId = login.user.uid;
+    if (cartItemAdd.length == 0 && personalCartItemData.length == 0) {
+      snackbarAlert('Giỏ đi chợ trống', 'error');
+      return;
+    }
+
+    try {
+      handleSpinner(true);
+      await Promise.all([
+        ...cartItemAdd.map(
+          async (item) =>
+            await PantryItemService.AddPantryItem({
+              account_id: accountId,
+              ingredient_id: item.ingredient_id,
+              number: item.number,
+            })
+        ),
+        ...personalCartItemData
+          .filter((item) => item.is_bought && item.ingredient)
+          .map(
+            async (item) =>
+              await PantryItemService.AddPantryItem({
+                account_id: accountId,
+                ingredient_id: item.ingredient_id,
+                number: item.amount,
+              })
+          ),
+        await DeleteAllCartByAccountId(),
+      ]);
+      handleSpinner(false);
+      snackbarAlert(
+        'Thêm vào tủ lạnh và dọn giỏ đi chợ thành công!',
+        'success'
+      );
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   return (
     <>
@@ -200,12 +345,19 @@ export default function Grocery() {
                 {cartData.length} Công thức | {getTotalIngredient()} Nguyên liệu
               </Typography>
 
-              <PopoverRecipes accountId={login.user?.uid} />
+              <PopoverRecipes
+                cartItemData={cartItemData}
+                DeleteAllCartByAccountId={DeleteAllCartByAccountId}
+                addToPantry={addToPantry}
+                pantryItems={pantryItems}
+                personalCartItemData={personalCartItemData}
+              />
             </Box>
           </Box>
           <RecipesServingSizeCarousel
             array={cartData}
             handleServingSizeChange={handleServingSizeChange}
+            DeleteCartById={DeleteCartById}
           />
         </Container>
 
@@ -228,57 +380,63 @@ export default function Grocery() {
             >
               <Grid item xs={12} lg={8}>
                 <Typography variant="h6" fontWeight={'bold'} color={'primary'}>
-                  Danh sách cần mua
+                  Danh sách cần có
                 </Typography>
               </Grid>
 
               <Grid item xs={12} lg={8}>
-                <AddYourOwnItem />
+                <AddYourOwnItem
+                  handlePersonalCartItemData={handlePersonalCartItemData}
+                />
               </Grid>
 
               <Grid item xs={12} lg={8}>
-                <CartItemFrame label="Đồ cá nhân">
-                  {personalCartItemData.map((item, index) => {
-                    if (!item.is_bought) {
-                      return (
-                        <CartItemCheckBox
-                          key={index}
-                          item={convertPersonalCartItemToCartItem(item)}
-                          total={() => {
-                            let total = 0;
-                            cartItemData.forEach((x) => {
-                              if (x.ingredientId == item.ingredient_id) {
-                                total += x.amount;
-                              }
-                            });
-                            personalCartItemData.forEach((x) => {
-                              if (
-                                item.ingredient_id &&
-                                x.ingredient_id == item.ingredient_id
-                              ) {
-                                total += x.amount;
-                              }
-                            });
-                            return total;
-                          }}
-                          type="personal"
-                          handleChangePersonalCartItemData={
-                            handleChangePersonalCartItemData
-                          }
-                        />
-                      );
-                    }
-                  })}
-                </CartItemFrame>
+                {personalCartItemData && personalCartItemData.length > 0 && (
+                  <CartItemFrame label="Đồ cá nhân">
+                    {personalCartItemData.map((item, index) => {
+                      if (!item.is_bought) {
+                        return (
+                          <CartItemCheckBox
+                            key={index}
+                            item={convertPersonalCartItemToCartItem(item)}
+                            total={() => {
+                              let total = 0;
+                              cartItemData.forEach((x) => {
+                                if (x.ingredient_id == item.ingredient_id) {
+                                  total += x.amount;
+                                }
+                              });
+                              personalCartItemData.forEach((x) => {
+                                if (
+                                  item.ingredient_id &&
+                                  x.ingredient_id == item.ingredient_id
+                                ) {
+                                  total += x.amount;
+                                }
+                              });
+                              return total;
+                            }}
+                            type="personal"
+                            handleChangePersonalCartItemData={
+                              handleChangePersonalCartItemData
+                            }
+                          />
+                        );
+                      }
+                    })}
+                  </CartItemFrame>
+                )}
               </Grid>
 
               <CartItemContent
                 cartItemData={cartItemData}
                 handleChangeCartItemData={handleChangeCartItemData}
+                handleChangeCartItemsData={handleChangeCartItemsData}
+                pantryItems={pantryItems}
               />
 
               <Grid item xs={12} lg={8}>
-                <CartItemFrame label="Đã mua">
+                <CartItemFrame label="Đã có">
                   {personalCartItemData.map((item, index) => {
                     if (item.is_bought) {
                       return (
@@ -288,7 +446,7 @@ export default function Grocery() {
                           total={() => {
                             let total = 0;
                             cartItemData.forEach((x) => {
-                              if (x.ingredientId == item.ingredient_id) {
+                              if (x.ingredient_id == item.ingredient_id) {
                                 total += x.amount;
                               }
                             });
@@ -311,26 +469,28 @@ export default function Grocery() {
                     }
                   })}
 
-                  {cartItemData.map((item, index) => {
-                    if (item.isBought) {
-                      return (
-                        <CartItemCheckBox
-                          key={index}
-                          item={item}
-                          total={() => {
-                            let total = 0;
-                            cartItemData.forEach((x) => {
-                              if (x.ingredientId == item.ingredientId) {
-                                total += x.amount;
-                              }
-                            });
-                            return total;
-                          }}
-                          handleChangeCartItemData={handleChangeCartItemData}
-                        />
-                      );
-                    }
-                  })}
+                  {cartItemData
+                    .sort((a, b) => a.ingredient_id - b.ingredient_id)
+                    .map((item, index) => {
+                      if (item.isBought) {
+                        return (
+                          <CartItemCheckBox
+                            key={index}
+                            item={item}
+                            total={() => {
+                              let total = 0;
+                              cartItemData.forEach((x) => {
+                                if (x.ingredient_id == item.ingredient_id) {
+                                  total += x.amount;
+                                }
+                              });
+                              return total;
+                            }}
+                            handleChangeCartItemData={handleChangeCartItemData}
+                          />
+                        );
+                      }
+                    })}
                 </CartItemFrame>
               </Grid>
             </Grid>

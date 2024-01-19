@@ -207,7 +207,7 @@ export default function SignUpEmail() {
                 <BoxImage
                   src={defaultAvtPath}
                   alt="Tasteal"
-                  quality={20}
+                  quality={10}
                   sx={{
                     aspectRatio: '1/1',
                     width: '32px',

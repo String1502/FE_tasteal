@@ -5,18 +5,24 @@ import { AddRecipeButton } from './AddRecipeButton';
 import { HighlightAltRounded } from '@mui/icons-material';
 import { Droppable } from 'react-beautiful-dnd';
 import { RecipeEntity } from '@/lib/models/entities/RecipeEntity/RecipeEntity';
-import { NoteTextField } from './NoteTextField';
 import { useMemo } from 'react';
 import { MealPlanCard } from './MealPlanCard';
+import { Plan_ItemEntity } from '@/lib/models/entities/Plan_ItemEntity/Plan_ItemEntity';
 
 function WeekDateItem({
   isDragging,
   weekDates,
   handleRemovePlanItem,
+  AddPlanItem,
 }: {
   isDragging: boolean;
   weekDates: DateDisplay;
-  handleRemovePlanItem: (id: number) => void;
+  handleRemovePlanItem: (
+    date: Date,
+    recipeId: number,
+    order: number
+  ) => Promise<void>;
+  AddPlanItem: (item: Plan_ItemEntity) => Promise<void>;
 }) {
   const isToday = useMemo(
     () => compareTwoDates(weekDates.date, new Date()),
@@ -78,31 +84,23 @@ function WeekDateItem({
               </Typography>
             </Box>
 
-            <AddRecipeButton />
+            <AddRecipeButton weekDates={weekDates} AddPlanItem={AddPlanItem} />
           </Box>
 
-          <Box
+          {/* <Box
             sx={{
               width: '100%',
               p: 2,
             }}
           >
             <NoteTextField />
-          </Box>
+          </Box> */}
 
           {weekDates.date && (
             <Droppable
-              droppableId={weekDates.date.toLocaleDateString('vi-VN', {
-                year: 'numeric',
-                month: '2-digit',
-                day: '2-digit',
-              })}
+              droppableId={weekDates.date.toString()}
               type="group"
-              key={weekDates.date.toLocaleDateString('vi-VN', {
-                year: 'numeric',
-                month: '2-digit',
-                day: '2-digit',
-              })}
+              key={weekDates.date.toString()}
             >
               {(provided, _snapshot) => (
                 <Box

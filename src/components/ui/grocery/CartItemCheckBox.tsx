@@ -3,7 +3,9 @@ import useSnackbarService from '@/lib/hooks/useSnackbar';
 import { CartEntity } from '@/lib/models/entities/CartEntity/CartEntity';
 import { Cart_ItemEntity } from '@/lib/models/entities/Cart_ItemEntity/Cart_ItemEntity';
 import { IngredientEntity } from '@/lib/models/entities/IngredientEntity/IngredientEntity';
+
 import { PersonalCartItemEntity } from '@/lib/models/entities/PersonalCartItemEntity/PersonalCartItemEntity';
+import { MeasurementUnitResolver } from '@/lib/resolvers/measurement';
 import CartItemService from '@/lib/services/CartItemService';
 import {
   CheckCircleRounded,
@@ -24,6 +26,7 @@ function CartItemCheckBox({
   type = 'cart',
   handleChangeCartItemData,
   handleChangePersonalCartItemData,
+  shorten = false,
 }: {
   item: Cart_ItemEntity;
   total?: () => number;
@@ -32,6 +35,7 @@ function CartItemCheckBox({
   handleChangePersonalCartItemData?: (
     id: PersonalCartItemEntity['id']
   ) => Promise<void>;
+  shorten?: boolean;
 }) {
   const typoProps: TypographyProps = {
     variant: 'body2',
@@ -60,7 +64,7 @@ function CartItemCheckBox({
           isBought
         );
         if (result) {
-          snackbarAlert('Check đã mua thành công!', 'success');
+          snackbarAlert('Cập nhật thành công!', 'success');
         } else snackbarAlert('Thao tác không thành công.', 'error');
       } catch (error) {
         console.log(error);
@@ -73,13 +77,14 @@ function CartItemCheckBox({
     <FormControlLabel
       sx={{
         width: '100%',
-        py: 1,
-        borderTop: 1,
+        py: 1.5,
+        borderTop: shorten ? 0 : 1,
         borderColor: 'grey.300',
         '.MuiFormControlLabel-label': {
           width: '100%',
         },
         mx: 0,
+        pr: 4,
       }}
       labelPlacement="start"
       control={
@@ -88,14 +93,12 @@ function CartItemCheckBox({
           onChange={async () => {
             setIsBought(!isBought);
             if (type === 'cart' && handleChangeCartItemData) {
-              handleChangeCartItemData(item.cartId, item.ingredientId);
-              // Cập nhật đã/chưa mua
-              await updateCartItem(item.cartId, item.ingredientId, !isBought);
+              handleChangeCartItemData(item.cartId, item.ingredient_id);
+              await updateCartItem(item.cartId, item.ingredient_id, !isBought);
               return;
             }
             if (type === 'personal' && handleChangePersonalCartItemData) {
               await handleChangePersonalCartItemData(item.cartId);
-              // cập nhật đã/chưa mua ở trong hàm trên do trong đây thiếu name
             }
           }}
           icon={<RadioButtonUncheckedRounded />}
@@ -113,13 +116,14 @@ function CartItemCheckBox({
         >
           <BoxImage
             src={item.ingredient?.image}
-            quality={30}
+            quality={1}
             sx={{
               height: '60px',
               width: '60px',
               objectFit: 'contain',
               borderRadius: '50%',
-              mr: 2,
+              mx: 2,
+              display: shorten ? 'none' : 'block',
             }}
           />
           <Box
@@ -128,14 +132,25 @@ function CartItemCheckBox({
               height: 'fit-content',
             }}
           >
-            <Typography {...typoProps}>{item.cart?.recipe?.name}</Typography>
             <Typography {...typoProps} fontWeight={900}>
-              {item.ingredient?.name}
+              {shorten ? item.cart?.recipe?.name : item.ingredient?.name}
             </Typography>
+
             <Typography {...typoProps}>
-              {Math.ceil(item.amount)}
+              {shorten
+                ? Math.ceil(item.amount) +
+                  ' (' +
+                  MeasurementUnitResolver(item.ingredient.isLiquid) +
+                  ') '
+                : item.cart?.recipe?.name}
+            </Typography>
+
+            <Typography {...typoProps} display={shorten ? 'none' : 'block'}>
               {total ? (
-                <span style={{ color: 'grey' }}> /{Math.ceil(total())}</span>
+                <span style={{ color: 'grey' }}>
+                  {Math.ceil(item.amount)} /{Math.ceil(total())}
+                  {item?.ingredient.isLiquid ? ' (ml)' : ' (g)'}
+                </span>
               ) : (
                 ''
               )}

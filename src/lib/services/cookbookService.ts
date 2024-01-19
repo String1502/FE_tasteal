@@ -40,7 +40,7 @@ class CookbookService {
       .then((data) => data)
       .catch((error) => {
         console.error('Lỗi:', error);
-        throw error;
+        return [];
       });
   }
 
@@ -67,7 +67,7 @@ class CookbookService {
 
   public static async AddCookBook(
     newCookBook: NewCookBookReq
-  ): Promise<boolean> {
+  ): Promise<CookBookEntity> {
     const requestOptions: RequestInit = {
       method: 'POST',
       headers: {

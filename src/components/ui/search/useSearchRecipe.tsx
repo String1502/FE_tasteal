@@ -103,6 +103,7 @@ export function useSearchRecipe(viewportItemAmount: number = 12) {
 
   useEffect(() => {
     async function fetchData() {
+      handleSpinner(true);
       setTextSearch('');
       const newData = await RecipeService.SearchRecipes({
         ...filter,
@@ -114,6 +115,7 @@ export function useSearchRecipe(viewportItemAmount: number = 12) {
       setRecipes(newData);
       if (newData.length < viewportItemAmount) setEnd(true);
       else setEnd(false);
+      handleSpinner(false);
     }
     fetchData();
   }, [filter]);
@@ -153,7 +155,7 @@ export function useSearchRecipe(viewportItemAmount: number = 12) {
     let keyWords: RecipeSearchReq['KeyWords'] = newTuKhoas
       .map((item) => {
         if (item.value && item.keyword) {
-          return removeDiacritics(item.keyword);
+          return item.keyword;
         }
       })
       .filter(Boolean);
@@ -173,7 +175,11 @@ export function useSearchRecipe(viewportItemAmount: number = 12) {
     });
 
     setPage((prev) => prev + 1);
-    setRecipes((prev) => [...prev, ...nextData]);
+    if (recipes) {
+      setRecipes((prev) => [...prev, ...nextData]);
+    } else {
+      setRecipes(nextData);
+    }
     if (nextData.length < viewportItemAmount) setEnd(true);
   }, [recipes]);
   //#endregion
