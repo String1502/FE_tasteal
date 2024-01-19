@@ -116,13 +116,11 @@ const RecipeDetail: FC = () => {
   const [loading, setLoading] = useState(false);
 
   //#endregion
-
   //#region Destructuring
 
   const { id } = useParams();
 
   //#endregion
-
   //#region Hooks
 
   const { handleSpinner, login } = useContext(AppContext);
@@ -133,7 +131,6 @@ const RecipeDetail: FC = () => {
   } = useContext(AppContext);
 
   //#endregion
-
   //#region Recipe
 
   const [isRecipeFound, setIsRecipeFound] = useState(true);
@@ -171,7 +168,6 @@ const RecipeDetail: FC = () => {
   }, [handleSpinner, id]);
 
   //#endregion
-
   //#region Nutrition
 
   const [nutritionPerServingModalOpen, setNutritionPerServingModalOpen] =
@@ -182,7 +178,6 @@ const RecipeDetail: FC = () => {
   }, [setNutritionPerServingModalOpen]);
 
   //#endregion
-
   //#region Edit Recipe
 
   const canEditRecipe = useMemo(() => {
@@ -209,7 +204,6 @@ const RecipeDetail: FC = () => {
   }, [id, navigate, snackbarAlert]);
 
   //#endregion
-
   //#region Direction
 
   const [viewDirectionImageUrl, setViewDirectionImageUrl] = useState('');
@@ -226,7 +220,6 @@ const RecipeDetail: FC = () => {
   }, []);
 
   //#endregion
-
   //#region Comment
 
   const [comment, setComment] = useState('');
@@ -279,7 +272,6 @@ const RecipeDetail: FC = () => {
   }
 
   //#endregion
-
   //#region Rating
 
   const [rating, setRating] = useState(0);
@@ -320,7 +312,6 @@ const RecipeDetail: FC = () => {
   }
 
   //#endregion
-
   //#region Others
 
   const recipeBrief = useMemo(() => {
@@ -355,7 +346,7 @@ const RecipeDetail: FC = () => {
 
             <Grid item xs={12}>
               <Grid container columnSpacing={4}>
-                <Grid item xs={8}>
+                <Grid item xs={12} md={8}>
                   <BoxImage
                     src={recipe?.image ?? ''}
                     alt={'Không tìm thấy ảnh'}
@@ -369,7 +360,7 @@ const RecipeDetail: FC = () => {
                   />
                 </Grid>
 
-                <Grid item xs={4}>
+                <Grid item xs={12} md={4}>
                   <Stack justifyContent={'center'} height={'100%'} gap={1}>
                     <Chip
                       label="Công thức"
@@ -434,7 +425,7 @@ const RecipeDetail: FC = () => {
               </Grid>
             </Grid>
 
-            <Grid item xs={8}>
+            <Grid item xs={12} md={8}>
               <Stack gap={8}>
                 {loading ? (
                   <>
@@ -514,7 +505,7 @@ const RecipeDetail: FC = () => {
               </Stack>
             </Grid>
 
-            <Grid item xs={4}>
+            <Grid item xs={12} md={4}>
               {/* <SimpleContainer>
                 {loading ? (
                   <Skeleton variant="rounded" animation="wave" height={60} />
@@ -642,12 +633,10 @@ const RecipeDetail: FC = () => {
             }}
           >
             <Stack width={{ xs: '100%', md: '60%' }} gap={1}>
-              <Stack
-                direction="row"
-                alignItems={'end'}
-                justifyContent={'space-between'}
-              >
-                <BigSectionHeading>Đánh giá & Review</BigSectionHeading>
+              <Grid container>
+                <Grid item xs={12} sm={8}>
+                  <BigSectionHeading>Đánh giá & Review</BigSectionHeading>
+                </Grid>
                 {loading ? (
                   <Skeleton variant="rounded" animation="wave" />
                 ) : (
@@ -669,20 +658,22 @@ const RecipeDetail: FC = () => {
                     />
                   </Stack>
                 )}
-              </Stack>
-              <Stack direction="row" gap={1}>
-                <Typography>{ratingData?.rating ?? 0}</Typography>
-                <Rating
-                  size="large"
-                  value={ratingData?.rating ?? 0}
-                  icon={<StarRateRounded />}
-                  emptyIcon={<StarRateRounded />}
-                  readOnly
-                />
-                <Typography>
-                  {ratingData?.comments.length ?? 0} đánh giá
-                </Typography>
-              </Stack>
+              </Grid>
+              <Grid item xs={12} sm={4}>
+                <Stack direction="row" gap={1}>
+                  <Typography>{ratingData?.rating ?? 0}</Typography>
+                  <Rating
+                    size="large"
+                    value={ratingData?.rating ?? 0}
+                    icon={<StarRateRounded />}
+                    emptyIcon={<StarRateRounded />}
+                    readOnly
+                  />
+                  <Typography>
+                    {ratingData?.comments.length ?? 0} đánh giá
+                  </Typography>
+                </Stack>
+              </Grid>
 
               {loading ? (
                 <Skeleton variant="rounded" animation="wave" height={160} />
