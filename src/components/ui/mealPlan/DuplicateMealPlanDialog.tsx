@@ -1,11 +1,40 @@
-import { Box, Stack } from '@mui/material';
-import 'react-date-range/dist/styles.css';
-import 'react-date-range/dist/theme/default.css';
+import { Box, Stack, Typography } from '@mui/material';
+import { WeekNavigation } from './WeekNavigation';
 
-function DuplicateMealPlanDialog() {
+function DuplicateMealPlanDialog({
+  weekCounter,
+  handleChangeWeekCounter,
+}: {
+  weekCounter: number;
+  handleChangeWeekCounter(increment: number): void;
+}) {
   return (
-    <Stack direction={'column'} alignItems={'center'}>
-      <Box sx={{ width: '100%', overflow: 'hidden' }}></Box>
+    <Stack
+      direction={'column'}
+      alignItems={'center'}
+      justifyContent={'flex-start'}
+      sx={{
+        width: '350px',
+      }}
+      gap={2}
+    >
+      <Typography>Bạn muốn sao chép lịch ăn của tuần:</Typography>
+      <Box
+        component={'div'}
+        sx={{
+          overflow: 'hidden',
+          p: 0,
+          bgcolor: 'primary.main',
+          borderRadius: '16px',
+          minWidth: '90%',
+        }}
+      >
+        <WeekNavigation
+          weekCounter={weekCounter}
+          handleChangeWeekCounter={handleChangeWeekCounter}
+          color="white"
+        />
+      </Box>
     </Stack>
   );
 }

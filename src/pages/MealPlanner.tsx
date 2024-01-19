@@ -18,6 +18,7 @@ import useSnackbarService from '@/lib/hooks/useSnackbar';
 import CartItemService from '@/lib/services/CartItemService';
 import { RecipeToCartReq } from '@/lib/models/dtos/Request/RecipeToCartReq/RecipeToCartReq';
 import LeftActionSection from '@/components/ui/mealPlan/LeftActionSection';
+import { v4 as uuidv4 } from 'uuid';
 
 export const compareTwoDates = (date1: Date, date2: Date) => {
   return (
@@ -498,6 +499,86 @@ const MealPlanner: React.FC = () => {
     }
   };
 
+  const handleDuplicatePlanMeal = async (
+    fromWeekCounter: number,
+    toWeekCounter: number
+  ) => {
+    if (!login.user || !login.user?.uid) {
+      return;
+    }
+
+    const fromDates = getWeekDates(fromWeekCounter);
+
+    const data: DateDisplay[] = [];
+    fromDates.forEach((date, i) => {
+      if (date) {
+        data.push({
+          ...initialWeekDates[i],
+          date,
+          planItems: planItemData
+            .filter((item) => {
+              const itemDate = new Date(item.plan?.date);
+              return compareTwoDates(itemDate, date);
+            })
+            .sort((a, b) => {
+              return a.order - b.order;
+            }),
+        });
+      }
+    });
+
+    const dates = getWeekDates(toWeekCounter);
+
+    const updateData = data.map((item, i) => {
+      return {
+        ...item,
+        date: dates[i],
+        planItems: item.planItems.map((planItem) => ({
+          ...planItem,
+          id: uuidv4(),
+          plan_id: -1,
+          plan: {
+            id: -1,
+            account_id: login.user.uid,
+            date: dates[i],
+          },
+        })),
+      };
+    });
+
+    const array = updateData.map((item) => item.planItems).flat();
+
+    if (array.length === 0) {
+      snackbarAlert('Lịch ăn tuần chọn đang trống!', 'error');
+      return;
+    }
+
+    // Cập nhật UI
+
+    setPlanItemData((prev) => [...prev, ...array]);
+
+    // Cập nhật DB
+    try {
+      handleSpinner(true);
+      await Promise.all(
+        updateData.map(async (item) => {
+          const req: PlanReq = {
+            account_id: login.user.uid,
+            date: formatDateToStringInDB(item.date),
+            recipeIds: item.planItems.map((item) => item.recipe_id),
+          };
+          return await PlanItemService.AddOrUpdateRecipesToPlan(req);
+        })
+      );
+      handleSpinner(false);
+      snackbarAlert('Sao chép lịch ăn thành công', 'success');
+    } catch (error) {
+      console.log(error);
+      handleSpinner(false);
+      snackbarAlert('Sao chép lịch ăn thất bại', 'error');
+    }
+  };
+
   return (
     <Layout headerPosition="static" isDynamicHeader={false}>
       {login.isUserSignedIn && (
@@ -548,7 +629,9 @@ const MealPlanner: React.FC = () => {
                   <Grid item xs={12} md={4}>
                     <ActionSection
                       weekCounter={weekCounter}
+                      weekDates={weekDates}
                       addAllToCart={addAllToCart}
+                      handleDuplicatePlanMeal={handleDuplicatePlanMeal}
                     />
                   </Grid>
 
