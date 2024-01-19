@@ -26,4 +26,8 @@ export type RecipeEntity = {
   occasions?: Recipe_OccasionEntity[];
   calories?: number;
   isDeleted?: boolean;
+  ingredients_miss?: {
+    id: IngredientEntity['id'];
+    name: IngredientEntity['name'];
+  }[];
 };

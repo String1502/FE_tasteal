@@ -13,10 +13,12 @@ function RecommendRecipe({
   pantryItems,
   recommendRecipes,
   loadMoreButton,
+  pantryItemReady,
 }: {
   pantryItems: Pantry_ItemEntity[];
   recommendRecipes: RecipeEntity[] | undefined;
   loadMoreButton?: React.ReactNode;
+  pantryItemReady: boolean;
 }) {
   // Need by more
   const [needByMoreRecipes, setNeedByMoreRecipes] = useState<
@@ -25,9 +27,9 @@ function RecommendRecipe({
 
   const [page, setPage] = useState<PageReq>({
     page: 0,
-    pageSize: 12,
+    pageSize: 20,
   });
-  const [end, setEnd] = useState(false);
+  // const [end, setEnd] = useState(false);
 
   const loadMore = async (refresh = false) => {
     const recommend = await PantryService.GetRecipesByIngredientsAny({
@@ -38,13 +40,14 @@ function RecommendRecipe({
       },
     });
     if (recommend.length < page.pageSize) {
-      setEnd(true);
+      // setEnd(true);
     }
-    if (needByMoreRecipes) {
-      setNeedByMoreRecipes((prev) => [...prev, ...recommend]);
-    } else {
-      setNeedByMoreRecipes(recommend);
-    }
+    // if (needByMoreRecipes) {
+    //   setNeedByMoreRecipes((prev) => [...prev, ...recommend]);
+    // } else {
+    //   setNeedByMoreRecipes(recommend);
+    // }
+    setNeedByMoreRecipes(recommend);
 
     setPage((prev) => ({
       ...prev,
@@ -55,7 +58,10 @@ function RecommendRecipe({
   useEffect(() => {
     async function fetch() {
       try {
-        await loadMore(true);
+        setNeedByMoreRecipes(undefined);
+        if (pantryItemReady) {
+          await loadMore(true);
+        }
       } catch (error) {
         console.log(error);
       }
@@ -79,8 +85,13 @@ function RecommendRecipe({
             color: 'white',
           }}
         >
-          Tuyệt vời bạn có thể nấu {recommendRecipes?.length ?? 0} món ăn với{' '}
-          {pantryItems.length} nguyên liệu!
+          {!recommendRecipes
+            ? 'Chờ một chút'
+            : `
+            Tuyệt vời bạn có thể nấu ${
+              recommendRecipes?.length ?? 0
+            } món ăn với ${pantryItems.length} nguyên liệu!
+            `}
         </Typography>
 
         {!recommendRecipes && <BoxIngredientTypeSkeleton />}
@@ -135,7 +146,7 @@ function RecommendRecipe({
           // 3*2*2
           dataLength={needByMoreRecipes?.length ?? 0}
           next={() => loadMore()}
-          hasMore={!end}
+          hasMore={false}
           loader={
             <>
               <LoaderInfiniteScroll />
@@ -173,22 +184,30 @@ function RecommendRecipe({
         >
           {needByMoreRecipes &&
             needByMoreRecipes.length > 0 &&
-            needByMoreRecipes.map((recipe) => (
-              <Box
-                key={recipe.id}
-                sx={{
-                  width: {
-                    xs: 'calc(100% / 1)',
-                    sm: 'calc(100% / 2)',
-                    md: 'calc(100% / 3)',
-                    lg: 'calc(100% / 4)',
-                  },
-                  p: 1,
-                }}
-              >
-                <PrimaryCard recipe={recipe} />
-              </Box>
-            ))}
+            needByMoreRecipes
+              .filter(
+                (recipe) =>
+                  recipe.ingredients_miss && recipe.ingredients_miss.length > 0
+              )
+              .sort(
+                (a, b) => a.ingredients_miss.length - b.ingredients_miss.length
+              )
+              .map((recipe) => (
+                <Box
+                  key={recipe.id}
+                  sx={{
+                    width: {
+                      xs: 'calc(100% / 1)',
+                      sm: 'calc(100% / 2)',
+                      md: 'calc(100% / 3)',
+                      lg: 'calc(100% / 4)',
+                    },
+                    p: 1,
+                  }}
+                >
+                  <PrimaryCard recipe={recipe} />
+                </Box>
+              ))}
         </InfiniteScroll>
       </Stack>
     </>
