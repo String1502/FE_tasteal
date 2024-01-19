@@ -12,7 +12,7 @@ import { RecipeEntity } from '@/lib/models/entities/RecipeEntity/RecipeEntity';
 import CustomCard from '@/components/common/card/CustomCard';
 import TotalTimeRecipe from '@/components/common/card/TotalTimeRecipe';
 import AvatarRecipe from '@/components/common/card/AvatarRecipe';
-import RatingRecipe from '@/components/common/card/RatingRecipe';
+// import RatingRecipe from '@/components/common/card/RatingRecipe';
 import NameRecipe from '@/components/common/card/NameRecipe';
 import ImageRecipe from '@/components/common/card/ImageRecipe';
 import { useNavigate } from 'react-router-dom';
@@ -65,7 +65,7 @@ export function MealPlanCard({
                   imgHeight={imgHeight}
                   src={recipe.image}
                   alt={recipe.name}
-                  quality={20}
+                  quality={1}
                 />
 
                 <Button
@@ -141,7 +141,7 @@ export function MealPlanCard({
                   p: padding,
                 }}
               >
-                <RatingRecipe rating={recipe.rating} />
+                {/* <RatingRecipe rating={recipe.rating} /> */}
                 <NameRecipe name={recipe.name} />
               </Box>
             </CustomCard>
