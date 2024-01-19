@@ -202,7 +202,7 @@ const MyPantry: React.FC = () => {
               >
                 <Typography {...typographyProps}>Công thức gợi ý</Typography>
                 <Typography {...labelIconProps}>
-                  {recommendRecipes?.length ?? 0}
+                  {recommendRecipes ? recommendRecipes.length : '-'}
                 </Typography>
               </Stack>
             }
