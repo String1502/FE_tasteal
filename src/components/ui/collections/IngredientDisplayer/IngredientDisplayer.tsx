@@ -1,6 +1,6 @@
 import SectionHeading from '@/components/common/typos/SectionHeading';
 import { IngredientRes } from '@/lib/models/dtos/Response/IngredientRes/IngredientRes';
-import { Stack, Typography } from '@mui/material';
+import { Grid, Stack, Typography } from '@mui/material';
 import { FC, useCallback, useState } from 'react';
 import ServingSizeSelect from '../../selects/ServingSizeSelect';
 import IngredientDisplayerItemList from '../IngredientDisplayerItemList';
@@ -18,20 +18,32 @@ const IngredientDisplayer: FC<IngredientDisplayerProps> = ({ ingredients }) => {
 
   return (
     <Stack gap={2}>
-      <Stack direction={'row'} justifyContent={'space-between'}>
-        <SectionHeading>Nguyên liệu</SectionHeading>
-        <Stack direction={'row'} alignItems={'center'} gap={2}>
-          <Typography color="primary.main">Khẩu phần</Typography>
-          <ServingSizeSelect
-            servingSize={servingSize}
-            onServingSizeChange={handleServingSizeChange}
-            size="small"
-            sx={{
-              backgroundColor: 'background.default',
+      <Grid container>
+        <Grid item xs={12} sm={8}>
+          <SectionHeading>Nguyên liệu</SectionHeading>
+        </Grid>
+        <Grid item xs={12} sm={4}>
+          <Stack
+            direction={'row'}
+            alignItems={'center'}
+            gap={2}
+            justifyContent={{
+              xs: 'space-between',
+              md: 'flex-end',
             }}
-          />
-        </Stack>
-      </Stack>
+          >
+            <Typography color="primary.main">Khẩu phần</Typography>
+            <ServingSizeSelect
+              servingSize={servingSize}
+              onServingSizeChange={handleServingSizeChange}
+              size="small"
+              sx={{
+                backgroundColor: 'background.default',
+              }}
+            />
+          </Stack>
+        </Grid>
+      </Grid>
       <IngredientDisplayerItemList
         ingredients={ingredients}
         servingSize={servingSize}
