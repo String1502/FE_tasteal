@@ -32,9 +32,11 @@ const getWeekLabel = (offset: number) => {
 export function WeekNavigation({
   weekCounter,
   handleChangeWeekCounter,
+  color,
 }: {
   weekCounter: number;
   handleChangeWeekCounter: (increment: number) => void;
+  color?: string;
 }) {
   const [weekLabel, setWeekLabel] = useState<string>(getWeekLabel(weekCounter));
   useEffect(() => {
@@ -51,7 +53,12 @@ export function WeekNavigation({
           alignItems: 'center',
         }}
       >
-        <IconButton color="primary" onClick={() => handleChangeWeekCounter(-1)}>
+        <IconButton
+          sx={{
+            color: color ? color : 'primary',
+          }}
+          onClick={() => handleChangeWeekCounter(-1)}
+        >
           <KeyboardArrowLeftRounded />
         </IconButton>
         <Typography
@@ -60,11 +67,17 @@ export function WeekNavigation({
             flexGrow: 1,
             textAlign: 'center',
             fontWeight: 'bold',
+            color: color ? color : 'primary',
           }}
         >
           {weekLabel}
         </Typography>
-        <IconButton color="primary" onClick={() => handleChangeWeekCounter(1)}>
+        <IconButton
+          sx={{
+            color: color ? color : 'primary',
+          }}
+          onClick={() => handleChangeWeekCounter(1)}
+        >
           <KeyboardArrowRightRounded />
         </IconButton>
       </Box>

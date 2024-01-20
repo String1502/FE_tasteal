@@ -1,36 +1,30 @@
-import React from 'react';
-import { Typography, Button, Box, IconButton, Popover } from '@mui/material';
-import {
-  HighlightAltRounded,
-  MapsUgcRounded,
-  QuestionMarkRounded,
-  RotateLeftRounded,
-  RotateRightRounded,
-} from '@mui/icons-material';
+import { Button, Box } from '@mui/material';
+import DuplicateMealPlanDialog from './DuplicateMealPlanDialog';
+import { useState } from 'react';
+
+import SlideInDialog from '@/components/common/dialog/SlideInDialog';
+import { DateDisplay } from '@/pages/MealPlanner';
 
 export function ActionSection({
   weekCounter,
-  handleChangeWeekCounter,
   addAllToCart,
+  handleDuplicatePlanMeal,
+  weekDates,
 }: {
   weekCounter: number;
-  handleChangeWeekCounter: (value: number) => void;
   addAllToCart: () => Promise<void>;
+  handleDuplicatePlanMeal: (
+    fromWeekCounter: number,
+    toWeekCounter: number
+  ) => Promise<void>;
+  weekDates: DateDisplay[];
 }) {
-  const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(
-    null
-  );
-
-  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-    setAnchorEl(event.currentTarget);
-  };
-
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
-
-  const open = Boolean(anchorEl);
-
+  // Dialog Sao chép
+  const [open, setOpen] = useState(false);
+  const [targetWeekCounter, setWeekCounter] = useState(0);
+  function handleChangeWeekCounter(increment: number) {
+    setWeekCounter((prev) => prev + increment);
+  }
   return (
     <>
       <Box
@@ -42,112 +36,37 @@ export function ActionSection({
           gap: 2,
         }}
       >
-        <IconButton
+        <Button
+          variant="contained"
           color="primary"
-          onClick={() => handleChangeWeekCounter(0)}
-          sx={{
-            border: 1,
-          }}
           size="small"
-          disabled={weekCounter === 0}
-        >
-          <RotateRightRounded fontSize="small" />
-        </IconButton>
-
-        <IconButton
-          color="primary"
-          onClick={handleClick}
           sx={{
-            border: 1,
+            px: 2,
           }}
-          size="small"
+          disabled={weekDates.map((item) => item.planItems).flat().length > 0}
+          onClick={() => setOpen(true)}
         >
-          <QuestionMarkRounded fontSize="small" />
-        </IconButton>
-
-        <Popover
+          Sao chép
+        </Button>
+        <SlideInDialog
           open={open}
-          anchorEl={anchorEl}
-          onClose={handleClose}
-          anchorOrigin={{
-            vertical: 'bottom',
-            horizontal: 'center',
+          handleClose={() => setOpen(false)}
+          title="Sao chép lịch ăn từ tuần khác"
+          content={
+            <DuplicateMealPlanDialog
+              weekCounter={targetWeekCounter}
+              handleChangeWeekCounter={handleChangeWeekCounter}
+            />
+          }
+          cancelText="Hủy"
+          confirmText="Sao chép"
+          onClickConfirm={() => {
+            handleDuplicatePlanMeal(targetWeekCounter, weekCounter);
           }}
-          transformOrigin={{
-            vertical: 'top',
-            horizontal: 'center',
+          confirmButtonProps={{
+            disabled: targetWeekCounter === weekCounter,
           }}
-          slotProps={{
-            paper: {
-              sx: {
-                borderRadius: 4,
-                background: 'white',
-                width: '280px',
-              },
-            },
-          }}
-        >
-          <Box
-            sx={{
-              p: 2,
-              display: 'flex',
-              flexDirection: 'column',
-              justifyContent: 'center',
-              alignItems: 'center',
-              gap: 4,
-            }}
-          >
-            <Box
-              sx={{
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center',
-                gap: 2,
-              }}
-            >
-              <HighlightAltRounded fontSize="small" />
-              <Typography variant="body2" fontWeight={'light'}>
-                <span style={{ fontWeight: 'bold' }}>Kéo và thả </span>
-                công thức để di chuyển nó tới bất kỳ ngày nào trong tuần.
-              </Typography>
-            </Box>
-
-            <Box
-              sx={{
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center',
-                gap: 2,
-              }}
-            >
-              <MapsUgcRounded
-                sx={{
-                  transform: 'scaleX(-1)',
-                }}
-                fontSize="small"
-              />
-              <Typography variant="body2" fontWeight={'light'}>
-                <span style={{ fontWeight: 'bold' }}>Thêm </span>
-                nhiều công thức nấu ăn ngon từ Tasteal.
-              </Typography>
-            </Box>
-
-            <Box
-              sx={{
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center',
-                gap: 2,
-              }}
-            >
-              <RotateLeftRounded fontSize="small" />
-              <Typography variant="body2" fontWeight={'light'}>
-                <span style={{ fontWeight: 'bold' }}>Đổi </span>
-                một công thức để thay thế nó bằng một gợi ý khác.
-              </Typography>
-            </Box>
-          </Box>
-        </Popover>
+        />
 
         <Button
           variant="contained"
