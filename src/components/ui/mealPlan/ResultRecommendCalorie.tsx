@@ -3,15 +3,12 @@ import {
   RecommendMealPlanRes,
   getLabelResult,
 } from '@/lib/models/dtos/Response/RecommendMealPlanRes/RecommendMealPlanRes';
-import RecipeService from '@/lib/services/recipeService';
 import { DateDisplay } from '@/pages/MealPlanner';
-import { Box, CardActionArea, Stack, Typography } from '@mui/material';
-import { useEffect, useState } from 'react';
+import { Box, CardActionArea, Grid, Stack, Typography } from '@mui/material';
 import { DataStep2 } from './RecommendCalorieStep2';
 import CustomCard from '@/components/common/card/CustomCard';
 import ImageRecipe from '@/components/common/card/ImageRecipe';
 import TotalTimeRecipe from '@/components/common/card/TotalTimeRecipe';
-import NameRecipe from '@/components/common/card/NameRecipe';
 
 const imgHeight = '84px';
 const padding = 1.4;
@@ -20,55 +17,23 @@ function ResultRecommendCalorie({
   result,
   displayData,
   step2Value,
+  recipeAdd,
+  recipeRemove,
 }: {
   result: RecommendMealPlanRes;
   displayData: DateDisplay;
   step2Value: DataStep2;
+  recipeAdd:
+    | (RecipeRes & {
+        amount: number;
+      })[]
+    | undefined;
+  recipeRemove:
+    | (RecipeRes & {
+        amount: number;
+      })[]
+    | undefined;
 }) {
-  const [recipeAdd, setRecipeAdd] = useState<RecipeRes[] | undefined>(
-    undefined
-  );
-
-  const [recipeRemove, setRecipeRemove] = useState<RecipeRes[] | undefined>(
-    undefined
-  );
-
-  useEffect(() => {
-    async function fetch() {
-      try {
-        await Promise.all(
-          result.recipe_add_ids.map(
-            async (id) => await RecipeService.GetById(id.id)
-          )
-        ).then((data) => {
-          setRecipeAdd(data);
-        });
-      } catch (error) {
-        console.log(error);
-      }
-    }
-
-    fetch();
-  }, [result.recipe_add_ids]);
-
-  useEffect(() => {
-    async function fetch() {
-      try {
-        await Promise.all(
-          result.recipe_remove_ids.map(
-            async (id) => await RecipeService.GetById(id)
-          )
-        ).then((data) => {
-          setRecipeRemove(data);
-        });
-      } catch (error) {
-        console.log(error);
-      }
-    }
-
-    fetch();
-  }, [result.recipe_remove_ids]);
-
   return (
     <Stack gap={2} sx={{ width: '100%' }} direction={'column'}>
       <Typography
@@ -106,10 +71,7 @@ function ResultRecommendCalorie({
           displayData.date.toLocaleDateString('vi-VN') +
           ' • ' +
           displayData.planItems.length +
-          ' công thức' +
-          ' • ' +
-          'Mục tiêu: ' +
-          step2Value?.intend?.label}
+          ' công thức'}
       </Typography>
 
       <Typography
@@ -122,153 +84,228 @@ function ResultRecommendCalorie({
           color: 'primary.main',
         }}
       >
-        Calo tiêu chuẩn cho mục tiêu: {Math.round(result.standard_calories)}
-        {' • '}Calo thực sự bạn tiêu thụ: {Math.round(result.real_calories)}
+        {getLabelInfor(step2Value)}
       </Typography>
 
-      {recipeAdd && recipeAdd.length > 0 && (
-        <>
-          <Typography
-            variant="body2"
-            fontWeight={'900'}
-            sx={{
-              width: '100%',
-              color: 'white',
-              textAlign: 'center',
-              bgcolor: 'grey.600',
-              borderRadius: '24px',
-              p: 1,
-            }}
-          >
-            Gợi ý bổ sung công thức
-          </Typography>
+      <Typography
+        variant="body2"
+        fontWeight={'400'}
+        sx={{
+          flex: 1,
+          textAlign: 'center',
+          borderRadius: '24px',
+          color: 'primary.main',
+        }}
+      >
+        {`Thói quen sinh hoạt: ${step2Value.rate.label}`}
+      </Typography>
 
-          <Stack
-            gap={2}
-            direction={'row'}
-            flexWrap={'wrap'}
-            sx={{
-              width: '100%',
-            }}
-          >
-            {recipeAdd.map((item) => (
-              <Box
-                key={item.id}
+      <Typography
+        variant="body2"
+        fontWeight={'400'}
+        sx={{
+          flex: 1,
+          textAlign: 'center',
+          borderRadius: '24px',
+          color: 'primary.main',
+        }}
+      >
+        Mức calo tiêu chuẩn cho mục tiêu: {Math.round(result.standard_calories)}
+        {' • '}Mức calo thực sự bạn tiêu thụ:{' '}
+        {getRealCalorie(result, recipeAdd, recipeRemove)}
+      </Typography>
+
+      {!recipeAdd && !recipeRemove && (
+        <Typography
+          sx={{
+            width: '100%',
+            textAlign: 'center',
+            p: 1,
+            bgcolor: 'grey.600',
+            color: 'white',
+            borderRadius: '24px',
+          }}
+        >
+          Chờ chút xíu...
+        </Typography>
+      )}
+
+      <Grid container spacing={2}>
+        <Grid item xs={12} md={6}>
+          {recipeAdd && recipeAdd.length > 0 && (
+            <>
+              <Typography
+                variant="body2"
+                fontWeight={'900'}
                 sx={{
-                  width: 'calc(100%/4)',
+                  width: '100%',
+                  color: 'white',
+                  textAlign: 'center',
+                  bgcolor: 'grey.600',
+                  borderRadius: '24px',
                   p: 1,
                 }}
               >
-                <CustomCard>
-                  <CardActionArea>
-                    <ImageRecipe
-                      imgHeight={imgHeight}
-                      src={item.image}
-                      alt={item.name}
-                      quality={1}
-                    />
+                Gợi ý bổ sung
+              </Typography>
 
-                    <TotalTimeRecipe
-                      imgHeight={imgHeight}
-                      padding={padding}
-                      totalTime={item.totalTime}
-                    />
-                  </CardActionArea>
-
+              <Stack
+                gap={2}
+                direction={'row'}
+                flexWrap={'wrap'}
+                sx={{
+                  width: '100%',
+                }}
+              >
+                {recipeAdd.map((item) => (
                   <Box
+                    key={item.id}
                     sx={{
-                      p: padding,
+                      width: { xs: 'calc(100%/4)', md: 'calc(100%/2)' },
+                      p: 1,
                     }}
                   >
-                    <Stack direction={'row'} justifyContent={'space-between'}>
-                      <Typography variant="body2" fontWeight={'bold'}>
-                        Số lượng
-                      </Typography>
-                      <Typography variant="body2" fontWeight={'bold'}>
-                        5
-                      </Typography>
-                    </Stack>
-                    <NameRecipe name={item.name} />
+                    <CalorieCard item={item} />
                   </Box>
-                </CustomCard>
-              </Box>
-            ))}
-          </Stack>
-        </>
-      )}
+                ))}
+              </Stack>
+            </>
+          )}
+        </Grid>
 
-      {recipeRemove && recipeRemove.length > 0 && (
-        <>
-          <Typography
-            variant="body2"
-            fontWeight={'900'}
-            sx={{
-              width: '100%',
-              color: 'white',
-              textAlign: 'center',
-              bgcolor: 'grey.600',
-              borderRadius: '24px',
-              p: 1,
-            }}
-          >
-            Gợi ý bỏ công thức
-          </Typography>
-
-          <Stack
-            gap={2}
-            direction={'row'}
-            flexWrap={'wrap'}
-            sx={{
-              width: '100%',
-            }}
-          >
-            {recipeRemove.map((item) => (
-              <Box
-                key={item.id}
+        <Grid item xs={12} md={6}>
+          {recipeRemove && recipeRemove.length > 0 && (
+            <>
+              <Typography
+                variant="body2"
+                fontWeight={'900'}
                 sx={{
-                  width: 'calc(100%/4)',
+                  width: '100%',
+                  color: 'white',
+                  textAlign: 'center',
+                  bgcolor: 'grey.600',
+                  borderRadius: '24px',
                   p: 1,
                 }}
               >
-                <CustomCard>
-                  <CardActionArea>
-                    <ImageRecipe
-                      imgHeight={imgHeight}
-                      src={item.image}
-                      alt={item.name}
-                      quality={1}
-                    />
+                Gợi ý loại bỏ
+              </Typography>
 
-                    <TotalTimeRecipe
-                      imgHeight={imgHeight}
-                      padding={padding}
-                      totalTime={item.totalTime}
-                    />
-                  </CardActionArea>
-
+              <Stack
+                gap={2}
+                direction={'row'}
+                flexWrap={'wrap'}
+                sx={{
+                  width: '100%',
+                }}
+              >
+                {recipeRemove.map((item) => (
                   <Box
+                    key={item.id}
                     sx={{
-                      p: padding,
+                      width: { xs: 'calc(100%/4)', md: 'calc(100%/2)' },
+                      p: 1,
                     }}
                   >
-                    <Stack direction={'row'} justifyContent={'space-between'}>
-                      <Typography variant="body2" fontWeight={'bold'}>
-                        Số lượng
-                      </Typography>
-                      <Typography variant="body2" fontWeight={'bold'}>
-                        5
-                      </Typography>
-                    </Stack>
-                    <NameRecipe name={item.name} />
+                    <CalorieCard item={item} />
                   </Box>
-                </CustomCard>
-              </Box>
-            ))}
-          </Stack>
-        </>
-      )}
+                ))}
+              </Stack>
+            </>
+          )}
+        </Grid>
+      </Grid>
     </Stack>
   );
 }
 
 export default ResultRecommendCalorie;
+
+function getRealCalorie(
+  result: RecommendMealPlanRes,
+  recipeAdd: (RecipeRes & { amount: number })[],
+  recipeRemove: (RecipeRes & { amount: number })[]
+) {
+  if (!result || !recipeAdd || !recipeRemove) {
+    return '--';
+  }
+  let realCalorie: number = result.real_calories;
+
+  let recipeAddCalorie: number = recipeAdd
+    .map(
+      (item) => (item.nutrition_info.calories * item.amount) / item.serving_size
+    )
+    .reduce((a, b) => a + b, 0);
+  let recipeRemoveCalorie: number = recipeRemove
+    .map(
+      (item) => (item.nutrition_info.calories * item.amount) / item.serving_size
+    )
+    .reduce((a, b) => a + b, 0);
+
+  return Math.round(realCalorie - recipeAddCalorie + recipeRemoveCalorie);
+}
+
+export function CalorieCard({
+  item,
+}: {
+  item: RecipeRes & {
+    amount: number;
+  };
+}) {
+  return (
+    <CustomCard>
+      <CardActionArea>
+        <ImageRecipe
+          imgHeight={imgHeight}
+          src={item.image}
+          alt={item.name}
+          quality={1}
+        />
+
+        <TotalTimeRecipe
+          imgHeight={imgHeight}
+          padding={padding}
+          totalTime={item.totalTime}
+        />
+      </CardActionArea>
+
+      <Box
+        sx={{
+          p: padding,
+        }}
+      >
+        <Stack direction={'row'} justifyContent={'space-between'}>
+          <Typography variant="body2">Tên</Typography>
+          <Typography variant="body2" fontWeight={'bold'}>
+            {item.name}
+          </Typography>
+        </Stack>
+
+        <Stack direction={'row'} justifyContent={'space-between'}>
+          <Typography variant="body2">Số lượng</Typography>
+          <Typography variant="body2" fontWeight={'bold'}>
+            {item.amount}
+          </Typography>
+        </Stack>
+
+        <Stack direction={'row'} justifyContent={'space-between'}>
+          <Typography variant="body2">Calorie</Typography>
+          <Typography variant="body2" fontWeight={'bold'}>
+            {Math.round(item.nutrition_info.calories / item.serving_size)}
+          </Typography>
+        </Stack>
+      </Box>
+    </CustomCard>
+  );
+}
+
+function getLabelInfor(value: DataStep2) {
+  if (!value) {
+    return '--';
+  }
+  return `${value.gender.value ? 'Nam giới' : 'Nữ giới'} • Nặng ${
+    value.weight
+  }kg • Cao ${value.height}cm • ${value.age} tuổi • Mong muốn ${
+    value.intend.label
+  }`;
+}

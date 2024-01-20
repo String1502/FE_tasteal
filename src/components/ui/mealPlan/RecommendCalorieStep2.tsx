@@ -231,6 +231,7 @@ function RecommendCalorieStep2({
                 intend: step2Value.intend.value,
                 rate: step2Value.rate.rate,
               };
+
               await handleResult(req);
             } else {
               snackbarAlert('Vui lòng nhập đủ thông tin', 'error');

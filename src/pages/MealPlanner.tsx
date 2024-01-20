@@ -708,7 +708,11 @@ const MealPlanner: React.FC = () => {
               zIndex: 9999,
             }}
           >
-            <RecommendCalorie weekDates={weekDates} />
+            <RecommendCalorie
+              weekDates={weekDates}
+              handleRemovePlanItem={handleRemovePlanItem}
+              AddPlanItem={AddPlanItem}
+            />
           </Box>
         </>
       )}

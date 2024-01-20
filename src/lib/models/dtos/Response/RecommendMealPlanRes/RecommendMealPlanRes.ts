@@ -6,7 +6,10 @@ export type RecommendMealPlanRes = {
     id: RecipeEntity['id'];
     amount: number;
   }[];
-  recipe_remove_ids: RecipeEntity['id'][];
+  recipe_remove_ids: {
+    id: RecipeEntity['id'];
+    amount: number;
+  }[];
   standard_calories: number;
   real_calories: number;
 };

@@ -19,8 +19,21 @@ import ResultRecommendCalorie from './ResultRecommendCalorie';
 import PlanItemService from '@/lib/services/planItemService';
 import { RecommendMealPlanReq } from '@/lib/models/dtos/Request/RecommendMealPlanReq/RecommendMealPlanReq';
 import AppContext from '@/lib/contexts/AppContext';
+import { Plan_ItemEntity } from '@/lib/models/entities/Plan_ItemEntity/Plan_ItemEntity';
+import { RecipeRes } from '@/lib/models/dtos/Response/RecipeRes/RecipeRes';
+import RecipeService from '@/lib/services/recipeService';
 
-function RecommendCalorie({ weekDates }: { weekDates: DateDisplay[] }) {
+function RecommendCalorie({
+  weekDates,
+}: {
+  weekDates: DateDisplay[];
+  handleRemovePlanItem: (
+    date: Date,
+    recipeId: number,
+    order: number
+  ) => Promise<void>;
+  AddPlanItem: (item: Plan_ItemEntity) => Promise<void>;
+}) {
   const [open, setOpen] = useState(false);
   const { handleSpinner } = useContext(AppContext);
   // Stepper
@@ -92,6 +105,74 @@ function RecommendCalorie({ weekDates }: { weekDates: DateDisplay[] }) {
       handleSpinner(false);
     }
   };
+
+  const [recipeAdd, setRecipeAdd] = useState<
+    (RecipeRes & { amount: number })[] | undefined
+  >(undefined);
+
+  const [recipeRemove, setRecipeRemove] = useState<
+    (RecipeRes & { amount: number })[] | undefined
+  >(undefined);
+
+  useEffect(() => {
+    async function fetch() {
+      try {
+        await Promise.all(
+          result.recipe_add_ids.map(
+            async (id) => await RecipeService.GetById(id.id)
+          )
+        ).then((data) => {
+          if (data) {
+            setRecipeAdd(
+              data.map((recipe) => ({
+                ...recipe,
+                amount:
+                  result.recipe_add_ids.find((id) => id.id === recipe.id)
+                    ?.amount ?? 0,
+              }))
+            );
+          } else {
+            setRecipeAdd([]);
+          }
+        });
+      } catch (error) {
+        console.log(error);
+        setRecipeAdd([]);
+      }
+    }
+
+    fetch();
+  }, [result?.recipe_add_ids]);
+
+  useEffect(() => {
+    async function fetch() {
+      try {
+        await Promise.all(
+          result.recipe_remove_ids.map(
+            async (id) => await RecipeService.GetById(id.id)
+          )
+        ).then((data) => {
+          if (data) {
+            setRecipeRemove(
+              data.map((recipe) => ({
+                ...recipe,
+                amount:
+                  result.recipe_remove_ids.find((id) => id.id === recipe.id)
+                    ?.amount ?? 0,
+              }))
+            );
+          } else {
+            setRecipeRemove([]);
+          }
+        });
+      } catch (error) {
+        console.log(error);
+        setRecipeRemove([]);
+      }
+    }
+
+    fetch();
+  }, [result?.recipe_remove_ids]);
 
   const steps = useMemo(() => {
     return [
@@ -197,14 +278,6 @@ function RecommendCalorie({ weekDates }: { weekDates: DateDisplay[] }) {
                 >
                   Hủy
                 </Button>
-                <Button
-                  variant="contained"
-                  onClick={() => {
-                    //Hàm cập nhật
-                  }}
-                >
-                  Cập nhật
-                </Button>
               </Stack>
             )}
           </>
@@ -215,6 +288,8 @@ function RecommendCalorie({ weekDates }: { weekDates: DateDisplay[] }) {
             result={result}
             displayData={displayData}
             step2Value={step2Value}
+            recipeAdd={recipeAdd}
+            recipeRemove={recipeRemove}
           />
         ) : (
           <Stepper
@@ -241,3 +316,23 @@ function RecommendCalorie({ weekDates }: { weekDates: DateDisplay[] }) {
 }
 
 export default RecommendCalorie;
+
+// function ConvertRecipeResToRecipeEntity(
+//   value: RecipeRes & { amount: number }
+// ): RecipeEntity {
+//   const { amount, ...data } = value;
+//   return {
+//     id: data.id,
+//     name: data.name,
+//     rating: data.rating,
+//     totalTime: data.totalTime,
+//     serving_size: data.serving_size,
+//     introduction: data.introduction,
+//     author_note: data.author_note,
+//     is_private: data.is_private,
+//     image: data.image,
+//     author: data.author_note,
+//     createdAt: data.createAt,
+//     account: data.author,
+//   };
+// }
