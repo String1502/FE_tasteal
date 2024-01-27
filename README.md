@@ -17,17 +17,18 @@ Visit our demo at https://tasteal-191ca.web.app/ and see Tasteal in action!
 Tasteal is a university project developed by a passionate team of students under the guidance of **Instructor Đặng Việt Dũng**. We're dedicated to crafting innovative digital experiences that make life easier and more delicious.
 
 **Team:**
-Nguyễn Văn Hên (20520179)
-Phan Trường Huy (20520206)
-Nguyễn Minh Hiếu (20520183)
-Trần Thanh Trí (20520328)
-Nguyễn Phước Bình (20520143)
+
+- Nguyễn Văn Hên (20520179)
+- Phan Trường Huy (20520206)
+- Nguyễn Minh Hiếu (20520183)
+- Trần Thanh Trí (20520328)
+- Nguyễn Phước Bình (20520143)
 
 **Tech Stack:**
 
 Tasteal leverages the power of cutting-edge technologies to deliver a smooth and enjoyable user experience:
 
 **ReactJS & Material UI:** Build a beautiful and responsive interface that adapts to any device.
+
 **Firebase & MySQL:** Power our robust database and search features, ensuring you find the perfect recipe every time.
 Join us on Tasteal and discover a world of endless culinary possibilities!
-
