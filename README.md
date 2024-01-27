@@ -1,20 +1,20 @@
-# Expore endless delicious recipes for your family with Tasteal!
+# Discover & Share Amazing Recipes for Every Meal with Tasteal!
 
-Tasteal offer you with a large collections of dishes diversity in country origniate, flavor, vegan, meat eating, ... All of that will satisfy your eating hunger.
-You can browse, save, share your own recipes and plan you eating day.
-Join Tasteal now!
+Tired of browsing endless recipe websites without finding the perfect dish? Say hello to Tasteal, your one-stop shop for exploring, saving, and sharing delicious recipes from around the world!
 
-**Demo**: https://tasteal-191ca.web.app/
+### Why Choose Tasteal?
 
-# Introduction
+**Endless Variety:** Dive into a vast collection of recipes from every cuisine imaginable, satisfying every taste bud. Whether you're craving creamy pasta, spicy curry, or vegan delights, Tasteal has you covered.
+**Organize & Share:** Save your favorite recipes, create personalized meal plans, and share your culinary creations with friends and family. Tasteal makes managing your meals and culinary adventures a breeze.
+**Simple & Beautiful:** Navigate our sleek and user-friendly interface with ease. Find the perfect recipe in seconds with powerful search filters and browse stunning recipe photos that'll make your mouth water.
 
-This university project is a testament to our passion for innovation and commitment to crafting exceptional digital experiences. We've utilized cutting-edge technologies to develop a website that is not only beautiful but also feature-rich and designed to make bakery management a breeze.
+**Ready to start your culinary journey?**
 
-**Details:**
+Visit our demo at https://tasteal-191ca.web.app/ and see Tasteal in action!
 
-**Topic:** Recipe Explorer Tasteal
+### About Tasteal:
 
-**Instructors:** Đặng Việt Dũng
+Tasteal is a university project developed by a passionate team of students under the guidance of **Instructor Đặng Việt Dũng**. We're dedicated to crafting innovative digital experiences that make life easier and more delicious.
 
 **Team:**
 
@@ -26,6 +26,9 @@ This university project is a testament to our passion for innovation and commitm
 
 **Tech Stack:**
 
-Frontend: ReactJS, Vite, Material UI
+Tasteal leverages the power of cutting-edge technologies to deliver a smooth and enjoyable user experience:
 
-Backend: Firebase services, MySQL, ASP.NET
+**ReactJS & Material UI:** Build a beautiful and responsive interface that adapts to any device.
+
+**Firebase & MySQL:** Power our robust database and search features, ensuring you find the perfect recipe every time.
+Join us on Tasteal and discover a world of endless culinary possibilities!
