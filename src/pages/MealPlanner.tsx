@@ -19,6 +19,7 @@ import CartItemService from '@/lib/services/CartItemService';
 import { RecipeToCartReq } from '@/lib/models/dtos/Request/RecipeToCartReq/RecipeToCartReq';
 import LeftActionSection from '@/components/ui/mealPlan/LeftActionSection';
 import { v4 as uuidv4 } from 'uuid';
+import RecommendCalorie from '@/components/ui/mealPlan/RecommendCalorie';
 
 export const compareTwoDates = (date1: Date, date2: Date) => {
   return (
@@ -698,6 +699,21 @@ const MealPlanner: React.FC = () => {
               </Box>
             </Grid>
           </Grid>
+
+          <Box
+            sx={{
+              position: 'fixed',
+              right: 20,
+              bottom: 96,
+              zIndex: 9999,
+            }}
+          >
+            <RecommendCalorie
+              weekDates={weekDates}
+              handleRemovePlanItem={handleRemovePlanItem}
+              AddPlanItem={AddPlanItem}
+            />
+          </Box>
         </>
       )}
       {login.isUserSignedIn == false && (

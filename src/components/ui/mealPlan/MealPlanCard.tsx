@@ -32,7 +32,7 @@ export function MealPlanCard({
   index: number;
   planItem: Plan_ItemEntity;
   recipe: RecipeEntity;
-  handleRemovePlanItem: (
+  handleRemovePlanItem?: (
     date: Date,
     recipeId: number,
     order: number
