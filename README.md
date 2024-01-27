@@ -1,27 +1,31 @@
-# React + TypeScript + Vite
+# Expore endless delicious recipes for your family with Tasteal!
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Tasteal offer you with a large collections of dishes diversity in country origniate, flavor, vegan, meat eating, ... All of that will satisfy your eating hunger.
+You can browse, save, share your own recipes and plan you eating day.
+Join Tasteal now!
 
-Currently, two official plugins are available:
+**Demo**: https://tasteal-191ca.web.app/
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+# Introduction
 
-## Expanding the ESLint configuration
+This university project is a testament to our passion for innovation and commitment to crafting exceptional digital experiences. We've utilized cutting-edge technologies to develop a website that is not only beautiful but also feature-rich and designed to make bakery management a breeze.
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+**Details:**
 
-- Configure the top-level `parserOptions` property like this:
+**Topic:** Recipe Explorer Tasteal
 
-```js
-   parserOptions: {
-    ecmaVersion: 'latest',
-    sourceType: 'module',
-    project: ['./tsconfig.json', './tsconfig.node.json'],
-    tsconfigRootDir: __dirname,
-   },
-```
+**Instructors:** Đặng Việt Dũng
 
-- Replace `plugin:@typescript-eslint/recommended` to `plugin:@typescript-eslint/recommended-type-checked` or `plugin:@typescript-eslint/strict-type-checked`
-- Optionally add `plugin:@typescript-eslint/stylistic-type-checked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and add `plugin:react/recommended` & `plugin:react/jsx-runtime` to the `extends` list
+**Team:**
+
+- Nguyễn Văn Hên (20520179)
+- Phan Trường Huy (20520206)
+- Nguyễn Minh Hiếu (20520183)
+- Trần Thanh Trí (20520328)
+- Nguyễn Phước Bình (20520143)
+
+**Tech Stack:**
+
+Frontend: ReactJS, Vite, Material UI
+
+Backend: Firebase services, MySQL, ASP.NET
