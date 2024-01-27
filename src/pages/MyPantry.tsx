@@ -39,6 +39,7 @@ const MyPantry: React.FC = () => {
 
   // tab tủ lạnh
   const [pantryItems, setPantryItems] = useState<Pantry_ItemEntity[]>([]);
+  const [pantryItemReady, setPantryItemReady] = useState(false);
 
   const hanlePantryItemsChange = async (
     type: 'add' | 'remove' | 'update',
@@ -123,7 +124,10 @@ const MyPantry: React.FC = () => {
   useEffect(() => {
     async function fetch() {
       try {
-        await loadMore(true);
+        setRecommendRecipes(undefined);
+        if (pantryItemReady) {
+          await loadMore(true);
+        }
       } catch (error) {
         console.log(error);
       }
@@ -145,6 +149,7 @@ const MyPantry: React.FC = () => {
         } as GetAllPantryItemReq);
 
         setPantryItems(final);
+        setPantryItemReady(true);
       } catch (error) {
         console.log(error);
       }
@@ -197,7 +202,7 @@ const MyPantry: React.FC = () => {
               >
                 <Typography {...typographyProps}>Công thức gợi ý</Typography>
                 <Typography {...labelIconProps}>
-                  {recommendRecipes?.length ?? 0}
+                  {recommendRecipes ? recommendRecipes.length : '-'}
                 </Typography>
               </Stack>
             }
@@ -232,6 +237,7 @@ const MyPantry: React.FC = () => {
             <RecommendRecipe
               pantryItems={pantryItems}
               recommendRecipes={recommendRecipes}
+              pantryItemReady={pantryItemReady}
               loadMoreButton={
                 <Button
                   variant="contained"

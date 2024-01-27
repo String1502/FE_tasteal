@@ -6,6 +6,7 @@ import {
   PlayArrowRounded,
 } from '@mui/icons-material';
 import {
+  Box,
   Button,
   CardActionArea,
   CardContent,
@@ -15,6 +16,8 @@ import {
   ListItemIcon,
   Menu,
   MenuItem,
+  Stack,
+  Tooltip,
   Typography,
 } from '@mui/material';
 import { useCallback, useContext, useState } from 'react';
@@ -31,6 +34,7 @@ import RecipeService from '@/lib/services/recipeService';
 import useSnackbarService from '@/lib/hooks/useSnackbar';
 import { RecipeToCartReq } from '@/lib/models/dtos/Request/RecipeToCartReq/RecipeToCartReq';
 import CartItemService from '@/lib/services/CartItemService';
+import SlideInDialog from '../dialog/SlideInDialog';
 
 export const imgHeight = '224px';
 export const padding = 2;
@@ -45,7 +49,10 @@ export function PrimaryCard({
   recipe: RecipeEntity;
 }) {
   const navigate = useNavigate();
+  const { login, cookbooks, handleSpinner } = useContext(AppContext);
+  const [snackbarAlert] = useSnackbarService();
 
+  // Popover Cookbook
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -55,12 +62,13 @@ export function PrimaryCard({
     setAnchorEl(null);
   };
 
-  const { login, cookbooks, handleSpinner } = useContext(AppContext);
-
+  // Recipe Details
   const handleCardClick = useCallback(() => {
     navigate(PageRoute.Recipe.Detail(recipe.id));
   }, [navigate, recipe.id]);
-  const [snackbarAlert] = useSnackbarService();
+
+  // Dialog Cần
+  const [openDialog, setOpenDialog] = useState(false);
 
   return (
     <>
@@ -119,6 +127,111 @@ export function PrimaryCard({
           <RatingRecipe rating={recipe.rating} />
 
           <NameRecipe name={recipe.name} />
+
+          {recipe.ingredients_miss && recipe.ingredients_miss.length > 0 && (
+            <>
+              <Tooltip
+                slotProps={{
+                  tooltip: {
+                    sx: {
+                      bgcolor: 'grey.700',
+                      p: 2,
+                      borderRadius: '12px',
+                    },
+                  },
+                }}
+                onClick={() => setOpenDialog(true)}
+                title={
+                  <Stack gap={1} sx={{ width: '100%' }}>
+                    <Typography sx={{ color: 'white' }} variant="body2">
+                      {recipe.ingredients_miss.length} nguyên liệu cần:
+                    </Typography>
+                    {recipe.ingredients_miss.map((ingredient) => (
+                      <Typography
+                        sx={{ color: 'white', width: '100%' }}
+                        variant="body2"
+                      >
+                        - {ingredient.name}
+                      </Typography>
+                    ))}
+                  </Stack>
+                }
+              >
+                <Stack
+                  sx={{
+                    width: '100%',
+                    mt: 1,
+                    bgcolor: 'grey.200',
+                    borderRadius: '100px',
+                  }}
+                  direction={'row'}
+                  gap={1}
+                  alignItems={'center'}
+                >
+                  <Box
+                    sx={{
+                      bgcolor: 'primary.main',
+                      borderRadius: '100px 0 0 100px',
+                      overflow: 'hidden',
+                      height: '100%',
+                      pl: 1.2,
+                      pr: 1,
+                      py: 0.4,
+                      display: 'flex',
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                      boxShadow: 3,
+                    }}
+                  >
+                    <Typography
+                      variant="body2"
+                      sx={{ fontWeight: '500', color: 'white' }}
+                    >
+                      Cần {recipe.ingredients_miss.length}
+                    </Typography>
+                  </Box>
+
+                  <Typography
+                    variant="body2"
+                    sx={{
+                      overflow: 'hidden',
+                      flex: 1,
+                      whiteSpace: 'nowrap',
+                      textOverflow: 'ellipsis',
+                      pr: 1.2,
+                    }}
+                  >
+                    {recipe.ingredients_miss.map((ingredient, index) => (
+                      <span key={index}>
+                        {ingredient.name}
+                        {index < recipe.ingredients_miss.length - 1
+                          ? ', '
+                          : ''}{' '}
+                      </span>
+                    ))}
+                  </Typography>
+                </Stack>
+              </Tooltip>
+
+              <SlideInDialog
+                open={openDialog}
+                handleClose={() => setOpenDialog(false)}
+                title={recipe.ingredients_miss.length + ' nguyên liệu cần:'}
+                content={
+                  <Stack gap={1} sx={{ width: '100%' }}>
+                    {recipe.ingredients_miss.map((ingredient) => (
+                      <Typography
+                        sx={{ color: 'primary.main', width: '100%' }}
+                        variant="body1"
+                      >
+                        - {ingredient.name}
+                      </Typography>
+                    ))}
+                  </Stack>
+                }
+              />
+            </>
+          )}
 
           <Button
             variant="outlined"

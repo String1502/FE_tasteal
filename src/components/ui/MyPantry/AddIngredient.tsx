@@ -39,7 +39,11 @@ export function AddIngredient({
   const [snackbarAlert] = useSnackbarService();
 
   const [tabValue, setTabValue] = useState<IngredientEntity['id']>(
-    pantryDataDisplay.length > 0 ? pantryDataDisplay[0].ingredientType.id : -1
+    pantryDataDisplay.length > 0
+      ? pantryDataDisplay[0].ingredientType
+        ? pantryDataDisplay[0].ingredientType.id
+        : -1
+      : -1
   );
 
   const [ingredientData, setIngredientData] = useState<IngredientEntity[]>([]);
@@ -64,7 +68,11 @@ export function AddIngredient({
     }
     fetch();
     if (pantryDataDisplay.length > 0) {
-      setTabValue(pantryDataDisplay[0].ingredientType.id);
+      setTabValue(
+        pantryDataDisplay[0].ingredientType
+          ? pantryDataDisplay[0].ingredientType.id
+          : -1
+      );
     }
   }, [pantryDataDisplay, allIngredients]);
 

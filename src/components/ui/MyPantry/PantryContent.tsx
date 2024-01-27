@@ -76,18 +76,11 @@ function PantryContent({
           });
         }
 
-        final = final.sort(
-          (a, b) => b.ingredients.length - a.ingredients.length
-        );
+        // final = final.sort(
+        //   (a, b) => b.ingredients.length - a.ingredients.length
+        // );
 
-        setPantryDataDisplay(
-          final.map((item) => ({
-            ...item,
-            ingredients: item.ingredients.sort((a, b) =>
-              a.ingredient?.name < b.ingredient?.name ? -1 : 1
-            ),
-          }))
-        );
+        setPantryDataDisplay(final);
       } catch (error) {
         console.log(error);
       }
